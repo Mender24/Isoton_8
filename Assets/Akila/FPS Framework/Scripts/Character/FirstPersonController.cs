@@ -1,10 +1,8 @@
 using Akila.FPSFramework.Animation;
-using Akila.FPSFramework.Internal;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
 using UnityEngine.Serialization;
 
 namespace Akila.FPSFramework
@@ -59,6 +57,10 @@ namespace Akila.FPSFramework
         [Header("Slopes")]
         [Tooltip("If true, the player will slide down steep slopes automatically.")]
         public bool slideDownSlopes = true;
+
+        public float speedIsSlopes = 3f;
+
+        public float lenRaycast = 0.4f;
 
         [Tooltip("Speed at which the player slides down slopes.")]
         public float slopeSlideSpeed = 1;
@@ -188,7 +190,7 @@ namespace Akila.FPSFramework
 
             characterManager.onJump.AddListener(() =>
             {
-                if(attemptedToJump == false)
+                if (attemptedToJump == false)
                 {
                     currentGravityForce = -leaveGroundForce;
                 }
@@ -205,7 +207,7 @@ namespace Akila.FPSFramework
 
             controller.center = Vector3.up * controller.height * 0.5f;
 
-            if(proceduralAnimator)
+            if (proceduralAnimator)
             {
                 leanRightAnimation = proceduralAnimator.GetAnimation("Lean Right");
                 leanLeftAnimation = proceduralAnimator.GetAnimation("Lean Left");
@@ -302,14 +304,16 @@ namespace Akila.FPSFramework
         private bool attemptedToJump;
 
         protected virtual void Update()
-        {            
+        {
             if (!isActive) return;
 
-            if(leanRightAnimation)
+            if (leanRightAnimation)
             {
                 leanRightAnimation.IsPlaying = CharacterInput.LeanRightInput;
                 leanLeftAnimation.IsPlaying = CharacterInput.LeanLeftInput;
             }
+
+            CheckSlopes();
 
             //slide down slope if on maxed angle slope
             if (slideDownSlopes && OnMaxedAngleSlope())
@@ -320,10 +324,12 @@ namespace Akila.FPSFramework
 
             Vector3 targetVelocity = (SlopeDirection() * CharacterInput.MoveInput.y + Orientation.right * CharacterInput.MoveInput.x).normalized * speed;
 
+            //Debug.Log("SlopeDirection(): " + SlopeDirection() + " speed: " + speed + " moveInput: " + CharacterInput.MoveInput);
+
             //update desiredVelocity in order to normlize it and smooth the movement
             desiredVelocity = slideVelocity + Vector3.SmoothDamp(desiredVelocity, targetVelocity * CharacterInput.MoveInput.magnitude, ref desiredVelocityRef, acceleration);
 
-            if (!controller.isGrounded || OnSlope())
+            if (!controller.isGrounded)
             {
                 controller.stepOffset = 0;
             }
@@ -338,16 +344,16 @@ namespace Akila.FPSFramework
 
             //update speed according to if player is holding sprint
 
-            if (SlopeAngle() < controller.slopeLimit)
+            if (!slideDownSlopes)
             {
                 if (CharacterInput.SprintInput && !CharacterInput.TacticalSprintInput) speed = isCrouching ? crouchSpeed * speedMultiplier : sprintSpeed * speedMultiplier;
                 else if (!CharacterInput.TacticalSprintInput) speed = speed = isCrouching ? crouchSpeed * speedMultiplier : walkSpeed * speedMultiplier;
 
                 if (CharacterInput.TacticalSprintInput) speed = speed = isCrouching ? crouchSpeed * speedMultiplier : tacticalSprintSpeed * speedMultiplier;
             }
-            else
+            else if (slideDownSlopes)
             {
-                speed = 0;
+                speed = speedIsSlopes;
             }
 
             //Do crouching
@@ -374,7 +380,7 @@ namespace Akila.FPSFramework
                     if (jumpSFX)
                         jumpAudio.Play(true);
                 }
-                
+
                 velocity.y = currentGravityForce;
             }
             else if (velocity.magnitude * 3.5f < maxFallSpeed)
@@ -405,7 +411,7 @@ namespace Akila.FPSFramework
             }
 
             velocityF.x = velocity.x;
-                velocityF.z = velocity.z;
+            velocityF.z = velocity.z;
 
             if (preserveMomentum)
             {
@@ -421,14 +427,14 @@ namespace Akila.FPSFramework
 
             if (preserveMomentum == false)
                 jumpVel = Vector3.zero;
-            
+
             Vector3 totalVel = velocityF + jumpVel;
 
             Vector3 clampedVel = Vector3.ClampMagnitude(new Vector3(totalVel.x, 0, totalVel.z), tacticalSprintSpeed);
 
             totalVel.x = clampedVel.x;
             totalVel.z = clampedVel.z;
-            
+
             //move and update CollisionFlags in order to check if collition is coming from above ot center or bottom
             CollisionFlags = controller.Move(totalVel * Time.deltaTime);
 
@@ -438,6 +444,46 @@ namespace Akila.FPSFramework
             tacticalSprintAmount = CharacterInput.TacticalSprintInput ? 1 : 0;
 
             MoveWithMovingPlatforms();
+        }
+
+        private void CheckSlopes()
+        {
+            Debug.Log(SlopeAngle() + " 000");
+
+            if (SlopeAngle() < controller.slopeLimit)
+            {
+                Debug.Log("Exit");
+                slideDownSlopes = false;
+                return;
+            }
+
+            float delta = controller.radius;
+            float height = controller.height / 2;
+            float len = 0.3f;
+            Vector3 center = transform.position;
+            center.y += 0.2f;
+
+            bool hitDetected1 = Physics.Raycast(center + new Vector3(delta, 0, 0), Vector3.down, out RaycastHit hit1, len);
+            bool hitDetected2 = Physics.Raycast(center + new Vector3(-delta, 0, 0), Vector3.down, out RaycastHit hit2, len);
+            bool hitDetected3 = Physics.Raycast(center + new Vector3(0, 0, -delta), Vector3.down, out RaycastHit hit3, len);
+            bool hitDetected4 = Physics.Raycast(center + new Vector3(0, 0, delta), Vector3.down, out RaycastHit hit4, len);
+
+            Vector3 startPos1 = center + new Vector3(delta, 0, 0);
+            Vector3 startPos2 = center + new Vector3(-delta, 0, 0);
+            Vector3 startPos3 = center + new Vector3(0, 0, -delta);
+
+            Vector3 endPos1 = startPos1 + Vector3.down * len;
+            Vector3 endPos2 = startPos2 + Vector3.down * len;
+            Vector3 endPos3 = startPos3 + Vector3.down * len;
+
+            Debug.DrawLine(startPos1, endPos1, Color.red);
+            Debug.DrawLine(startPos2, endPos2, Color.green);
+            Debug.DrawLine(startPos3, endPos3, Color.blue);
+
+            if(!slideDownSlopes)
+                slideDownSlopes = true;
+            else if(slideDownSlopes && SlopeAngle() < controller.slopeLimit)
+                slideDownSlopes = false;
         }
 
         protected virtual void LateUpdate()
@@ -506,7 +552,7 @@ namespace Akila.FPSFramework
 
             //update
             nextStep = stepCycle + stepInterval;
-           
+
             int currentFootStepIndex = Random.Range(0, footStepsAudio.GetLength());
 
             onStep?.Invoke(currentFootStepIndex);
@@ -530,7 +576,7 @@ namespace Akila.FPSFramework
             xRotation = Mathf.Clamp(xRotation, minimumX, maximumX);
 
             //Avoid Nan for x rot
-            if(float.IsNaN(xRotation))
+            if (float.IsNaN(xRotation))
             {
                 xRotation = 0;
             }
@@ -567,7 +613,7 @@ namespace Akila.FPSFramework
 
         public virtual bool OnMaxedAngleSlope()
         {
-            if (controller.isGrounded && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, controller.height))
+            if (controller.isGrounded && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, lenRaycast))
             {
                 slopeDirection = hit.normal;
                 return Vector3.Angle(slopeDirection, Vector3.up) > controller.slopeLimit;
@@ -580,6 +626,10 @@ namespace Akila.FPSFramework
         {
             //setup a raycast from position to down at the bottom of the collider
             RaycastHit slopeHit;
+
+            Vector3 startPos1 = transform.position;
+            Vector3 endPos1 = startPos1 + Vector3.down * lenRaycast;
+            Debug.DrawLine(startPos1, endPos1, Color.yellow);
 
             if (Physics.Raycast(Orientation.position, Vector3.down, out slopeHit, (controller.height / 2) + 0.1f) && SlopeAngle() < controller.slopeLimit)
             {
@@ -595,7 +645,7 @@ namespace Akila.FPSFramework
         {
             //setup a raycast from position to down at the bottom of the collider
             RaycastHit slopeHit;
-            if (Physics.Raycast(transform.position, Vector3.down, out slopeHit))
+            if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, lenRaycast))
             {
                 //get the direction result according to slope normal
                 return (Vector3.Angle(Vector3.down, slopeHit.normal) - 180) * -1;
@@ -653,12 +703,12 @@ namespace Akila.FPSFramework
                 AudioLowPassFilter lowPassFilter = audioListener.GetComponent<AudioLowPassFilter>();
                 AudioDistortionFilter distortionFilter = audioListener.GetComponent<AudioDistortionFilter>();
 
-                if(echoFilter) echoFilter.enabled = value;
-                if(reverbFilter)reverbFilter.enabled = value;
-                if(highPassFilter) highPassFilter.enabled = value;
-                if(lowPassFilter) lowPassFilter.enabled = value;
-                if(distortionFilter) distortionFilter.enabled = value;
-                
+                if (echoFilter) echoFilter.enabled = value;
+                if (reverbFilter) reverbFilter.enabled = value;
+                if (highPassFilter) highPassFilter.enabled = value;
+                if (lowPassFilter) lowPassFilter.enabled = value;
+                if (distortionFilter) distortionFilter.enabled = value;
+
                 audioListener.enabled = value;
             }
         }
@@ -699,7 +749,7 @@ namespace Akila.FPSFramework
                 }
             }
 
-            if(!controller.isGrounded)
+            if (!controller.isGrounded)
             {
                 //totalVelocity += Physics.gravity * gravity * Time.deltaTime;
             }
