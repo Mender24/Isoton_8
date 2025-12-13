@@ -230,8 +230,21 @@ namespace Akila.FPSFramework
                 yield break;
             }
 
+            AsyncOperation secondLoadOperation;
+            try
+            {
+                secondLoadOperation = SceneManager.LoadSceneAsync("Level_0", LoadSceneMode.Additive);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to load scene '{sceneName}': {ex.Message}", gameObject);
+                yield break;
+            }
+
             // Wait until the scene is nearly fully loaded (90% progress)
             yield return new WaitUntil(() => loadOperation.progress >= 0.90f);
+
+            yield return new WaitUntil(() => secondLoadOperation.progress >= 0.90f);
 
             yield return new WaitUntil(() => customCondition == false);
 

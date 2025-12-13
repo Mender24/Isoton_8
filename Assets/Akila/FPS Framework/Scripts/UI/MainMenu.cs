@@ -17,11 +17,15 @@ namespace Akila.FPSFramework
             FPSFrameworkCore.IsInputActive = true;
         }
 
+
         public void LoadGame(string name)
         {
             LoadingScreen.LoadScene(name);
+
         }
 
+
+ 
         public void OpenAssetPage()
         {
             Application.OpenURL("https://assetstore.unity.com/packages/templates/systems/fps-framework-217379");
