@@ -13,7 +13,8 @@ public class BunkerDoor : MonoBehaviour
 
     private void Start()
     {
-        targetRotation = isOpenInitially ? Quaternion.Euler(0, 90, 0) : Quaternion.identity;
+        targetRotation = isOpenInitially ? Quaternion.Euler(-90, 180, -90) : Quaternion.identity;   
+        //targetRotation = isOpenInitially ? Quaternion.Euler(0, 0, 0) : Quaternion.identity;
     }
 
     private void Update()
