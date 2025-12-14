@@ -2,60 +2,62 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Events;
 
-
-public class DoorControllerSceneChanger : MonoBehaviour
+namespace Akila.FPSFramework
 {
-
-    public Transform pivot;
-    public BunkerDoor enterDoor;
-    public BunkerDoor exitDoor;
-    private bool _isActivated = false;
-    public float roughness = 2;
-    private Quaternion targetRotation;
-    private SceneManagerMy sceneManager;
-    void Start()
+    public class DoorControllerSceneChanger : MonoBehaviour
     {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        pivot.localRotation = Quaternion.Lerp(pivot.localRotation, targetRotation, Time.deltaTime * roughness);
-    }
-
-    public void ActivatedLeaver()
-    {
-
-        sceneManager = FindFirstObjectByType<SceneManagerMy>();
-        if (sceneManager == null)
-        {
-            Debug.LogWarning("SceneManagerMy not found in the scene.");
-        }
-        if (!_isActivated)
-        {
-            _isActivated = true;
-            ToggleLeaver();
-            StartCoroutine(StartChangeSceneProcess());
-        }
-        else
+        public Transform pivot;
+        public BunkerDoor enterDoor;
+        public BunkerDoor exitDoor;
+        private bool _isActivated = false;
+        public float roughness = 2;
+        private Quaternion targetRotation;
+        private SceneManagerMy sceneManager;
+        void Start()
         {
 
         }
-    }
 
-    private IEnumerator StartChangeSceneProcess()
-    {
-        enterDoor.ToggleDoor();
-        yield return new WaitForSeconds(1f);
-        yield return StartCoroutine(sceneManager.SceneRotationProcess());
-        yield return new WaitForSeconds(1f);
-        exitDoor.ToggleDoor();
+        // Update is called once per frame
+        void Update()
+        {
+            pivot.localRotation = Quaternion.Lerp(pivot.localRotation, targetRotation, Time.deltaTime * roughness);
+        }
 
-    }
+        public void ActivatedLeaver()
+        {
 
-    private void ToggleLeaver()
-    {
-        targetRotation = targetRotation == Quaternion.Euler(0, 0, 150) ? Quaternion.identity : Quaternion.Euler(0, 0, 10);
+            sceneManager = FindFirstObjectByType<SceneManagerMy>();
+            if (sceneManager == null)
+            {
+                Debug.LogWarning("SceneManagerMy not found in the scene.");
+            }
+            if (!_isActivated)
+            {
+                _isActivated = true;
+                ToggleLeaver();
+                StartCoroutine(StartChangeSceneProcess());
+            }
+            else
+            {
+
+            }
+        }
+
+        private IEnumerator StartChangeSceneProcess()
+        {
+            enterDoor.ToggleDoor();
+            yield return new WaitForSeconds(1f);
+            yield return StartCoroutine(sceneManager.SceneRotationProcess());
+            yield return new WaitForSeconds(1f);
+            exitDoor.ToggleDoor();
+
+        }
+
+        private void ToggleLeaver()
+        {
+            targetRotation = targetRotation == Quaternion.Euler(0, 0, 150) ? Quaternion.identity : Quaternion.Euler(0, 0, 10);
+        }
     }
 }

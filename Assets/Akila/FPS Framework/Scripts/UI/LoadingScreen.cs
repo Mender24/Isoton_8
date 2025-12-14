@@ -5,15 +5,19 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
+
 
 namespace Akila.FPSFramework
 {
     /// <summary>
     /// Controls the loading screen UI, showing tips during scene loading.
     /// </summary>
+
     [AddComponentMenu("Akila/FPS Framework/UI/Loading Screen")]
     public class LoadingScreen : MonoBehaviour
     {
+
         /// <summary>
         /// List of tips to display on the loading screen.
         /// </summary>
@@ -41,6 +45,14 @@ namespace Akila.FPSFramework
         /// <summary>
         /// Singleton instance of the LoadingScreen.
         /// </summary>
+        //--------------------------------------------------------------------------------
+        public String LoadedScenes = "Transition_1";
+        public FirstPersonController _playerController = null;
+        public GameObject _spawnPoint = null; 
+        
+
+
+        //--------------------------------------------------------------------------------
         public static LoadingScreen Instance
         {
             get
@@ -233,7 +245,7 @@ namespace Akila.FPSFramework
             AsyncOperation secondLoadOperation;
             try
             {
-                secondLoadOperation = SceneManager.LoadSceneAsync("Transition_1", LoadSceneMode.Additive);
+                secondLoadOperation = SceneManager.LoadSceneAsync(LoadedScenes, LoadSceneMode.Additive);
             }
             catch (Exception ex)
             {
@@ -248,11 +260,36 @@ namespace Akila.FPSFramework
 
             yield return new WaitUntil(() => customCondition == false);
 
-            if(onLoadFinished != null) onLoadFinished?.Invoke();
+            _playerController = FindFirstObjectByType<FirstPersonController>();
+            if (_playerController == null)
+            {
+                Debug.LogWarning("CharacterController not found in the first scene", gameObject);
+            }
+            /*
+            _sceneManager = FindFirstObjectByType<SceneManagerMy>();
+            if (_sceneManager == null)
+            {
+                Debug.LogWarning("sceneManager not found in the first scene", gameObject);
+            }
+            */
+            // Find and assign the spawn point from the second loaded scene
+            _spawnPoint = GameObject.Find("SpawnPoint"); // Убедитесь, что имя совпадает с именем объекта в сцене
+            if (_spawnPoint == null)
+            {
+                Debug.LogWarning("SpawnPoint not found in the second scene", gameObject);
+            }
+            _playerController.transform.position = _spawnPoint.transform.position;
+            _playerController.gravity = 1;
+
+
+            if (onLoadFinished != null) onLoadFinished?.Invoke();
+
+            
 
             // Hide the loading screen after a delay once the scene is loaded
             Invoke(nameof(Disable), postLoadDelay);
         }
+
 
         public static bool IsSceneInBuild(string sceneName)
         {
