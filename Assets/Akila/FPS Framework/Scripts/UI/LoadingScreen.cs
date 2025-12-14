@@ -233,7 +233,7 @@ namespace Akila.FPSFramework
             AsyncOperation secondLoadOperation;
             try
             {
-                secondLoadOperation = SceneManager.LoadSceneAsync("Level_0", LoadSceneMode.Additive);
+                secondLoadOperation = SceneManager.LoadSceneAsync("Transition_1", LoadSceneMode.Additive);
             }
             catch (Exception ex)
             {
