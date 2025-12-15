@@ -90,7 +90,7 @@ namespace Akila.FPSFramework
                 yield return null;
             }
             asyncLoad.allowSceneActivation = true;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1f);
             endLevelPoint = FindGameObjectInSceneByName(originalScene, "EndLevelPoint");
             Scene loadedScene = SceneManager.GetSceneByBuildIndex(sceneIndex);
             if (loadedScene.isLoaded)
