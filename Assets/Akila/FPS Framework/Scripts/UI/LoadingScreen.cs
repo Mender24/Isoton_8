@@ -268,6 +268,7 @@ namespace Akila.FPSFramework
             {
                 Debug.LogWarning("SpawnPoint not found in the second scene", gameObject);
             }
+            Debug.Log("teleport");
             _playerController.transform.position = _spawnPoint.transform.position;
             _playerController.gravity = 1;
 
