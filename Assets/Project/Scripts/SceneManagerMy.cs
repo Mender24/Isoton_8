@@ -169,6 +169,7 @@ namespace Akila.FPSFramework
             {
                 Debug.LogWarning("Следующая сцена 'Transition' не найдена. Загружены сцены только до конца.");
             }
+            loadedScenes = SceneManager.GetSceneByBuildIndex(nextTransitionIndex).name;
             _isDone = true;
         }
 
