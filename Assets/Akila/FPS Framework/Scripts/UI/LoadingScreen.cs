@@ -49,9 +49,6 @@ namespace Akila.FPSFramework
         public String LoadedScenes = "Transition_1";
         public FirstPersonController _playerController = null;
         public GameObject _spawnPoint = null; 
-        
-
-
         //--------------------------------------------------------------------------------
         public static LoadingScreen Instance
         {
@@ -265,13 +262,6 @@ namespace Akila.FPSFramework
             {
                 Debug.LogWarning("CharacterController not found in the first scene", gameObject);
             }
-            /*
-            _sceneManager = FindFirstObjectByType<SceneManagerMy>();
-            if (_sceneManager == null)
-            {
-                Debug.LogWarning("sceneManager not found in the first scene", gameObject);
-            }
-            */
             // Find and assign the spawn point from the second loaded scene
             _spawnPoint = GameObject.Find("SpawnPoint"); // Убедитесь, что имя совпадает с именем объекта в сцене
             if (_spawnPoint == null)

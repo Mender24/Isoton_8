@@ -27,7 +27,6 @@ namespace Akila.FPSFramework
 
         public void ActivatedLeaver()
         {
-
             sceneManager = FindFirstObjectByType<SceneManagerMy>();
             if (sceneManager == null)
             {

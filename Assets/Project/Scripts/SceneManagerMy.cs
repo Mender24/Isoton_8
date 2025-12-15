@@ -16,7 +16,7 @@ namespace Akila.FPSFramework
         private GameObject endLevelPoint;
         private GameObject startLevelPoint;
         private GameObject levelContainer;
-        private string loadedScenes = null;
+        public String loadedScenes = "Transition_1";
 
         private List<string> sceneNames;
         private int _sceneIndex;
@@ -110,28 +110,69 @@ namespace Akila.FPSFramework
 
             }
         }
-        private IEnumerator StartLoadLevels()
+
+        private void GetCurendSceneName()
         {
-            yield return StartCoroutine(LoadSceneByIndexAsync(1));
-            yield return StartCoroutine(LoadSceneByIndexAsync(2));
-            _sceneIndex = 2;
+            string sceneName = loadedScenes;
+            Debug.Log("Текущая сцена: " + sceneName);
         }
 
         public IEnumerator SceneRotationProcess()
         {
+            GetCurendSceneName();
             _isDone = false;
-            if (_sceneIndex > 2)
+            _sceneIndex = sceneNames.IndexOf(loadedScenes);
+            if (_sceneIndex == -1)
             {
-                yield return StartCoroutine(UnloadSceneByIndexAsync(_sceneIndex - 2));
-
+                Debug.LogError("Загруженная сцена не найдена в списке сцен.");
+                yield break;
             }
-            yield return StartCoroutine(UnloadSceneByIndexAsync(_sceneIndex - 1));
-            yield return StartCoroutine(LoadSceneByIndexAsync(_sceneIndex + 1));
-            yield return StartCoroutine(LoadSceneByIndexAsync(_sceneIndex + 2));
-            _sceneIndex += 2;
 
+            int previousTransitionIndex = -1;
+            for (int i = _sceneIndex - 1; i >= 0; i--)
+            {
+                if (sceneNames[i].StartsWith("Transition"))
+                {
+                    previousTransitionIndex = i;
+                    break;
+                }
+            }
+
+            if (previousTransitionIndex != -1)
+            {
+                for (int i = _sceneIndex - 1; i > previousTransitionIndex; i--)
+                {
+                    yield return StartCoroutine(UnloadSceneByIndexAsync(i));
+                }
+                yield return StartCoroutine(UnloadSceneByIndexAsync(previousTransitionIndex));
+            }
+
+            int nextTransitionIndex = -1;
+            for (int i = _sceneIndex + 1; i < sceneNames.Count; i++)
+            {
+                if (sceneNames[i].StartsWith("Transition"))
+                {
+                    nextTransitionIndex = i;
+                    break;
+                }
+            }
+
+            if (nextTransitionIndex != -1)
+            {
+                for (int i = _sceneIndex + 1; i < nextTransitionIndex; i++)
+                {
+                    yield return StartCoroutine(LoadSceneByIndexAsync(i));
+                }
+                yield return StartCoroutine(LoadSceneByIndexAsync(nextTransitionIndex));
+            }
+            else
+            {
+                Debug.LogWarning("Следующая сцена 'Transition' не найдена. Загружены сцены только до конца.");
+            }
             _isDone = true;
         }
+
+
 
     }
 }
