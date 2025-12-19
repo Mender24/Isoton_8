@@ -142,7 +142,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u041C\u0410\u041B\u041E \u041F\u0410\u0422\u0420\u041E\u041D\u041E\u0412"
+  m_text: LOW AMMO
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fb44eca06bc742f4d8bce9846f578e28, type: 2}
   m_sharedMaterial: {fileID: -4569395416394809772, guid: fb44eca06bc742f4d8bce9846f578e28,
@@ -441,7 +441,7 @@ GameObject:
   - component: {fileID: 4622341081318701054}
   - component: {fileID: 6802205737550449059}
   m_Layer: 5
-  m_Name: Firearm HUD
+  m_Name: Firearm HUD NoAmmoWarning
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -549,8 +549,8 @@ MonoBehaviour:
   ammoTypeNameText: {fileID: 2749390296656520528}
   remainingAmmoText: {fileID: 6215231800757327020}
   remainingAmmoTypeText: {fileID: 8682197073094840466}
-  outOfAmmoAlert: {fileID: 2491642312499373199}
-  lowAmmoAlert: {fileID: 5378726229535123121}
+  outOfAmmoAlert: {fileID: 0}
+  lowAmmoAlert: {fileID: 0}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   alertColor: {r: 0.6037736, g: 0, b: 0, a: 1}
 --- !u!1 &2491642312499373199
@@ -1178,7 +1178,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u041D\u0415\u0422 \u041F\u0410\u0422\u0420\u041E\u041D\u041E\u0412"
+  m_text: OUT OF AMMO
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fb44eca06bc742f4d8bce9846f578e28, type: 2}
   m_sharedMaterial: {fileID: -4569395416394809772, guid: fb44eca06bc742f4d8bce9846f578e28,
@@ -1344,7 +1344,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7802457421820562996
 RectTransform:
   m_ObjectHideFlags: 0
