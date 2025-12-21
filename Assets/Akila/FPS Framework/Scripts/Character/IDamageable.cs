@@ -22,5 +22,7 @@ namespace Akila.FPSFramework
 
         public GameObject DamageSource { get; set; }
         public UnityEvent OnDeath { get; }
+
+        public bool IsSwaped();
     }
 }
