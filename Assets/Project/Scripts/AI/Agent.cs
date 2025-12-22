@@ -9,8 +9,10 @@ public class Agent : MonoBehaviour
     [SerializeField] private float _percentage = 0.25f;
     [SerializeField] private float _speedBullet;
 
-    public bool IsLineSight;
+    //Time
+    public bool IsLineSight; 
     public Damageable Target;
+    //-----
 
     private AIShootingSystem _aiShootingSystem;
 
