@@ -7,7 +7,6 @@ public class Projectile : Akila.FPSFramework.Projectile
 
     [SerializeField] private OnHitProjectileEffect _onHitProjectileEffect;
     [SerializeField] private GameObject _effectPrefab;
-    [SerializeField] private GameObject _freezeTimeZone;
     public override void OnHit(RaycastHit hit, Ray ray)
     {
         if (!isActive) return;
@@ -42,6 +41,10 @@ public class Projectile : Akila.FPSFramework.Projectile
 
     private void SwapPlayer(IDamageable damageable)
     {
+        if (!damageable.IsSwaped())
+        {
+            return;
+        }
         var player = Player.Instance;
         var pos = damageable.gameObject.transform.position;
         //var rot = damageable.transform.rotation;
@@ -58,13 +61,17 @@ public class Projectile : Akila.FPSFramework.Projectile
 
     private void SwapEnemy(IDamageable damageable)
     {
+        if (!damageable.IsSwaped())
+        {
+            return;
+        }
         damageable.gameObject.SetActive(false);
         Instantiate(_effectPrefab, damageable.transform.position, damageable.transform.rotation, damageable.transform.parent);
         this.gameObject.SetActive(false);
     }
     private void OnHitEffectFreezeTime(RaycastHit hit)
     {
-        Instantiate(_effectPrefab, hit.transform.position, hit.transform.rotation, hit.transform.parent);
+        Instantiate(_effectPrefab, hit.point, hit.transform.rotation, hit.transform.parent);
         this.gameObject.SetActive(false);
     }
 }

@@ -25,4 +25,5 @@ namespace Akila.FPSFramework
 
         public bool IsSwaped();
     }
+
 }
