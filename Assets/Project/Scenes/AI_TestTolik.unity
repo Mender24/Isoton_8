@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 106129501}
   - component: {fileID: 106129500}
   - component: {fileID: 106129499}
+  - component: {fileID: 106129506}
   - component: {fileID: 106129505}
   m_Layer: 0
   m_Name: Agent
@@ -159,6 +160,7 @@ MonoBehaviour:
   - rid: 2658388370545967306
   - rid: 4423224429646185305
   - rid: 4423224429646185306
+  - rid: 4423224477138027096
   m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
@@ -192,6 +194,15 @@ MonoBehaviour:
           m_Value1: 10803636405098026427
         Name: Idle animations
         m_Value: []
+    - rid: 4423224477138027096
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
+        asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 7419949414868915445
+          m_Value1: 3944776713629506187
+        Name: IdleWaitTime
+        m_Value: 3
 --- !u!195 &106129500
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -318,57 +329,150 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 106129500}
-  blackboard:
-    m_Variables: []
   animator: {fileID: 0}
-  player: {fileID: 118501460}
-  playerLayer:
+  playerTransform: {fileID: 118501460}
+  _playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  obstacleLayer:
+  _obstacleLayer:
     serializedVersion: 2
     m_Bits: 8192
-  fieldOfViewAngle: 60
-  visionRange: 15
-  visionHeight: 0.5
-  debugVision: 1
+  _fieldOfViewAngle: 110
+  _visionRange: 15
+  _visionHeight: 0.5
   hearingRange: 10
-  debugHearing: 1
   attackRange: 20
-  detectionDelay: 0.5
   forgetTime: 10
+  _detectionDelay: 0.25
   walkSpeed: 2
   runSpeed: 5
-  isPatrolling: 1
+  shouldPatrol: 1
   patrolPoints:
   - {fileID: 1264704118}
   - {fileID: 572395997}
   waypointWaitTime: 1
-  idleWaitTime: 3
-  audioSource: {fileID: 0}
-  detectionSound: {fileID: 0}
-  showDetectionRange: 1
-  showFieldOfView: 1
-  showRaycast: 1
-  showLastKnownPosition: 1
-  fovResolution: 30
-  showHearingRange: 1
-  detectionRangeColor: {r: 1, g: 1, b: 0, a: 0.1}
-  fieldOfViewColor: {r: 0, g: 1, b: 0, a: 0.2}
-  raycastHitColor: {r: 0, g: 1, b: 0, a: 1}
-  raycastMissColor: {r: 1, g: 0, b: 0, a: 1}
-  alertColor: {r: 1, g: 0, b: 0, a: 1}
-  hearingRangeColor: {r: 0, g: 0.5, b: 1, a: 0.1}
+  _idleWaitTime: 3
+  _audioSource: {fileID: 106129506}
+  _detectionSound: {fileID: 8300000, guid: 6e46f06946fd48444be0914ca797e8d6, type: 3}
+  _showDebug: 0
+  _showDebugInfo: 0
+  _debugVision: 0
+  _showDetectionRange: 0
+  _showFieldOfView: 0
+  _showRaycast: 0
+  _showLastKnownPosition: 0
+  _fovResolution: 10
+  _detectionRangeColor: {r: 1, g: 1, b: 0, a: 0.1}
+  _alertColor: {r: 1, g: 0, b: 0, a: 1}
+  _fieldOfViewColor: {r: 0, g: 1, b: 0, a: 0.2}
+  _raycastHitColor: {r: 0, g: 1, b: 0, a: 1}
+  _raycastMissColor: {r: 1, g: 0, b: 0, a: 1}
+  _debugHearing: 0
+  _showHearingRange: 0
+  _hearingRangeColor: {r: 0, g: 0.5, b: 1, a: 0.1}
   isActivated: 0
   playerDetected: 0
   isAlerted: 0
   isSearching: 0
   lastKnownPlayerPosition: {x: 0, y: 0, z: 0}
   timeSinceLastSeen: 0
-  currentPatrolIndex: 0
-  references:
-    version: 2
-    RefIds: []
+--- !u!82 &106129506
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 106129498}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &118501450
 GameObject:
   m_ObjectHideFlags: 0
