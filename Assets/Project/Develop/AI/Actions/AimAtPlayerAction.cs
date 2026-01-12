@@ -38,15 +38,17 @@ public class AimAtPlayerAction : Action
         
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         EnemyAI.Value.transform.rotation = Quaternion.Slerp(
-            EnemyAI.Value.transform.rotation, 
-            lookRotation, 
-            Time.deltaTime * 5f
+            EnemyAI.Value.transform.rotation,
+            lookRotation,
+            Time.deltaTime * EnemyAI.Value.rotationSpeed
         );
         
         if (direction == lastFrameRotDirection)
             return Status.Success;
 
         // Здесь будет логика стрельбы
+        EnemyAI.Value.StartFire();
+        // ------
         
         lastFrameRotDirection = direction;
         return Status.Running;
