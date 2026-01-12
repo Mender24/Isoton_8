@@ -146,8 +146,14 @@ public class EnemyAI : MonoBehaviour
 
     private void Fire()
     {
+        if (_isReload)
+            _isReload = false;
+
         if (!playerDetected)
+        {
             _isFire = false;
+            return;
+        }
 
         if (!Physics.Raycast(transform.position, transform.forward, out RaycastHit _, 100, LayerMask.GetMask("Player")))
             return;
@@ -194,6 +200,7 @@ public class EnemyAI : MonoBehaviour
         if (currentBullet >= _countBullet)
         {
             timeShoot = _timeReload;
+            _isReload = true;
             currentBullet = 0;
         }
         else
