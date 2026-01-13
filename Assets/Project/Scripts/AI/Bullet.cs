@@ -9,14 +9,17 @@ public class Bullet : MonoBehaviour
 
     private Rigidbody _rb;
 
-    private float _time = 0;
-
     private void Update()
     {
-        if(_time >= _lifeTime)
-            Destroy(gameObject);
+        if(_lifeTime <= 0)
+        {
+            _lifeTime = int.MaxValue;
+            PoolManager.Instance.SetObject(this);
 
-        _time += Time.deltaTime;
+            return;
+        }
+
+        _lifeTime -= Time.deltaTime;
     }
 
     public void Init(float lifeTime, Vector3 direction, float speed)

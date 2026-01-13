@@ -347,6 +347,7 @@ MonoBehaviour:
   _detectionDelay: 0.25
   _prefabBullet: {fileID: 6624762225559418138, guid: 109dcdd061aec394cb854cdb25ab2f3c,
     type: 3}
+  _damage: 5
   _speedBullet: 20
   _countBullet: 20
   _chanceToHit: 0.25
@@ -368,8 +369,8 @@ MonoBehaviour:
   _idleWaitTime: 3
   _audioSource: {fileID: 106129506}
   _detectionSound: {fileID: 8300000, guid: 6e46f06946fd48444be0914ca797e8d6, type: 3}
-  _showDebug: 1
-  _showDebugInfo: 1
+  _showDebug: 0
+  _showDebugInfo: 0
   _debugVision: 0
   _showDetectionRange: 0
   _showFieldOfView: 0
@@ -593,7 +594,7 @@ MonoBehaviour:
   destroyRoot: 0
   ragdolls: 0
   deathEffect: {fileID: 0}
-  autoHeal: 1
+  autoHeal: 0
   regenerationRate: 1
   autoHealDelay: 1
   onDeath:
@@ -3756,6 +3757,74 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1782309793}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1811900784
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.1697342
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 27.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.98768586
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097604923816173187, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5727211486961748454, guid: d832a5b833a49c143a9853fa0a79cdd1,
+        type: 3}
+      propertyPath: m_Name
+      value: PoolManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d832a5b833a49c143a9853fa0a79cdd1, type: 3}
 --- !u!1 &1868292084
 GameObject:
   m_ObjectHideFlags: 0
@@ -4033,3 +4102,4 @@ SceneRoots:
   - {fileID: 106129504}
   - {fileID: 1223393606}
   - {fileID: 1100909376}
+  - {fileID: 1811900784}

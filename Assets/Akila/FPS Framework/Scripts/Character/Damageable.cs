@@ -302,7 +302,7 @@ namespace Akila.FPSFramework
 
             if (uIManager == null)
             {
-                Debug.LogError("UIManager is not set. Make sure to have a UIManager in your scene.", gameObject);
+                Debug.LogWarning("UIManager is not set. Make sure to have a UIManager in your scene.", gameObject);
                 return;
             }
 
@@ -365,10 +365,12 @@ namespace Akila.FPSFramework
         /// </summary>
         /// <param name="amount">Damage amount.</param>
         /// <param name="damageSource">The source of damage.</param>
-        public void Damage(float amount, GameObject damageSource)
+        public void Damage(float amount, GameObject damageSource = null)
         {
             health -= amount;
-            this.DamageSource = damageSource;
+
+            if(damageSource != null)
+                this.DamageSource = damageSource;
 
             autoHealDelayTime = autoHealDelay;
         }

@@ -26,6 +26,7 @@ public class EnemyAI : MonoBehaviour
     public float forgetTime = 10f;
     [SerializeField] private float _detectionDelay = 0.9f;
     [SerializeField] private GameObject _prefabBullet;
+    [SerializeField] private float _damage = 5f;
     [SerializeField] private float _speedBullet;
     [SerializeField] private int _countBullet = 20;
     [Range(0, 1)]
@@ -175,9 +176,9 @@ public class EnemyAI : MonoBehaviour
         targetPosition.y += yRandomSprayOffset + _yShootTargetOffset;
         targetPosition.x += xRandomSprayOffset + _xShootTargetOffset;
 
-        GameObject bulletGO = Instantiate(_prefabBullet, transform);
-        Bullet bullet = bulletGO.GetComponent<Bullet>();
-        bullet.transform.position = transform.position + transform.forward * 2; // !!!!!!!!!!!!!!!!!! Тут было _value = 2, почему тут так я хз, надо избавиться от magic const
+        Bullet bullet = PoolManager.Instance.GetObgect<Bullet>();
+        bullet.transform.position = transform.position + transform.forward;
+        bullet.gameObject.SetActive(true);
         bullet.Init(_bulletLifetime, (targetPosition - transform.position).normalized, _speedBullet);
 
         targetPosition.y -= yRandomSprayOffset;
@@ -195,8 +196,10 @@ public class EnemyAI : MonoBehaviour
         {   
             RaycastHit hit;
 
-            if (Physics.Raycast(transform.position, (targetPosition - transform.position).normalized, out hit, attackRange) && hit.collider.gameObject.TryGetComponent(out Actor actor))
+            if (Physics.Raycast(transform.position + transform.forward, (targetPosition - transform.position).normalized, out hit, attackRange) && hit.collider.gameObject.TryGetComponent(out Damageable actor))
             {
+                actor.Damage(_damage);
+
                 if (_showDebug && _showShootingRaycast)
                 {
                     _debugIsPlayerHit = true;
