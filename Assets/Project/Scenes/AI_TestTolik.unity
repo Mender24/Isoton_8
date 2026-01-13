@@ -342,25 +342,24 @@ MonoBehaviour:
   _visionRange: 15
   _visionHeight: 0.5
   hearingRange: 10
+  attackRange: 20
+  forgetTime: 10
+  _detectionDelay: 0.25
   _prefabBullet: {fileID: 6624762225559418138, guid: 109dcdd061aec394cb854cdb25ab2f3c,
     type: 3}
   _speedBullet: 20
   _countBullet: 20
-  _percentage: 25
-  _timeBetweenShoot: 0.5
-  _timeReload: 10
-  attackRange: 20
-  forgetTime: 10
-  _detectionDelay: 0.25
-  _xValue: 0
-  _yValue: 1
-  _height: 0.5
-  _width: 2
-  _testPoint: {fileID: 753225874}
-  _value: 1
+  _chanceToHit: 0.25
+  _timeBetweenShot: 0.5
+  _timeReload: 2
+  _bulletLifetime: 2
+  _xShootTargetOffset: 0
+  _yShootTargetOffset: 1
+  _heightSprayOffset: 0.5
+  _widthSprayOffset: 2
   walkSpeed: 2
   runSpeed: 5
-  rotationSpeed: 10
+  rotationSpeed: 20
   shouldPatrol: 1
   patrolPoints:
   - {fileID: 1264704118}
@@ -369,19 +368,22 @@ MonoBehaviour:
   _idleWaitTime: 3
   _audioSource: {fileID: 106129506}
   _detectionSound: {fileID: 8300000, guid: 6e46f06946fd48444be0914ca797e8d6, type: 3}
-  _showDebug: 0
-  _showDebugInfo: 0
+  _showDebug: 1
+  _showDebugInfo: 1
   _debugVision: 0
   _showDetectionRange: 0
   _showFieldOfView: 0
-  _showRaycast: 0
+  _showVisionRaycast: 0
+  _showShootingRaycast: 0
   _showLastKnownPosition: 0
   _fovResolution: 10
   _detectionRangeColor: {r: 1, g: 1, b: 0, a: 0.1}
   _alertColor: {r: 1, g: 0, b: 0, a: 1}
   _fieldOfViewColor: {r: 0, g: 1, b: 0, a: 0.2}
-  _raycastHitColor: {r: 0, g: 1, b: 0, a: 1}
-  _raycastMissColor: {r: 1, g: 0, b: 0, a: 1}
+  _raycastVisionHitColor: {r: 0, g: 1, b: 0, a: 1}
+  _raycastVisionMissColor: {r: 1, g: 0, b: 0, a: 1}
+  _raycastShotHitColor: {r: 0, g: 0, b: 1, a: 1}
+  _raycastShotMissColor: {r: 0, g: 1, b: 1, a: 1}
   _debugHearing: 0
   _showHearingRange: 0
   _hearingRangeColor: {r: 0, g: 0.5, b: 1, a: 0.1}
@@ -391,8 +393,8 @@ MonoBehaviour:
   isSearching: 0
   lastKnownPlayerPosition: {x: 0, y: 0, z: 0}
   timeSinceLastSeen: 0
-  _isReload: 0
-  _isFire: 0
+  isReload: 0
+  isFire: 0
   timeShoot: 0
   currentBullet: 0
 --- !u!82 &106129506
@@ -1481,7 +1483,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: b6f001b22df076f46aae404da48938a0, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 565307eed075e1f4d90be8f5b782039e, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &737811177
 GameObject:

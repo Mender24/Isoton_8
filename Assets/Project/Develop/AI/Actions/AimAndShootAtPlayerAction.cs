@@ -5,8 +5,8 @@ using Action = Unity.Behavior.Action;
 using Unity.Properties;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "AimAtPlayer", story: "[EnemyAI] aims at player", category: "Action/Animation", id: "ff484dcfaa9e70c54238b5055ba6816a")]
-public class AimAtPlayerAction : Action
+[NodeDescription(name: "AimAndShootAtPlayer", story: "[EnemyAI] aims at player with animation and starts shooting", category: "Action", id: "ff484dcfaa9e70c54238b5011ba6816a")]
+public class AimAndShooAtPlayerAction : Action
 {
     [SerializeReference] public BlackboardVariable<EnemyAI> EnemyAI;
     private Vector3 lastFrameRotDirection = new Vector3();
@@ -16,8 +16,9 @@ public class AimAtPlayerAction : Action
         if (EnemyAI.Value == null || EnemyAI.Value.playerTransform == null) 
             return Status.Failure;
         
-        // Останавливаем движение
-        EnemyAI.Value.agent.isStopped = true;
+        if (EnemyAI.Value.agent.isOnNavMesh)
+            EnemyAI.Value.agent.isStopped = true;
+            
         if (EnemyAI.Value.animator)
         {
             EnemyAI.Value.animator?.SetBool("Walking", false);
@@ -32,6 +33,8 @@ public class AimAtPlayerAction : Action
     {
         if (EnemyAI.Value.playerTransform == null) return Status.Failure;
         
+        if (!EnemyAI.Value.playerDetected) return Status.Failure;
+
         // Поворот к игроку
         Vector3 direction = (EnemyAI.Value.playerTransform.position - EnemyAI.Value.transform.position).normalized;
         direction.y = 0;
@@ -44,11 +47,14 @@ public class AimAtPlayerAction : Action
         );
         
         if (direction == lastFrameRotDirection)
-            return Status.Success;
-
-        // Здесь будет логика стрельбы
-        EnemyAI.Value.StartFire();
-        // ------
+        {
+            EnemyAI.Value.StartFire();
+        }
+        
+        if (EnemyAI.Value.isFire)
+        {
+            return Status.Running;
+        }
         
         lastFrameRotDirection = direction;
         return Status.Running;
@@ -56,7 +62,8 @@ public class AimAtPlayerAction : Action
     
     protected override void OnEnd()
     {
-        EnemyAI.Value.agent.isStopped = false;
+        if (EnemyAI.Value.agent.isOnNavMesh)
+            EnemyAI.Value.agent.isStopped = false;
         if (EnemyAI.Value.animator) EnemyAI.Value.animator?.SetBool("Aiming", false);
     }
 }

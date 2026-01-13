@@ -15,6 +15,7 @@ public partial class MoveToLastKnownPositionAction : Action
         if (EnemyAI.Value == null)
             return Status.Failure;
         
+        EnemyAI.Value.agent.ResetPath();
         EnemyAI.Value.agent.SetDestination(EnemyAI.Value.lastKnownPlayerPosition);
         EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
         if (EnemyAI.Value.animator) EnemyAI.Value.animator?.SetBool("Running", true);

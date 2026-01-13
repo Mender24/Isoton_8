@@ -22,29 +22,30 @@ public class EnemyAI : MonoBehaviour
     public float hearingRange = 10f;
 
     [Header("Combat Settings")]
+    public float attackRange = 20f;
+    public float forgetTime = 10f;
+    [SerializeField] private float _detectionDelay = 0.9f;
     [SerializeField] private GameObject _prefabBullet;
     [SerializeField] private float _speedBullet;
     [SerializeField] private int _countBullet = 20;
-    [SerializeField] private float _percentage;
-    [SerializeField] private float _timeBetweenShoot = 0.5f;
+    [Range(0, 1)]
+    [SerializeField] private float _chanceToHit = 0.9f;
+    [SerializeField] private float _timeBetweenShot = 0.5f;
     [SerializeField] private float _timeReload = 10f;
-    public float attackRange = 20f;
-    public float forgetTime = 10f;
-    [SerializeField] private float _detectionDelay = 0.25f;
-    [Header("OffSet")]
-    [SerializeField] private float _xValue; // const offset
-    [SerializeField] private float _yValue = 1;
-    [Header("SizeColliderTarget")]
-    [SerializeField] private float _height = 0.5f; // random offset
-    [SerializeField] private float _width = 2;
-    [SerializeField] private GameObject _testPoint;
-    [SerializeField] private float _value;
+    [SerializeField] private float _bulletLifetime = 2f;
 
+    [Header("Shoot Target Offset")]
+    [SerializeField] private float _xShootTargetOffset = 0; // const offset я тут переименовал твое, если непрвильно переделай на свое
+    [SerializeField] private float _yShootTargetOffset = 1;
+
+    [Header("Spray Shoot Offset")]
+    [SerializeField] private float _heightSprayOffset = 0.5f; // random offset
+    [SerializeField] private float _widthSprayOffset = 2;
 
     [Header("Movement")]
     public float walkSpeed = 2f;
     public float runSpeed = 5f;
-    public float rotationSpeed = 5f;
+    public float rotationSpeed = 10f;
 
     [Header("Patrol/Idle")]
     public bool shouldPatrol = false;
@@ -67,7 +68,9 @@ public class EnemyAI : MonoBehaviour
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision))]
     [SerializeField] private bool _showFieldOfView = false;
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision))]
-    [SerializeField] private bool _showRaycast = false;
+    [SerializeField] private bool _showVisionRaycast = false;
+    [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision))]
+    [SerializeField] private bool _showShootingRaycast = false;
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision))]
     [SerializeField] private bool _showLastKnownPosition = false;
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision), nameof(_showFieldOfView))]
@@ -79,11 +82,14 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Color _alertColor = Color.red;
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision), nameof(_showFieldOfView))]
     [SerializeField] private Color _fieldOfViewColor = new Color(0f, 1f, 0f, 0.2f);
-    [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision), nameof(_showRaycast))]
-    [SerializeField] private Color _raycastHitColor = Color.green;
-    [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision), nameof(_showRaycast))]
-    [SerializeField] private Color _raycastMissColor = Color.red;
-
+    [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision), nameof(_showVisionRaycast))]
+    [SerializeField] private Color _raycastVisionHitColor = Color.green;
+    [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision), nameof(_showVisionRaycast))]
+    [SerializeField] private Color _raycastVisionMissColor = Color.red;
+    [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision), nameof(_showShootingRaycast))]
+    [SerializeField] private Color _raycastShotHitColor = Color.blue;
+    [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision), nameof(_showShootingRaycast))]
+    [SerializeField] private Color _raycastShotMissColor = Color.cyan;
 
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug))]
     [SerializeField] private bool _debugHearing = false;
@@ -100,12 +106,14 @@ public class EnemyAI : MonoBehaviour
     [HideInInspector] public Vector3 lastKnownPlayerPosition;
     [HideInInspector] public float timeSinceLastSeen = 0f;
 
-    [HideInInspector] public bool _isReload = false; // Reload Status
-    [HideInInspector] public bool _isFire = false;
+    [HideInInspector] public bool isReload = false; // Reload Status
+    [HideInInspector] public bool isFire = false;
     [HideInInspector] public float timeShoot = 0f;
     [HideInInspector] public int currentBullet = 0;
 
     private bool _detectionDelayActive = false;
+    private bool _debugIsPlayerHit = false;
+    private Vector3 _debugShotTargetPosition = new();
 
     void Start()
     {
@@ -131,7 +139,7 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        if(_isFire && timeShoot <= 0)
+        if(isFire && timeShoot <= 0)
         {
             Fire();
         }
@@ -141,71 +149,71 @@ public class EnemyAI : MonoBehaviour
 
     public void StartFire()
     {
-        _isFire = true;
+        isFire = true;
     }
 
     private void Fire()
     {
-        if (_isReload)
-            _isReload = false;
+        if (isReload)
+            isReload = false;
 
         if (!playerDetected)
         {
-            _isFire = false;
+            isFire = false;
             return;
         }
 
-        if (!Physics.Raycast(transform.position, transform.forward, out RaycastHit _, 100, LayerMask.GetMask("Player")))
+        if (!Physics.Raycast(transform.position, transform.forward, out RaycastHit _, 100, _playerLayer))
             return;
-
-        //Visualisation
 
         currentBullet++;
 
         Vector3 targetPosition = playerTransform.position;
-        float yValue = Random.Range(-_height, _height);
-        float xValue = Random.Range(-_width, _width);
+        float yRandomSprayOffset = Random.Range(-_heightSprayOffset, _heightSprayOffset);
+        float xRandomSprayOffset = Random.Range(-_widthSprayOffset, _widthSprayOffset);
 
-        targetPosition.y += yValue + _yValue;
-        targetPosition.x += xValue + _xValue;
+        targetPosition.y += yRandomSprayOffset + _yShootTargetOffset;
+        targetPosition.x += xRandomSprayOffset + _xShootTargetOffset;
 
-        GameObject newBullet = Instantiate(_prefabBullet, transform);
-        Bullet bullet = newBullet.GetComponent<Bullet>();
-        _testPoint.transform.position = transform.position + transform.forward * _value;
-        bullet.transform.position = _testPoint.transform.position;
-        bullet.Init(2, (targetPosition - transform.position).normalized, _speedBullet);
+        GameObject bulletGO = Instantiate(_prefabBullet, transform);
+        Bullet bullet = bulletGO.GetComponent<Bullet>();
+        bullet.transform.position = transform.position + transform.forward * 2; // !!!!!!!!!!!!!!!!!! Тут было _value = 2, почему тут так я хз, надо избавиться от magic const
+        bullet.Init(_bulletLifetime, (targetPosition - transform.position).normalized, _speedBullet);
 
-        //Shoot
-
-        targetPosition.y -= yValue;
-        targetPosition.x -= xValue;
+        targetPosition.y -= yRandomSprayOffset;
+        targetPosition.x -= xRandomSprayOffset;
 
         float isShoot = Random.Range(0, 1f);
 
-        if (isShoot <= _percentage)
+        if (_showDebug && _showShootingRaycast)
         {
+            _debugIsPlayerHit = false;
+            _debugShotTargetPosition = targetPosition;
+        }
+
+        if (isShoot <= _chanceToHit)
+        {   
             RaycastHit hit;
 
-
-            Debug.Log(Physics.Raycast(transform.position, (targetPosition - transform.position).normalized, out hit, 100) && hit.collider.gameObject.TryGetComponent(out Actor _));
-
-
-            if (Physics.Raycast(transform.position, (targetPosition - transform.position).normalized, out hit, 100) && hit.collider.gameObject.TryGetComponent(out Actor actor))
+            if (Physics.Raycast(transform.position, (targetPosition - transform.position).normalized, out hit, attackRange) && hit.collider.gameObject.TryGetComponent(out Actor actor))
             {
-                Debug.DrawRay(transform.position, (targetPosition - transform.position).normalized * 100, Color.blue, 0.5f);
-                Debug.Log("Target: " + hit.collider.gameObject.name + " Hit: " + (isShoot));
+                if (_showDebug && _showShootingRaycast)
+                {
+                    _debugIsPlayerHit = true;
+                    _debugShotTargetPosition = (targetPosition - transform.position).normalized * attackRange;
+                }
             }
         }
 
         if (currentBullet >= _countBullet)
         {
             timeShoot = _timeReload;
-            _isReload = true;
+            isReload = true;
             currentBullet = 0;
         }
         else
         {
-            timeShoot = _timeBetweenShoot;
+            timeShoot = _timeBetweenShot;
         }
     }
 
@@ -347,9 +355,14 @@ public class EnemyAI : MonoBehaviour
                     DrawFieldOfView(position);
                 }
 
-                if (_showRaycast && playerTransform != null)
+                if (_showVisionRaycast && playerTransform != null)
                 {
                     DrawVisionRaycast(position);
+                }
+
+                if (_showShootingRaycast)
+                {
+                    DrawShootRaycast(position);
                 }
 
                 if (_showLastKnownPosition && isAlerted)
@@ -427,9 +440,9 @@ public class EnemyAI : MonoBehaviour
 
             // Цвет луча
             if (hitPlayer && inFOV)
-                Gizmos.color = _raycastHitColor;
+                Gizmos.color = _raycastVisionHitColor;
             else
-                Gizmos.color = _raycastMissColor;
+                Gizmos.color = _raycastVisionMissColor;
 
             // Луч до препятствия
             Gizmos.DrawLine(position, hit.point);
@@ -447,7 +460,7 @@ public class EnemyAI : MonoBehaviour
         else
         {
             // Луч до игрока если нет препятствий
-            Gizmos.color = inFOV ? _raycastHitColor : _raycastMissColor;
+            Gizmos.color = inFOV ? _raycastVisionHitColor : _raycastVisionMissColor;
             Gizmos.DrawLine(position, playerTransform.position);
         }
 
@@ -456,6 +469,20 @@ public class EnemyAI : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(playerTransform.position, 0.5f);
+        }
+    }
+
+    void DrawShootRaycast(Vector3 position)
+    {
+        if (_debugIsPlayerHit)
+        {
+            Gizmos.color = _raycastShotHitColor;
+            Gizmos.DrawLine(position, _debugShotTargetPosition);
+        }
+        else
+        {
+            Gizmos.color = _raycastShotMissColor;
+            Gizmos.DrawLine(position, _debugShotTargetPosition);
         }
     }
 
@@ -506,7 +533,7 @@ public class EnemyAI : MonoBehaviour
         info += $"Activated: {isActivated}\n";
         info += $"Alerted: {isAlerted}\n";
         info += $"Searching: {isSearching}\n";
-        info += $"Can See Player: {CanSeePlayer()}\n";
+        info += $"Detected player: {playerDetected}\n";
 
         if (playerTransform != null)
         {
@@ -521,6 +548,9 @@ public class EnemyAI : MonoBehaviour
         if (isAlerted)
         {
             info += $"Time Since Seen: {timeSinceLastSeen:F1}s / {forgetTime}s\n";
+            info += $"Firing: {isFire}\n";
+            info += $"Reloading: {isReload}\n";
+            info += $"Bullets in magazine: {_countBullet - currentBullet}\n";
         }
 
         return info;
