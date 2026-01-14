@@ -176,10 +176,10 @@ public class EnemyAI : MonoBehaviour
         targetPosition.y += yRandomSprayOffset + _yShootTargetOffset;
         targetPosition.x += xRandomSprayOffset + _xShootTargetOffset;
 
-        Bullet bullet = PoolManager.Instance.GetObgect<Bullet>();
-        bullet.transform.position = transform.position + transform.forward;
+        AiProjectile bullet = PoolManager.Instance.GetObgect<AiProjectile>();
+        bullet.transform.position = transform.position;
         bullet.gameObject.SetActive(true);
-        bullet.Init(_bulletLifetime, (targetPosition - transform.position).normalized, _speedBullet);
+        bullet.Setup((targetPosition - transform.position).normalized, _bulletLifetime, _speedBullet);
 
         targetPosition.y -= yRandomSprayOffset;
         targetPosition.x -= xRandomSprayOffset;
