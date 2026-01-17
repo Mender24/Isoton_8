@@ -215,8 +215,8 @@ namespace Akila.FPSFramework
 
             if (isHealing)
             {
-                if (allowDamageableEffects && GetComponent<ICharacterController>() != null)
-                    DamageableEffectsVisualizer.instance.TriggerHealingEffect();
+                // if (allowDamageableEffects && GetComponent<ICharacterController>() != null)
+                    // DamageableEffectsVisualizer.instance.TriggerHealingEffect();
             }
         }
 
