@@ -431,8 +431,7 @@ Transform:
   m_LocalPosition: {x: 2.69, y: 1.51, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 753225875}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &106129505
@@ -487,8 +486,8 @@ MonoBehaviour:
   _idleWaitTime: 3
   _audioSource: {fileID: 106129506}
   _detectionSound: {fileID: 8300000, guid: 6e46f06946fd48444be0914ca797e8d6, type: 3}
-  _showDebug: 0
-  _showDebugInfo: 0
+  _showDebug: 1
+  _showDebugInfo: 1
   _debugVision: 0
   _showDetectionRange: 0
   _showFieldOfView: 0
@@ -1904,37 +1903,6 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 565307eed075e1f4d90be8f5b782039e, type: 2}
   m_BuildHeightMesh: 0
---- !u!1 &753225874
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 753225875}
-  m_Layer: 0
-  m_Name: TestPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &753225875
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 753225874}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 106129504}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &875912186
 GameObject:
   m_ObjectHideFlags: 0
@@ -2619,7 +2587,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
+  far clip plane: 1
   field of view: 60
   orthographic: 0
   orthographic size: 5

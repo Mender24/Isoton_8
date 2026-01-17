@@ -329,53 +329,57 @@ public class EnemyAI : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (_showDebug)
+        // To make only main camera and scene view draw gizmos
+        if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
         {
-            Vector3 position = transform.position + new Vector3(0, _visionHeight, 0);
-
-            if (_debugHearing)
+            if (_showDebug)
             {
-                if (_showHearingRange)
-                {
-                    Gizmos.color = _hearingRangeColor;
-                    Gizmos.DrawSphere(position, hearingRange);
-                }
-            }
+                Vector3 position = transform.position + new Vector3(0, _visionHeight, 0);
 
-            if (_debugVision)
-            {
-                if (_showDetectionRange)
+                if (_debugHearing)
                 {
-                    Gizmos.color = _detectionRangeColor;
-                    Gizmos.DrawSphere(position, _visionRange);
-
-                    Gizmos.color = isAlerted ? _alertColor : Color.yellow;
-                    DrawCircle(position, _visionRange, 50);
+                    if (_showHearingRange)
+                    {
+                        Gizmos.color = _hearingRangeColor;
+                        Gizmos.DrawSphere(position, hearingRange);
+                    }
                 }
 
-                if (_showFieldOfView)
+                if (_debugVision)
                 {
-                    DrawFieldOfView(position);
-                }
+                    if (_showDetectionRange)
+                    {
+                        Gizmos.color = _detectionRangeColor;
+                        Gizmos.DrawSphere(position, _visionRange);
 
-                if (_showVisionRaycast && playerTransform != null)
-                {
-                    DrawVisionRaycast(position);
-                }
+                        Gizmos.color = isAlerted ? _alertColor : Color.yellow;
+                        DrawCircle(position, _visionRange, 50);
+                    }
 
-                if (_showShootingRaycast)
-                {
-                    DrawShootRaycast(position);
-                }
+                    if (_showFieldOfView)
+                    {
+                        DrawFieldOfView(position);
+                    }
 
-                if (_showLastKnownPosition && isAlerted)
-                {
-                    DrawLastKnownPosition();
-                }
+                    if (_showVisionRaycast && playerTransform != null)
+                    {
+                        DrawVisionRaycast(position);
+                    }
 
-                // Направление взгляда
-                Gizmos.color = Color.blue;
-                Gizmos.DrawRay(position, transform.forward * 2f);
+                    if (_showShootingRaycast)
+                    {
+                        DrawShootRaycast(position);
+                    }
+
+                    if (_showLastKnownPosition && isAlerted)
+                    {
+                        DrawLastKnownPosition();
+                    }
+
+                    // Направление взгляда
+                    Gizmos.color = Color.blue;
+                    Gizmos.DrawRay(position, transform.forward * 2f);
+                }
             }
         }
     }
@@ -523,10 +527,13 @@ public class EnemyAI : MonoBehaviour
     // Для отображения в Game View
     void OnDrawGizmosSelected()
     {
-        // Текстовая информация (только в Scene View)
 #if UNITY_EDITOR
-        if (_showDebug && _showDebugInfo)
-            UnityEditor.Handles.Label(transform.position + Vector3.up * 3f, GetDebugInfo());
+        // To make only main camera and scene view draw gizmos
+        if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
+        {
+            if (_showDebug && _showDebugInfo)
+                UnityEditor.Handles.Label(transform.position + Vector3.up * 3f, GetDebugInfo());
+        }
 #endif
     }
 
