@@ -8,7 +8,7 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     public NavMeshAgent agent;
-    public Animator animator;
+    public BasicEnemyAnimationController animationController;
     public Transform playerTransform;
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private LayerMask _obstacleLayer;
@@ -32,8 +32,9 @@ public class EnemyAI : MonoBehaviour
     [Range(0, 1)]
     [SerializeField] private float _chanceToHit = 0.9f;
     [SerializeField] private float _timeBetweenShot = 0.5f;
-    [SerializeField] private float _timeReload = 10f;
+    public float timeReload = 3f;
     [SerializeField] private float _bulletLifetime = 2f;
+    [SerializeField] private Vector3 _agentCenterOffset = new(0, 0.5f, 0);
 
     [Header("Shoot Target Offset")]
     [SerializeField] private float _xShootTargetOffset = 0; // const offset я тут переименовал твое, если непрвильно переделай на свое
@@ -62,6 +63,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private bool _showDebug = false;
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug))]
     [SerializeField] private bool _showDebugInfo = false;
+    [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug))]
+    [SerializeField] private bool _showDebugLogs = false;
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug))]
     [SerializeField] private bool _debugVision = false;
     [ShowIf(ActionOnConditionFail.DontDraw, ConditionOperator.And, nameof(_showDebug), nameof(_debugVision))]
@@ -119,7 +122,7 @@ public class EnemyAI : MonoBehaviour
     void Start()
     {
         if (agent == null) agent = GetComponent<NavMeshAgent>();
-        if (animator == null) animator = GetComponent<Animator>();
+        if (animationController == null) animationController = GetComponent<BasicEnemyAnimationController>();
         if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
 
         agent.speed = walkSpeed;
@@ -164,8 +167,8 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        if (!Physics.Raycast(transform.position, transform.forward, out RaycastHit _, 100, _playerLayer))
-            return;
+        // if (!Physics.Raycast(transform.position, transform.forward, out RaycastHit _, 100, _playerLayer))
+        //     return;
 
         currentBullet++;
 
@@ -176,43 +179,51 @@ public class EnemyAI : MonoBehaviour
         targetPosition.y += yRandomSprayOffset + _yShootTargetOffset;
         targetPosition.x += xRandomSprayOffset + _xShootTargetOffset;
 
+        Vector3 bulletStartPosition = transform.position + _agentCenterOffset;
+
         AiProjectile bullet = PoolManager.Instance.GetObgect<AiProjectile>();
-        bullet.transform.position = transform.position;
+        bullet.transform.position = bulletStartPosition;
         bullet.gameObject.SetActive(true);
-        bullet.Setup((targetPosition - transform.position).normalized, _bulletLifetime, _speedBullet);
+        bullet.Setup((targetPosition - bulletStartPosition).normalized, _bulletLifetime, _speedBullet);
 
         targetPosition.y -= yRandomSprayOffset;
         targetPosition.x -= xRandomSprayOffset;
 
-        float isShoot = Random.Range(0, 1f);
+        // animationController?.PlayShoot(); триггер не работает
 
-        if (_showDebug && _showShootingRaycast)
+        float hitChance = Random.Range(0, 1f);
+
+        if (hitChance <= _chanceToHit)
+        {   
+            Vector3 shootDirection = (targetPosition - bulletStartPosition).normalized;
+            RaycastHit hit;
+
+            if (Physics.Raycast(bulletStartPosition + transform.forward, shootDirection, out hit, attackRange, _playerLayer))
+            {
+                if (hit.collider.gameObject.TryGetComponent(out Damageable actor))
+                {
+                    actor.Damage(_damage);
+
+                    if (_showDebug && _showShootingRaycast)
+                    {
+                        _debugIsPlayerHit = true;
+                        _debugShotTargetPosition = hit.point;
+                    }
+                }
+            }
+        }
+        else if (_showDebug && _showShootingRaycast)
         {
             _debugIsPlayerHit = false;
             _debugShotTargetPosition = targetPosition;
         }
 
-        if (isShoot <= _chanceToHit)
-        {   
-            RaycastHit hit;
-
-            if (Physics.Raycast(transform.position + transform.forward, (targetPosition - transform.position).normalized, out hit, attackRange) && hit.collider.gameObject.TryGetComponent(out Damageable actor))
-            {
-                actor.Damage(_damage);
-
-                if (_showDebug && _showShootingRaycast)
-                {
-                    _debugIsPlayerHit = true;
-                    _debugShotTargetPosition = (targetPosition - transform.position).normalized * attackRange;
-                }
-            }
-        }
-
         if (currentBullet >= _countBullet)
         {
-            timeShoot = _timeReload;
+            timeShoot = timeReload;
             isReload = true;
             currentBullet = 0;
+            // animationController?.PlayReload(); триггер не работает
         }
         else
         {
@@ -286,19 +297,15 @@ public class EnemyAI : MonoBehaviour
     {
         _detectionDelayActive = true;
 
-        // Звуковое оповещение
         if (_audioSource && _detectionSound)
         {
             _audioSource.PlayOneShot(_detectionSound);
         }
 
-        // Анимация тревоги
-        if (animator != null) animator?.SetTrigger("Alert");
+        animationController?.PlayAlert();
 
-        // Задержка
         yield return new WaitForSeconds(_detectionDelay);
 
-        // Активация боевого режима
         playerDetected = true;
 
         _detectionDelayActive = false;
@@ -327,6 +334,42 @@ public class EnemyAI : MonoBehaviour
         return Vector3.Distance(transform.position, playerTransform.position);
     }
 
+    public void TakeDamage(float damage)
+    {
+        animationController?.PlayHit();
+        
+        // health -= damage;
+        // if (health <= 0)
+        // {
+        //     Die();
+        // }
+    }
+
+    private void Die()
+    {
+        isActivated = false;
+        if (agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        animationController?.SetDead(true);
+    }
+
+    public void OnDeathComplete()
+    {
+        Debug.Log("Enemy death animation complete");
+        gameObject.SetActive(false);
+    }
+
+    public void PlayFootstepSound(int foot)
+    {
+        // логика звуков шагов
+        if (_showDebugLogs)
+            Debug.Log($"Footstep {foot}");
+    }
+
     void OnDrawGizmos()
     {
         // To make only main camera and scene view draw gizmos
@@ -334,7 +377,7 @@ public class EnemyAI : MonoBehaviour
         {
             if (_showDebug)
             {
-                Vector3 position = transform.position + new Vector3(0, _visionHeight, 0);
+                Vector3 position = transform.position + _agentCenterOffset + new Vector3(0, _visionHeight, 0);
 
                 if (_debugHearing)
                 {
@@ -532,7 +575,7 @@ public class EnemyAI : MonoBehaviour
         if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
         {
             if (_showDebug && _showDebugInfo)
-                UnityEditor.Handles.Label(transform.position + Vector3.up * 3f, GetDebugInfo());
+                UnityEditor.Handles.Label(transform.position + _agentCenterOffset + Vector3.up * 3f, GetDebugInfo());
         }
 #endif
     }

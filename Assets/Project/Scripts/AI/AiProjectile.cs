@@ -19,34 +19,34 @@ public class AiProjectile : MonoBehaviour
     public Vector3 direction { get; set; }
     public bool isActive { get; set; } = true;
 
-    private Vector3 velocity;
-    private TrailRenderer trail;
-    private Rigidbody rb;
+    private Vector3 _velocity;
+    private TrailRenderer _trail;
+    private Rigidbody _rb;
 
     private float _lifeTime = 5;
 
     public void Setup(Vector3 direction, float lifeTime, float speed)
     {
-        if(trail == null)
-            trail = GetComponentInChildren<TrailRenderer>();
+        if(_trail == null)
+            _trail = GetComponentInChildren<TrailRenderer>();
 
-        if (rb == null)
-            rb = GetComponent<Rigidbody>();
+        if (_rb == null)
+            _rb = GetComponent<Rigidbody>();
 
         this.direction = direction;
         this.speed = speed;
         _lifeTime = lifeTime;
 
-        velocity = (direction) * (speed);
+        _velocity = (direction) * (speed);
 
-        rb.isKinematic = false;
+        _rb.isKinematic = false;
 
         if (isActive)
-            rb.AddForce(velocity, ForceMode.VelocityChange);
+            _rb.AddForce(_velocity, ForceMode.VelocityChange);
 
         transform.localScale = useAutoScaling ? Vector3.zero : Vector3.one * scaleMultipler;
 
-        if (trail) trail.widthMultiplier = useAutoScaling ? 0 : scaleMultipler;
+        if (_trail) _trail.widthMultiplier = useAutoScaling ? 0 : scaleMultipler;
     }
 
     private void Update()
@@ -65,7 +65,7 @@ public class AiProjectile : MonoBehaviour
             }
 
             transform.localScale = Vector3.one * scale;
-            if (trail) trail.widthMultiplier = scale;
+            if (_trail) _trail.widthMultiplier = scale;
         }
 
         if (!useAutoScaling)
@@ -76,7 +76,7 @@ public class AiProjectile : MonoBehaviour
         if (_lifeTime <= 0)
         {
             _lifeTime = int.MaxValue;
-            rb.isKinematic = true;
+            _rb.isKinematic = true;
             PoolManager.Instance.SetObject(this);
 
             return;
@@ -87,12 +87,18 @@ public class AiProjectile : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
+        _rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
     }
 
     private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, hitRadius);
+    { 
+#if UNITY_EDITOR
+        // To make only main camera and scene view draw gizmos
+        if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, hitRadius);
+        }
+#endif
     }
 }
