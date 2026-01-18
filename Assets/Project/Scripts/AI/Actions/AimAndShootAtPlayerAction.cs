@@ -19,8 +19,6 @@ public class AimAndShooAtPlayerAction : Action
         if (EnemyAI.Value.agent.isOnNavMesh)
             EnemyAI.Value.agent.isStopped = true;
             
-        EnemyAI.Value.animationController?.SetWalking(false);
-        EnemyAI.Value.animationController?.SetRunning(false);
         EnemyAI.Value.animationController?.SetAiming(true);
 
         _hasStartedAiming = false;
@@ -34,7 +32,6 @@ public class AimAndShooAtPlayerAction : Action
         
         if (!EnemyAI.Value.playerDetected) return Status.Failure;
 
-        // Поворот к игроку
         Vector3 direction = (EnemyAI.Value.playerTransform.position - EnemyAI.Value.transform.position).normalized;
         direction.y = 0;
         

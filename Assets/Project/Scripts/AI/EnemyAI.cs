@@ -53,11 +53,11 @@ public class EnemyAI : MonoBehaviour
     public bool shouldPatrol = false;
     public List<GameObject> patrolPoints = new();
     public float waypointWaitTime = 1f;
-    [SerializeField] private float _idleWaitTime = 3f;
 
     [Header("Audio")]
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip _detectionSound;
+    [SerializeField] private List<AudioClip> _footstepSounds;
 
     [Header("Debug Settings")]
     [SerializeField] private bool _showDebug = false;
@@ -167,9 +167,6 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        // if (!Physics.Raycast(transform.position, transform.forward, out RaycastHit _, 100, _playerLayer))
-        //     return;
-
         currentBullet++;
 
         Vector3 targetPosition = playerTransform.position;
@@ -188,8 +185,6 @@ public class EnemyAI : MonoBehaviour
 
         targetPosition.y -= yRandomSprayOffset;
         targetPosition.x -= xRandomSprayOffset;
-
-        // animationController?.PlayShoot(); триггер не работает
 
         float hitChance = Random.Range(0, 1f);
 
@@ -223,7 +218,6 @@ public class EnemyAI : MonoBehaviour
             timeShoot = timeReload;
             isReload = true;
             currentBullet = 0;
-            // animationController?.PlayReload(); триггер не работает
         }
         else
         {
@@ -302,8 +296,6 @@ public class EnemyAI : MonoBehaviour
             _audioSource.PlayOneShot(_detectionSound);
         }
 
-        animationController?.PlayAlert();
-
         yield return new WaitForSeconds(_detectionDelay);
 
         playerDetected = true;
@@ -365,7 +357,12 @@ public class EnemyAI : MonoBehaviour
 
     public void PlayFootstepSound(int foot)
     {
-        // логика звуков шагов
+        if (_audioSource != null && _footstepSounds.Count > 0)
+        {
+            int rool =  Random.Range(0, _footstepSounds.Count-1);
+            _audioSource.PlayOneShot(_footstepSounds[rool]);
+        }
+
         if (_showDebugLogs)
             Debug.Log($"Footstep {foot}");
     }

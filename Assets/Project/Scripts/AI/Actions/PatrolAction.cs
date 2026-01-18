@@ -73,7 +73,7 @@ namespace Unity.Behavior
 
             if (EnemyAI.Value.playerDetected)
             {
-                UpdateAnimatorSpeed(0f);
+                // UpdateAnimatorSpeed(0f);
 
                 if (m_NavMeshAgent != null)
                 {
@@ -121,14 +121,14 @@ namespace Unity.Behavior
                 }
             }
 
-            UpdateAnimatorSpeed();
+            // UpdateAnimatorSpeed();
 
             return Status.Running;
         }
 
         protected override void OnEnd()
         {
-            UpdateAnimatorSpeed(0f);
+            // UpdateAnimatorSpeed(0f);
 
             if (m_NavMeshAgent != null)
             {
@@ -180,7 +180,7 @@ namespace Unity.Behavior
 
             m_CurrentPatrolPoint = PreserveLatestPatrolPoint.Value ? m_CurrentPatrolPoint - 1 : -1;
 
-            UpdateAnimatorSpeed(0f);
+            // UpdateAnimatorSpeed(0f);
         }
 
         private float GetDistanceToWaypoint()
@@ -209,7 +209,7 @@ namespace Unity.Behavior
 
         private void UpdateAnimatorSpeed(float explicitSpeed = -1f)
         {
-            NavigationUtility.UpdateAnimatorSpeed(m_Animator, AnimatorSpeedParam, m_NavMeshAgent, m_CurrentSpeed, explicitSpeed: explicitSpeed);
+            // NavigationUtility.UpdateAnimatorSpeed(m_Animator, AnimatorSpeedParam, m_NavMeshAgent, m_CurrentSpeed, explicitSpeed: explicitSpeed);
         }
     }
 }

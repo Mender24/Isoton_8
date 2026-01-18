@@ -18,7 +18,6 @@ public partial class MoveToLastKnownPositionAction : Action
         EnemyAI.Value.agent.ResetPath();
         EnemyAI.Value.agent.SetDestination(EnemyAI.Value.lastKnownPlayerPosition);
         EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
-        EnemyAI.Value.animationController?.SetRunning(true);
         
         return Status.Running;
     }
@@ -27,16 +26,10 @@ public partial class MoveToLastKnownPositionAction : Action
     {
         if (EnemyAI.Value.agent.remainingDistance <= EnemyAI.Value.agent.stoppingDistance + 1f)
         {
-            EnemyAI.Value.animationController?.SetRunning(false);
             return Status.Success;
         }
         
         return Status.Running;
-    }
-    
-    protected override void OnEnd()
-    {
-        EnemyAI.Value.animationController?.SetRunning(false);
     }
 }
 

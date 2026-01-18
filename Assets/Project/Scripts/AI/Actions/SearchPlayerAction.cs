@@ -64,13 +64,11 @@ public partial class SearchPatternNode : Action
         {
             _searchPoint = hit.position;
             EnemyAI.Value.agent.SetDestination(_searchPoint);
-            EnemyAI.Value.animationController?.SetWalking(true);
         }
     }
     
     protected override void OnEnd()
     {
         EnemyAI.Value.isSearching = false;
-        EnemyAI.Value.animationController?.SetWalking(false);
     }
 }

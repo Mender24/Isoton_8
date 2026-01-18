@@ -14,17 +14,16 @@ public class BasicEnemyAnimationController : MonoBehaviour
     [SerializeField] private EnemyAI _enemyAI;
     
     [Header("Movement Animation Settings")]
-    [SerializeField] private float _walkSpeedThreshold = 0.3f;
-    [SerializeField] private float _runSpeedThreshold = 0.7f;
-    [SerializeField] private float _animationSmoothTime = 0.1f;
+    [SerializeField] private float _speedSmoothTime = 0.1f;
+    [SerializeField] private float _minSpeedThreshold = 0.05f;
+
+    [Tooltip("Множитель скорости для более выразительных анимаций")]
+    [SerializeField] private float _speedMultiplier = 1.0f;
     
     [Header("Idle Settings")]
-    [SerializeField] private float _idleVariationInterval = 8f;
+    [SerializeField] private float _idleVariationInterval = 5f;
     [SerializeField] private int _idleVariationsCount = 3;
     [SerializeField] private float _idleVariationChance = 0.6f; // 60% шанс вариации
-    
-    [Header("Combat Animation Settings")]
-    [SerializeField] private float _aimRotationSpeed = 5f;
     
     [Header("Debug")]
     [SerializeField] private bool _showDebugLogs = false;
@@ -45,7 +44,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         
         // States
         public const string IsDead = "IsDead";
-        public const string RandomIdle = "RandomIdle";
+        public const string RandomIdleF = "RandomIdleF";
         
         // Triggers
         public const string Alert = "Alert";
@@ -62,9 +61,12 @@ public class BasicEnemyAnimationController : MonoBehaviour
     private bool _cachedAlerted = false;
     private bool _cachedReloading = false;
     private float _cachedSpeed = 0f;
+    private float _targetSpeed = 0f;
     
     // Idle variation
     private float _idleTimer = 0f;
+    private float _stationaryTime = 0f;
+    private bool _wasMoving = false;
     private float reloadClipLength = 2.8f;
     private bool _isInitialized = false;
 
@@ -142,33 +144,36 @@ public class BasicEnemyAnimationController : MonoBehaviour
         if (_agent == null) return;
         
         float currentSpeed = _agent.velocity.magnitude;
-        float normalizedSpeed = _agent.speed > 0 ? Mathf.Clamp01(currentSpeed / _agent.speed) : 0f;
+        // float normalizedSpeed = _agent.speed > 0 ? Mathf.Clamp01(currentSpeed / _agent.speed) : 0f;
+
+        float maxSpeed = Mathf.Max(_agent.speed, 0.001f);
+        _targetSpeed = Mathf.Clamp01(currentSpeed / maxSpeed) * _speedMultiplier;
+
+        _targetSpeed = Mathf.Clamp01(currentSpeed / maxSpeed) * _speedMultiplier;
         
-        if (Mathf.Abs(normalizedSpeed - _cachedSpeed) > 0.01f)
+        if (_targetSpeed < _minSpeedThreshold)
         {
-            _cachedSpeed = Mathf.Lerp(_cachedSpeed, normalizedSpeed, _animationSmoothTime);
-            _animator.SetFloat(AnimParams.Speed, _cachedSpeed);
+            _targetSpeed = 0f;
         }
         
-        bool isWalking = currentSpeed > 0.1f && normalizedSpeed < _runSpeedThreshold;
-        bool isRunning = normalizedSpeed >= _runSpeedThreshold;
+        _cachedSpeed = Mathf.Lerp(_cachedSpeed, _targetSpeed, _speedSmoothTime * Time.deltaTime * 10f);
+        _animator.SetFloat(AnimParams.Speed, _cachedSpeed);
         
-        if (isWalking != _cachedWalking)
+        bool isMoving = currentSpeed > _minSpeedThreshold;
+        
+        if (isMoving)
         {
-            _cachedWalking = isWalking;
-            _animator.SetBool(AnimParams.Walking, isWalking);
-            
-            if (_showDebugLogs)
-                Debug.Log($"[Animation] Walking: {isWalking}");
+            _wasMoving = true;
+            _stationaryTime = 0f;
         }
-        
-        if (isRunning != _cachedRunning)
+        else if (_wasMoving)
         {
-            _cachedRunning = isRunning;
-            _animator.SetBool(AnimParams.Running, isRunning);
-            
-            if (_showDebugLogs)
-                Debug.Log($"[Animation] Running: {isRunning}");
+            _wasMoving = false;
+            _stationaryTime = 0f;
+        }
+        else
+        {
+            _stationaryTime += Time.deltaTime;
         }
     }
     
@@ -191,7 +196,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         {
             _cachedReloading = _enemyAI.isReload;
 
-            // Делаем длину перезарядке по параметку в EnemyAI
+            // Делаем длину перезарядки по параметку в EnemyAI
             float reloadSpeed = reloadClipLength / _enemyAI.timeReload;
             _animator.SetFloat(AnimParams.ReloadSpeed, reloadSpeed);
 
@@ -201,7 +206,6 @@ public class BasicEnemyAnimationController : MonoBehaviour
                 Debug.Log($"[Animation] Reloading: {_cachedReloading}");
         }
         
-        // Обновляем состояние стрельбы
         _animator.SetBool(AnimParams.Shooting, _enemyAI.isFire);
     }
     
@@ -211,7 +215,6 @@ public class BasicEnemyAnimationController : MonoBehaviour
     
     private void UpdateIdleVariations()
     {
-        // Вариации idle только когда враг не в тревоге и не двигается
         bool shouldPlayVariation = !_enemyAI.isAlerted && 
                                    !_agent.hasPath && 
                                    _agent.velocity.magnitude < 0.1f &&
@@ -229,27 +232,29 @@ public class BasicEnemyAnimationController : MonoBehaviour
         }
         else
         {
-            // Сбрасываем таймер и возвращаем базовую idle
             _idleTimer = 0f;
             
-            if (_animator.GetInteger(AnimParams.RandomIdle) != 0)
+            if (_animator.GetFloat(AnimParams.RandomIdleF) != 0)
             {
-                _animator.SetInteger(AnimParams.RandomIdle, 0);
+                _animator.SetFloat(AnimParams.RandomIdleF, 0);
+                if (_showDebugLogs)
+                    Debug.Log("[Animation] Returning to base idle");
             }
         }
     }
     
     private void PlayRandomIdleVariation()
     {
-        // Случайный выбор с учетом шанса
-        if (Random.value > _idleVariationChance)
+        float roll = Random.value;
+
+        if (roll > _idleVariationChance)
         {
-            _animator.SetInteger(AnimParams.RandomIdle, 0);
+            _animator.SetFloat(AnimParams.RandomIdleF, 0);
             return;
         }
         
         int randomIdle = Random.Range(1, _idleVariationsCount + 1);
-        _animator.SetInteger(AnimParams.RandomIdle, randomIdle);
+        _animator.SetFloat(AnimParams.RandomIdleF, (float)randomIdle);
         
         if (_showDebugLogs)
             Debug.Log($"[Animation] Playing Idle variation: {randomIdle}");
@@ -377,6 +382,27 @@ public class BasicEnemyAnimationController : MonoBehaviour
         _cachedRunning = running;
         _animator.SetBool(AnimParams.Running, running);
     }
+
+    /// <summary>
+    /// Принудительно задать конкретную idle вариацию
+    /// </summary>
+    public void SetIdleVariation(int variationIndex)
+    {
+        if (!_isInitialized) return;
+        
+        _animator.SetFloat(AnimParams.RandomIdleF, variationIndex);
+        
+        if (_showDebugLogs)
+            Debug.Log($"[Animation] Set idle variation to: {variationIndex}");
+    }
+
+    /// <summary>
+    /// Получить текущую скорость анимации
+    /// </summary>
+    public float GetAnimationSpeed()
+    {
+        return _cachedSpeed;
+    }
     
     #endregion
     
@@ -494,6 +520,16 @@ public class BasicEnemyAnimationController : MonoBehaviour
         _animator.ResetTrigger(AnimParams.Hit);
         _animator.ResetTrigger(AnimParams.Reload);
         _animator.ResetTrigger(AnimParams.Search);
+    }
+
+    /// <summary>
+    /// Получить текущее состояние движения (для debug)
+    /// </summary>
+    public string GetMovementState()
+    {
+        if (_cachedSpeed < 0.05f) return "Idle";
+        if (_cachedSpeed < 0.5f) return "Walking";
+        return "Running";
     }
     
     #endregion
