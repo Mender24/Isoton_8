@@ -8,12 +8,12 @@ public class FreezeZone : MonoBehaviour
     private float _endTime;
     private List<FreezeNote> _freezeNotes = new List<FreezeNote>();
 
-    
-    private void OnCollisionEnter(Collision collision)
+
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Projectile"))
+        if (other.gameObject.CompareTag("Projectile"))
         {
-            var freezed = collision.gameObject.GetComponent<Akila.FPSFramework.IFreezed>();
+            var freezed = other.gameObject.GetComponent<Akila.FPSFramework.IFreezed>();
             var speed = freezed.Freeze();
             _freezeNotes.Add(new FreezeNote(freezed, speed));
         }
