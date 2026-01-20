@@ -1,0 +1,149 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8733808148983803233
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459404, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 395104231899459405, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      propertyPath: m_Name
+      value: SwapPlayerTogle
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -7770503669698727024, guid: bbabec215dfafb844b5dfd983988a7d0, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 395104231899459405, guid: bbabec215dfafb844b5dfd983988a7d0,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4268091170551638350}
+  m_SourcePrefab: {fileID: 100100000, guid: bbabec215dfafb844b5dfd983988a7d0, type: 3}
+--- !u!4 &8692024262694889106 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 113995438697614323, guid: bbabec215dfafb844b5dfd983988a7d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 8733808148983803233}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8957388115393296442 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 395104232405325147, guid: bbabec215dfafb844b5dfd983988a7d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 8733808148983803233}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8957388115958923820 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 395104231899459405, guid: bbabec215dfafb844b5dfd983988a7d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 8733808148983803233}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4268091170551638350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8957388115958923820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bdde936da0f010449f4357603fd5aea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Assault Rifle_1
+  replacement: {fileID: 8065355004949804950, guid: 1698b00eb7f178a46b2621d3e14ccade,
+    type: 3}
+  OnDropAttempted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDropPerformed:
+    m_PersistentCalls:
+      m_Calls: []
+  preset: {fileID: 11400000, guid: a872919ba8fdae8448ebb23ba51990df, type: 2}
+  muzzle: {fileID: 8692024262694889106}
+  casingEjectionPort: {fileID: 8957388115393296442}
+  chamberingEffects: {fileID: 0}
+  events:
+    OnFireDemand:
+      m_PersistentCalls:
+        m_Calls: []
+    OnFireDone:
+      m_PersistentCalls:
+        m_Calls: []
+    OnFireApplied:
+      m_PersistentCalls:
+        m_Calls: []
+    OnReloadStarting:
+      m_PersistentCalls:
+        m_Calls: []
+    OnReloadStart:
+      m_PersistentCalls:
+        m_Calls: []
+    OnReloadComplete:
+      m_PersistentCalls:
+        m_Calls: []
+    OnReloadAppliedOnce:
+      m_PersistentCalls:
+        m_Calls: []
+    OnReloadCancel:
+      m_PersistentCalls:
+        m_Calls: []
+    OnFireModeChange:
+      m_PersistentCalls:
+        m_Calls: []
+  _swapPrefab: {fileID: 1798787266113774264, guid: 9f2ffcbbbc194c743aee0377f7201cd9,
+    type: 3}
+  _isPlayerSwap: 1

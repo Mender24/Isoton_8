@@ -375,6 +375,8 @@ namespace Akila.FPSFramework
             autoHealDelayTime = autoHealDelay;
         }
 
+        public bool IsSwaped() => true;
+
         /// <summary>
         /// Event accessor for death event.
         /// </summary>

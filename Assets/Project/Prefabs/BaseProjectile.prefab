@@ -243,12 +243,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5533149664834043034}
-  - component: {fileID: 5533149664834043035}
   - component: {fileID: -6901600008566424722}
   - component: {fileID: -7446506828513555428}
-  - component: {fileID: 5870995619616495788}
+  - component: {fileID: 3996850003560986321}
   m_Layer: 0
-  m_Name: Projectile
+  m_Name: BaseProjectile
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -271,58 +270,6 @@ Transform:
   - {fileID: 4318224737487219244}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5533149664834043035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5533149664834043029}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e31de3ee62dd559429622f7a0dcaad31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hittableLayers:
-    serializedVersion: 2
-    m_Bits: 14651
-  decalDirection: 0
-  speed: 100
-  gravity: 1
-  force: 20
-  lifeTime: 5
-  defaultDecal: {fileID: 1000010844420130, guid: 4edabb1c0dde62743b137378c7d22980,
-    type: 3}
-  hitRadius: 0.01
-  destroyOnImpact: 1
-  useSourceVelocity: 1
-  useAutoScaling: 1
-  scaleMultipler: 15
-  range: 300
-  damageRangeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!54 &-6901600008566424722
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -365,24 +312,57 @@ MonoBehaviour:
   cullingMode: 1
   minDistance: 1
   reverse: 1
---- !u!135 &5870995619616495788
-SphereCollider:
+--- !u!114 &3996850003560986321
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5533149664834043029}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 557cbe60e0732504284b89464312b096, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hittableLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  decalDirection: 0
+  speed: 100
+  gravity: 1
+  force: 20
+  lifeTime: 5
+  defaultDecal: {fileID: 1000010844420130, guid: 4edabb1c0dde62743b137378c7d22980,
+    type: 3}
+  hitRadius: 0.01
+  destroyOnImpact: 1
+  useSourceVelocity: 1
+  useAutoScaling: 1
+  scaleMultipler: 15
+  range: 300
+  damageRangeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _onHitProjectileEffect: 0
+  _effectPrefab: {fileID: 0}
