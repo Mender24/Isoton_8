@@ -136,6 +136,8 @@ namespace Akila.FPSFramework
             }
         }
 
+        public bool IsSwaped() => false;
+
         /// <summary>
         /// Tries to explode this explosive
         /// </summary>

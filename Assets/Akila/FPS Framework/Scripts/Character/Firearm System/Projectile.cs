@@ -7,7 +7,7 @@ using UnityEngine.Events;
 namespace Akila.FPSFramework
 {
     [AddComponentMenu("Akila/FPS Framework/Weapons/Projectile")]
-    public class Projectile : MonoBehaviour
+    public class Projectile : MonoBehaviour, IFreezed
     {
         [Header("Base Settings")]
         public LayerMask hittableLayers = -1;
@@ -29,7 +29,6 @@ namespace Akila.FPSFramework
         public float range = 300;
         public AnimationCurve damageRangeCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0, 1), new Keyframe(1, 0.3f) });
 
-
         public Firearm source { get; set; }
         public Vector3 direction { get; set; }
         public Vector3 initialVelocity { get; set; }
@@ -37,7 +36,7 @@ namespace Akila.FPSFramework
         private Vector3 velocity;
         private TrailRenderer trail;
         private Explosive explosive;
-
+        public Explosive Explosive => explosive;
         private Rigidbody rb;
 
         private Vector3 previousPosition;
@@ -54,6 +53,11 @@ namespace Akila.FPSFramework
         {
             if (isActive)
                 Destroy(gameObject, lifeTime);
+        }
+
+        public void SetSpeed(Vector3 speed)
+        {
+            rb.linearVelocity = speed;
         }
 
         /// <summary>
@@ -221,26 +225,52 @@ namespace Akila.FPSFramework
 
             if (hit.transform.TryGetComponent(out Ignore _ignore) && _ignore.ignoreHitDetection || sourcePlayer && hit.transform == sourcePlayer.transform) return;
             onHit?.Invoke(hit.transform.gameObject, ray, hit);
-            OnHit(hit);
+            OnHit(hit, ray);
 
-            if (!isActive) return;
+        }
 
+        public virtual void OnHit(RaycastHit hit, Ray ray)
+        {
             if (explosive)
             {
-                explosive.Explode();
-                Destroy(gameObject);
-                return;
+                OnHitEffectExplosive(hit);
             }
+            else
+            {
+                OnHitEffectBase(hit, ray);
+            }
+        }
 
+        protected void OnHitEffectExplosive(RaycastHit hit)
+        {
+            Explosive.Explode();
+            Destroy(gameObject);
+            return;
+        }
+
+        protected void OnHitEffectBase(RaycastHit hit, Ray ray)
+        {
             Firearm.UpdateHits(source.firearm, defaultDecal, ray, hit, CalculateDamage(), decalDirection);
         }
 
-        public bool isActive { get; set; } = true;
-
-        public virtual void OnHit(RaycastHit hit)
+        public Vector3 Freeze()
         {
-
+            var res = rb.linearVelocity;
+            rb.linearVelocity = Vector3.zero;
+            return res;
         }
+
+        public void UnFreeze(Vector3 velocity)
+        {
+            SetVelocity(velocity);
+        }
+
+        public void SetVelocity(Vector3 speed)
+        {
+            rb.linearVelocity = speed;
+    }
+
+        public bool isActive { get; set; } = true;
 
         private void OnDrawGizmos()
         {
@@ -254,4 +284,7 @@ namespace Akila.FPSFramework
             FPSFrameworkCore.InvokeConvertMethod("ConvertProjectile", this, new object[] { this });
         }
     }
+
+
+
 }

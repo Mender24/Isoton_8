@@ -24,6 +24,11 @@ namespace Akila.FPSFramework
 
         public Renderer[] renderers { get; private set; }
 
+        [SerializeField] private Sprite _uiSprite;
+        public Sprite UISprite => _uiSprite;
+        [SerializeField] private InventoryItemType _inventoryItemType;
+        public InventoryItemType InventoryItemType=> _inventoryItemType;
+
         public void PlayHideAnimation()
         {
             animators = transform.GetComponentsInChildren<Animator>();
@@ -1005,5 +1010,12 @@ namespace Akila.FPSFramework
             return animation;
         }
 #endif
+    }
+
+    public enum InventoryItemType
+    {
+        None = 0,
+        Weapone = 1,
+
     }
 }

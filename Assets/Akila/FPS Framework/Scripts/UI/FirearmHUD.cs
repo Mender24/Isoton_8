@@ -33,7 +33,7 @@ namespace Akila.FPSFramework
 
             firearmNameText.SetText(firearm.Name);
             ammoTypeNameText.SetText(firearm.ammoProfile.identifier.displayName);
-            remainingAmmoText.SetText(firearm.remainingAmmoCount.ToString());
+            remainingAmmoText.SetText(firearm.remainingAmmoCount.ToString()+"/" + firearm.preset.magazineCapacity.ToString());
             remainingAmmoTypeText.SetText(firearm.remainingAmmoTypeCount.ToString());
 
             outOfAmmoAlert.SetActive(firearm.remainingAmmoCount <= 0);

@@ -14,7 +14,8 @@ namespace Akila.FPSFramework
         public List<InventoryItem> startItems = new List<InventoryItem>();
         public List<InventoryItem> items = new List<InventoryItem>();
         public List<InventoryCollectable> collectables = new List<InventoryCollectable>();
-
+        public event Action<int> OnChangeWeapone;
+        public event Action<int, InventoryItem> OnAddWeapone;
         [Space]
         public InventoryItem defaultItem;
         public int maxSlots = 3;
@@ -26,7 +27,7 @@ namespace Akila.FPSFramework
         public CharacterInput characterInput { get; set; }
 
         public bool isActive { get; set; } = true;
-
+        
 
         private int previousItemIndex { get; set; }
         public int currentItemIndex { get; set; }
@@ -72,6 +73,7 @@ namespace Akila.FPSFramework
 
             Switch(0);
         }
+
 
         private void RefreshItemsList()
         {
@@ -146,9 +148,12 @@ namespace Akila.FPSFramework
             if (characterInput.item7) currentItemIndex = 6;
             if (characterInput.item8) currentItemIndex = 7;
             if (characterInput.item9) currentItemIndex = 8;
-            
-            if (characterInput.itemUp) 
+
+            if (characterInput.itemUp)
+            {
+               // OnAddWeapone?.Invoke();
                 currentItemIndex++;
+            }
 
             if (characterInput.itemDown)
             {
@@ -168,8 +173,19 @@ namespace Akila.FPSFramework
             if (characterInput.itemDown) currentItemIndex = lastItemIndex;
         }
 
+
         private int lastItemIndex;
         private InventoryItem activeItem;
+
+        public void AddItem(InventoryItem newItem)
+        {
+            if (newItem.InventoryItemType == InventoryItemType.Weapone)
+            {
+                items.Add(newItem);
+                currentItemIndex++;
+                OnAddWeapone?.Invoke(items.Count, newItem);
+            }
+        }
 
         /// <summary>
         /// Switches the currently active inventory item by index.
