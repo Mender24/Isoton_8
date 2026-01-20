@@ -21,7 +21,7 @@ namespace Akila.FPSFramework
         [FormerlySerializedAs("interactionDuration")]
         public float holdDuration = 0.2f;
 
-        [Tooltip("Defines the interaction angle as a fraction of 360°. Example: 1 = 360°, 0.5 = 180°.")]
+        [Tooltip("Defines the interaction angle as a fraction of 360ï¿½. Example: 1 = 360ï¿½, 0.5 = 180ï¿½.")]
         [FormerlySerializedAs("fieldOfInteractions")]
         public float interactionFieldAngle = 0.5f;
 

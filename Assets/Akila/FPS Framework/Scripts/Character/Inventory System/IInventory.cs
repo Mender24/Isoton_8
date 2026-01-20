@@ -18,7 +18,7 @@ namespace Akila.FPSFramework
         public int currentItemIndex { get; set; }
         public int maxSlots { get; }
         public float dropForce { get; }
-
+        public void AddItem(InventoryItem item);
         public bool isActive { get; set; }
         public bool isInputActive { get; set; }
 

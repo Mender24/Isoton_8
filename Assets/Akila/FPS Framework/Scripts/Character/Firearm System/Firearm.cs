@@ -853,9 +853,14 @@ namespace Akila.FPSFramework
                 if (Physics.Raycast(ray, out RaycastHit hit, preset.range, preset.hittableLayers))
                 {
                     float damage = preset.alwaysApplyFire ? preset.damage : preset.damage / preset.shotCount;
-                    Firearm.UpdateHits(this, preset.defaultDecal, ray, hit, damage, preset.decalDirection);
+                    Firearm.UpdateHits(this, preset.defaultDecal, ray, hit, damage, preset.decalDirection, ShootEffect);
                 }
             }
+        }
+
+        protected virtual void ShootEffect(IDamageable damageable)
+        {
+
         }
 
         /// <summary>
@@ -969,7 +974,7 @@ namespace Akila.FPSFramework
         /// <param name="hit">Information about the hit result.</param>
         /// <param name="damage">The amount of damage to apply.</param>
         /// <param name="decalDirection">The direction for orienting the decal.</param>
-        public static void UpdateHits(Firearm firearm, GameObject defaultDecal, Ray ray, RaycastHit hit, float damage, Vector3Direction decalDirection)
+        public static void UpdateHits(Firearm firearm, GameObject defaultDecal, Ray ray, RaycastHit hit, float damage, Vector3Direction decalDirection, Action<IDamageable> shootEffect =null)
         {
             // Check if the hit object should be ignored based on IgnoreHitDetection component
             if (hit.transform.TryGetComponent(out Ignore _ignore) && _ignore.ignoreHitDetection)
@@ -1038,11 +1043,16 @@ namespace Akila.FPSFramework
                 GameObject actorGO = null;
 
                 if (actor != null) actorGO = actor.gameObject;
-
-                damageable.Damage(totalDamage, actorGO);
-
+                if (shootEffect == null)
+                {
+                    damageable.Damage(totalDamage, actorGO);
+                }
+                else
+                {
+                    shootEffect?.Invoke(damageable);
+                }
                 bool shouldHighlight = damageable.Health <= 0;
-
+                
                 if (firearm.character != null)
                 {
                     UIManager uiManager = UIManager.Instance;
@@ -1094,6 +1104,8 @@ namespace Akila.FPSFramework
                 hit.rigidbody.AddForceAtPosition(-hit.normal * impactForce, hit.point, ForceMode.Impulse);
             }
         }
+
+
 
         /// <summary>
         /// Invokes hit-related callbacks on the hit object, as well as its children and parents, if applicable.
@@ -1454,7 +1466,10 @@ namespace Akila.FPSFramework
             return isPlayingRestricted;
         }
 
+        protected void ShootEffect()
+        {
 
+        }
 
         private void OnEnable()
         {
@@ -1482,6 +1497,7 @@ namespace Akila.FPSFramework
 
             characterManager.ResetSpeedMultiplier();
         }
+
 
         private void OnDestroy()
         {
