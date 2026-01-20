@@ -153,7 +153,7 @@ namespace Akila.FPSFramework
 
 
             // Update inventory items list
-            inventory.items = inventory.transform.GetComponentsInChildren<InventoryItem>(true).ToList();
+            inventory.AddItem(newItem);
 
             // Switch inventory to the newly picked up item
             int index = inventory.items.IndexOf(newItem);
@@ -165,7 +165,6 @@ namespace Akila.FPSFramework
             {
                 inventory.currentItem.Drop(true);
             }
-
             onPickupPerformed?.Invoke(newItem);
         }
 
