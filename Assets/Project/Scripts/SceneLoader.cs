@@ -6,9 +6,9 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneManagerMy : MonoBehaviour
+public class SceneLoader : MonoBehaviour
 {
-    public static SceneManagerMy instance;
+    public static SceneLoader instance;
 
     public String loadedScenes = "Transition_1";
 

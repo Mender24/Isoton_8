@@ -32,7 +32,7 @@ namespace Akila.FPSFramework
             enterDoor.ToggleDoor();
 
             yield return new WaitForSeconds(1f);
-            yield return StartCoroutine(SceneManagerMy.instance.SceneRotationProcess());
+            yield return StartCoroutine(SceneLoader.instance.SceneRotationProcess());
             yield return new WaitForSeconds(1f);
 
             exitDoor.ToggleDoor();
