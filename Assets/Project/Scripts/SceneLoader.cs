@@ -1,3 +1,4 @@
+using Akila.FPSFramework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,11 +24,6 @@ public class SceneLoader : MonoBehaviour
             Destroy(this);
 
         sceneNames = GetSceneNamesInBuild();
-    }
-
-    public void SetLoadedScenes(string loadedSceneName)
-    {
-        loadedScenes = loadedSceneName;
     }
 
     private List<string> GetSceneNamesInBuild()
@@ -144,6 +140,7 @@ public class SceneLoader : MonoBehaviour
             yield return StartCoroutine(LoadSceneByIndexAsync(nextTransitionIndex));
 
             loadedScenes = SceneManager.GetSceneByBuildIndex(nextTransitionIndex).name;
+            SpawnManager.Instance.UpdateSpawnPoint(nextTransitionIndex);
         }
         else
         {

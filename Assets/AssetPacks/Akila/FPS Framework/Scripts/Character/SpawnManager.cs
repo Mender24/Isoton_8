@@ -1,9 +1,9 @@
-using Akila.FPSFramework.Internal;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace Akila.FPSFramework
@@ -14,6 +14,7 @@ namespace Akila.FPSFramework
         [FormerlySerializedAs("spwanableObjects")]
         public List<SpwanableObject> spawnableObjects = new List<SpwanableObject>();
 
+        public string NameSearchObjectToNewScene = "SpawnPoints";
         public float spawnRadius = 5;
         public float respawnDelay = 5;
 
@@ -22,7 +23,10 @@ namespace Akila.FPSFramework
 
         public static SpawnManager Instance;
 
+        public int _currentSpawnPointId = 0;
+
         public bool isActive { get; set; } = true;
+        public int CurrentSpawnPointId => _currentSpawnPointId;
 
         public UnityEvent<GameObject> onPlayerSpwanWithObj { get; set; } = new UnityEvent<GameObject>();
         public UnityEvent<string> onPlayerSpwanWithObjName { get; set; } = new UnityEvent<string>();
@@ -31,6 +35,24 @@ namespace Akila.FPSFramework
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+        }
+
+        public void SetNewSpawnPoint()
+        {
+            _currentSpawnPointId++;
+        }
+
+        public void UpdateSpawnPoint(int indexNewScene)
+        {
+            Scene scene = SceneManager.GetSceneByBuildIndex(indexNewScene);
+
+            GameObject SpawnPoints = scene.GetRootGameObjects()
+                .SelectMany(t => t.GetComponentsInChildren<Transform>(true))
+                .FirstOrDefault(x => x.gameObject.transform.name == NameSearchObjectToNewScene)?.gameObject;
+
+            Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
+            sides[0].points = newArray;
+            _currentSpawnPointId = 0;
         }
 
         public async void SpawnActor(IActor actorSelf, string actorObjName, float delay)
@@ -67,7 +89,7 @@ namespace Akila.FPSFramework
         {
             GameObject obj = spawnableObjects.Find(x => x.name == actorObjName).obj;
 
-            GameObject newPlayer = SpawnActor( actorSelf, obj);
+            GameObject newPlayer = SpawnActor(actorSelf, obj);
 
             Actor newPlayerActorComponent = newPlayer.GetComponent<Actor>();
             Actor actorSelfActorComponent = actorSelf.gameObject.GetComponent<Actor>();
@@ -85,7 +107,7 @@ namespace Akila.FPSFramework
         {
             onPlayerSpwanWithObj?.Invoke(actorObj);
 
-            if(!isActive) return null;
+            if (!isActive) return null;
 
             Vector3 actorPosition = GetPlayerPosition(actorSelf.teamId);
             Quaternion actorRotation = GetPlayerRotation(actorSelf.teamId);
@@ -112,14 +134,14 @@ namespace Akila.FPSFramework
 
         public Transform GetPlayerSpawnPoint(int sideId)
         {
-            int pointIndex = Random.Range(0, sides[sideId].points.Length);
+            //int pointIndex = Random.Range(0, sides[sideId].points.Length);
 
-            return sides[sideId].points[pointIndex];
+            return sides[sideId].points[_currentSpawnPointId];
         }
 
         public Vector3 GetPlayerPosition(int sideId)
         {
-            Vector3 addedPosition = Random.insideUnitCircle * spawnRadius;
+            Vector3 addedPosition = UnityEngine.Random.insideUnitCircle * spawnRadius;
 
             addedPosition.z = addedPosition.y;
 
@@ -135,10 +157,16 @@ namespace Akila.FPSFramework
 
         private void OnDrawGizmos()
         {
+            if (sides.Count == 0)
+                return;
+
             foreach (SpwanSide point in sides)
             {
                 foreach (Transform transform in point.points)
                 {
+                    if (transform == null)
+                        continue;
+
                     Gizmos.color = Color.white;
                     Gizmos.DrawWireSphere(transform.position, spawnRadius * transform.lossyScale.magnitude);
                 }
