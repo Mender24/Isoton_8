@@ -15,7 +15,7 @@ namespace Akila.FPSFramework
         public List<InventoryItem> items = new List<InventoryItem>();
         public List<InventoryCollectable> collectables = new List<InventoryCollectable>();
         public event Action<int> OnChangeWeapone;
-        public event Action<int, InventoryItem> OnAddWeapone;
+        public event Action<InventoryItem> OnAddWeapone;
         [Space]
         public InventoryItem defaultItem;
         public int maxSlots = 3;
@@ -139,19 +139,17 @@ namespace Akila.FPSFramework
         {
             if (!FPSFrameworkCore.IsActive || !FPSFrameworkCore.IsInputActive || !isInputActive) return;
 
-            if (characterInput.item1) currentItemIndex = 0;
-            if (characterInput.item2) currentItemIndex = 1;
-            if (characterInput.item3) currentItemIndex = 2;
-            if (characterInput.item4) currentItemIndex = 3;
-            if (characterInput.item5) currentItemIndex = 4;
-            if (characterInput.item6) currentItemIndex = 5;
-            if (characterInput.item7) currentItemIndex = 6;
-            if (characterInput.item8) currentItemIndex = 7;
-            if (characterInput.item9) currentItemIndex = 8;
+            for (var i=0; i< items.Count; i++)
+            {
+                if (CheckItemSlotInput(i))
+                {
+                    SetCurrentItemIdexByChange(i);
+                    break;
+                }
+            }
 
             if (characterInput.itemUp)
             {
-               // OnAddWeapone?.Invoke();
                 currentItemIndex++;
             }
 
@@ -173,6 +171,32 @@ namespace Akila.FPSFramework
             if (characterInput.itemDown) currentItemIndex = lastItemIndex;
         }
 
+        private bool CheckItemSlotInput(int value)
+        {
+            switch (value)
+            {
+                case 0:
+                    return characterInput.item1;
+                    break;                
+                case 1:
+                    return characterInput.item2;
+                    break;                
+                case 2:
+                    return characterInput.item3;            
+                case 3:
+                    return characterInput.item4;
+                default:
+                    Debug.LogError("inventary bigger then posible");
+                    return false;
+            }
+            
+        }
+
+        private void SetCurrentItemIdexByChange(int value)
+        {
+            currentItemIndex = value;
+            OnChangeWeapone?.Invoke(value);
+        }
 
         private int lastItemIndex;
         private InventoryItem activeItem;
@@ -183,7 +207,7 @@ namespace Akila.FPSFramework
             {
                 items.Add(newItem);
                 currentItemIndex++;
-                OnAddWeapone?.Invoke(items.Count, newItem);
+                OnAddWeapone?.Invoke(newItem);
             }
         }
 
