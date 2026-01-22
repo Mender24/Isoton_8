@@ -148,7 +148,7 @@ namespace Akila.FPSFramework
         public virtual bool item9 => IsInputAllowed ? controls.Player.Item9.triggered : false;
 
         public virtual bool itemUp => IsInputAllowed ? controls.Player.SwitchItem.ReadValue<float>() > 0 : false;
-        public virtual bool itemDown => IsInputAllowed ? controls.Player.SwitchItem.ReadValue<float>() < 0 : false;
+        public virtual bool itemDown => false; //IsInputAllowed ? controls.Player.SwitchItem.ReadValue<float>() < 0 : false;
 
         public virtual bool itemNext => IsInputAllowed ? controls.Player.NextItem.triggered : false;
         public virtual bool itemPrevious => IsInputAllowed ? controls.Player.PreviousItem.triggered : false;

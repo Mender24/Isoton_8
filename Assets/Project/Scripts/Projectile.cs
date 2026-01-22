@@ -84,3 +84,4 @@ public enum OnHitProjectileEffect
     SwapEnemy = 4,
     FreezeTime = 5
 }
+

@@ -150,17 +150,17 @@ namespace Akila.FPSFramework
 
             if (characterInput.itemUp)
             {
-                currentItemIndex++;
+                SetCurrentItemIdexByChange(currentItemIndex+1);
             }
 
-            if (characterInput.itemDown)
-            {
-                currentItemIndex--;
+            //if (characterInput.itemDown)
+            //{
+            //    currentItemIndex--;
                 
-                {
-                    if (currentItemIndex < 0) currentItemIndex = items.ToArray().Length - 1;
-                }
-            }
+            //    {
+            //        if (currentItemIndex < 0) currentItemIndex = items.ToArray().Length - 1;
+            //    }
+            //}
 
             if (characterInput.defaultItem)
             {

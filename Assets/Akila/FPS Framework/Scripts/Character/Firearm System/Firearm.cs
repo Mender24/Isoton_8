@@ -201,7 +201,7 @@ namespace Akila.FPSFramework
         public Action onCasingThrown;
 
         private bool isPreviouslyReloading;
-
+        [SerializeField] private GameObject _specialOnHitEffectPrefab;
         protected override void Awake()
         {
             base.Awake();
@@ -857,10 +857,46 @@ namespace Akila.FPSFramework
                 }
             }
         }
+        [SerializeField] private OnHitEffect _onHitEffect = OnHitEffect.None;
 
         protected virtual void ShootEffect(IDamageable damageable)
         {
+            switch (_onHitEffect)
+            {
+                case OnHitEffect.None:
+                    break;
+                case OnHitEffect.SwapEnemy:
+                    SwapEnemy(damageable);
+                    break;
+                case OnHitEffect.SwapPlayer:
+                    SwapPlayer(damageable);
+                    break;
+            } 
+        }
 
+        private void SwapEnemy(IDamageable damageable)
+        {
+            if (!damageable.IsSwaped())
+            {
+                return;
+            }
+            damageable.gameObject.SetActive(false);
+            Instantiate(_specialOnHitEffectPrefab, damageable.transform.position, damageable.transform.rotation, damageable.transform.parent);
+            this.gameObject.SetActive(false);
+        }
+
+        private void SwapPlayer(IDamageable damageable)
+        {
+            if (!damageable.IsSwaped())
+            {
+                return;
+            }
+            var player = Player.Instance;
+            var pos = damageable.gameObject.transform.position;
+            //var rot = damageable.transform.rotation;
+            damageable.gameObject.transform.position = player.transform.position;
+            damageable.transform.rotation = player.transform.rotation;
+            player.gameObject.transform.position = pos;
         }
 
         /// <summary>
@@ -1562,6 +1598,13 @@ namespace Akila.FPSFramework
         {
             Default = 0,
             Scripted = 1
+        }
+
+        public enum OnHitEffect
+        {
+            None = 0,
+            SwapEnemy = 1,
+            SwapPlayer = 2
         }
     }
 }

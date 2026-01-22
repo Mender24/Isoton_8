@@ -116,12 +116,18 @@ namespace Akila.FPSFramework
 
             InventoryItem itemToFind = inventory.items.Find(i => i.Name == itemToPickup.Name);
 
+            if (itemToFind !=null && !includeCollectable)
+            {
+                return;
+            }
+
             if (includeCollectable && itemToFind == null)
             {
                 DoItemPickup(inventory);
             }
             else
             {
+                
                 int index = inventory.items.IndexOf(itemToFind);
 
                 index = Mathf.Clamp(index, 0, inventory.maxSlots - 1);
@@ -142,6 +148,11 @@ namespace Akila.FPSFramework
 
         protected virtual void DoItemPickup(IInventory inventory)
         {
+            if (inventory.IsFull)
+            {
+                return;
+            }
+
             // Refresh inventory current item UI etc.
             if (itemToPickup == null)
             {
@@ -161,11 +172,15 @@ namespace Akila.FPSFramework
             if (index != -1)
                 inventory.Switch(index);
 
+            //DropItemByMaxSlotsCount(inventory); 
+            onPickupPerformed?.Invoke(newItem);
+        }
+        private void DropItemByMaxSlotsCount(IInventory inventory)
+        {
             if(inventory.items.Count > inventory.maxSlots)
             {
                 inventory.currentItem.Drop(true);
             }
-            onPickupPerformed?.Invoke(newItem);
         }
 
         /// <summary>
