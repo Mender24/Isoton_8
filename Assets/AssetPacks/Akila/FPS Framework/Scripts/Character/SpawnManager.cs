@@ -11,6 +11,11 @@ namespace Akila.FPSFramework
     [AddComponentMenu("Akila/FPS Framework/Managers/Spwan Manager")]
     public class SpawnManager : MonoBehaviour
     {
+        public bool _isDeleteSave = false;
+        public InventoryItem _prefab;
+        [SerializeField] private List<InventoryItem> _itemsPrefab = new();
+        [SerializeField] private int _maxWeaponCount = 3;
+
         [FormerlySerializedAs("spwanableObjects")]
         public List<SpwanableObject> spawnableObjects = new List<SpwanableObject>();
 
@@ -35,6 +40,15 @@ namespace Akila.FPSFramework
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+        }
+
+        private void Update()
+        {
+            if(_isDeleteSave)
+            {
+                _isDeleteSave = false;
+                PlayerPrefs.DeleteAll();
+            }
         }
 
         public void SetNewSpawnPoint()
@@ -117,6 +131,14 @@ namespace Akila.FPSFramework
             Actor newPlayerActorComponent = newActorObject.GetComponent<Actor>();
             Actor actorSelfActorComponent = actorSelf.gameObject.GetComponent<Actor>();
 
+            //----
+            Inventory inventory = newPlayerActorComponent.GetComponentsInChildren<MonoBehaviour>()
+                .OfType<Inventory>()
+                .FirstOrDefault();
+
+            //SaveManager.LoadPlayer(inventory, _itemsPrefab);
+            LoadPlayer(inventory, _itemsPrefab);
+            //----
 
             if (newPlayerActorComponent && actorSelfActorComponent)
             {
@@ -130,6 +152,30 @@ namespace Akila.FPSFramework
             newActorObject.transform.SetPositionAndRotation(position, rotation);
 
             return newActorObject;
+        }
+
+        public void SavePlayer(Actor player)
+        {
+            PlayerPrefs.DeleteAll();
+
+            Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
+
+            for (int i = 0; i < weapons.Length; i++)
+                PlayerPrefs.SetString("Weapon" + i.ToString(), weapons[i].Name);
+
+            PlayerPrefs.Save();
+        }
+
+        public void LoadPlayer(Inventory inventory, List<InventoryItem> itemsPrefab)
+        {
+            for(int i = 0; i < _maxWeaponCount; i++)
+            {
+                if(PlayerPrefs.HasKey("Weapon" + i))
+                {
+                    InventoryItem prefab = itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
+                    InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
+                }
+            }
         }
 
         public Transform GetPlayerSpawnPoint(int sideId)
