@@ -23,5 +23,7 @@ namespace Akila.FPSFramework
         public bool isInputActive { get; set; }
 
         public void Switch(int index, bool immediate = true);
+
+        public bool IsFull=> items.Count == maxSlots;
     }
 }

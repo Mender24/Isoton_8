@@ -24,8 +24,11 @@ namespace Akila.FPSFramework
 
         public Renderer[] renderers { get; private set; }
 
-        [SerializeField] private Sprite _uiSprite;
-        public Sprite UISprite => _uiSprite;
+        [SerializeField] private Sprite _uiSpriteActive;
+        [SerializeField] private Sprite _uiSpriteDeactivated;
+        public Sprite UISpriteActive => _uiSpriteActive;
+        public Sprite UISpriteDeactivated => _uiSpriteDeactivated;
+        public int ItemsCount => inventory.items.Count;
         [SerializeField] private InventoryItemType _inventoryItemType;
         public InventoryItemType InventoryItemType=> _inventoryItemType;
 

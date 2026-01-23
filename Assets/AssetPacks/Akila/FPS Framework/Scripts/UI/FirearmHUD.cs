@@ -19,7 +19,6 @@ namespace Akila.FPSFramework
         [Header("Colors")]
         public Color normalColor = Color.white;
         public Color alertColor = Color.red;
-
         public Firearm firearm { get; set; }
 
         private void Update()
