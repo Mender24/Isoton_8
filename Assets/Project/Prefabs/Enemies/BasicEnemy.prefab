@@ -6189,7 +6189,7 @@ GameObject:
   - component: {fileID: 7698475277634065106}
   m_Layer: 0
   m_Name: BasicEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6528,6 +6528,8 @@ MonoBehaviour:
   _visionRange: 15
   _visionHeight: 0.5
   hearingRange: 10
+  _soundDetectionThreshold: 0.7
+  _noiseInvestigationTime: 8
   attackRange: 20
   forgetTime: 10
   _detectionDelay: 0.5
@@ -6551,14 +6553,10 @@ MonoBehaviour:
   shouldPatrol: 0
   patrolPoints: []
   waypointWaitTime: 1
+  startPosition: {x: 0, y: 0, z: 0}
   _audioSource: {fileID: 2733046975915953009}
   _detectionSound: {fileID: 8300000, guid: 6e46f06946fd48444be0914ca797e8d6, type: 3}
-  _footstepSounds:
-  - {fileID: 8300000, guid: ca15ad96f8c2b3640909a22b28580b57, type: 3}
-  - {fileID: 8300000, guid: 1b9123f42d7000344af3b96d404500b0, type: 3}
-  - {fileID: 8300000, guid: aa6479453687eb54b965116f4f52b2ec, type: 3}
-  - {fileID: 8300000, guid: f30607b44957cdb439481edbb854182b, type: 3}
-  - {fileID: 8300000, guid: 97184db0c705f2d469ce5521d0555dcf, type: 3}
+  _footstepSounds: []
   _showDebug: 1
   _showDebugInfo: 1
   _showDebugLogs: 0
@@ -6589,6 +6587,8 @@ MonoBehaviour:
   isFire: 0
   timeShoot: 0
   currentBullet: 0
+  lastHeardNoisePosition: {x: 0, y: 0, z: 0}
+  heardNoise: 0
 --- !u!114 &7698475277634065106
 MonoBehaviour:
   m_ObjectHideFlags: 0

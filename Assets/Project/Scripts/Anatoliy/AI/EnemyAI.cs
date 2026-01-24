@@ -20,10 +20,13 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Hearing Settings")]
     public float hearingRange = 10f;
+    [SerializeField] private float _soundDetectionThreshold = 0.5f;
+    [SerializeField] private float _noiseInvestigationTime = 8f;
 
     [Header("Combat Settings")]
     public float attackRange = 20f;
     public float forgetTime = 10f;
+    public float stoppingDistance = 0.5f;
     [SerializeField] private float _detectionDelay = 0.9f;
     [SerializeField] private GameObject _prefabBullet;
     [SerializeField] private float _damage = 5f;
@@ -37,11 +40,11 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Vector3 _agentCenterOffset = new(0, 0.5f, 0);
 
     [Header("Shoot Target Offset")]
-    [SerializeField] private float _xShootTargetOffset = 0; // const offset я тут переименовал твое, если непрвильно переделай на свое
+    [SerializeField] private float _xShootTargetOffset = 0;
     [SerializeField] private float _yShootTargetOffset = 1;
 
     [Header("Spray Shoot Offset")]
-    [SerializeField] private float _heightSprayOffset = 0.5f; // random offset
+    [SerializeField] private float _heightSprayOffset = 0.5f;
     [SerializeField] private float _widthSprayOffset = 2;
 
     [Header("Movement")]
@@ -53,6 +56,7 @@ public class EnemyAI : MonoBehaviour
     public bool shouldPatrol = false;
     public List<GameObject> patrolPoints = new();
     public float waypointWaitTime = 1f;
+    public Vector3 startPosition = new();
 
     [Header("Audio")]
     [SerializeField] private AudioSource _audioSource;
@@ -110,10 +114,14 @@ public class EnemyAI : MonoBehaviour
     [HideInInspector] public Vector3 lastKnownPlayerPosition;
     [HideInInspector] public float timeSinceLastSeen = 0f;
 
-    [HideInInspector] public bool isReload = false; // Reload Status
+    [HideInInspector] public bool isReload = false;
     [HideInInspector] public bool isFire = false;
     [HideInInspector] public float timeShoot = 0f;
     [HideInInspector] public int currentBullet = 0;
+    [HideInInspector] public Vector3 lastHeardNoisePosition;
+    [HideInInspector] public bool heardNoise = false;
+    private float _noiseInvestigationTimer = 0f;
+    private AudioSource _lastHeardAudioSource;
 
     private bool _detectionDelayActive = false;
     private bool _debugIsPlayerHit = false;
@@ -126,13 +134,13 @@ public class EnemyAI : MonoBehaviour
         if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
 
         agent.speed = walkSpeed;
+        agent.stoppingDistance = stoppingDistance;
     }
 
     void Update()
     {
         if (!isActivated) return;
 
-        // Обновление таймера забывания
         if (isAlerted && !CanSeePlayer())
         {
             timeSinceLastSeen += Time.deltaTime;
@@ -142,6 +150,8 @@ public class EnemyAI : MonoBehaviour
                 ForgetPlayer();
             }
         }
+
+        UpdateNoiseInvestigation();
 
         if(isFire && timeShoot <= 0)
         {
@@ -249,14 +259,6 @@ public class EnemyAI : MonoBehaviour
         return false;
     }
 
-    public bool CanHearPlayer(float noiseRange)
-    {
-        if (playerTransform == null) return false;
-
-        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-        return distanceToPlayer <= noiseRange;
-    }
-
     public Node.Status OnPlayerDetected()
     {
         if (isSearching)
@@ -282,6 +284,7 @@ public class EnemyAI : MonoBehaviour
     {
         isAlerted = true;
         lastKnownPlayerPosition = playerTransform.position;
+        startPosition = transform.position;
         timeSinceLastSeen = 0f;
         agent.speed = runSpeed;
         StartCoroutine(DetectionDelayCoroutine());
@@ -365,6 +368,86 @@ public class EnemyAI : MonoBehaviour
 
         if (_showDebugLogs)
             Debug.Log($"Footstep {foot}");
+    }
+
+    public bool CanHearPlayer(float noiseRange)
+    {
+        if (playerTransform == null) return false;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+        return distanceToPlayer <= noiseRange;
+    }
+
+    public bool CanHearNoise()
+    {
+        if (playerDetected) return false;
+
+        Collider[] hearingColliders = Physics.OverlapSphere(transform.position, hearingRange, _playerLayer);
+
+        foreach (Collider collider in hearingColliders)
+        {
+            AudioSource audioSource = collider.GetComponentInChildren<AudioSource>();
+
+            if (audioSource != null && audioSource.isPlaying)
+            {
+                if (audioSource.volume >= _soundDetectionThreshold)
+                {
+                    lastHeardNoisePosition = audioSource.transform.position;
+                    _lastHeardAudioSource = audioSource;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public Node.Status OnNoiseDetected()
+    {
+        if (heardNoise && playerDetected)
+        {
+            heardNoise = false;
+            return Node.Status.Failure;
+        }
+
+        if (!heardNoise && CanHearNoise())
+        {
+            heardNoise = true;
+            _noiseInvestigationTimer = _noiseInvestigationTime;
+            agent.speed = runSpeed;
+            startPosition = transform.position;
+
+            if (_showDebugLogs)
+                Debug.Log($"Enemy heard noise at: {lastHeardNoisePosition}");
+
+            return Node.Status.Success;
+        }
+
+        return Node.Status.Failure;
+    }
+
+    public void UpdateNoiseInvestigation()
+    {
+        if (heardNoise)
+        {
+            _noiseInvestigationTimer -= Time.deltaTime;
+
+            if (_noiseInvestigationTimer <= 0)
+            {
+                heardNoise = false;
+                agent.speed = walkSpeed;
+            }
+            else if (playerDetected)
+            {
+                heardNoise = false;
+                agent.speed = walkSpeed;
+            }
+        }
+    }
+
+    public Vector3 GetNoiseInvestigationTarget()
+    {
+        return lastHeardNoisePosition;
     }
 
     void OnDrawGizmos()
@@ -584,6 +667,7 @@ public class EnemyAI : MonoBehaviour
         info += $"Alerted: {isAlerted}\n";
         info += $"Searching: {isSearching}\n";
         info += $"Detected player: {playerDetected}\n";
+        info += $"Started position: {startPosition}\n";
 
         if (playerTransform != null)
         {
