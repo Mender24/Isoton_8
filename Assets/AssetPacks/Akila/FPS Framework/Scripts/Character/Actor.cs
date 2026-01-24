@@ -143,12 +143,12 @@ namespace Akila.FPSFramework
                 return;
             }
 
-            if (Damageable.DamageSource == null)
-            {
-                Debug.LogError("DamageSource in Damageable is not set.", gameObject);
+            //if (Damageable.DamageSource == null)
+            //{
+            //    Debug.LogError("DamageSource in Damageable is not set.", gameObject);
 
-                return;
-            }
+            //    return;
+            //}
 
             if (Damageable.DeadConfirmed)
             {
@@ -169,18 +169,18 @@ namespace Akila.FPSFramework
             if (Damageable.DamageSource == gameObject)
                 return;
 
-            Actor killer = Damageable.DamageSource.GetComponent<Actor>();
-
-            if (killer != null) killer.kills++;
-
             deaths++;
 
-            if (uiManager != null && playerUIEnabled)
-            {
-                uiManager.KillFeed?.Show(killer.actorName, killer.kills, actorName);
+            //Actor killer = Damageable.DamageSource.GetComponent<Actor>();
 
-                uiManager.Hitmarker?.Show(true);
-            }
+            //if (killer != null) killer.kills++;
+
+            //if (uiManager != null && playerUIEnabled)
+            //{
+            //    uiManager.KillFeed?.Show(killer.actorName, killer.kills, actorName);
+
+            //    uiManager.Hitmarker?.Show(true);
+            //}
         }
 
         /// <summary>
