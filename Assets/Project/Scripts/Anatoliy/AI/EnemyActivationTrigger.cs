@@ -5,7 +5,15 @@ public class EnemyActivationTrigger : MonoBehaviour
     public EnemyAI[] enemiesInZone;
     public bool activateOnce = true;
     private bool _hasActivated = false;
-    
+
+    void Start()
+    {
+        if (enemiesInZone.Length == 0)
+        {
+            Debug.LogError("No enemies were assigned to the trigger " + gameObject.name);
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (activateOnce && _hasActivated) return;
