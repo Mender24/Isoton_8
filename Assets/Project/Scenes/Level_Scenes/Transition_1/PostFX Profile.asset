@@ -144,10 +144,10 @@ MonoBehaviour:
     m_Value: 0
   sharpenIntensity:
     m_OverrideState: 1
-    m_Value: 4.5
+    m_Value: 1.81
   sharpenDepthThreshold:
     m_OverrideState: 1
-    m_Value: 0.0201
+    m_Value: 0.029
   sharpenMinMaxDepth:
     m_OverrideState: 0
     m_Value: {x: 0, y: 0.999}
@@ -158,7 +158,7 @@ MonoBehaviour:
     m_Value: 0
   sharpenRelaxation:
     m_OverrideState: 0
-    m_Value: 0.0838
+    m_Value: 0.1069
   sharpenClamp:
     m_OverrideState: 1
     m_Value: 1
@@ -188,19 +188,19 @@ MonoBehaviour:
     m_Value: 1000
   tonemapExposurePre:
     m_OverrideState: 1
-    m_Value: 1.97
+    m_Value: 4.37
   tonemapBrightnessPost:
     m_OverrideState: 1
-    m_Value: 0.84
+    m_Value: 1
   saturate:
     m_OverrideState: 1
-    m_Value: 1.25
+    m_Value: 0
   brightness:
     m_OverrideState: 1
-    m_Value: 0.906
+    m_Value: 1
   contrast:
     m_OverrideState: 1
-    m_Value: 0.981
+    m_Value: 1
   daltonize:
     m_OverrideState: 0
     m_Value: 0
@@ -208,14 +208,14 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 0
   tintColor:
-    m_OverrideState: 0
-    m_Value: {r: 0.8773585, g: 0.70974994, b: 0.69112676, a: 1}
+    m_OverrideState: 1
+    m_Value: {r: 0.9433962, g: 0.66141176, b: 0.4672481, a: 1}
   colorTemp:
     m_OverrideState: 1
-    m_Value: 35678
+    m_Value: 20000
   colorTempBlend:
     m_OverrideState: 1
-    m_Value: 0.692
+    m_Value: 0.5
   lut:
     m_OverrideState: 0
     m_Value: 0
@@ -228,22 +228,22 @@ MonoBehaviour:
     dimension: 1
   bloomIntensity:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 0.73
   bloomThreshold:
     m_OverrideState: 1
-    m_Value: 0.95
+    m_Value: 1.2
   bloomConservativeThreshold:
     m_OverrideState: 0
     m_Value: 0
   bloomSpread:
     m_OverrideState: 1
-    m_Value: 0.18
+    m_Value: 0.779
   bloomMaxBrightness:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1000
   bloomTint:
     m_OverrideState: 0
-    m_Value: {r: 0.5, g: 0.5, b: 1, a: 0}
+    m_Value: {r: 0.5, g: 0.5, b: 1, a: 1}
   bloomDepthAtten:
     m_OverrideState: 0
     m_Value: 0
@@ -259,8 +259,8 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 0
   bloomAntiflicker:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   bloomResolution:
     m_OverrideState: 0
     m_Value: 1
@@ -325,14 +325,14 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
   anamorphicFlaresIntensity:
-    m_OverrideState: 1
-    m_Value: 0.01
+    m_OverrideState: 0
+    m_Value: 0.005
   anamorphicFlaresThreshold:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 3
   anamorphicFlaresConservativeThreshold:
-    m_OverrideState: 1
-    m_Value: 1
+    m_OverrideState: 0
+    m_Value: 0
   anamorphicFlaresTint:
     m_OverrideState: 0
     m_Value: {r: 0.4481132, g: 0.4481132, b: 1, a: 1}
@@ -776,28 +776,6 @@ MonoBehaviour:
   blurSourceEdgeBlendStrength:
     m_OverrideState: 0
     m_Value: 20
---- !u!114 &-1730069352445020097
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
-  m_Name: LiftGammaGain
-  m_EditorClassIdentifier: 
-  active: 1
-  lift:
-    m_OverrideState: 0
-    m_Value: {x: 0.95058066, y: 0.9546925, z: 1, w: 0}
-  gamma:
-    m_OverrideState: 1
-    m_Value: {x: 0.8955144, y: 0.9052643, z: 1, w: 0.39252338}
-  gain:
-    m_OverrideState: 1
-    m_Value: {x: 0.86235887, y: 0.8913207, z: 1, w: 0.18691589}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -812,4 +790,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - {fileID: -1861236593529776857}
-  - {fileID: -1730069352445020097}
