@@ -859,6 +859,12 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!1 &552376562 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2938448627455052600, guid: e7832cc3ea9c6a34eaf66f40642bb7b2,
+    type: 3}
+  m_PrefabInstance: {fileID: 1779576101}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &565205863
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2017,16 +2023,20 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 624685861, guid: e7832cc3ea9c6a34eaf66f40642bb7b2, type: 3}
+      propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1779576108}
+    - target: {fileID: 624685861, guid: e7832cc3ea9c6a34eaf66f40642bb7b2, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LoadGame
+      value: LoadScene
       objectReference: {fileID: 0}
     - target: {fileID: 624685861, guid: e7832cc3ea9c6a34eaf66f40642bb7b2, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Akila.FPSFramework.MainMenu, Akila.FPSFramework
+      value: SceneLoaderSimple, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 624685861, guid: e7832cc3ea9c6a34eaf66f40642bb7b2, type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: ManagerScene
+      value: StartTunnel
       objectReference: {fileID: 0}
     - target: {fileID: 650998106, guid: e7832cc3ea9c6a34eaf66f40642bb7b2, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3005,7 +3015,11 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1969381073}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2938448627455052600, guid: e7832cc3ea9c6a34eaf66f40642bb7b2,
+        type: 3}
+      insertIndex: 5
+      addedObject: {fileID: 1779576108}
   m_SourcePrefab: {fileID: 100100000, guid: e7832cc3ea9c6a34eaf66f40642bb7b2, type: 3}
 --- !u!114 &1779576102 stripped
 MonoBehaviour:
@@ -3013,10 +3027,22 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1779576101}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 552376562}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8481e4798f0df043ad80643701d9dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1779576108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552376562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9cb740fa4b267a4aabb50ab57435acf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &1827406318 stripped
