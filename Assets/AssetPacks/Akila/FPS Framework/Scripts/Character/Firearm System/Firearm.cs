@@ -1,7 +1,6 @@
 ﻿using Akila.FPSFramework.Animation;
 using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Akila.FPSFramework
 {
@@ -9,6 +8,8 @@ namespace Akila.FPSFramework
     [RequireComponent(typeof(FirearmAttachmentsManager))]
     public class Firearm : InventoryItem
     {
+        public LightCreator lightCreator;
+
         [Tooltip("The firearm preset that defines all values for this firearm. This preset is a ScriptableObject.")]
         public FirearmPreset preset;
 
@@ -185,9 +186,9 @@ namespace Akila.FPSFramework
         {
             get
             {
-                if(aimingAnimation != null)
+                if (aimingAnimation != null)
                     return aimingAnimation.progress;
-                
+
                 return 0;
             }
         }
@@ -302,7 +303,7 @@ namespace Akila.FPSFramework
                 firearmHUD.firearm = this;
             }
 
-            if(preset.crosshair == null)
+            if (preset.crosshair == null)
             {
                 Debug.LogError("Crosshair is not set in the preset. Fire's crosshair won't be initialized.", gameObject);
             }
@@ -360,13 +361,13 @@ namespace Akila.FPSFramework
 
         private void ApplyFirearmToPickable(Pickable pickable)
         {
-            if(pickable.TryGetComponent<FirearmPickableModule>(out FirearmPickableModule pickableModule))
+            if (pickable.TryGetComponent<FirearmPickableModule>(out FirearmPickableModule pickableModule))
             {
                 pickableModule.storedAmmoCount = remainingAmmoCount;
 
                 pickableModule.firearmAttachmentsManager = pickable.GetComponent<FirearmAttachmentsManager>();
 
-                if(pickableModule.firearmAttachmentsManager && firearmAttachmentsManager != null)
+                if (pickableModule.firearmAttachmentsManager && firearmAttachmentsManager != null)
                 {
                     pickableModule.firearmAttachmentsManager.activeAttachments = firearmAttachmentsManager.activeAttachments;
                 }
@@ -435,7 +436,7 @@ namespace Akila.FPSFramework
                 if (!isAiming)
                     hipFireSprayPattern.RampupMagnitude(ref currentSprayMultiplier, Time.deltaTime);
                 else
-                    aimDownSightsSprayPattern.RampupMagnitude(ref currentSprayMultiplier, Time.deltaTime); 
+                    aimDownSightsSprayPattern.RampupMagnitude(ref currentSprayMultiplier, Time.deltaTime);
             }
             else if (characterManager.IsAlmostStopped() && !isFiring)
             {
@@ -468,7 +469,7 @@ namespace Akila.FPSFramework
 
                 currentSprayAmount = hipFireSprayPattern.maxAmount * multiplier;
             }
-            else if(!characterManager.isGrounded && !isAiming)
+            else if (!characterManager.isGrounded && !isAiming)
             {
                 currentSprayAmount = hipFireSprayPattern.maxAmount;
             }
@@ -477,7 +478,7 @@ namespace Akila.FPSFramework
                 currentSprayAmount = Mathf.Lerp(hipFireSprayPattern.maxAmount * 0.5f, aimDownSightsSprayPattern.maxAmount, aimProgress) * currentSprayMultiplier;
             }
         }
-        
+
 
         private void LateUpdate()
         {
@@ -493,7 +494,7 @@ namespace Akila.FPSFramework
 
             isPreviouslyReloading = isReloading;
 
-            if(currentSprayMultiplier > 1)
+            if (currentSprayMultiplier > 1)
             {
                 currentSprayMultiplier = 1;
             }
@@ -577,10 +578,10 @@ namespace Akila.FPSFramework
                 {
                     if (itemInput.FireModeSwitchInput)
                     {
-                        currentFireMode = (currentFireMode == FireMode.Auto) ? FireMode.SemiAuto: FireMode.Auto;
+                        currentFireMode = (currentFireMode == FireMode.Auto) ? FireMode.SemiAuto : FireMode.Auto;
 
                         events.OnFireModeChange?.Invoke();
-                        
+
                         Debug.Log($"Selective Mode Switched To: {currentFireMode}");
                     }
                 }
@@ -795,7 +796,7 @@ namespace Akila.FPSFramework
             {
                 ApplyFireOnce();
             }
-            
+
             // Cancel any pending FireDone invocations
             CancelInvoke();
 
@@ -871,7 +872,7 @@ namespace Akila.FPSFramework
                 case OnHitEffect.SwapPlayer:
                     SwapPlayer(damageable);
                     break;
-            } 
+            }
         }
 
         private void SwapEnemy(IDamageable damageable)
@@ -984,6 +985,9 @@ namespace Akila.FPSFramework
             // Instantiate the projectile prefab at the given position and rotation
             Projectile newProjectile = Instantiate(preset.projectile, position, rotation);
 
+            if(lightCreator != null)
+                lightCreator.TurnOnLight();
+
             // Initialize the velocity of the projectile to zero
             Vector3 initialVelocity = Vector3.zero;
 
@@ -1010,7 +1014,7 @@ namespace Akila.FPSFramework
         /// <param name="hit">Information about the hit result.</param>
         /// <param name="damage">The amount of damage to apply.</param>
         /// <param name="decalDirection">The direction for orienting the decal.</param>
-        public static void UpdateHits(Firearm firearm, GameObject defaultDecal, Ray ray, RaycastHit hit, float damage, Vector3Direction decalDirection, Action<IDamageable> shootEffect =null)
+        public static void UpdateHits(Firearm firearm, GameObject defaultDecal, Ray ray, RaycastHit hit, float damage, Vector3Direction decalDirection, Action<IDamageable> shootEffect = null)
         {
             // Check if the hit object should be ignored based on IgnoreHitDetection component
             if (hit.transform.TryGetComponent(out Ignore _ignore) && _ignore.ignoreHitDetection)
@@ -1027,14 +1031,14 @@ namespace Akila.FPSFramework
             }
 
             //Exit if firearm preset is not set
-            if(firearm.preset == null)
+            if (firearm.preset == null)
             {
                 Debug.Log($"Firearm preset is not set {new System.Diagnostics.StackTrace()}.", firearm);
 
                 return;
             }
 
-            if(firearm.character == null)
+            if (firearm.character == null)
             {
                 Debug.LogError($"Character (ICharacterController) in the firearm is not set.", firearm);
 
@@ -1042,7 +1046,7 @@ namespace Akila.FPSFramework
             }
 
             IActor actor = firearm.actor;
-            
+
             FirearmPreset preset = firearm.preset;
 
             FirearmAttachmentsManager firearmAttachmentsManager = firearm.firearmAttachmentsManager;
@@ -1088,7 +1092,7 @@ namespace Akila.FPSFramework
                     shootEffect?.Invoke(damageable);
                 }
                 bool shouldHighlight = damageable.Health <= 0;
-                
+
                 if (firearm.character != null)
                 {
                     UIManager uiManager = UIManager.Instance;
@@ -1240,7 +1244,7 @@ namespace Akila.FPSFramework
             casingVelocity += speedometerVelocity;
 
             // Apply the calculated velocity to the casing's Rigidbody
-            if(!float.IsNaN(casingVelocity.x) && !float.IsNaN(casingVelocity.y) && !float.IsNaN(casingVelocity.z))
+            if (!float.IsNaN(casingVelocity.x) && !float.IsNaN(casingVelocity.y) && !float.IsNaN(casingVelocity.z))
             {
                 casingRigidbody.linearVelocity = casingVelocity;
             }
@@ -1277,7 +1281,7 @@ namespace Akila.FPSFramework
 
                 characterManager.AddLookValue(verticalRecoil, horizontalRecoil);
 
-                if(characterManager.cameraManager)
+                if (characterManager.cameraManager)
                 {
                     if (characterManager.cameraManager.cameraKickAnimation)
                     {
@@ -1288,7 +1292,7 @@ namespace Akila.FPSFramework
                 }
             }
         }
-        
+
         /// <summary>
         /// Initiates the reloading process if the weapon is ready and ammo is available.
         /// </summary>
@@ -1460,10 +1464,10 @@ namespace Akila.FPSFramework
         {
             if (isAiming)
             {
-                return aimDownSightsSprayPattern.CalculatePattern(this, forward, right, up, currentSprayMultiplier, ref currentSprayPointIdex,currentSprayAmount);
+                return aimDownSightsSprayPattern.CalculatePattern(this, forward, right, up, currentSprayMultiplier, ref currentSprayPointIdex, currentSprayAmount);
             }
 
-            return hipFireSprayPattern.CalculatePattern(this, forward, right, up, currentSprayMultiplier, ref currentSprayPointIdex,currentSprayAmount);
+            return hipFireSprayPattern.CalculatePattern(this, forward, right, up, currentSprayMultiplier, ref currentSprayPointIdex, currentSprayAmount);
         }
 
         /// <summary>
@@ -1525,7 +1529,7 @@ namespace Akila.FPSFramework
                 return;
             }
 
-            if(characterManager)
+            if (characterManager)
             {
                 characterManager.attemptingToAim = false;
                 characterManager.isAiming = false;

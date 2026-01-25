@@ -1,68 +1,71 @@
 using UnityEngine;
 
-public class LightCreator : MonoBehaviour
+namespace LightCreator
 {
-    public GameObject lightObject;  // Перетащите сюда GameObject с Light
-    public float activeTime = 0.05f; // Свет горит 0.05 секунды
-
-    [SerializeField] private ParticleSystem particleSystem;
-    private float timer;
-    private bool lightOn;
-
-    void Awake()
+    public class LightCreator : MonoBehaviour
     {
-        particleSystem = GetComponent<ParticleSystem>();
+        public GameObject lightObject;  // Перетащите сюда GameObject с Light
+        public float activeTime = 0.05f; // Свет горит 0.05 секунды
 
-        // Гарантируем, что свет выключен в начале
-        if (lightObject != null)
-        {
-            lightObject.SetActive(false);
-        }
-    }
+        [SerializeField] private ParticleSystem particleSystem;
+        private float timer;
+        private bool lightOn;
 
-    void Update()
-    {
-        // Если Particle System проигрывается - включаем свет
-        if (particleSystem.isPlaying && particleSystem.particleCount > 0)
+        void Awake()
         {
-            if (!lightOn)
+            particleSystem = GetComponent<ParticleSystem>();
+
+            // Гарантируем, что свет выключен в начале
+            if (lightObject != null)
             {
-                TurnOnLight();
-            }
-            timer = activeTime; // Сбрасываем таймер
-        }
-
-        // Таймер выключения
-        if (lightOn)
-        {
-            timer -= Time.deltaTime;
-            if (timer <= 0)
-            {
-                TurnOffLight();
+                lightObject.SetActive(false);
             }
         }
-    }
 
-    void TurnOnLight()
-    {
-        if (lightObject != null)
+        void Update()
         {
-            lightObject.SetActive(true);
-            lightOn = true;
-        }
-    }
+            // Если Particle System проигрывается - включаем свет
+            if (particleSystem.isPlaying && particleSystem.particleCount > 0)
+            {
+                if (!lightOn)
+                {
+                    TurnOnLight();
+                }
+                timer = activeTime; // Сбрасываем таймер
+            }
 
-    void TurnOffLight()
-    {
-        if (lightObject != null)
+            // Таймер выключения
+            if (lightOn)
+            {
+                timer -= Time.deltaTime;
+                if (timer <= 0)
+                {
+                    TurnOffLight();
+                }
+            }
+        }
+
+        void TurnOnLight()
         {
-            lightObject.SetActive(false);
-            lightOn = false;
+            if (lightObject != null)
+            {
+                lightObject.SetActive(true);
+                lightOn = true;
+            }
         }
-    }
 
-    void OnDisable()
-    {
-        TurnOffLight();
+        void TurnOffLight()
+        {
+            if (lightObject != null)
+            {
+                lightObject.SetActive(false);
+                lightOn = false;
+            }
+        }
+
+        void OnDisable()
+        {
+            TurnOffLight();
+        }
     }
 }
