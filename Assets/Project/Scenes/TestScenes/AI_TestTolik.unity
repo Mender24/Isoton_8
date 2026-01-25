@@ -459,9 +459,22 @@ MonoBehaviour:
   _visionRange: 15
   _visionHeight: 0.5
   hearingRange: 10
-  attackRange: 20
+  _soundDetectionThreshold: 0.5
+  _noiseInvestigationTime: 8
+  combatType: 0
   forgetTime: 10
+  stoppingDistance: 0.5
+  _health: 100
   _detectionDelay: 0.25
+  _meleeAttackRange: 2
+  _meleeAttackCooldown: 1.5
+  _meleeDamage: 20
+  _meleeHitLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  _meleeAttackOffset: {x: 0, y: 1, z: 1}
+  _meleeAttackRadius: 1
+  attackRange: 20
   _prefabBullet: {fileID: 1462829680492441149, guid: a0c58ddaf7b3fed4cbd4ca357a4a88d1,
     type: 3}
   _damage: 1
@@ -484,6 +497,7 @@ MonoBehaviour:
   - {fileID: 1264704118}
   - {fileID: 572395997}
   waypointWaitTime: 1
+  startPosition: {x: 0, y: 0, z: 0}
   _audioSource: {fileID: 106129506}
   _detectionSound: {fileID: 8300000, guid: 6e46f06946fd48444be0914ca797e8d6, type: 3}
   _footstepSounds: []
@@ -513,10 +527,14 @@ MonoBehaviour:
   isSearching: 0
   lastKnownPlayerPosition: {x: 0, y: 0, z: 0}
   timeSinceLastSeen: 0
+  isMeleeAttacking: 0
+  meleeAttackTimer: 0
   isReload: 0
   isFire: 0
   timeShoot: 0
   currentBullet: 0
+  lastHeardNoisePosition: {x: 0, y: 0, z: 0}
+  heardNoise: 0
 --- !u!82 &106129506
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1318,8 +1336,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
         type: 3}
+      propertyPath: combatType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
+        type: 3}
+      propertyPath: _debugVision
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
+        type: 3}
       propertyPath: shouldPatrol
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
+        type: 3}
+      propertyPath: _meleeHitLayers.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
         type: 3}
@@ -1391,6 +1424,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6881652080201872440, guid: d0061aa6e3d03b54290bc84a94623f44,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 26ac554f67f9b6c41a5c01a392072a4b, type: 2}
     - target: {fileID: 6881652080201872441, guid: d0061aa6e3d03b54290bc84a94623f44,
         type: 3}
       propertyPath: m_Name
@@ -4550,6 +4588,21 @@ PrefabInstance:
       propertyPath: 'enemiesInZone.Array.data[1]'
       value: 
       objectReference: {fileID: 1216956564}
+    - target: {fileID: 7583282181922937897, guid: 3da1a827fa420c24f8020f494aee3d8d,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 28.206
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583282181922937897, guid: 3da1a827fa420c24f8020f494aee3d8d,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 28.206
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583282181922937897, guid: 3da1a827fa420c24f8020f494aee3d8d,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 28.206
+      objectReference: {fileID: 0}
     - target: {fileID: 7583282181922937897, guid: 3da1a827fa420c24f8020f494aee3d8d,
         type: 3}
       propertyPath: m_LocalPosition.x

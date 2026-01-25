@@ -7,6 +7,8 @@ using UnityEngine.Events;
 
 public class EnemyAI : MonoBehaviour, IDamageable
 {
+    public enum CombatType { Ranged, Melee }
+
     [Header("References")]
     public NavMeshAgent agent;
     public BasicEnemyAnimationController animationController;
@@ -25,11 +27,22 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private float _noiseInvestigationTime = 8f;
 
     [Header("Combat Settings")]
-    public float attackRange = 20f;
+    public CombatType combatType = CombatType.Ranged;
     public float forgetTime = 10f;
     public float stoppingDistance = 0.5f;
     [SerializeField] private float _health = 100;
     [SerializeField] private float _detectionDelay = 0.9f;
+
+    [Header("Melee Combat Settings")]
+    [SerializeField] private float _meleeAttackRange = 2f;
+    [SerializeField] private float _meleeAttackCooldown = 1.5f;
+    [SerializeField] private float _meleeDamage = 20f;
+    [SerializeField] private LayerMask _meleeHitLayers;
+    [SerializeField] private Vector3 _meleeAttackOffset = new Vector3(0, 1f, 1f);
+    [SerializeField] private float _meleeAttackRadius = 1f;
+
+    [Header("Range Combat Settings")]
+    public float attackRange = 20f;
     [SerializeField] private GameObject _prefabBullet;
     [SerializeField] private float _damage = 5f;
     [SerializeField] private float _speedBullet;
@@ -115,6 +128,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [HideInInspector] public bool isSearching = false;
     [HideInInspector] public Vector3 lastKnownPlayerPosition;
     [HideInInspector] public float timeSinceLastSeen = 0f;
+    [HideInInspector] public bool isMeleeAttacking = false;
+    [HideInInspector] public float meleeAttackTimer = 0f;
 
     [HideInInspector] public bool isReload = false;
     [HideInInspector] public bool isFire = false;
@@ -158,6 +173,15 @@ public class EnemyAI : MonoBehaviour, IDamageable
             if (timeSinceLastSeen >= forgetTime)
             {
                 ForgetPlayer();
+            }
+        }
+
+        if (isMeleeAttacking)
+        {
+            meleeAttackTimer -= Time.deltaTime;
+            if (meleeAttackTimer <= 0)
+            {
+                isMeleeAttacking = false;
             }
         }
 
@@ -242,6 +266,45 @@ public class EnemyAI : MonoBehaviour, IDamageable
         else
         {
             timeShoot = _timeBetweenShot;
+        }
+    }
+
+    public bool IsInMeleeRange()
+    {
+        if (playerTransform == null) return false;
+        return Vector3.Distance(transform.position, playerTransform.position) <= _meleeAttackRange;
+    }
+
+    public void StartMeleeAttack()
+    {
+        if (meleeAttackTimer > 0 || !playerDetected) return;
+        
+        isMeleeAttacking = true;
+        meleeAttackTimer = _meleeAttackCooldown;
+    }
+
+    public void ExecuteMeleeAttack()
+    {
+        if (playerTransform == null) return;
+        
+        Vector3 attackPosition = transform.position + transform.forward * _meleeAttackOffset.z + 
+                                Vector3.up * _meleeAttackOffset.y;
+        
+        Collider[] hitColliders = Physics.OverlapSphere(attackPosition, _meleeAttackRadius, _meleeHitLayers);
+        
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.transform == playerTransform)
+            {
+                if (hitCollider.TryGetComponent(out Damageable damageable))
+                {
+                    damageable.Damage(_meleeDamage);
+                    
+                    if (_showDebugLogs)
+                        Debug.Log($"Melee hit player for {_meleeDamage} damage");
+                }
+                break;
+            }
         }
     }
 
@@ -502,7 +565,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
                         DrawVisionRaycast(position);
                     }
 
-                    if (_showShootingRaycast)
+                    if (_showShootingRaycast && combatType == CombatType.Ranged)
                     {
                         DrawShootRaycast(position);
                     }
@@ -510,6 +573,17 @@ public class EnemyAI : MonoBehaviour, IDamageable
                     if (_showLastKnownPosition && isAlerted)
                     {
                         DrawLastKnownPosition();
+                    }
+
+                    if (_debugVision && combatType == CombatType.Melee)
+                    {
+                        Gizmos.color = Color.red;
+                        Vector3 meleePos = transform.position + transform.forward * _meleeAttackOffset.z + 
+                                        Vector3.up * _meleeAttackOffset.y;
+                        Gizmos.DrawWireSphere(meleePos, _meleeAttackRadius);
+                        
+                        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+                        Gizmos.DrawWireSphere(transform.position + Vector3.up, _meleeAttackRange);
                     }
 
                     // Направление взгляда

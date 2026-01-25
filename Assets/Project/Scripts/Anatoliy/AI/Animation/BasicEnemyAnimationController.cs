@@ -41,6 +41,10 @@ public class BasicEnemyAnimationController : MonoBehaviour
         public const string Shooting = "Shooting";
         public const string Reloading = "Reloading";
         public const string ReloadSpeed = "ReloadSpeed";
+
+        //Melee
+        public const string MeleeAttack = "MeleeAttack";
+        public const string MeleeAttacking = "MeleeAttacking";
         
         // States
         public const string IsDead = "IsDead";
@@ -103,9 +107,12 @@ public class BasicEnemyAnimationController : MonoBehaviour
 
     void Start()
     {
-        var animController = GetComponent<Animator>().runtimeAnimatorController;
-        var clip = animController.animationClips.First(a => a.name == "Reloading");
-        reloadClipLength = clip.length;
+        if (_enemyAI.combatType == EnemyAI.CombatType.Ranged)
+        {
+            var animController = GetComponent<Animator>().runtimeAnimatorController;
+            var clip = animController.animationClips.First(a => a.name == "Reloading");
+            reloadClipLength = clip.length;
+        }
     }
 
     void OnValidate()
@@ -320,6 +327,20 @@ public class BasicEnemyAnimationController : MonoBehaviour
         if (_showDebugLogs)
             Debug.Log("[Animation] Hit triggered!");
     }
+
+    /// <summary>
+    /// Проигрывает анимацию ближней атаки
+    /// </summary>
+    public void PlayMeleeAttack()
+    {
+        if (!_isInitialized) return;
+        
+        // _animator.SetTrigger(AnimParams.MeleeAttack);
+        _animator.SetBool(AnimParams.MeleeAttacking, _enemyAI.isMeleeAttacking);
+        
+        if (_showDebugLogs)
+            Debug.Log("[Animation] Melee attack triggered!");
+    }
     
     /// <summary>
     /// Проигрывает анимацию перезарядки
@@ -472,6 +493,22 @@ public class BasicEnemyAnimationController : MonoBehaviour
     public void OnFootstepRight()
     {
         _enemyAI?.PlayFootstepSound(1);
+    }
+
+    public void OnMeleeAttackHit()
+    {
+        _enemyAI?.ExecuteMeleeAttack();
+        
+        if (_showDebugLogs)
+            Debug.Log("[Animation Event] Melee attack hit!");
+    }
+
+    public void OnMeleeAttackComplete()
+    {
+        _animator.SetBool(AnimParams.MeleeAttacking, _enemyAI.isMeleeAttacking);
+        
+        if (_showDebugLogs)
+            Debug.Log("[Animation Event] Melee attack complete!");
     }
     
     #endregion
