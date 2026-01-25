@@ -11,6 +11,8 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader instance;
 
+    [SerializeField] private bool _isDebug = false;
+
     public String loadedScenes = "Transition_1";
 
     private List<string> sceneNames;
@@ -37,11 +39,14 @@ public class SceneLoader : MonoBehaviour
             {
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(scene.path);
                 names.Add(sceneName);
-                Debug.Log("Scene found: " + sceneName);
+
+                if(_isDebug)
+                    Debug.Log("Scene found: " + sceneName);
             }
         }
 
-        Debug.Log("Total scenes found: " + names.Count);
+        if (_isDebug)
+            Debug.Log("Total scenes found: " + names.Count);
 
         return names;
     }
@@ -55,7 +60,9 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator UnloadSceneByIndexAsync(int sceneIndex)
     {
         yield return SceneManager.UnloadSceneAsync(sceneIndex);
-        Debug.Log("Scene " + sceneIndex + " unloaded successfully.");
+
+        if (_isDebug)
+            Debug.Log("Scene " + sceneIndex + " unloaded successfully.");
     }
 
     private IEnumerator LoadSceneByIndexAsync(int sceneIndex)
@@ -76,7 +83,9 @@ public class SceneLoader : MonoBehaviour
             {
                 levelContainer.transform.eulerAngles = endLevelPoint.transform.eulerAngles;
                 levelContainer.transform.position -= startLevelPoint.transform.position - endLevelPoint.transform.position;
-                Debug.Log("Scene ID " + sceneIndex + " loaded successfully.");
+
+                if (_isDebug)
+                    Debug.Log("Scene ID " + sceneIndex + " loaded successfully.");
             }
             else
             {
@@ -88,7 +97,9 @@ public class SceneLoader : MonoBehaviour
     private void GetCurrentSceneName()
     {
         string sceneName = loadedScenes;
-        Debug.Log("Текущая сцена: " + sceneName);
+
+        if (_isDebug)
+            Debug.Log("Текущая сцена: " + sceneName);
     }
 
     public IEnumerator SceneRotationProcess()
