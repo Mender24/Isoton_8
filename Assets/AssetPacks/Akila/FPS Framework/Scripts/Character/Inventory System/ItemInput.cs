@@ -56,7 +56,7 @@ namespace Akila.FPSFramework
         /// <summary>
         /// Gets whether the drop input was triggered this frame.
         /// </summary>
-        public virtual bool DropInput => dropInput;
+        public virtual bool DropInput => false; //dropInput;
 
         /// <summary>
         /// Gets whether the fire button was triggered this frame.

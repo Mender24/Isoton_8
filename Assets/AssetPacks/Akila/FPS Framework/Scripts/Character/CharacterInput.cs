@@ -153,7 +153,7 @@ namespace Akila.FPSFramework
         public virtual bool itemNext => IsInputAllowed ? controls.Player.NextItem.triggered : false;
         public virtual bool itemPrevious => IsInputAllowed ? controls.Player.PreviousItem.triggered : false;
 
-        public virtual bool defaultItem => IsInputAllowed ? controls.Player.DefaultItem.triggered : false;
+        public virtual bool defaultItem => false; //=> IsInputAllowed ? controls.Player.DefaultItem.triggered : false;
 
         // Helper property for readability
         protected bool IsInputAllowed => FPSFrameworkCore.IsActive && FPSFrameworkCore.IsInputActive;
