@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Unity.Behavior;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IDamageable
 {
     [Header("References")]
     public NavMeshAgent agent;
@@ -27,6 +28,7 @@ public class EnemyAI : MonoBehaviour
     public float attackRange = 20f;
     public float forgetTime = 10f;
     public float stoppingDistance = 0.5f;
+    [SerializeField] private float _health = 100;
     [SerializeField] private float _detectionDelay = 0.9f;
     [SerializeField] private GameObject _prefabBullet;
     [SerializeField] private float _damage = 5f;
@@ -127,6 +129,14 @@ public class EnemyAI : MonoBehaviour
     private bool _debugIsPlayerHit = false;
     private Vector3 _debugShotTargetPosition = new();
 
+    public float Health { get => _health; set => _health = value; }
+    public bool isDamagableDisabled { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public bool allowDamageableEffects { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public bool DeadConfirmed { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public GameObject DamageSource { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+    public UnityEvent OnDeath => throw new System.NotImplementedException();
+
     void Start()
     {
         if (agent == null) agent = GetComponent<NavMeshAgent>();
@@ -199,7 +209,7 @@ public class EnemyAI : MonoBehaviour
         float hitChance = Random.Range(0, 1f);
 
         if (hitChance <= _chanceToHit)
-        {   
+        {
             Vector3 shootDirection = (targetPosition - bulletStartPosition).normalized;
             RaycastHit hit;
 
@@ -329,15 +339,18 @@ public class EnemyAI : MonoBehaviour
         return Vector3.Distance(transform.position, playerTransform.position);
     }
 
-    public void TakeDamage(float damage)
+    public void Damage(float amount, GameObject damageSource)
     {
         animationController?.PlayHit();
-        
-        // health -= damage;
-        // if (health <= 0)
-        // {
-        //     Die();
-        // }
+
+        _health -= amount;
+        if (_health <= 0)
+            Die();
+    }
+
+    public bool IsSwaped()
+    {
+        throw new System.NotImplementedException();
     }
 
     private void Die()
@@ -362,7 +375,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (_audioSource != null && _footstepSounds.Count > 0)
         {
-            int rool =  Random.Range(0, _footstepSounds.Count-1);
+            int rool = Random.Range(0, _footstepSounds.Count - 1);
             _audioSource.PlayOneShot(_footstepSounds[rool]);
         }
 

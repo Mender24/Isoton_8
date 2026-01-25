@@ -1,9 +1,9 @@
-using Akila.FPSFramework.Internal;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace Akila.FPSFramework
@@ -11,9 +11,15 @@ namespace Akila.FPSFramework
     [AddComponentMenu("Akila/FPS Framework/Managers/Spwan Manager")]
     public class SpawnManager : MonoBehaviour
     {
+        public bool _isDeleteSave = false;
+        public InventoryItem _prefab;
+        [SerializeField] private List<InventoryItem> _itemsPrefab = new();
+        [SerializeField] private int _maxWeaponCount = 3;
+
         [FormerlySerializedAs("spwanableObjects")]
         public List<SpwanableObject> spawnableObjects = new List<SpwanableObject>();
 
+        public string NameSearchObjectToNewScene = "SpawnPoints";
         public float spawnRadius = 5;
         public float respawnDelay = 5;
 
@@ -22,7 +28,10 @@ namespace Akila.FPSFramework
 
         public static SpawnManager Instance;
 
+        public int _currentSpawnPointId = 0;
+
         public bool isActive { get; set; } = true;
+        public int CurrentSpawnPointId => _currentSpawnPointId;
 
         public UnityEvent<GameObject> onPlayerSpwanWithObj { get; set; } = new UnityEvent<GameObject>();
         public UnityEvent<string> onPlayerSpwanWithObjName { get; set; } = new UnityEvent<string>();
@@ -31,6 +40,33 @@ namespace Akila.FPSFramework
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+        }
+
+        private void Update()
+        {
+            if(_isDeleteSave)
+            {
+                _isDeleteSave = false;
+                PlayerPrefs.DeleteAll();
+            }
+        }
+
+        public void SetNewSpawnPoint()
+        {
+            _currentSpawnPointId++;
+        }
+
+        public void UpdateSpawnPoint(int indexNewScene)
+        {
+            Scene scene = SceneManager.GetSceneByBuildIndex(indexNewScene);
+
+            GameObject SpawnPoints = scene.GetRootGameObjects()
+                .SelectMany(t => t.GetComponentsInChildren<Transform>(true))
+                .FirstOrDefault(x => x.gameObject.transform.name == NameSearchObjectToNewScene)?.gameObject;
+
+            Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
+            sides[0].points = newArray;
+            _currentSpawnPointId = 0;
         }
 
         public async void SpawnActor(IActor actorSelf, string actorObjName, float delay)
@@ -67,7 +103,7 @@ namespace Akila.FPSFramework
         {
             GameObject obj = spawnableObjects.Find(x => x.name == actorObjName).obj;
 
-            GameObject newPlayer = SpawnActor( actorSelf, obj);
+            GameObject newPlayer = SpawnActor(actorSelf, obj);
 
             Actor newPlayerActorComponent = newPlayer.GetComponent<Actor>();
             Actor actorSelfActorComponent = actorSelf.gameObject.GetComponent<Actor>();
@@ -85,7 +121,7 @@ namespace Akila.FPSFramework
         {
             onPlayerSpwanWithObj?.Invoke(actorObj);
 
-            if(!isActive) return null;
+            if (!isActive) return null;
 
             Vector3 actorPosition = GetPlayerPosition(actorSelf.teamId);
             Quaternion actorRotation = GetPlayerRotation(actorSelf.teamId);
@@ -95,6 +131,14 @@ namespace Akila.FPSFramework
             Actor newPlayerActorComponent = newActorObject.GetComponent<Actor>();
             Actor actorSelfActorComponent = actorSelf.gameObject.GetComponent<Actor>();
 
+            //----
+            Inventory inventory = newPlayerActorComponent.GetComponentsInChildren<MonoBehaviour>()
+                .OfType<Inventory>()
+                .FirstOrDefault();
+
+            //SaveManager.LoadPlayer(inventory, _itemsPrefab);
+            LoadPlayer(inventory, _itemsPrefab);
+            //----
 
             if (newPlayerActorComponent && actorSelfActorComponent)
             {
@@ -110,16 +154,40 @@ namespace Akila.FPSFramework
             return newActorObject;
         }
 
+        public void SavePlayer(Actor player)
+        {
+            PlayerPrefs.DeleteAll();
+
+            Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
+
+            for (int i = 0; i < weapons.Length; i++)
+                PlayerPrefs.SetString("Weapon" + i.ToString(), weapons[i].Name);
+
+            PlayerPrefs.Save();
+        }
+
+        public void LoadPlayer(Inventory inventory, List<InventoryItem> itemsPrefab)
+        {
+            for(int i = 0; i < _maxWeaponCount; i++)
+            {
+                if(PlayerPrefs.HasKey("Weapon" + i))
+                {
+                    InventoryItem prefab = itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
+                    InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
+                }
+            }
+        }
+
         public Transform GetPlayerSpawnPoint(int sideId)
         {
-            int pointIndex = Random.Range(0, sides[sideId].points.Length);
+            //int pointIndex = Random.Range(0, sides[sideId].points.Length);
 
-            return sides[sideId].points[pointIndex];
+            return sides[sideId].points[_currentSpawnPointId];
         }
 
         public Vector3 GetPlayerPosition(int sideId)
         {
-            Vector3 addedPosition = Random.insideUnitCircle * spawnRadius;
+            Vector3 addedPosition = UnityEngine.Random.insideUnitCircle * spawnRadius;
 
             addedPosition.z = addedPosition.y;
 
@@ -135,10 +203,16 @@ namespace Akila.FPSFramework
 
         private void OnDrawGizmos()
         {
+            if (sides.Count == 0)
+                return;
+
             foreach (SpwanSide point in sides)
             {
                 foreach (Transform transform in point.points)
                 {
+                    if (transform == null)
+                        continue;
+
                     Gizmos.color = Color.white;
                     Gizmos.DrawWireSphere(transform.position, spawnRadius * transform.lossyScale.magnitude);
                 }
