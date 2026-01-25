@@ -23,7 +23,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 597552344615743030}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1.13686824e-13, z: -5.6843412e-14, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -32,6 +31,7 @@ Transform:
   - {fileID: 911312323238108233}
   - {fileID: 597552345267094241}
   m_Father: {fileID: 597552345293954953}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &597552345267094174
 GameObject:
@@ -56,7 +56,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 597552345267094174}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.3, y: 0.47, z: 0.328}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -64,6 +63,7 @@ Transform:
   m_Children:
   - {fileID: 5811329709258387044}
   m_Father: {fileID: 597552344615743033}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &597552345293954950
 GameObject:
@@ -88,7 +88,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 597552345293954950}
-  serializedVersion: 2
   m_LocalRotation: {x: -0.70710695, y: 4.0745365e-10, z: 1.74623e-10, w: 0.70710665}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.002970014, y: 0.002970014, z: 0.002970014}
@@ -97,6 +96,7 @@ Transform:
   - {fileID: 597552344615743033}
   - {fileID: 5470953863196249150}
   m_Father: {fileID: 6549288436452031267}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &907023614913582992
 GameObject:
@@ -123,13 +123,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 907023614913582992}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1174394582393499688
 MonoBehaviour:
@@ -146,9 +146,9 @@ MonoBehaviour:
   Name: Breathing Aim
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -222,13 +222,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 911312323238108232}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.119, z: 1.508}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 597552344615743033}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1012730713975569757
 GameObject:
@@ -257,13 +257,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1012730713975569757}
-  serializedVersion: 2
   m_LocalRotation: {x: -0.111480795, y: 0.5566358, z: -0.095505476, w: -0.8176842}
   m_LocalPosition: {x: 302.63242, y: -9.329628, z: 391.13068}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9176025078226439763
 MonoBehaviour:
@@ -280,9 +280,9 @@ MonoBehaviour:
   Name: Land
   length: 0.15
   weight: 0.683
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -420,7 +420,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1069960484613499416}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -429,6 +428,7 @@ Transform:
   - {fileID: 1069960485281077536}
   - {fileID: 6518075918089467556}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1069960484613499420
 MonoBehaviour:
@@ -445,10 +445,6 @@ MonoBehaviour:
   Name: Pistol_1
   replacement: {fileID: 3038335593628742140, guid: 21e9684a6af38734d96c7c5344a73eef,
     type: 3}
-  _uiSpriteActive: {fileID: 21300000, guid: 1cf68ad274dce9f4287157af6af8e5ba, type: 3}
-  _uiSpriteDeactivated: {fileID: 21300000, guid: 6c386d7ae9880c64f9f3234a0cc3c595,
-    type: 3}
-  _inventoryItemType: 1
   OnDropAttempted:
     m_PersistentCalls:
       m_Calls: []
@@ -545,7 +541,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1069960484828834673}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -553,6 +548,7 @@ Transform:
   m_Children:
   - {fileID: 672155756044788619}
   m_Father: {fileID: 1069960485281077536}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1069960485281077539
 GameObject:
@@ -578,7 +574,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1069960485281077539}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.06, y: -0.06, z: 0.4}
   m_LocalScale: {x: 0.54967463, y: 0.54967463, z: 0.54967463}
@@ -586,6 +581,7 @@ Transform:
   m_Children:
   - {fileID: 1069960484828834678}
   m_Father: {fileID: 1069960484613499417}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3346201709412351682
 MonoBehaviour:
@@ -631,13 +627,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1089173400499628984}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8113653295788052847
 MonoBehaviour:
@@ -654,9 +650,9 @@ MonoBehaviour:
   Name: Recoil
   length: 0.01
   weight: 1
-  options: 6
+  animationOptions: 6
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -779,7 +775,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1201069202278072461}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -788,6 +783,7 @@ Transform:
   - {fileID: 6949874251609539377}
   - {fileID: 8117017919463884174}
   m_Father: {fileID: 5470953863196249150}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1270069150264878917
 GameObject:
@@ -814,13 +810,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1270069150264878917}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6675801957344075804
 MonoBehaviour:
@@ -837,9 +833,9 @@ MonoBehaviour:
   Name: Walking
   length: 0.15
   weight: 1
-  options: 1
+  animationOptions: 1
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -913,7 +909,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1385828070400940052}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -921,6 +916,7 @@ Transform:
   m_Children:
   - {fileID: 66468154415603763}
   m_Father: {fileID: 5470953863196249150}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2058194011421963778
 GameObject:
@@ -949,13 +945,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2058194011421963778}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1129499945710827942
 MonoBehaviour:
@@ -972,9 +968,9 @@ MonoBehaviour:
   Name: Sprinting
   length: 0.24
   weight: 1
-  options: 0
+  animationOptions: 0
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 2
   triggerInputAction:
     m_Name: 'Shit [Keyboard]'
@@ -1128,13 +1124,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2706362599959986558}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1550149860063465898
 MonoBehaviour:
@@ -1151,9 +1147,9 @@ MonoBehaviour:
   Name: Tactical Sprinting
   length: 0.24
   weight: 1
-  options: 0
+  animationOptions: 0
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 3
   triggerInputAction:
     m_Name: 'Shit [Keyboard]'
@@ -1305,13 +1301,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4155667616213351707}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3306493781390062051}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4727134813415848769
 MonoBehaviour:
@@ -1378,7 +1374,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4705368281514454600}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -1387,6 +1382,7 @@ Transform:
   - {fileID: 5086288392029404160}
   - {fileID: 976325749305937363}
   m_Father: {fileID: 597552345293954953}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5515258505040471149
 GameObject:
@@ -1413,13 +1409,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5515258505040471149}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4093877607956272197
 MonoBehaviour:
@@ -1436,9 +1432,9 @@ MonoBehaviour:
   Name: Lean Left Aim
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: 'Q [Keyboard]'
@@ -1512,13 +1508,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5898180529956333241}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8323344892824100659
 MonoBehaviour:
@@ -1535,9 +1531,9 @@ MonoBehaviour:
   Name: Wall Avoidance
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -1601,7 +1597,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6099778984959900871}
-  serializedVersion: 2
   m_LocalRotation: {x: -0.70942295, y: 0.0022481505, z: 0.0011070254, w: 0.7047786}
   m_LocalPosition: {x: 0, y: -0.0002565456, z: 0.00032391722}
   m_LocalScale: {x: 0.0029700138, y: 0.0029700142, z: 0.002970014}
@@ -1610,6 +1605,7 @@ Transform:
   - {fileID: 5845646520171781792}
   - {fileID: 6000509253064984243}
   m_Father: {fileID: 2639918729357868849}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6339226811359698056
 GameObject:
@@ -1636,13 +1632,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6339226811359698056}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2590426587467619819
 MonoBehaviour:
@@ -1659,9 +1655,9 @@ MonoBehaviour:
   Name: Lean Left
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: 'Q [Keyboard]'
@@ -1738,13 +1734,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6650499960120749202}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3665515201205757906
 MonoBehaviour:
@@ -1761,9 +1757,9 @@ MonoBehaviour:
   Name: Recoil Aim
   length: 0.01
   weight: 1
-  options: 6
+  animationOptions: 6
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -1886,13 +1882,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6653310978612385746}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8933465988903176214
 MonoBehaviour:
@@ -1909,9 +1905,9 @@ MonoBehaviour:
   Name: Breathing
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -1989,13 +1985,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6697086219742627686}
-  serializedVersion: 2
   m_LocalRotation: {x: -0.111480795, y: 0.5566358, z: -0.095505476, w: -0.8176842}
   m_LocalPosition: {x: 302.63242, y: -9.329628, z: 391.13068}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4346679889731134927
 MonoBehaviour:
@@ -2012,9 +2008,9 @@ MonoBehaviour:
   Name: Jump
   length: 0.15
   weight: 0.683
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -2151,13 +2147,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6932851143399414472}
-  serializedVersion: 2
   m_LocalRotation: {x: -0.031798247, y: -0.90381116, z: -0.034677144, w: -0.42533714}
   m_LocalPosition: {x: 306.98578, y: -10.688639, z: 387.12277}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2002907383728711116
 MonoBehaviour:
@@ -2174,9 +2170,9 @@ MonoBehaviour:
   Name: Show
   length: 0.15
   weight: 1
-  options: 12
+  animationOptions: 12
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -2260,13 +2256,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7275563678424617123}
-  serializedVersion: 2
   m_LocalRotation: {x: -0.031798247, y: -0.90381116, z: -0.034677144, w: -0.42533714}
   m_LocalPosition: {x: 306.98575, y: -10.688641, z: 387.1227}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3967893164089518406
 MonoBehaviour:
@@ -2283,9 +2279,9 @@ MonoBehaviour:
   Name: Sway Aiming
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -2372,7 +2368,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7650015916316515110}
-  serializedVersion: 2
   m_LocalRotation: {x: 0.00023632962, y: 0.9043704, z: 0.019811975, w: -0.42628828}
   m_LocalPosition: {x: 494.16415, y: 1.6739514, z: 10.219915}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -2398,6 +2393,7 @@ Transform:
   - {fileID: 8566612898501202005}
   - {fileID: 5274498848822712790}
   m_Father: {fileID: 1069960484613499417}
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7783383399571644076
 GameObject:
@@ -2424,13 +2420,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7783383399571644076}
-  serializedVersion: 2
   m_LocalRotation: {x: -0.031798247, y: -0.90381116, z: -0.034677144, w: -0.42533714}
   m_LocalPosition: {x: 306.98575, y: -10.688641, z: 387.1227}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6500674332384390024
 MonoBehaviour:
@@ -2447,9 +2443,9 @@ MonoBehaviour:
   Name: Sway
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: Trigger Input
@@ -2538,13 +2534,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8143288230373219598}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3794933281422319488
 MonoBehaviour:
@@ -2561,9 +2557,9 @@ MonoBehaviour:
   Name: Lean Right Aim
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: 'E [Keyboard]'
@@ -2637,13 +2633,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8237765018241484216}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0.47, y: -0.133882, z: 0.2672748}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 597552345267094241}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!198 &2244003601039064073
 ParticleSystem:
@@ -7339,9 +7335,6 @@ ParticleSystemRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -7380,15 +7373,13 @@ ParticleSystemRenderer:
   m_RenderAlignment: 0
   m_Pivot: {x: 0.04, y: 0.02, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
+  m_UseCustomVertexStreams: 0
   m_EnableGPUInstancing: 0
   m_ApplyActiveColorSpace: 0
   m_AllowRoll: 1
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
-  m_UseCustomVertexStreams: 0
   m_VertexStreams: 00010304
-  m_UseCustomTrailVertexStreams: 0
-  m_TrailVertexStreams: 00010304
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
@@ -7423,13 +7414,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8325416232282326599}
-  serializedVersion: 2
   m_LocalRotation: {x: -0.031798247, y: -0.90381116, z: -0.034677144, w: -0.42533714}
   m_LocalPosition: {x: 306.98578, y: -10.688639, z: 387.12277}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3098456202835132710
 MonoBehaviour:
@@ -7446,9 +7437,9 @@ MonoBehaviour:
   Name: Crouch
   length: 0.12
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: 'Right Button [Mouse]'
@@ -7516,13 +7507,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8473819864093119836}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6850227354709662327
 MonoBehaviour:
@@ -7539,9 +7530,9 @@ MonoBehaviour:
   Name: Aiming
   length: 0.2
   weight: 1
-  options: 0
+  animationOptions: 0
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 2
   triggerInputAction:
     m_Name: 'Right Button [Mouse]'
@@ -7711,13 +7702,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9129023193881951723}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.026176922, w: 0.9996574}
   m_LocalPosition: {x: 0.060124334, y: -0.09434144, z: 0.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6518075918089467556}
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2006236085698838115
 MonoBehaviour:
@@ -7734,9 +7725,9 @@ MonoBehaviour:
   Name: Lean Right
   length: 0.15
   weight: 1
-  options: 4
+  animationOptions: 4
   isolationMode: 0
-  isolationUpdateMode: 0
+  updateMode: 0
   triggerType: 0
   triggerInputAction:
     m_Name: 'E [Keyboard]'

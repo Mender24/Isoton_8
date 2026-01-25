@@ -17,6 +17,7 @@ public partial class PlayerDetectedAction : Action
 
     protected override Status OnUpdate()
     {
+        if (!EnemyAI.Value) return Status.Failure;
         return EnemyAI.Value.OnPlayerDetected();
     }
 

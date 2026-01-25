@@ -24,7 +24,7 @@ public partial class MoveToLastKnownPositionAction : Action
     
     protected override Status OnUpdate()
     {
-        if (EnemyAI.Value.agent.remainingDistance <= EnemyAI.Value.agent.stoppingDistance + 1f)
+        if (EnemyAI.Value.agent.remainingDistance <= EnemyAI.Value.agent.stoppingDistance)
         {
             return Status.Success;
         }

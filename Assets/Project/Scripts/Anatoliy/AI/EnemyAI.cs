@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Unity.Behavior;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IDamageable
 {
     [Header("References")]
     public NavMeshAgent agent;
@@ -20,10 +21,14 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Hearing Settings")]
     public float hearingRange = 10f;
+    [SerializeField] private float _soundDetectionThreshold = 0.5f;
+    [SerializeField] private float _noiseInvestigationTime = 8f;
 
     [Header("Combat Settings")]
     public float attackRange = 20f;
     public float forgetTime = 10f;
+    public float stoppingDistance = 0.5f;
+    [SerializeField] private float _health = 100;
     [SerializeField] private float _detectionDelay = 0.9f;
     [SerializeField] private GameObject _prefabBullet;
     [SerializeField] private float _damage = 5f;
@@ -37,11 +42,11 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Vector3 _agentCenterOffset = new(0, 0.5f, 0);
 
     [Header("Shoot Target Offset")]
-    [SerializeField] private float _xShootTargetOffset = 0; // const offset я тут переименовал твое, если непрвильно переделай на свое
+    [SerializeField] private float _xShootTargetOffset = 0;
     [SerializeField] private float _yShootTargetOffset = 1;
 
     [Header("Spray Shoot Offset")]
-    [SerializeField] private float _heightSprayOffset = 0.5f; // random offset
+    [SerializeField] private float _heightSprayOffset = 0.5f;
     [SerializeField] private float _widthSprayOffset = 2;
 
     [Header("Movement")]
@@ -53,6 +58,7 @@ public class EnemyAI : MonoBehaviour
     public bool shouldPatrol = false;
     public List<GameObject> patrolPoints = new();
     public float waypointWaitTime = 1f;
+    public Vector3 startPosition = new();
 
     [Header("Audio")]
     [SerializeField] private AudioSource _audioSource;
@@ -110,14 +116,26 @@ public class EnemyAI : MonoBehaviour
     [HideInInspector] public Vector3 lastKnownPlayerPosition;
     [HideInInspector] public float timeSinceLastSeen = 0f;
 
-    [HideInInspector] public bool isReload = false; // Reload Status
+    [HideInInspector] public bool isReload = false;
     [HideInInspector] public bool isFire = false;
     [HideInInspector] public float timeShoot = 0f;
     [HideInInspector] public int currentBullet = 0;
+    [HideInInspector] public Vector3 lastHeardNoisePosition;
+    [HideInInspector] public bool heardNoise = false;
+    private float _noiseInvestigationTimer = 0f;
+    private AudioSource _lastHeardAudioSource;
 
     private bool _detectionDelayActive = false;
     private bool _debugIsPlayerHit = false;
     private Vector3 _debugShotTargetPosition = new();
+
+    public float Health { get => _health; set => _health = value; }
+    public bool isDamagableDisabled { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public bool allowDamageableEffects { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public bool DeadConfirmed { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public GameObject DamageSource { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+    public UnityEvent OnDeath => throw new System.NotImplementedException();
 
     void Start()
     {
@@ -126,13 +144,13 @@ public class EnemyAI : MonoBehaviour
         if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
 
         agent.speed = walkSpeed;
+        agent.stoppingDistance = stoppingDistance;
     }
 
     void Update()
     {
         if (!isActivated) return;
 
-        // Обновление таймера забывания
         if (isAlerted && !CanSeePlayer())
         {
             timeSinceLastSeen += Time.deltaTime;
@@ -142,6 +160,8 @@ public class EnemyAI : MonoBehaviour
                 ForgetPlayer();
             }
         }
+
+        UpdateNoiseInvestigation();
 
         if(isFire && timeShoot <= 0)
         {
@@ -189,7 +209,7 @@ public class EnemyAI : MonoBehaviour
         float hitChance = Random.Range(0, 1f);
 
         if (hitChance <= _chanceToHit)
-        {   
+        {
             Vector3 shootDirection = (targetPosition - bulletStartPosition).normalized;
             RaycastHit hit;
 
@@ -249,14 +269,6 @@ public class EnemyAI : MonoBehaviour
         return false;
     }
 
-    public bool CanHearPlayer(float noiseRange)
-    {
-        if (playerTransform == null) return false;
-
-        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-        return distanceToPlayer <= noiseRange;
-    }
-
     public Node.Status OnPlayerDetected()
     {
         if (isSearching)
@@ -282,6 +294,7 @@ public class EnemyAI : MonoBehaviour
     {
         isAlerted = true;
         lastKnownPlayerPosition = playerTransform.position;
+        startPosition = transform.position;
         timeSinceLastSeen = 0f;
         agent.speed = runSpeed;
         StartCoroutine(DetectionDelayCoroutine());
@@ -326,15 +339,18 @@ public class EnemyAI : MonoBehaviour
         return Vector3.Distance(transform.position, playerTransform.position);
     }
 
-    public void TakeDamage(float damage)
+    public void Damage(float amount, GameObject damageSource)
     {
         animationController?.PlayHit();
-        
-        // health -= damage;
-        // if (health <= 0)
-        // {
-        //     Die();
-        // }
+
+        _health -= amount;
+        if (_health <= 0)
+            Die();
+    }
+
+    public bool IsSwaped()
+    {
+        throw new System.NotImplementedException();
     }
 
     private void Die()
@@ -359,12 +375,92 @@ public class EnemyAI : MonoBehaviour
     {
         if (_audioSource != null && _footstepSounds.Count > 0)
         {
-            int rool =  Random.Range(0, _footstepSounds.Count-1);
+            int rool = Random.Range(0, _footstepSounds.Count - 1);
             _audioSource.PlayOneShot(_footstepSounds[rool]);
         }
 
         if (_showDebugLogs)
             Debug.Log($"Footstep {foot}");
+    }
+
+    public bool CanHearPlayer(float noiseRange)
+    {
+        if (playerTransform == null) return false;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+        return distanceToPlayer <= noiseRange;
+    }
+
+    public bool CanHearNoise()
+    {
+        if (playerDetected) return false;
+
+        Collider[] hearingColliders = Physics.OverlapSphere(transform.position, hearingRange, _playerLayer);
+
+        foreach (Collider collider in hearingColliders)
+        {
+            AudioSource audioSource = collider.GetComponentInChildren<AudioSource>();
+
+            if (audioSource != null && audioSource.isPlaying)
+            {
+                if (audioSource.volume >= _soundDetectionThreshold)
+                {
+                    lastHeardNoisePosition = audioSource.transform.position;
+                    _lastHeardAudioSource = audioSource;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public Node.Status OnNoiseDetected()
+    {
+        if (heardNoise && playerDetected)
+        {
+            heardNoise = false;
+            return Node.Status.Failure;
+        }
+
+        if (!heardNoise && CanHearNoise())
+        {
+            heardNoise = true;
+            _noiseInvestigationTimer = _noiseInvestigationTime;
+            agent.speed = runSpeed;
+            startPosition = transform.position;
+
+            if (_showDebugLogs)
+                Debug.Log($"Enemy heard noise at: {lastHeardNoisePosition}");
+
+            return Node.Status.Success;
+        }
+
+        return Node.Status.Failure;
+    }
+
+    public void UpdateNoiseInvestigation()
+    {
+        if (heardNoise)
+        {
+            _noiseInvestigationTimer -= Time.deltaTime;
+
+            if (_noiseInvestigationTimer <= 0)
+            {
+                heardNoise = false;
+                agent.speed = walkSpeed;
+            }
+            else if (playerDetected)
+            {
+                heardNoise = false;
+                agent.speed = walkSpeed;
+            }
+        }
+    }
+
+    public Vector3 GetNoiseInvestigationTarget()
+    {
+        return lastHeardNoisePosition;
     }
 
     void OnDrawGizmos()
@@ -584,6 +680,7 @@ public class EnemyAI : MonoBehaviour
         info += $"Alerted: {isAlerted}\n";
         info += $"Searching: {isSearching}\n";
         info += $"Detected player: {playerDetected}\n";
+        info += $"Started position: {startPosition}\n";
 
         if (playerTransform != null)
         {
