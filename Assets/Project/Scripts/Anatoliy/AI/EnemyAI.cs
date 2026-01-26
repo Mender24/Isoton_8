@@ -413,7 +413,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     public bool IsSwaped()
     {
-        throw new System.NotImplementedException();
+        return true;
     }
 
     private void Die()

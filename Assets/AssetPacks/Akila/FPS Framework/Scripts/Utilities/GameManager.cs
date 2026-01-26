@@ -24,7 +24,9 @@ namespace Akila.FPSFramework
                 Destroy(gameObject);
 
             Instantiate(deathCamera, transform);
-            Instantiate(uIManager, transform);
+
+            if(uIManager != null)
+                Instantiate(uIManager, transform);
         }
     }
 }
