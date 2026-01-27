@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -17,14 +18,29 @@ namespace Akila.FPSFramework
             pivot.localRotation = Quaternion.Lerp(pivot.localRotation, targetRotation, Time.deltaTime * roughness);
         }
 
-        public void ActivatedLeaver()
+        public void ActivatedLeaver(bool isActive = false)
         {
             if (!_isActivated)
             {
                 _isActivated = true;
                 ToggleLeaver();
-                StartCoroutine(StartChangeSceneProcess());
+
+                if(isActive)
+                    StartCoroutine(StartChangeSceneProcess());
             }
+        }
+
+        public void EnterNext()
+        {
+            ActivatedLeaver();
+            enterDoor.CloseDoor();
+            exitDoor.OpenDoor();
+        }
+
+        public void EnterLastLocation()
+        {
+            enterDoor.OpenDoor();
+            exitDoor.CloseDoor();
         }
 
         private IEnumerator StartChangeSceneProcess()

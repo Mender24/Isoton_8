@@ -11,20 +11,31 @@ public class BunkerDoor : MonoBehaviour
     private Quaternion targetRotation;
     public bool isOpenInitially = false;
 
-    private void Start()
-    {
-        targetRotation = isOpenInitially ? Quaternion.Euler(0, -90, 0) : Quaternion.identity;   
-        //targetRotation = isOpenInitially ? Quaternion.Euler(0, 0, 0) : Quaternion.identity;
-    }
+    //private void Start()
+    //{
+    //    Debug.Log("Start");
+    //    if(isOpenInitially)
+    //        targetRotation = Quaternion.Euler(0, -90, 0);   
+    //}
 
     private void Update()
     {
-        //pivot_left.localRotation = Quaternion.Lerp(pivot_left.localRotation, targetRotation, Time.deltaTime * roughness);
-        pivot_hinge.localRotation = Quaternion.Lerp(pivot_hinge.localRotation, Quaternion.Inverse(targetRotation), Time.deltaTime * roughness);
+        if(targetRotation != pivot_hinge.localRotation)
+            pivot_hinge.localRotation = Quaternion.Lerp(pivot_hinge.localRotation, Quaternion.Inverse(targetRotation), Time.deltaTime * roughness);
     }
 
     public void ToggleDoor()
     {
         targetRotation = targetRotation == Quaternion.Euler(0, -90, 0) ? Quaternion.identity : Quaternion.Euler(0, -90, 0);
+    }
+
+    public void OpenDoor()
+    {
+        targetRotation = Quaternion.Euler(0, -90, 0);
+    }
+
+    public void CloseDoor()
+    {
+        targetRotation = Quaternion.identity;
     }
 }
