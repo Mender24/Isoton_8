@@ -14,8 +14,8 @@ public class BasicEnemyAnimationController : MonoBehaviour
     [SerializeField] private EnemyAI _enemyAI;
     
     [Header("Movement Animation Settings")]
-    [SerializeField] private float _speedSmoothTime = 0.1f;
-    [SerializeField] private float _minSpeedThreshold = 0.05f;
+    [SerializeField] private float _speedSmoothTime = 0.3f;
+    [SerializeField] private float _minSpeedThreshold = 0.2f;
 
     [Tooltip("Множитель скорости для более выразительных анимаций")]
     [SerializeField] private float _speedMultiplier = 1.0f;
@@ -24,6 +24,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
     [SerializeField] private float _idleVariationInterval = 5f;
     [SerializeField] private int _idleVariationsCount = 3;
     [SerializeField] private float _idleVariationChance = 0.6f; // 60% шанс вариации
+    [SerializeField] private int _amountWinAnimations = 3;
     
     [Header("Debug")]
     [SerializeField] private bool _showDebugLogs = false;
@@ -49,6 +50,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         // States
         public const string IsDead = "IsDead";
         public const string RandomIdleF = "RandomIdleF";
+        public const string WinNumber = "WinNumber";
         
         // Triggers
         public const string Alert = "Alert";
@@ -56,6 +58,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         public const string Hit = "Hit";
         public const string Reload = "Reload";
         public const string Search = "Search";
+        public const string Winning = "Win";
     }
     
     // State cache для оптимизации
@@ -66,6 +69,8 @@ public class BasicEnemyAnimationController : MonoBehaviour
     private bool _cachedReloading = false;
     private float _cachedSpeed = 0f;
     private float _targetSpeed = 0f;
+    private float _idleFloat = 0.0f;
+    private float _randomIdle = 0.0f;
     
     // Idle variation
     private float _idleTimer = 0f;
@@ -110,7 +115,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         if (_enemyAI.combatType == EnemyAI.CombatType.Ranged)
         {
             var animController = GetComponent<Animator>().runtimeAnimatorController;
-            var clip = animController.animationClips.First(a => a.name == "Reloading");
+            var clip = animController.animationClips.First(a => a.name == "ReloadAssaultRifle");
             reloadClipLength = clip.length;
         }
     }
@@ -222,12 +227,13 @@ public class BasicEnemyAnimationController : MonoBehaviour
     
     private void UpdateIdleVariations()
     {
-        bool shouldPlayVariation = !_enemyAI.isAlerted && 
-                                   !_agent.hasPath && 
-                                   _agent.velocity.magnitude < 0.1f &&
-                                   !_enemyAI.playerDetected;
+        // Условие, при котором бот может играть вариации ожидания
+        bool canPlayVariation = !_enemyAI.isAlerted && 
+                                !_agent.hasPath && 
+                                _agent.velocity.magnitude < 0.1f &&
+                                !_enemyAI.playerDetected;
         
-        if (shouldPlayVariation)
+        if (canPlayVariation)
         {
             _idleTimer += Time.deltaTime;
             
@@ -240,31 +246,40 @@ public class BasicEnemyAnimationController : MonoBehaviour
         else
         {
             _idleTimer = 0f;
-            
-            if (_animator.GetFloat(AnimParams.RandomIdleF) != 0)
-            {
-                _animator.SetFloat(AnimParams.RandomIdleF, 0);
-                if (_showDebugLogs)
-                    Debug.Log("[Animation] Returning to base idle");
-            }
+            _randomIdle = 0f; // Возвращаемся к базовому Idle (0)
         }
+
+        // ПЛАВНЫЙ ПЕРЕХОД: Интерполируем значение каждый кадр
+        // 5f - скорость перехода. Чем выше число, тем быстрее сменится поза.
+        _idleFloat = Mathf.MoveTowards(_idleFloat, _randomIdle, Time.deltaTime * 0.5f);
+        
+        // Отправляем текущее плавное значение в аниматор
+        _animator.SetFloat(AnimParams.RandomIdleF, _idleFloat);
     }
     
     private void PlayRandomIdleVariation()
     {
         float roll = Random.value;
 
+        // Если не повезло с шансом, целевое значение — 0 (обычный Idle)
         if (roll > _idleVariationChance)
         {
-            _animator.SetFloat(AnimParams.RandomIdleF, 0);
+            _randomIdle = 0f;
             return;
         }
         
-        int randomIdle = Random.Range(1, _idleVariationsCount + 1);
-        _animator.SetFloat(AnimParams.RandomIdleF, (float)randomIdle);
+        // Выбираем новую вариацию, которая отличается от текущей цели
+        int nextVariation;
+        do
+        {
+            nextVariation = Random.Range(1, _idleVariationsCount + 1);
+        } 
+        while (nextVariation == (int)_randomIdle && _idleVariationsCount > 1);
+
+        _randomIdle = (float)nextVariation;
         
         if (_showDebugLogs)
-            Debug.Log($"[Animation] Playing Idle variation: {randomIdle}");
+            Debug.Log($"[Animation] New Idle target variation: {_randomIdle}");
     }
     
     #endregion
@@ -367,6 +382,19 @@ public class BasicEnemyAnimationController : MonoBehaviour
         
         if (_showDebugLogs)
             Debug.Log("[Animation] Search triggered!");
+    }
+
+    /// <summary>
+    /// Проигрывает случайную анимацию победы
+    /// </summary>
+    public void PlayWinning()
+    {
+        if (!_isInitialized) return;
+
+        int roll = Random.Range(0, _amountWinAnimations);
+
+        _animator.SetTrigger(AnimParams.Winning);
+        _animator.SetInteger(AnimParams.WinNumber, roll);
     }
     
     /// <summary>

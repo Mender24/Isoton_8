@@ -477,6 +477,7 @@ MonoBehaviour:
   attackRange: 20
   _prefabBullet: {fileID: 1462829680492441149, guid: a0c58ddaf7b3fed4cbd4ca357a4a88d1,
     type: 3}
+  _shotStartTransform: {fileID: 0}
   _damage: 1
   _speedBullet: 200
   _countBullet: 40
@@ -484,7 +485,6 @@ MonoBehaviour:
   _timeBetweenShot: 0.1
   timeReload: 3
   _bulletLifetime: 2
-  _agentCenterOffset: {x: 0, y: 0.5, z: 0}
   _xShootTargetOffset: 0
   _yShootTargetOffset: 1
   _heightSprayOffset: 0.5
@@ -725,7 +725,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   health: 100
-  destroyDelay: 0
+  destroyDelay: 0.5
   damageCameraShake: 0.2
   destroyOnDeath: 1
   destroyRoot: 0
@@ -1336,34 +1336,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
         type: 3}
-      propertyPath: combatType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
-        type: 3}
-      propertyPath: _debugVision
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
-        type: 3}
-      propertyPath: shouldPatrol
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
-        type: 3}
-      propertyPath: _meleeHitLayers.m_Bits
-      value: 256
-      objectReference: {fileID: 0}
-    - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
-        type: 3}
-      propertyPath: patrolPoints.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
-        type: 3}
-      propertyPath: _footstepSounds.Array.size
-      value: 0
-      objectReference: {fileID: 0}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 137057248}
     - target: {fileID: 423112662875772378, guid: d0061aa6e3d03b54290bc84a94623f44,
         type: 3}
       propertyPath: 'patrolPoints.Array.data[0]'
@@ -1424,11 +1399,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6881652080201872440, guid: d0061aa6e3d03b54290bc84a94623f44,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 26ac554f67f9b6c41a5c01a392072a4b, type: 2}
     - target: {fileID: 6881652080201872441, guid: d0061aa6e3d03b54290bc84a94623f44,
         type: 3}
       propertyPath: m_Name

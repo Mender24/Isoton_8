@@ -44,6 +44,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [Header("Range Combat Settings")]
     public float attackRange = 20f;
     [SerializeField] private GameObject _prefabBullet;
+    [SerializeField] private Transform _shotStartTransform;
     [SerializeField] private float _damage = 5f;
     [SerializeField] private float _speedBullet;
     [SerializeField] private int _countBullet = 20;
@@ -52,15 +53,14 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private float _timeBetweenShot = 0.5f;
     public float timeReload = 3f;
     [SerializeField] private float _bulletLifetime = 2f;
-    [SerializeField] private Vector3 _agentCenterOffset = new(0, 0.5f, 0);
 
     [Header("Shoot Target Offset")]
     [SerializeField] private float _xShootTargetOffset = 0;
     [SerializeField] private float _yShootTargetOffset = 1;
 
     [Header("Spray Shoot Offset")]
-    [SerializeField] private float _heightSprayOffset = 0.5f;
-    [SerializeField] private float _widthSprayOffset = 2;
+    [SerializeField] private float _heightSprayOffset = 0.25f;
+    [SerializeField] private float _widthSprayOffset = 0.25f;
 
     [Header("Movement")]
     public float walkSpeed = 2f;
@@ -145,15 +145,20 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private Vector3 _debugShotTargetPosition = new();
 
     public float Health { get => _health; set => _health = value; }
-    public bool isDamagableDisabled { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-    public bool allowDamageableEffects { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-    public bool DeadConfirmed { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-    public GameObject DamageSource { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public bool isDamagableDisabled { get; set; }
+    public bool allowDamageableEffects { get; set; }
+    public bool DeadConfirmed { get; set; }
+    public GameObject DamageSource { get; set; }
 
-    public UnityEvent OnDeath => throw new System.NotImplementedException();
+    public UnityEvent OnDeath { get; set; }
 
     void Start()
     {
+        if (playerTransform == null) 
+        {
+            playerTransform = FindFirstObjectByType<CharacterController>().transform;
+            playerTransform.GetComponent<Damageable>().OnDeath.AddListener(OnPlayerDeath);
+        }
         if (agent == null) agent = GetComponent<NavMeshAgent>();
         if (animationController == null) animationController = GetComponent<BasicEnemyAnimationController>();
         if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
@@ -164,6 +169,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     void Update()
     {
+        if (playerTransform == null) return;
         if (!isActivated) return;
 
         if (isAlerted && !CanSeePlayer())
@@ -220,7 +226,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         targetPosition.y += yRandomSprayOffset + _yShootTargetOffset;
         targetPosition.x += xRandomSprayOffset + _xShootTargetOffset;
 
-        Vector3 bulletStartPosition = transform.position + _agentCenterOffset;
+        Vector3 bulletStartPosition = _shotStartTransform.position;//transform.position + _agentCenterOffset;
 
         AiProjectile bullet = PoolManager.Instance.GetObgect<AiProjectile>();
         bullet.transform.position = bulletStartPosition;
@@ -310,6 +316,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     public bool CanSeePlayer()
     {
+        if (playerTransform == null) return false;
         Vector3 rayDirection = (playerTransform.position - transform.position).normalized;
         float rayDistance = GetDistanceToPlayer();
 
@@ -457,13 +464,11 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public bool CanHearNoise()
     {
         if (playerDetected) return false;
-
-        Collider[] hearingColliders = Physics.OverlapSphere(transform.position, hearingRange, _playerLayer);
-
-        foreach (Collider collider in hearingColliders)
+        
+        if (GetDistanceToPlayer() < hearingRange)
         {
-            AudioSource audioSource = collider.GetComponentInChildren<AudioSource>();
-
+            AudioSource audioSource = playerTransform.GetComponentInChildren<AudioSource>();
+            
             if (audioSource != null && audioSource.isPlaying)
             {
                 if (audioSource.volume >= _soundDetectionThreshold)
@@ -526,6 +531,17 @@ public class EnemyAI : MonoBehaviour, IDamageable
         return lastHeardNoisePosition;
     }
 
+    private void OnPlayerDeath()
+    {
+        playerDetected = false;
+        isFire = false;
+        isAlerted = false;
+        isSearching = false;
+        isMeleeAttacking = false;
+        agent.ResetPath();
+        animationController.PlayWinning();
+    }
+
     void OnDrawGizmos()
     {
         // To make only main camera and scene view draw gizmos
@@ -533,7 +549,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         {
             if (_showDebug)
             {
-                Vector3 position = transform.position + _agentCenterOffset + new Vector3(0, _visionHeight, 0);
+                Vector3 position = transform.position + new Vector3(0, _visionHeight, 0);
 
                 if (_debugHearing)
                 {
@@ -742,7 +758,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
         {
             if (_showDebug && _showDebugInfo)
-                UnityEditor.Handles.Label(transform.position + _agentCenterOffset + Vector3.up * 3f, GetDebugInfo());
+                UnityEditor.Handles.Label(transform.position + Vector3.up * 3f, GetDebugInfo());
         }
 #endif
     }

@@ -6345,7 +6345,7 @@ NavMeshAgent:
   m_AgentTypeID: -334000983
   m_Radius: 0.3
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 20
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
@@ -6518,7 +6518,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 1011661064639563882}
   animationController: {fileID: 7698475277634065106}
-  playerTransform: {fileID: 3345886394137075803}
+  playerTransform: {fileID: 0}
   _playerLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -6531,25 +6531,34 @@ MonoBehaviour:
   hearingRange: 20
   _soundDetectionThreshold: 0.7
   _noiseInvestigationTime: 8
-  attackRange: 20
+  combatType: 0
   forgetTime: 10
   stoppingDistance: 0.5
   _health: 100
   _detectionDelay: 0.5
+  _meleeAttackRange: 2
+  _meleeAttackCooldown: 1.5
+  _meleeDamage: 20
+  _meleeHitLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  _meleeAttackOffset: {x: 0, y: 1, z: 1}
+  _meleeAttackRadius: 1
+  attackRange: 20
   _prefabBullet: {fileID: 1462829680492441149, guid: a0c58ddaf7b3fed4cbd4ca357a4a88d1,
     type: 3}
-  _damage: 1
+  _shotStartTransform: {fileID: 8013077038860687312}
+  _damage: 5
   _speedBullet: 200
   _countBullet: 40
   _chanceToHit: 0.25
   _timeBetweenShot: 0.1
-  timeReload: 2.8
+  timeReload: 3
   _bulletLifetime: 2
-  _agentCenterOffset: {x: 0, y: 1.65, z: -0.1}
   _xShootTargetOffset: 0
   _yShootTargetOffset: 1
-  _heightSprayOffset: 0.5
-  _widthSprayOffset: 1
+  _heightSprayOffset: 0.25
+  _widthSprayOffset: 0.25
   walkSpeed: 2
   runSpeed: 5
   rotationSpeed: 20
@@ -6586,6 +6595,8 @@ MonoBehaviour:
   isSearching: 0
   lastKnownPlayerPosition: {x: 0, y: 0, z: 0}
   timeSinceLastSeen: 0
+  isMeleeAttacking: 0
+  meleeAttackTimer: 0
   isReload: 0
   isFire: 0
   timeShoot: 0
@@ -6607,12 +6618,13 @@ MonoBehaviour:
   _animator: {fileID: 6881652080201872440}
   _agent: {fileID: 1011661064639563882}
   _enemyAI: {fileID: 423112662875772378}
-  _speedSmoothTime: 0.1
-  _minSpeedThreshold: 0.05
+  _speedSmoothTime: 0.2
+  _minSpeedThreshold: 0.2
   _speedMultiplier: 1
   _idleVariationInterval: 5
   _idleVariationsCount: 3
-  _idleVariationChance: 0.6
+  _idleVariationChance: 0.8
+  _amountWinAnimations: 3
   _showDebugLogs: 0
 --- !u!1 &6881652080241917032
 GameObject:
@@ -13786,6 +13798,37 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.00078091025, y: 0.045397192, z: 1.4008422}
     m_Extent: {x: 0.7464433, y: 0.2645069, z: 0.48878336}
   m_DirtyAABB: 0
+--- !u!1 &8180816734065835698
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8013077038860687312}
+  m_Layer: 0
+  m_Name: StartShootingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8013077038860687312
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8180816734065835698}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.64599186, y: -0.5367506, z: -0.07438726, w: 0.53764296}
+  m_LocalPosition: {x: 0.0202, y: 0.1478, z: 0.3836}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1892005883185377067}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4291255302810349533
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13881,7 +13924,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 2435418967023747318, guid: 8ea7a79b21af1c94a919f2129d13958f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8013077038860687312}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ea7a79b21af1c94a919f2129d13958f, type: 3}
 --- !u!4 &1892005883185377067 stripped
