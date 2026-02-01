@@ -6,11 +6,14 @@ using UnityEngine.Events;
 public class Battery : MonoBehaviour, IDamageable
 {
     [SerializeField] private float _health = 100f;
+    [SerializeField] private GameObject _modelBattery;
     [SerializeField] private GameObject _shieldObject;
     [SerializeField] private float _lenPathShield = 4f;
     [SerializeField] private float _speedMoveShield = 3f;
     [SerializeField] private float _timeShieldOpen = 10f;
     [SerializeField] private float _cooldownTime = 5f;
+
+    private bool _untargetable = false;
 
     private UnityEvent onDeath = new UnityEvent();
     private UnityEvent onEndCooldown = new UnityEvent();
@@ -26,6 +29,9 @@ public class Battery : MonoBehaviour, IDamageable
 
     public void Damage(float amount, GameObject damageSource)
     {
+        if (!_untargetable)
+            return;
+
         _health -= amount;
 
         if(_health <= 0)
@@ -49,12 +55,14 @@ public class Battery : MonoBehaviour, IDamageable
         StopAllCoroutines();
         _health = 0;
         OnDeath?.Invoke();
-        gameObject.SetActive(false);
+        _modelBattery.SetActive(false);
     }
 
     private IEnumerator OpenShieldInteraction()
     {
         Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
+
+        _untargetable = true;
 
         while (_shieldObject.transform.position != target)
         {
@@ -73,6 +81,8 @@ public class Battery : MonoBehaviour, IDamageable
 
             yield return null;
         }
+
+        _untargetable = false;
 
         yield return new WaitForSeconds(_cooldownTime);
 

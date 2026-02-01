@@ -53,6 +53,9 @@ public class Reactor : MonoBehaviour, IDamageable
 
     public void Damage(float amount, GameObject damageSource)
     {
+        if (_batteryHealth > 0)
+            return;
+
         _health -= amount;
 
         if (_health <= 0)
