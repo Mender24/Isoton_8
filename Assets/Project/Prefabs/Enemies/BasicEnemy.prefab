@@ -6406,7 +6406,7 @@ MonoBehaviour:
           m_Value0: 7419949414868915445
           m_Value1: 3944776713629506187
         Name: IdleWaitTime
-        m_Value: 3
+        m_Value: 0.5
 --- !u!82 &2733046975915953009
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6519,6 +6519,7 @@ MonoBehaviour:
   agent: {fileID: 1011661064639563882}
   animationController: {fileID: 7698475277634065106}
   playerTransform: {fileID: 0}
+  mainCameraTag: MainCamera
   _playerLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -6527,13 +6528,13 @@ MonoBehaviour:
     m_Bits: 8192
   _fieldOfViewAngle: 110
   _visionRange: 15
-  _visionHeight: 0.5
+  _visionHeight: 1.75
   hearingRange: 20
   _soundDetectionThreshold: 0.7
   _noiseInvestigationTime: 8
   combatType: 0
   forgetTime: 10
-  stoppingDistance: 0.5
+  stoppingDistance: 0.2
   _health: 100
   _detectionDelay: 0.5
   _meleeAttackRange: 2

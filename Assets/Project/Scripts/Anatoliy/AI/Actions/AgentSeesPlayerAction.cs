@@ -11,6 +11,10 @@ public partial class AgentSeesPlayerAction : Action
     [SerializeReference] public BlackboardVariable<EnemyAI> EnemyAI;
     [SerializeReference] public BlackboardVariable<bool> seesPlayer;
 
+    private bool _cachedSeesPlayer = false;
+    private float _timeBetweenUpdate = 0.5f;
+    private float _curTimer = 0f;
+
     protected override Status OnStart()
     {
         return Status.Running;
@@ -20,10 +24,16 @@ public partial class AgentSeesPlayerAction : Action
     {
         if (EnemyAI.Value == null) return Status.Failure;
         
+        _cachedSeesPlayer = seesPlayer.Value;
         seesPlayer.Value = EnemyAI.Value.CanSeePlayer();
         
+        if (_cachedSeesPlayer != seesPlayer.Value && seesPlayer.Value == false)
+        {
+        }
+
         if (seesPlayer.Value)
         {
+            
             EnemyAI.Value.UpdateLastKnownPosition();
             return Status.Success;
         }

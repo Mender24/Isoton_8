@@ -13,6 +13,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public NavMeshAgent agent;
     public BasicEnemyAnimationController animationController;
     public Transform playerTransform;
+    [SerializeField] private string mainCameraTag = "MainCamera";
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private LayerMask _obstacleLayer;
 
@@ -143,6 +144,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private bool _detectionDelayActive = false;
     private bool _debugIsPlayerHit = false;
     private Vector3 _debugShotTargetPosition = new();
+    private Camera _mainCamera = null;
 
     public float Health { get => _health; set => _health = value; }
     public bool isDamagableDisabled { get; set; }
@@ -157,12 +159,29 @@ public class EnemyAI : MonoBehaviour, IDamageable
         if (playerTransform == null) 
         {
             playerTransform = FindFirstObjectByType<CharacterController>().transform;
-            playerTransform.GetComponent<Damageable>().OnDeath.AddListener(OnPlayerDeath);
         }
+        
+        if (_mainCamera == null)
+        {
+            var cameras = playerTransform.GetComponentsInChildren<Camera>();
+            foreach (var cam in cameras)
+            {
+                if (cam.tag == mainCameraTag)
+                {
+                    _mainCamera = cam;
+                    break;
+                }
+            }
+        }
+
         if (agent == null) agent = GetComponent<NavMeshAgent>();
         if (animationController == null) animationController = GetComponent<BasicEnemyAnimationController>();
         if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
 
+        if (playerTransform != null)
+        {
+            playerTransform.GetComponent<Damageable>().OnDeath.AddListener(OnPlayerDeath);
+        }
         agent.speed = walkSpeed;
         agent.stoppingDistance = stoppingDistance;
     }
@@ -317,8 +336,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public bool CanSeePlayer()
     {
         if (playerTransform == null) return false;
-        Vector3 rayDirection = (playerTransform.position - transform.position).normalized;
-        float rayDistance = GetDistanceToPlayer();
+        if (_mainCamera == null) return false;
+        Vector3 rayDirection = (_mainCamera.transform.position - transform.position).normalized;
+        float rayDistance = GetDistanceToMainCamera();
 
         if (rayDistance > _visionRange) return false;
 
@@ -390,9 +410,16 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         if (playerTransform != null)
         {
-            lastKnownPlayerPosition = playerTransform.position;
             timeSinceLastSeen = 0f;
+            StartCoroutine(UpdateLastKnownPositionDelay());
         }
+    }
+
+    private System.Collections.IEnumerator UpdateLastKnownPositionDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        if (playerTransform != null)
+            lastKnownPlayerPosition = playerTransform.position;
     }
 
     public void ForgetPlayer()
@@ -407,6 +434,12 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         if (playerTransform == null) return Mathf.Infinity;
         return Vector3.Distance(transform.position, playerTransform.position);
+    }
+
+    public float GetDistanceToMainCamera()
+    {
+        if (_mainCamera == null) return Mathf.Infinity;
+        return Vector3.Distance(transform.position, _mainCamera.transform.position + new Vector3(0, _visionHeight, 0));
     }
 
     public void Damage(float amount, GameObject damageSource)
@@ -659,7 +692,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         if (playerTransform == null) return;
 
-        Vector3 directionToPlayer = (playerTransform.position - position).normalized;
+        Vector3 directionToPlayer = (Camera.current.transform.position - position).normalized;
         float distanceToPlayer = Vector3.Distance(position, playerTransform.position);
 
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
@@ -771,6 +804,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         info += $"Searching: {isSearching}\n";
         info += $"Detected player: {playerDetected}\n";
         info += $"Started position: {startPosition}\n";
+        info += $"Last Known Position: {lastKnownPlayerPosition}\n";
 
         if (playerTransform != null)
         {

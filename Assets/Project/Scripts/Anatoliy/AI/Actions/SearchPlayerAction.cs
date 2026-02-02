@@ -23,7 +23,8 @@ public partial class SearchPatternNode : Action
         if (EnemyAI.Value == null) return Status.Failure;
         
         _searchAttempts = 0;
-        GenerateNewSearchPoint();
+        if (!EnemyAI.Value.agent.hasPath)
+            GenerateNewSearchPoint();
 
         _cacheStoppingDistance = EnemyAI.Value.agent.stoppingDistance;
         EnemyAI.Value.agent.stoppingDistance = stoppingDistance.Value;

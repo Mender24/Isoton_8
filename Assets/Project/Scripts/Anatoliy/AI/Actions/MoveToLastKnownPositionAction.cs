@@ -17,7 +17,8 @@ public partial class MoveToLastKnownPositionAction : Action
             return Status.Failure;
         
         EnemyAI.Value.agent.ResetPath();
-        EnemyAI.Value.agent.SetDestination(EnemyAI.Value.lastKnownPlayerPosition);
+        Vector3 vecWithNoY = new Vector3(EnemyAI.Value.lastKnownPlayerPosition.x, GameObject.transform.position.y, EnemyAI.Value.lastKnownPlayerPosition.z);
+        EnemyAI.Value.agent.SetDestination(vecWithNoY);
         EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
         
         return Status.Running;
@@ -30,13 +31,13 @@ public partial class MoveToLastKnownPositionAction : Action
         else
             EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
 
-        if (EnemyAI.Value.agent.remainingDistance <= EnemyAI.Value.agent.stoppingDistance)
+        if (EnemyAI.Value.agent.hasPath) // FIXME: smh this always throw false, idk y, need logic to end only when finished route
         {
-            EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
-            return Status.Success;
+            return Status.Running;
         }
         
-        return Status.Running;
+        EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
+        return Status.Success;
     }
 
     protected override void OnEnd()
