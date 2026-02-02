@@ -122,7 +122,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private Color _hearingRangeColor = new Color(0f, 0.5f, 1f, 0.1f);
 
     // AI States
-    [HideInInspector] public bool isActivated = false;
+    public bool isActivated = false;
     [HideInInspector] public bool playerDetected = false;
     [HideInInspector] public bool isAlerted = false;
     [HideInInspector] public bool isSearching = false;
