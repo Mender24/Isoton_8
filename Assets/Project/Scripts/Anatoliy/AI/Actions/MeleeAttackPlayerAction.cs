@@ -44,7 +44,7 @@ public partial class MeleeAttackPlayerAction : Action
         float angleToTarget = Quaternion.Angle(EnemyAI.Value.transform.rotation, lookRotation);
         
         // Начинаем атаку когда повернулись к цели
-        if (angleToTarget < 5f && !_hasInitiatedAttack && EnemyAI.Value.meleeAttackTimer <= 0)
+        if (angleToTarget < 5f && !_hasInitiatedAttack && EnemyAI.Value.meleeAttackTimer <= 0 && EnemyAI.Value.IsInMeleeRange())
         {
             _hasInitiatedAttack = true;
             EnemyAI.Value.StartMeleeAttack();
@@ -54,7 +54,11 @@ public partial class MeleeAttackPlayerAction : Action
         // Проверяем, не вышел ли игрок из зоны атаки
         if (!EnemyAI.Value.IsInMeleeRange() && _hasInitiatedAttack)
         {
-            
+            return Status.Failure;
+        }
+
+        if (!EnemyAI.Value.IsInMeleeRange() && !_hasInitiatedAttack)
+        {
             return Status.Failure;
         }
         
