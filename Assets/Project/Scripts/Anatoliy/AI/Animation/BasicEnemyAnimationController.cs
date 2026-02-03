@@ -46,6 +46,8 @@ public class BasicEnemyAnimationController : MonoBehaviour
         //Melee
         public const string MeleeAttack = "MeleeAttack";
         public const string MeleeAttacking = "MeleeAttacking";
+        public const string PlayerDetected = "PlayerDetected";
+        public const string HasAlerted = "HasAlerted";
         
         // States
         public const string IsDead = "IsDead";
@@ -66,6 +68,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
     private bool _cachedRunning = false;
     private bool _cachedAiming = false;
     private bool _cachedAlerted = false;
+    private bool _cachedPlayerDetected = false;
     private bool _cachedReloading = false;
     private float _cachedSpeed = 0f;
     private float _targetSpeed = 0f;
@@ -204,6 +207,15 @@ public class BasicEnemyAnimationController : MonoBehaviour
                 Debug.Log($"[Animation] Alerted: {_cachedAlerted}");
         }
         
+        if (_enemyAI.playerDetected != _cachedPlayerDetected)
+        {
+            _cachedPlayerDetected = _enemyAI.playerDetected;
+            _animator.SetBool(AnimParams.PlayerDetected, _cachedPlayerDetected);
+
+            if (_showDebugLogs)
+                Debug.Log($"[Animation] PlayerDetected: {_cachedPlayerDetected}");
+        }
+
         if (_enemyAI.isReload != _cachedReloading)
         {
             _cachedReloading = _enemyAI.isReload;
@@ -246,14 +258,11 @@ public class BasicEnemyAnimationController : MonoBehaviour
         else
         {
             _idleTimer = 0f;
-            _randomIdle = 0f; // Возвращаемся к базовому Idle (0)
+            _randomIdle = 0f;
         }
 
-        // ПЛАВНЫЙ ПЕРЕХОД: Интерполируем значение каждый кадр
-        // 5f - скорость перехода. Чем выше число, тем быстрее сменится поза.
         _idleFloat = Mathf.MoveTowards(_idleFloat, _randomIdle, Time.deltaTime * 0.5f);
         
-        // Отправляем текущее плавное значение в аниматор
         _animator.SetFloat(AnimParams.RandomIdleF, _idleFloat);
     }
     
@@ -261,14 +270,12 @@ public class BasicEnemyAnimationController : MonoBehaviour
     {
         float roll = Random.value;
 
-        // Если не повезло с шансом, целевое значение — 0 (обычный Idle)
         if (roll > _idleVariationChance)
         {
             _randomIdle = 0f;
             return;
         }
         
-        // Выбираем новую вариацию, которая отличается от текущей цели
         int nextVariation;
         do
         {
@@ -457,9 +464,19 @@ public class BasicEnemyAnimationController : MonoBehaviour
     
     #region Animation Events (вызываются из анимаций)
     
+    public void OnAlertStart()
+    {
+        _enemyAI.AlertStarted();
+        
+        if (_showDebugLogs)
+            Debug.Log("[Animation Event] Alert start");
+    }
+
     public void OnAlertComplete()
     {
         SetAiming(true);
+        _animator.SetBool(AnimParams.HasAlerted, true);
+        _enemyAI.AlertCompleted();
         
         if (_showDebugLogs)
             Debug.Log("[Animation Event] Alert complete - switching to aim");

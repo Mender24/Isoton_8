@@ -136,6 +136,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [HideInInspector] public bool isFire = false;
     [HideInInspector] public float timeShoot = 0f;
     [HideInInspector] public int currentBullet = 0;
+    // [HideInInspector] public int is = 0;
     [HideInInspector] public Vector3 lastHeardNoisePosition;
     [HideInInspector] public bool heardNoise = false;
     private float _noiseInvestigationTimer = 0f;
@@ -333,6 +334,16 @@ public class EnemyAI : MonoBehaviour, IDamageable
         }
     }
 
+    public void AlertStarted()
+    {
+        agent.isStopped = true;
+    }
+
+    public void AlertCompleted()
+    {
+        agent.isStopped = false;
+    }
+
     public bool CanSeePlayer()
     {
         if (playerTransform == null) return false;
@@ -383,7 +394,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private void StartDetection()
     {
         isAlerted = true;
-        lastKnownPlayerPosition = playerTransform.position;
+        // lastKnownPlayerPosition = playerTransform.position;
         startPosition = transform.position;
         timeSinceLastSeen = 0f;
         agent.speed = runSpeed;
