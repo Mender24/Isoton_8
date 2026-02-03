@@ -226,25 +226,25 @@ public class SceneLoader : MonoBehaviour
 
         Scene loadedScene = SceneManager.GetSceneByBuildIndex(sceneIndex);
 
-        if (loadedScene.isLoaded)
-        {
-            GameObject endLevelPoint = FindGameObjectInSceneByName(originalScene, "EndLevelPoint");
-            GameObject startLevelPoint = FindGameObjectInSceneByName(loadedScene, "StartLevelPoint");
-            GameObject levelContainer = FindGameObjectInSceneByName(loadedScene, "LevelContainer");
+        //if (loadedScene.isLoaded)
+        //{
+        //    GameObject endLevelPoint = FindGameObjectInSceneByName(originalScene, "EndLevelPoint");
+        //    GameObject startLevelPoint = FindGameObjectInSceneByName(loadedScene, "StartLevelPoint");
+        //    GameObject levelContainer = FindGameObjectInSceneByName(loadedScene, "LevelContainer");
 
-            if (endLevelPoint != null && startLevelPoint != null && levelContainer != null)
-            {
-                levelContainer.transform.eulerAngles = endLevelPoint.transform.eulerAngles;
-                levelContainer.transform.position -= startLevelPoint.transform.position - endLevelPoint.transform.position;
+        //    if (endLevelPoint != null && startLevelPoint != null && levelContainer != null)
+        //    {
+        //        levelContainer.transform.eulerAngles = endLevelPoint.transform.eulerAngles;
+        //        levelContainer.transform.position -= startLevelPoint.transform.position - endLevelPoint.transform.position;
 
-                if (_isDebug)
-                    Debug.Log("Scene ID " + sceneIndex + " loaded successfully.");
-            }
-            else
-            {
-                Debug.LogError("Couldn't find necessary game objects in the loaded scene.");
-            }
-        }
+        //        if (_isDebug)
+        //            Debug.Log("Scene ID " + sceneIndex + " loaded successfully.");
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("Couldn't find necessary game objects in the loaded scene.");
+        //    }
+        //}
     }
 
     private void GetCurrentSceneName()
