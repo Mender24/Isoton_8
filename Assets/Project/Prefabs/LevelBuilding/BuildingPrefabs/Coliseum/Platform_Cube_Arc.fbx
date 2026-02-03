@@ -9,10 +9,10 @@ FBXHeaderExtension:  {
 		Year: 2026
 		Month: 2
 		Day: 3
-		Hour: 2
-		Minute: 51
-		Second: 33
-		Millisecond: 697
+		Hour: 3
+		Minute: 7
+		Second: 19
+		Millisecond: 446
 	}
 	Creator: "FBX SDK/FBX Plugins version 2020.3.6"
 	OtherFlags:  {
@@ -37,13 +37,13 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya"
 			P: "Original|ApplicationVersion", "KString", "", "", "2025"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "02/02/2026 23:51:33.697"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "03/02/2026 00:07:19.446"
 			P: "Original|FileName", "KString", "", "", "D:\fbx_Export\Platform_Cube_Arc.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "2025"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "02/02/2026 23:51:33.697"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "03/02/2026 00:07:19.446"
 			P: "Original|ApplicationActiveProject", "KString", "", "", "D:\"
 			P: "Original|ApplicationNativeFile", "KString", "", "", "D:\UnityP\Kol.mb"
 		}
@@ -80,7 +80,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 1911652389104, "", "Scene" {
+	Document: 1911746727184, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -238,7 +238,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 1911729818000, "Geometry::", "Mesh" {
+	Geometry: 1911992275072, "Geometry::", "Mesh" {
 		Vertices: *60 {
 			a: 250.000122070312,-50.0000076293945,49.99951171875,-50,0,50,250.000122070312,-3.814697265625e-06,49.99951171875,-50,6.103515625e-05,-250,250.000122070312,5.7220458984375e-05,-250,250.000122070312,-49.9999580383301,-250,-50,-15.0000009536743,50,-50,-14.9999418258667,-250,-65,-12.750226020813,50,-62.750244140625,-15.0000009536743,50,-65,-12.7501668930054,-250,-62.750244140625,-14.9999418258667,-250,-65,-2.24977493286133,50,-62.750244140625,0,50,-65,-2.24971389770508,-250,-62.750244140625,6.103515625e-05,-250,-46.5003662109375,-50,50,-50,-46.5003509521484,50,-50,-46.5002975463867,-250,-46.5003662109375,-49.9999465942383,-250
 		} 
@@ -300,22 +300,22 @@ Objects:  {
 			}
 		}
 	}
-	Model: 1888303343792, "Model::Platform_Cube_Arc", "Mesh" {
+	Model: 1901060515456, "Model::Platform_Cube_Arc", "Mesh" {
 		Version: 232
 		Properties70:  {
-			P: "RotationPivot", "Vector3D", "Vector", "",92.5000610351562,-24.9999732971191,-100
-			P: "ScalingPivot", "Vector3D", "Vector", "",92.5000610351562,-24.9999732971191,-100
+			P: "RotationPivot", "Vector3D", "Vector", "",-49.9999693398934,-49.9999478552044,-249.999988281853
+			P: "ScalingPivot", "Vector3D", "Vector", "",-49.9999693398934,-49.9999478552044,-249.999988281853
 			P: "RotationActive", "bool", "", "",1
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",1099.97860703521,-10.0004984643757,957.763049805291
+			P: "Lcl Translation", "Lcl Translation", "", "A",1099.97860703521,-10.0005594995319,957.763049805291
 			P: "currentUVSet", "KString", "", "U", "map1"
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 1911728208960, "Material::standardSurface1", "" {
+	Material: 1911781681472, "Material::standardSurface1", "" {
 		Version: 102
 		ShadingModel: "unknown"
 		MultiLayer: 0
@@ -368,7 +368,7 @@ Objects:  {
 			P: "Maya|normalCameraFactor", "double", "Number", "",0
 		}
 	}
-	Implementation: 1901077948032, "Implementation::standardSurface1_Implementation", "" {
+	Implementation: 1911987334096, "Implementation::standardSurface1_Implementation", "" {
 		Version: 100
 		Properties70:  {
 			P: "ShaderLanguage", "KString", "", "", "StandardSSL"
@@ -377,7 +377,7 @@ Objects:  {
 			P: "RootBindingName", "KString", "", "", "root"
 		}
 	}
-	BindingTable: 1911730627040, "BindingTable::root 12", "" {
+	BindingTable: 1911989140080, "BindingTable::root 16", "" {
 		Version: 100
 		Properties70:  {
 			P: "TargetName", "KString", "", "", "root"
@@ -434,17 +434,17 @@ Objects:  {
 Connections:  {
 	
 	;Model::Platform_Cube_Arc, Model::RootNode
-	C: "OO",1888303343792,0
+	C: "OO",1901060515456,0
 	
 	;Material::standardSurface1, Implementation::standardSurface1_Implementation
-	C: "OO",1911728208960,1901077948032
+	C: "OO",1911781681472,1911987334096
 	
-	;BindingTable::root 12, Implementation::standardSurface1_Implementation
-	C: "OO",1911730627040,1901077948032
+	;BindingTable::root 16, Implementation::standardSurface1_Implementation
+	C: "OO",1911989140080,1911987334096
 	
 	;Geometry::, Model::Platform_Cube_Arc
-	C: "OO",1911729818000,1888303343792
+	C: "OO",1911992275072,1901060515456
 	
 	;Material::standardSurface1, Model::Platform_Cube_Arc
-	C: "OO",1911728208960,1888303343792
+	C: "OO",1911781681472,1901060515456
 }
