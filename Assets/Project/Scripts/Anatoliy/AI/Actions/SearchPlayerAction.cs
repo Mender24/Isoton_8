@@ -9,18 +9,27 @@ using Unity.Properties;
 public partial class SearchPatternNode : Action
 {
     [SerializeReference] public BlackboardVariable<EnemyAI> EnemyAI;
-    [SerializeReference] public BlackboardVariable<float> SearchRadius = new BlackboardVariable<float>(10f);
+    [SerializeReference] public BlackboardVariable<float> SearchRadius = new BlackboardVariable<float>(5f);
+    [SerializeReference] public BlackboardVariable<float> stoppingDistance = new BlackboardVariable<float>(3f);
     
     private Vector3 _searchPoint;
     private int _searchAttempts = 0;
     private const int _maxSearchAttempts = 3;
+    private float _cacheStoppingDistance = 1f;
+    private float _cacheSpeed = 5f;
     
     protected override Status OnStart()
     {
         if (EnemyAI.Value == null) return Status.Failure;
         
         _searchAttempts = 0;
-        GenerateNewSearchPoint();
+        if (!EnemyAI.Value.agent.hasPath)
+            GenerateNewSearchPoint();
+
+        _cacheStoppingDistance = EnemyAI.Value.agent.stoppingDistance;
+        EnemyAI.Value.agent.stoppingDistance = stoppingDistance.Value;
+        _cacheSpeed = EnemyAI.Value.agent.speed;
+
         EnemyAI.Value.isSearching = true;
 
         EnemyAI.Value.animationController?.PlaySearch();
@@ -30,6 +39,13 @@ public partial class SearchPatternNode : Action
     
     protected override Status OnUpdate()
     {
+        if (EnemyAI.Value.isReload)
+        {
+            EnemyAI.Value.agent.speed = 0;
+        }
+        else
+            EnemyAI.Value.agent.speed = _cacheSpeed;
+
         if (EnemyAI.Value.agent.remainingDistance <= EnemyAI.Value.agent.stoppingDistance)
         {
             _searchAttempts++;
@@ -37,6 +53,8 @@ public partial class SearchPatternNode : Action
             if (_searchAttempts >= _maxSearchAttempts)
             {
                 EnemyAI.Value.isSearching = false;
+                EnemyAI.Value.agent.stoppingDistance = _cacheStoppingDistance;
+                EnemyAI.Value.agent.speed = _cacheSpeed;
                 return Status.Success;
             }
             
@@ -48,6 +66,8 @@ public partial class SearchPatternNode : Action
             if (EnemyAI.Value.agent.isOnNavMesh)
                 EnemyAI.Value.agent.ResetPath();
             EnemyAI.Value.isSearching = false;
+            EnemyAI.Value.agent.stoppingDistance = _cacheStoppingDistance;
+            EnemyAI.Value.agent.speed = _cacheSpeed;
             return Status.Failure;
         }
         
@@ -70,5 +90,6 @@ public partial class SearchPatternNode : Action
     protected override void OnEnd()
     {
         EnemyAI.Value.isSearching = false;
+        EnemyAI.Value.agent.speed = _cacheSpeed;
     }
 }
