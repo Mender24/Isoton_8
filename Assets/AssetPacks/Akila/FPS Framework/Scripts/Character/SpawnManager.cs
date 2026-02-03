@@ -64,9 +64,12 @@ namespace Akila.FPSFramework
                 .SelectMany(t => t.GetComponentsInChildren<Transform>(true))
                 .FirstOrDefault(x => x.gameObject.transform.name == NameSearchObjectToNewScene)?.gameObject;
 
-            Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
-            sides[0].points = newArray;
-            _currentSpawnPointId = 0;
+            if(SpawnPoints != null)
+            {
+                Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
+                sides[0].points = newArray;
+                _currentSpawnPointId = 0;
+            }
         }
 
         public void MovePlayerStartPositionAndOn(Player player)

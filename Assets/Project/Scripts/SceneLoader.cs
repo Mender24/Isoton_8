@@ -32,8 +32,6 @@ public class SceneLoader : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
-
-        sceneNames = GetSceneNamesInBuild();
     }
 
     public void LoadStartScene(string name)
@@ -243,29 +241,6 @@ public class SceneLoader : MonoBehaviour
                 return i;
 
         return -1;
-    }
-
-    private List<string> GetSceneNamesInBuild()
-    {
-        List<string> names = new List<string>();
-        var scenes = EditorBuildSettings.scenes;
-
-        foreach (var scene in scenes)
-        {
-            if (scene.enabled)
-            {
-                string sceneName = System.IO.Path.GetFileNameWithoutExtension(scene.path);
-                names.Add(sceneName);
-
-                if (_isDebug)
-                    Debug.Log("Scene found: " + sceneName);
-            }
-        }
-
-        if (_isDebug)
-            Debug.Log("Total scenes found: " + names.Count);
-
-        return names;
     }
 
     private GameObject FindGameObjectInSceneByName(Scene scene, string name)
