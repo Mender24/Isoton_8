@@ -167,6 +167,8 @@ public class SceneLoader : MonoBehaviour
 
         if(_nextScene != "")
             ActivateButton(_nextScene, true);
+
+        SpawnManager.Instance.UpdateSpawnPoint(currentSceneInd);
     }
 
     private int SerachIndexScene(string name)
