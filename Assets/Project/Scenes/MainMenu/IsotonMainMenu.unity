@@ -1590,7 +1590,8 @@ Transform:
   m_LocalPosition: {x: 8.9824505, y: 1.3693362, z: -6.1069384}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1625955895}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1065807090
@@ -2027,6 +2028,68 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 565205863}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1625955894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1625955895}
+  - component: {fileID: 1625955896}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1625955895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625955894}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 104.577545, y: -11.359336, z: -14.993062}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1065807089}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1625955896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625955894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19df7726ebaa2f446831e1f351302e6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isDeleteSave: 0
+  _prefab: {fileID: -7770503669698727024, guid: bbabec215dfafb844b5dfd983988a7d0,
+    type: 3}
+  _itemsPrefab:
+  - {fileID: -7770503669698727024, guid: bbabec215dfafb844b5dfd983988a7d0, type: 3}
+  - {fileID: 1069960484613499420, guid: b59bdbe3ae563544c9c624ef3653f87f, type: 3}
+  - {fileID: 6458865047959599860, guid: 538243ac849b4134db3ab9f6be558433, type: 3}
+  - {fileID: 4733035344019299247, guid: 2c6fcc7a75e3b6541a71cc927bb824c7, type: 3}
+  _maxWeaponCount: 3
+  spawnableObjects:
+  - name: Player
+    obj: {fileID: 3917014405222904205, guid: 365989104bab89047b810e46a38f7798, type: 3}
+  NameSearchObjectToNewScene: SpawnPoints
+  spawnRadius: 1
+  respawnDelay: 2
+  sides:
+  - points: []
+  _currentSpawnPointId: 0
 --- !u!1 &1644593637
 GameObject:
   m_ObjectHideFlags: 0
@@ -2119,7 +2182,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Transition_1
+          m_StringArgument: StartTunnel
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1644593640
