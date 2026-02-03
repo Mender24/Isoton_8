@@ -46,6 +46,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         //Melee
         public const string MeleeAttack = "MeleeAttack";
         public const string MeleeAttacking = "MeleeAttacking";
+        public const string MeleeSpeed = "MeleeSpeed";
         public const string PlayerDetected = "PlayerDetected";
         public const string HasAlerted = "HasAlerted";
         
@@ -70,16 +71,17 @@ public class BasicEnemyAnimationController : MonoBehaviour
     private bool _cachedAlerted = false;
     private bool _cachedPlayerDetected = false;
     private bool _cachedReloading = false;
+    private bool _cachedMeleeAttacking = false;
     private float _cachedSpeed = 0f;
     private float _targetSpeed = 0f;
     private float _idleFloat = 0.0f;
     private float _randomIdle = 0.0f;
     
-    // Idle variation
     private float _idleTimer = 0f;
     private float _stationaryTime = 0f;
     private bool _wasMoving = false;
-    private float reloadClipLength = 2.8f;
+    private float _reloadClipLength = 2.8f;
+    private float _meleeAttackClipLength = 3.2f;
     private bool _isInitialized = false;
 
     
@@ -119,7 +121,13 @@ public class BasicEnemyAnimationController : MonoBehaviour
         {
             var animController = GetComponent<Animator>().runtimeAnimatorController;
             var clip = animController.animationClips.First(a => a.name == "ReloadAssaultRifle");
-            reloadClipLength = clip.length;
+            _reloadClipLength = clip.length;
+        }
+        else if (_enemyAI.combatType == EnemyAI.CombatType.Melee)
+        {
+            var animController = GetComponent<Animator>().runtimeAnimatorController;
+            var clip = animController.animationClips.First(a => a.name == "Attack1Zombie_RM");
+            _meleeAttackClipLength = clip.length;
         }
     }
 
@@ -221,13 +229,26 @@ public class BasicEnemyAnimationController : MonoBehaviour
             _cachedReloading = _enemyAI.isReload;
 
             // Делаем длину перезарядки по параметку в EnemyAI
-            float reloadSpeed = reloadClipLength / _enemyAI.timeReload;
+            float reloadSpeed = _reloadClipLength / _enemyAI.timeReload;
             _animator.SetFloat(AnimParams.ReloadSpeed, reloadSpeed);
 
             _animator.SetBool(AnimParams.Reloading, _cachedReloading);
             
             if (_showDebugLogs)
                 Debug.Log($"[Animation] Reloading: {_cachedReloading}");
+        }
+
+        if (_enemyAI.isMeleeAttacking != _cachedMeleeAttacking)
+        {
+            _cachedMeleeAttacking = _enemyAI.isMeleeAttacking;
+
+            // Делаем длину удара по параметку в EnemyAI
+            float meleeSpeed = _meleeAttackClipLength / _enemyAI.meleeAttackLength;
+            _animator.SetFloat(AnimParams.MeleeSpeed, meleeSpeed);
+
+            _animator.SetBool(AnimParams.MeleeAttacking, _enemyAI.isMeleeAttacking);
+            if (_showDebugLogs)
+                Debug.Log($"[Animation] Is MeleeAttacking: {_cachedMeleeAttacking}");
         }
         
         _animator.SetBool(AnimParams.Shooting, _enemyAI.isFire);
@@ -357,9 +378,12 @@ public class BasicEnemyAnimationController : MonoBehaviour
     {
         if (!_isInitialized) return;
         
-        // _animator.SetTrigger(AnimParams.MeleeAttack);
-        _animator.SetBool(AnimParams.MeleeAttacking, _enemyAI.isMeleeAttacking);
+        // Делаем длину удара по параметку в EnemyAI
+        float meleeSpeed = _meleeAttackClipLength / _enemyAI.meleeAttackLength;
+        _animator.SetFloat(AnimParams.MeleeSpeed, meleeSpeed);
         
+        _animator.SetTrigger(AnimParams.MeleeAttack);
+
         if (_showDebugLogs)
             Debug.Log("[Animation] Melee attack triggered!");
     }
@@ -550,7 +574,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
 
     public void OnMeleeAttackComplete()
     {
-        _animator.SetBool(AnimParams.MeleeAttacking, _enemyAI.isMeleeAttacking);
+        // _animator.SetBool(AnimParams.MeleeAttacking, _enemyAI.isMeleeAttacking);
         
         if (_showDebugLogs)
             Debug.Log("[Animation Event] Melee attack complete!");

@@ -26,19 +26,15 @@ public partial class AgentSeesPlayerAction : Action
         
         _cachedSeesPlayer = seesPlayer.Value;
         seesPlayer.Value = EnemyAI.Value.CanSeePlayer();
-        
-        if (_cachedSeesPlayer != seesPlayer.Value && seesPlayer.Value == false)
-        {
-        }
 
         if (seesPlayer.Value)
         {
-            
             EnemyAI.Value.UpdateLastKnownPosition();
             return Status.Success;
         }
             
-        EnemyAI.Value.playerDetected = false;
+        if (EnemyAI.Value.combatType == global::EnemyAI.CombatType.Ranged)
+            EnemyAI.Value.playerDetected = false;
         return Status.Failure;
     }
 }

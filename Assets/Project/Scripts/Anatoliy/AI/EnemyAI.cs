@@ -35,7 +35,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private float _detectionDelay = 0.9f;
 
     [Header("Melee Combat Settings")]
+    // public float meleeAttackTime = 2f;
     [SerializeField] private float _meleeAttackRange = 2f;
+    public float meleeAttackLength = 3.0f;
     [SerializeField] private float _meleeAttackCooldown = 1.5f;
     [SerializeField] private float _meleeDamage = 20f;
     [SerializeField] private LayerMask _meleeHitLayers;
@@ -202,7 +204,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
             }
         }
 
-        if (isMeleeAttacking)
+        if (combatType == CombatType.Melee && isMeleeAttacking)
         {
             meleeAttackTimer -= Time.deltaTime;
             if (meleeAttackTimer <= 0)
@@ -213,7 +215,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         UpdateNoiseInvestigation();
 
-        if(isFire && timeShoot <= 0)
+        if(combatType == CombatType.Ranged && isFire && timeShoot <= 0)
         {
             Fire();
         }

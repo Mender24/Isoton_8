@@ -458,6 +458,7 @@ MonoBehaviour:
   _health: 100
   _detectionDelay: 0.25
   _meleeAttackRange: 2
+  meleeAttackLength: 3
   _meleeAttackCooldown: 1.5
   _meleeDamage: 20
   _meleeHitLayers:
@@ -4175,11 +4176,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BasicEnemyRanged
       objectReference: {fileID: 0}
-    - target: {fileID: 6881652080201872441, guid: d0061aa6e3d03b54290bc84a94623f44,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4546,11 +4542,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BasicMeleeEnemy
       objectReference: {fileID: 0}
-    - target: {fileID: 3947139205911218929, guid: 08acc29187f58624987a12e4339c3b17,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5127768019120152211, guid: 08acc29187f58624987a12e4339c3b17,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4603,24 +4594,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7825205097074764562, guid: 08acc29187f58624987a12e4339c3b17,
         type: 3}
-      propertyPath: forgetTime
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7825205097074764562, guid: 08acc29187f58624987a12e4339c3b17,
-        type: 3}
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 137057248}
-    - target: {fileID: 7825205097074764562, guid: 08acc29187f58624987a12e4339c3b17,
-        type: 3}
-      propertyPath: 'patrolPoints.Array.data[0]'
-      value: 
-      objectReference: {fileID: 1264704118}
-    - target: {fileID: 7825205097074764562, guid: 08acc29187f58624987a12e4339c3b17,
-        type: 3}
-      propertyPath: 'patrolPoints.Array.data[1]'
-      value: 
-      objectReference: {fileID: 572395997}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

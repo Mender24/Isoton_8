@@ -48,19 +48,7 @@ public partial class MeleeAttackPlayerAction : Action
             if (EnemyAI.Value.agent.isOnNavMesh)
                 EnemyAI.Value.agent.isStopped = true;
             EnemyAI.Value.StartMeleeAttack();
-            EnemyAI.Value.animationController?.PlayMeleeAttack();
         }
-        
-        // // Проверяем, не вышел ли игрок из зоны атаки
-        // if (!EnemyAI.Value.IsInMeleeRange() && _hasInitiatedAttack)
-        // {
-        //     return Status.Failure;
-        // }
-
-        // if (!EnemyAI.Value.IsInMeleeRange() && !_hasInitiatedAttack)
-        // {
-        //     return Status.Failure;
-        // }
         
         // Продолжаем атаку пока идет анимация
         if (EnemyAI.Value.isMeleeAttacking)
@@ -76,7 +64,6 @@ public partial class MeleeAttackPlayerAction : Action
             return Status.Failure;
         }
 
-        
         // Если атака завершена
         if (_hasInitiatedAttack && !EnemyAI.Value.isMeleeAttacking)
         {
@@ -86,12 +73,6 @@ public partial class MeleeAttackPlayerAction : Action
         }
         
         return Status.Running;
-    }
-    
-    protected override void OnEnd()
-    {
-        // if (EnemyAI.Value?.agent != null && EnemyAI.Value.agent.isOnNavMesh && !EnemyAI.Value.isMeleeAttacking)
-        //     EnemyAI.Value.agent.isStopped = false;
     }
 }
 
