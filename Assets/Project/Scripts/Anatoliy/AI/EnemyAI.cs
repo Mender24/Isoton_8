@@ -37,7 +37,6 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private float _detectionDelay = 0.9f;
 
     [Header("Melee Combat Settings")]
-    // public float meleeAttackTime = 2f;
     [SerializeField] private float _meleeAttackRange = 2f;
     public float meleeAttackLength = 3.0f;
     [SerializeField] private float _meleeAttackCooldown = 1.5f;
@@ -146,13 +145,14 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [HideInInspector] public bool isFire = false;
     [HideInInspector] public float timeShoot = 0f;
     [HideInInspector] public int currentBullet = 0;
-    // [HideInInspector] public int is = 0;
     [HideInInspector] public Vector3 lastHeardNoisePosition;
     [HideInInspector] public bool heardNoise = false;
     [HideInInspector] public bool isDead = false;
     private float _noiseInvestigationTimer = 0f;
     private AudioSource _lastHeardAudioSource;
     private float _lastDamageReactionTime = -999f;
+    private float _alertSoundDelay = 30f;
+    private float _alertSoundTimer = 0f;
 
     private bool _detectionDelayActive = false;
     private bool _debugIsPlayerHit = false;
@@ -238,6 +238,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
         }
 
         timeShoot -= Time.deltaTime;
+        
+        if (_alertSoundTimer > 0)
+            _alertSoundTimer -= Time.deltaTime;
     }
 
     public void StartFire()
@@ -426,8 +429,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         _detectionDelayActive = true;
 
-        if (_audioSource && _detectionSound)
+        if (_audioSource && _detectionSound && _alertSoundTimer <= 0)
         {
+            _alertSoundTimer = _alertSoundDelay;
             _audioSource.PlayOneShot(_detectionSound);
         }
 
