@@ -60,7 +60,8 @@ public class SceneLoader : MonoBehaviour
 
     public void SetPlayer(string player)
     {
-        _player = GetComponentInChildren<Player>();
+        Player[] players = GetComponentsInChildren<Player>();
+        _player = players[players.Length - 1];
     }
 
     public void LoadStartScene(string name)
