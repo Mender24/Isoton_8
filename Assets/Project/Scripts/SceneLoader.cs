@@ -24,6 +24,7 @@ public class SceneLoader : MonoBehaviour
     private string _currentScene;
     private string _nextScene;
     private bool _isDone = true;
+    private bool _isFirstLoad = false;
 
     public Player Player => _player;
 
@@ -38,9 +39,6 @@ public class SceneLoader : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
-        Inventory inventory = _player.GetComponentInChildren<Inventory>();
-        SpawnManager.Instance.LoadPlayer(inventory);
     }
 
     private void Start()
@@ -74,6 +72,13 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadStartScene(string name)
     {
+        if(!_isFirstLoad)
+        {
+            _isFirstLoad = true;
+            Inventory inventory = _player.GetComponentInChildren<Inventory>();
+            SpawnManager.Instance.LoadPlayer(inventory);
+        }
+
         if (name == "")
         {
             string lastSaveScene = SaveManager.Instance.GetLastSceneName();
