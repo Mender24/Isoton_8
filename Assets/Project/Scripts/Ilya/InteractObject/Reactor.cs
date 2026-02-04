@@ -10,12 +10,14 @@ public class Reactor : MonoBehaviour, IDamageable
     [SerializeField] private float _timeBeforeOpenShield = 1f;
     [SerializeField] private float _secondDestroy = 1f;
     [SerializeField] private float _lenPathShield = 4f;
+    [SerializeField] private float _lenPathDoorEnd = 4f;
     [SerializeField] private float _speedMoveShield = 3f;
     [SerializeField] private float _cooldownNextBattery = 3f;
     [SerializeField] private List<Battery> _batterys = new();
 
     [SerializeField] private GameObject _shieldObject;
     [SerializeField] private GameObject _reactorObject;
+    [SerializeField] private GameObject _doorEndLocation;
 
     private int _batteryHealth;
     private float _health;
@@ -92,6 +94,9 @@ public class Reactor : MonoBehaviour, IDamageable
         while(_batterys[_currentIndexLiveBattery].IsDead)
         {
             _currentIndexLiveBattery++;
+
+            if (_currentIndexLiveBattery >= _batterys.Count)
+                _currentIndexLiveBattery = 0;
         }
 
         _batterys[_currentIndexLiveBattery++].OpenShield();
@@ -126,6 +131,15 @@ public class Reactor : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(_secondDestroy);
 
         _reactorObject.SetActive(false);
+
+        Vector3 target = _doorEndLocation.transform.position - new Vector3(0, _lenPathDoorEnd, 0);
+
+        while (_doorEndLocation.transform.position != target)
+        {
+            _doorEndLocation.transform.position = Vector3.MoveTowards(_doorEndLocation.transform.position, target, -_speedMoveShield * Time.deltaTime);
+
+            yield return null;
+        }
 
         OnDeath?.Invoke();
     }
