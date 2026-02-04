@@ -29,7 +29,7 @@ namespace Akila.FPSFramework
 
             Instantiate(deathCamera, transform);
             
-            if(uIManager != null)
+            if(uIManager != null && _player != null)
                 Instantiate(uIManager, _player.transform);
         }
     }
