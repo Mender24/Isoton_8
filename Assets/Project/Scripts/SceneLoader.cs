@@ -30,9 +30,17 @@ public class SceneLoader : MonoBehaviour
     private void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else
+        {
             Destroy(gameObject);
+            return;
+        }
+
+        Inventory inventory = _player.GetComponentInChildren<Inventory>();
+        SpawnManager.Instance.LoadPlayer(inventory);
     }
 
     private void Start()
