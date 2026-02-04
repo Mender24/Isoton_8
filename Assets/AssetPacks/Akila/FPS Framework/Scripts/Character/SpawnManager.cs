@@ -44,8 +44,9 @@ namespace Akila.FPSFramework
 
         private void Update()
         {
-            if(_isDeleteSave)
+            if (_isDeleteSave)
             {
+                Debug.Log("DeleteAll");
                 _isDeleteSave = false;
                 PlayerPrefs.DeleteAll();
             }
@@ -159,18 +160,21 @@ namespace Akila.FPSFramework
             Quaternion rotation = GetPlayerRotation(actorSelf.teamId);
 
             newActorObject.transform.SetPositionAndRotation(position, rotation);
+            newActorObject.transform.parent = transform.parent;
+            newActorObject.SetActive(true);
 
             return newActorObject;
         }
 
         public void SavePlayer(Actor player)
         {
-            PlayerPrefs.DeleteAll();
-
             Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
 
             for (int i = 0; i < weapons.Length; i++)
+            {
                 PlayerPrefs.SetString("Weapon" + i.ToString(), weapons[i].Name);
+                Debug.Log("Weapon" + i.ToString() + " " + weapons[i].Name);
+            }
 
             PlayerPrefs.Save();
         }

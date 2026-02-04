@@ -2,7 +2,6 @@ using Akila.FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,6 +25,8 @@ public class SceneLoader : MonoBehaviour
     private string _nextScene;
     private bool _isDone = true;
 
+    public Player Player => _player;
+
     private void Awake()
     {
         if (instance == null)
@@ -34,12 +35,22 @@ public class SceneLoader : MonoBehaviour
             Destroy(gameObject);
     }
 
+    private void Start()
+    {
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(SetPlayer);
+    }
+
+    public void SetPlayer(string player)
+    {
+        _player = GetComponentInChildren<Player>();
+    }
+
     public void LoadStartScene(string name)
     {
         if (name == "")
         {
             string lastSaveScene = SaveManager.Instance.GetLastSceneName();
-            Debug.Log(lastSaveScene);
+
             if (lastSaveScene == "")
                 name = _startScene;
             else
@@ -75,7 +86,6 @@ public class SceneLoader : MonoBehaviour
     {
         if (_isUseSave)
         {
-            Debug.Log(_currentScene + " Save");
             SaveManager.Instance.SetLastSceneName(_currentScene);
             SaveManager.Instance.Save();
         }
