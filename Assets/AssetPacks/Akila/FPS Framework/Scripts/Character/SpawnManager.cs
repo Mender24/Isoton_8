@@ -69,6 +69,12 @@ namespace Akila.FPSFramework
             _currentSpawnPointId = 0;
         }
 
+        public void MovePlayerStartPositionAndOn(Player player)
+        {
+            player.transform.position = sides[0].points[0].transform.position;
+            player.gameObject.SetActive(true);
+        }
+
         public async void SpawnActor(IActor actorSelf, string actorObjName, float delay)
         {
             if (Application.isPlaying == false)

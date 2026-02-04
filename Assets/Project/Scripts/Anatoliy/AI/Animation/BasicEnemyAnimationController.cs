@@ -8,22 +8,26 @@ using UnityEngine.AI;
 /// </summary>
 public class BasicEnemyAnimationController : MonoBehaviour
 {
+    public enum MeleeAttackType { Stationary = 1, InMotion = 0 }
+
     [Header("References")]
     [SerializeField] private Animator _animator;
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private EnemyAI _enemyAI;
     
     [Header("Movement Animation Settings")]
-    [SerializeField] private float _speedSmoothTime = 0.1f;
-    [SerializeField] private float _minSpeedThreshold = 0.05f;
+    [SerializeField] private float _speedSmoothTime = 0.3f;
+    [SerializeField] private float _minSpeedThreshold = 0.2f;
 
     [Tooltip("Множитель скорости для более выразительных анимаций")]
     [SerializeField] private float _speedMultiplier = 1.0f;
-    
+    public MeleeAttackType attackType = MeleeAttackType.Stationary;
+
     [Header("Idle Settings")]
     [SerializeField] private float _idleVariationInterval = 5f;
     [SerializeField] private int _idleVariationsCount = 3;
     [SerializeField] private float _idleVariationChance = 0.6f; // 60% шанс вариации
+    [SerializeField] private int _amountWinAnimations = 3;
     
     [Header("Debug")]
     [SerializeField] private bool _showDebugLogs = false;
@@ -41,10 +45,19 @@ public class BasicEnemyAnimationController : MonoBehaviour
         public const string Shooting = "Shooting";
         public const string Reloading = "Reloading";
         public const string ReloadSpeed = "ReloadSpeed";
+
+        //Melee
+        public const string MeleeAttack = "MeleeAttack";
+        public const string MeleeAttacking = "MeleeAttacking";
+        public const string MeleeSpeed = "MeleeSpeed";
+        public const string PlayerDetected = "PlayerDetected";
+        public const string HasAlerted = "HasAlerted";
+        public const string MeleeAttackType = "MeleeAttackType";
         
         // States
         public const string IsDead = "IsDead";
         public const string RandomIdleF = "RandomIdleF";
+        public const string WinNumber = "WinNumber";
         
         // Triggers
         public const string Alert = "Alert";
@@ -52,6 +65,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         public const string Hit = "Hit";
         public const string Reload = "Reload";
         public const string Search = "Search";
+        public const string Winning = "Win";
     }
     
     // State cache для оптимизации
@@ -59,15 +73,19 @@ public class BasicEnemyAnimationController : MonoBehaviour
     private bool _cachedRunning = false;
     private bool _cachedAiming = false;
     private bool _cachedAlerted = false;
+    private bool _cachedPlayerDetected = false;
     private bool _cachedReloading = false;
+    private bool _cachedMeleeAttacking = false;
     private float _cachedSpeed = 0f;
     private float _targetSpeed = 0f;
+    private float _idleFloat = 0.0f;
+    private float _randomIdle = 0.0f;
     
-    // Idle variation
     private float _idleTimer = 0f;
     private float _stationaryTime = 0f;
     private bool _wasMoving = false;
-    private float reloadClipLength = 2.8f;
+    private float _reloadClipLength = 2.8f;
+    private float _meleeAttackClipLength = 3.2f;
     private bool _isInitialized = false;
 
     
@@ -103,9 +121,18 @@ public class BasicEnemyAnimationController : MonoBehaviour
 
     void Start()
     {
-        var animController = GetComponent<Animator>().runtimeAnimatorController;
-        var clip = animController.animationClips.First(a => a.name == "Reloading");
-        reloadClipLength = clip.length;
+        if (_enemyAI.combatType == EnemyAI.CombatType.Ranged)
+        {
+            var animController = GetComponent<Animator>().runtimeAnimatorController;
+            var clip = animController.animationClips.First(a => a.name == "ReloadAssaultRifle");
+            _reloadClipLength = clip.length;
+        }
+        else if (_enemyAI.combatType == EnemyAI.CombatType.Melee)
+        {
+            var animController = GetComponent<Animator>().runtimeAnimatorController;
+            var clip = animController.animationClips.First(a => a.name == "AttackRightClaws1Creature_RM");
+            _meleeAttackClipLength = clip.length;
+        }
     }
 
     void OnValidate()
@@ -165,6 +192,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         {
             _wasMoving = true;
             _stationaryTime = 0f;
+            attackType = MeleeAttackType.InMotion;
         }
         else if (_wasMoving)
         {
@@ -174,6 +202,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
         else
         {
             _stationaryTime += Time.deltaTime;
+            attackType = MeleeAttackType.Stationary;
         }
     }
     
@@ -192,18 +221,43 @@ public class BasicEnemyAnimationController : MonoBehaviour
                 Debug.Log($"[Animation] Alerted: {_cachedAlerted}");
         }
         
+        if (_enemyAI.playerDetected != _cachedPlayerDetected)
+        {
+            _cachedPlayerDetected = _enemyAI.playerDetected;
+            _animator.SetBool(AnimParams.PlayerDetected, _cachedPlayerDetected);
+
+            if (_showDebugLogs)
+                Debug.Log($"[Animation] PlayerDetected: {_cachedPlayerDetected}");
+        }
+
         if (_enemyAI.isReload != _cachedReloading)
         {
             _cachedReloading = _enemyAI.isReload;
-
+            
             // Делаем длину перезарядки по параметку в EnemyAI
-            float reloadSpeed = reloadClipLength / _enemyAI.timeReload;
+            float reloadSpeed = _reloadClipLength / _enemyAI.timeReload;
             _animator.SetFloat(AnimParams.ReloadSpeed, reloadSpeed);
 
             _animator.SetBool(AnimParams.Reloading, _cachedReloading);
             
             if (_showDebugLogs)
                 Debug.Log($"[Animation] Reloading: {_cachedReloading}");
+        }
+
+        if (_enemyAI.isMeleeAttacking != _cachedMeleeAttacking)
+        {
+            _cachedMeleeAttacking = _enemyAI.isMeleeAttacking;
+
+            // Устанавливаем как будем атаковать, в движении или нет
+            SetMeleeAttackType();
+
+            // Делаем длину удара по параметку в EnemyAI
+            float meleeSpeed = _meleeAttackClipLength / _enemyAI.meleeAttackLength;
+            _animator.SetFloat(AnimParams.MeleeSpeed, meleeSpeed);
+
+            _animator.SetBool(AnimParams.MeleeAttacking, _enemyAI.isMeleeAttacking);
+            if (_showDebugLogs)
+                Debug.Log($"[Animation] Is MeleeAttacking: {_cachedMeleeAttacking}");
         }
         
         _animator.SetBool(AnimParams.Shooting, _enemyAI.isFire);
@@ -215,12 +269,13 @@ public class BasicEnemyAnimationController : MonoBehaviour
     
     private void UpdateIdleVariations()
     {
-        bool shouldPlayVariation = !_enemyAI.isAlerted && 
-                                   !_agent.hasPath && 
-                                   _agent.velocity.magnitude < 0.1f &&
-                                   !_enemyAI.playerDetected;
+        // Условие, при котором бот может играть вариации ожидания
+        bool canPlayVariation = !_enemyAI.isAlerted && 
+                                !_agent.hasPath && 
+                                _agent.velocity.magnitude < 0.1f &&
+                                !_enemyAI.playerDetected;
         
-        if (shouldPlayVariation)
+        if (canPlayVariation)
         {
             _idleTimer += Time.deltaTime;
             
@@ -233,14 +288,12 @@ public class BasicEnemyAnimationController : MonoBehaviour
         else
         {
             _idleTimer = 0f;
-            
-            if (_animator.GetFloat(AnimParams.RandomIdleF) != 0)
-            {
-                _animator.SetFloat(AnimParams.RandomIdleF, 0);
-                if (_showDebugLogs)
-                    Debug.Log("[Animation] Returning to base idle");
-            }
+            _randomIdle = 0f;
         }
+
+        _idleFloat = Mathf.MoveTowards(_idleFloat, _randomIdle, Time.deltaTime * 0.5f);
+        
+        _animator.SetFloat(AnimParams.RandomIdleF, _idleFloat);
     }
     
     private void PlayRandomIdleVariation()
@@ -249,17 +302,28 @@ public class BasicEnemyAnimationController : MonoBehaviour
 
         if (roll > _idleVariationChance)
         {
-            _animator.SetFloat(AnimParams.RandomIdleF, 0);
+            _randomIdle = 0f;
             return;
         }
         
-        int randomIdle = Random.Range(1, _idleVariationsCount + 1);
-        _animator.SetFloat(AnimParams.RandomIdleF, (float)randomIdle);
+        int nextVariation;
+        do
+        {
+            nextVariation = Random.Range(1, _idleVariationsCount + 1);
+        } 
+        while (nextVariation == (int)_randomIdle && _idleVariationsCount > 1);
+
+        _randomIdle = (float)nextVariation;
         
         if (_showDebugLogs)
-            Debug.Log($"[Animation] Playing Idle variation: {randomIdle}");
+            Debug.Log($"[Animation] New Idle target variation: {_randomIdle}");
     }
     
+    public void SetMeleeAttackType()
+    {
+        _animator.SetFloat(AnimParams.MeleeAttackType, (float)attackType);
+    }
+
     #endregion
     
     #region Public Animation Controls
@@ -320,6 +384,23 @@ public class BasicEnemyAnimationController : MonoBehaviour
         if (_showDebugLogs)
             Debug.Log("[Animation] Hit triggered!");
     }
+
+    /// <summary>
+    /// Проигрывает анимацию ближней атаки
+    /// </summary>
+    public void PlayMeleeAttack()
+    {
+        if (!_isInitialized) return;
+        
+        // Делаем длину удара по параметку в EnemyAI
+        float meleeSpeed = _meleeAttackClipLength / _enemyAI.meleeAttackLength;
+        _animator.SetFloat(AnimParams.MeleeSpeed, meleeSpeed);
+        
+        _animator.SetTrigger(AnimParams.MeleeAttack);
+
+        if (_showDebugLogs)
+            Debug.Log("[Animation] Melee attack triggered!");
+    }
     
     /// <summary>
     /// Проигрывает анимацию перезарядки
@@ -346,6 +427,19 @@ public class BasicEnemyAnimationController : MonoBehaviour
         
         if (_showDebugLogs)
             Debug.Log("[Animation] Search triggered!");
+    }
+
+    /// <summary>
+    /// Проигрывает случайную анимацию победы
+    /// </summary>
+    public void PlayWinning()
+    {
+        if (!_isInitialized) return;
+
+        int roll = Random.Range(0, _amountWinAnimations);
+
+        _animator.SetTrigger(AnimParams.Winning);
+        _animator.SetInteger(AnimParams.WinNumber, roll);
     }
     
     /// <summary>
@@ -408,9 +502,19 @@ public class BasicEnemyAnimationController : MonoBehaviour
     
     #region Animation Events (вызываются из анимаций)
     
+    public void OnAlertStart()
+    {
+        _enemyAI.AlertStarted();
+        
+        if (_showDebugLogs)
+            Debug.Log("[Animation Event] Alert start");
+    }
+
     public void OnAlertComplete()
     {
         SetAiming(true);
+        _animator.SetBool(AnimParams.HasAlerted, true);
+        _enemyAI.AlertCompleted();
         
         if (_showDebugLogs)
             Debug.Log("[Animation Event] Alert complete - switching to aim");
@@ -443,14 +547,31 @@ public class BasicEnemyAnimationController : MonoBehaviour
             Debug.Log("[Animation Event] Reload complete");
     }
     
+    public void OnHitReactionStart()
+    {
+        _enemyAI.agent.isStopped = true;
+        if (_showDebugLogs)
+            Debug.Log("[Animation Event] Hit reaction start");
+    }
+
     public void OnHitReactionComplete()
     {
+        _enemyAI.agent.isStopped = false;
         if (_showDebugLogs)
             Debug.Log("[Animation Event] Hit reaction complete");
     }
     
+    public void OnDeathAnimationStart()
+    {
+        _enemyAI.agent.isStopped = true;
+        
+        if (_showDebugLogs)
+            Debug.Log("[Animation Event] Death animation complete");
+    }
+
     public void OnDeathAnimationComplete()
     {
+        _enemyAI.agent.isStopped = false;
         _enemyAI?.OnDeathComplete();
         
         if (_showDebugLogs)
@@ -472,6 +593,20 @@ public class BasicEnemyAnimationController : MonoBehaviour
     public void OnFootstepRight()
     {
         _enemyAI?.PlayFootstepSound(1);
+    }
+
+    public void OnMeleeAttackHit()
+    {
+        _enemyAI?.ExecuteMeleeAttack();
+        
+        if (_showDebugLogs)
+            Debug.Log("[Animation Event] Melee attack hit!");
+    }
+
+    public void OnMeleeAttackComplete()
+    {
+        if (_showDebugLogs)
+            Debug.Log("[Animation Event] Melee attack complete!");
     }
     
     #endregion
