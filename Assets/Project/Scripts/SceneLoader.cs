@@ -87,6 +87,7 @@ public class SceneLoader : MonoBehaviour
         if (_isUseSave)
         {
             SaveManager.Instance.SetLastSceneName(_currentScene);
+            SpawnManager.Instance.SavePlayer(_player.GetComponent<Actor>());
             SaveManager.Instance.Save();
         }
     }

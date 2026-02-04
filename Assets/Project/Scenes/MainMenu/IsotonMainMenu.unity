@@ -1571,12 +1571,13 @@ MonoBehaviour:
   - StartTunnel
   - Transition_1-2
   - Lvl2
-  - Transition_2-3
+  - Transition_2-BOSS
+  - End_BossFightACT1
   - Lvl3
-  - Transition_3-2
-  - Lvl4
+  - Transition_3-4
+  - End_Lvl4
   _transitionName: Transition
-  _endSceneName: Lvl4
+  _endSceneName: End
   _startScene: StartTunnel
   _player: {fileID: 1340925790}
 --- !u!4 &1065807089
@@ -3181,7 +3182,7 @@ PrefabInstance:
     - target: {fileID: 3961204817899577533, guid: e7832cc3ea9c6a34eaf66f40642bb7b2,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5573026
+      value: 0.562953
       objectReference: {fileID: 0}
     - target: {fileID: 3961204817997502604, guid: e7832cc3ea9c6a34eaf66f40642bb7b2,
         type: 3}
@@ -4156,6 +4157,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: destroyRoot
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: onDeath.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3917014405222904205, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
