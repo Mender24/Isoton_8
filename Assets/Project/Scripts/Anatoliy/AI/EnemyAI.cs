@@ -169,7 +169,14 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         if (playerTransform == null) 
         {
-            playerTransform = FindFirstObjectByType<CharacterController>().transform;
+            if(SceneLoader.instance == null /*|| SceneLoader.instance.Player == null*/)
+            {
+                playerTransform = FindFirstObjectByType<CharacterController>().transform;
+            }
+            // else
+            // {
+            //     playerTransform = SceneLoader.instance.Player.transform;
+            // }
         }
         
         if (_mainCamera == null)
@@ -644,17 +651,21 @@ public class EnemyAI : MonoBehaviour, IDamageable
         
         if (GetDistanceToPlayer() < hearingRange)
         {
-            AudioSource audioSource = playerTransform.GetComponentInChildren<AudioSource>();
+            AudioSource[] audioSources = playerTransform.GetComponentsInChildren<AudioSource>();
             
-            if (audioSource != null && audioSource.isPlaying)
+            foreach (var audioSource in audioSources)
             {
-                if (audioSource.volume >= _soundDetectionThreshold)
+                if (audioSource != null && audioSource.isPlaying)
                 {
-                    lastHeardNoisePosition = audioSource.transform.position;
-                    _lastHeardAudioSource = audioSource;
-                    return true;
+                    if (audioSource.volume >= _soundDetectionThreshold)
+                    {
+                        lastHeardNoisePosition = audioSource.transform.position;
+                        _lastHeardAudioSource = audioSource;
+                        return true;
+                    }
                 }
             }
+            
         }
 
         return false;
@@ -706,6 +717,25 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public Vector3 GetNoiseInvestigationTarget()
     {
         return lastHeardNoisePosition;
+    }
+
+    public bool IsEnemyStopped()
+    {
+        if (agent != null)
+        {
+            if (!agent.pathPending)
+            {
+                if (agent.remainingDistance <= agent.stoppingDistance)
+                {
+                    if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+            
+        return false;
     }
 
     private void OnPlayerDeath()

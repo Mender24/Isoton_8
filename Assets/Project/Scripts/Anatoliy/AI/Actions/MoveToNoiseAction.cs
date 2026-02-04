@@ -33,7 +33,7 @@ public partial class MoveToNoiseAction : Action
         if (!EnemyAI.Value.heardNoise || EnemyAI.Value.playerDetected)
             return Status.Failure;
 
-        if (EnemyAI.Value.agent.remainingDistance <= EnemyAI.Value.agent.stoppingDistance)
+        if (EnemyAI.Value.IsEnemyStopped()) 
         {
             return Status.Success;
         }
