@@ -7,6 +7,7 @@ using UnityEngine.Events;
 
 public class EnemyAI : MonoBehaviour, IDamageable
 {
+    public enum SpawnSource { FromSpawner, Manually }
     public enum CombatType { Ranged, Melee }
 
     [Header("References")]
@@ -16,6 +17,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private string mainCameraTag = "MainCamera";
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private LayerMask _obstacleLayer;
+    public SpawnSource spawnType = SpawnSource.Manually;
 
     [Header("Vision Settings")]
     [SerializeField] private float _fieldOfViewAngle = 110f;
@@ -736,6 +738,44 @@ public class EnemyAI : MonoBehaviour, IDamageable
         }
             
         return false;
+    }
+
+    public void FullReset()
+    {
+        playerDetected = false;
+        isFire = false;
+        isAlerted = false;
+        isSearching = false;
+        isMeleeAttacking = false;
+        isActivated = false;
+        isDead = false;
+        isReload = false;
+        heardNoise = false;
+        _detectionDelayActive = false;
+        
+        timeSinceLastSeen = 0f;
+        meleeAttackTimer = 0f;
+        timeShoot = 0f;
+        currentBullet = 0;
+        _noiseInvestigationTimer = 0f;
+        _lastDamageReactionTime = -999f;
+
+        lastKnownPlayerPosition = Vector3.zero;
+        lastHeardNoisePosition = Vector3.zero;
+
+        _lastHeardAudioSource = null;
+        
+        var cols = GetComponentsInChildren<Collider>();
+        foreach (var col in cols)
+        {
+            if (!col.enabled)
+                col.enabled = true;
+        }
+
+        transform.SetPosition(startPosition);
+        agent.ResetPath();
+        agent.SetDestination(startPosition);
+        animationController.ResetAnimationController();
     }
 
     private void OnPlayerDeath()
