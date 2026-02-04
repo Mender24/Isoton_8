@@ -21,6 +21,8 @@ public partial class MoveToNoiseAction : Action
         {
             targetPosition.y = hit.point.y;
         }
+        EnemyAI.Value.agent.isStopped = false;
+        EnemyAI.Value.agent.speed = EnemyAI.Value.walkSpeed;
         EnemyAI.Value.agent.SetDestination(targetPosition);
 
         return Status.Running;
