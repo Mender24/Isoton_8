@@ -14,7 +14,6 @@ public class GameInitializer : MonoBehaviour
             Debug.LogError("Not found playerInventory");
             return;
         }
-        var inGameUI = Instantiate(_inGameUI, transform);
-        inGameUI.Init(_inventory);
+       // _inGameUI.Init(_inventory);
     }
 }

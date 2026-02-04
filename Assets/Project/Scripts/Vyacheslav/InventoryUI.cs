@@ -57,7 +57,6 @@ public class InventoryUI : MonoBehaviour
 
     private void UpdateWeaponeAll(int index)
     {
-        SetActive(true);
         var iterator = 0;
         foreach (var slot in _slots)
         {
@@ -72,6 +71,7 @@ public class InventoryUI : MonoBehaviour
             }
             iterator++;
         }
+        SetActive(true);
     }
 
     private void ShowWeaponeAll()

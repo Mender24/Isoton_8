@@ -6,11 +6,16 @@ using UnityEngine.UI;
 public class InGameUI : MonoBehaviour
 {
     [SerializeField] private InventoryUI _inventoryUI;
+    [SerializeField] private Inventory _inventory;
 
 
-    public void Init(Inventory inventory)
+    private void Start()
     {
-        _inventoryUI.Init(inventory);
+        Init();
+    }
+    private void Init()
+    {
+        _inventoryUI.Init(_inventory);
     }
 
    
