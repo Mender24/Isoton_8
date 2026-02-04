@@ -742,6 +742,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     public void FullReset()
     {
+        _health = 100;
         playerDetected = false;
         isFire = false;
         isAlerted = false;
