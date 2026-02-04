@@ -8,11 +8,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2026
 		Month: 2
-		Day: 3
-		Hour: 23
-		Minute: 1
-		Second: 11
-		Millisecond: 623
+		Day: 5
+		Hour: 0
+		Minute: 20
+		Second: 25
+		Millisecond: 76
 	}
 	Creator: "FBX SDK/FBX Plugins version 2020.3.6"
 	OtherFlags:  {
@@ -37,13 +37,13 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya"
 			P: "Original|ApplicationVersion", "KString", "", "", "2025"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "03/02/2026 20:01:11.623"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "04/02/2026 21:20:25.076"
 			P: "Original|FileName", "KString", "", "", "D:\UnityP\Roof.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "2025"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "03/02/2026 20:01:11.623"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "04/02/2026 21:20:25.076"
 			P: "Original|ApplicationActiveProject", "KString", "", "", "D:\UnityP"
 			P: "Original|ApplicationNativeFile", "KString", "", "", "D:\UnityP\da.mb"
 		}
@@ -80,7 +80,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 1592234531168, "", "Scene" {
+	Document: 2100498302976, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -238,15 +238,15 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 1592228124784, "Geometry::", "Mesh" {
+	Geometry: 2089982304672, "Geometry::", "Mesh" {
 		Vertices: *12 {
-			a: 459.999847412109,294.596618652344,-154.999923706055,459.999847412109,294.596557617188,144.999588012695,159.999847412109,294.596557617188,144.999816894531,159.999847412109,294.596618652344,-154.999938964844
+			a: -280.02001953125,600,-300.006286621094,-280.02001953125,600.001220703125,-0.00577926635742188,20,600.000061035156,-300.002593994141,20,600,-0.003082275390625
 		} 
 		PolygonVertexIndex: *6 {
-			a: 3,0,-3,2,0,-2
+			a: 0,2,-2,1,2,-4
 		} 
 		Edges: *5 {
-			a: 0,5,4,2,1
+			a: 2,0,5,4,1
 		} 
 		GeometryVersion: 124
 		LayerElementNormal: 0 {
@@ -255,7 +255,7 @@ Objects:  {
 			MappingInformationType: "ByVertice"
 			ReferenceInformationType: "Direct"
 			Normals: *12 {
-				a: -7.24362857564866e-14,-1,-1.73611311993227e-07,-7.24362925327501e-14,-1,-1.73611326204082e-07,-7.24362925327501e-14,-1,-1.73611311993227e-07,-7.24362857564866e-14,-1,-1.73611326204082e-07
+				a: -1.93267146642029e-06,-1,1.90959462997853e-06,-1.93267169379396e-06,-1,1.90959462997853e-06,-1.93267146642029e-06,-1,1.90959462997853e-06,-1.93267146642029e-06,-1,1.90959462997853e-06
 			} 
 			NormalsW: *4 {
 				a: 1,1,1,1
@@ -267,7 +267,7 @@ Objects:  {
 			MappingInformationType: "ByPolygonVertex"
 			ReferenceInformationType: "IndexToDirect"
 			UV: *8 {
-				a: 5.87105751037598e-05,3.88622283935547e-05,0.999961137771606,5.88297843933105e-05,0.999941289424896,0.999959468841553,3.88622283935547e-05,0.999940395355225
+				a: -3.0517578125e-05,1.49011611938477e-07,1.00002646446228,8.34465026855469e-06,1.00003051757812,0.999997019767761,-2.6404857635498e-05,0.99999213218689
 			} 
 			UVIndex: *6 {
 				a: 0,1,3,3,1,2
@@ -298,11 +298,11 @@ Objects:  {
 			}
 		}
 	}
-	Model: 1579404983664, "Model::Roof", "Mesh" {
+	Model: 2087261339696, "Model::Roof", "Mesh" {
 		Version: 232
 		Properties70:  {
-			P: "RotationPivot", "Vector3D", "Vector", "",309.999847412109,294.596588134766,-5.00006103515625
-			P: "ScalingPivot", "Vector3D", "Vector", "",309.999847412109,294.596588134766,-5.00006103515625
+			P: "RotationPivot", "Vector3D", "Vector", "",-280,600.003540039062,-300.018127441406
+			P: "ScalingPivot", "Vector3D", "Vector", "",-280,600.003540039062,-300.018127441406
 			P: "RotationActive", "bool", "", "",1
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -312,7 +312,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 1592193088944, "Material::standardSurface1", "" {
+	Material: 2087187047536, "Material::standardSurface1", "" {
 		Version: 102
 		ShadingModel: "unknown"
 		MultiLayer: 0
@@ -365,7 +365,7 @@ Objects:  {
 			P: "Maya|normalCameraFactor", "double", "Number", "",0
 		}
 	}
-	Implementation: 1592163852400, "Implementation::standardSurface1_Implementation", "" {
+	Implementation: 2088222527408, "Implementation::standardSurface1_Implementation", "" {
 		Version: 100
 		Properties70:  {
 			P: "ShaderLanguage", "KString", "", "", "StandardSSL"
@@ -374,7 +374,7 @@ Objects:  {
 			P: "RootBindingName", "KString", "", "", "root"
 		}
 	}
-	BindingTable: 1579970253680, "BindingTable::root 44", "" {
+	BindingTable: 2101029629584, "BindingTable::root 46", "" {
 		Version: 100
 		Properties70:  {
 			P: "TargetName", "KString", "", "", "root"
@@ -431,17 +431,17 @@ Objects:  {
 Connections:  {
 	
 	;Model::Roof, Model::RootNode
-	C: "OO",1579404983664,0
+	C: "OO",2087261339696,0
 	
 	;Material::standardSurface1, Implementation::standardSurface1_Implementation
-	C: "OO",1592193088944,1592163852400
+	C: "OO",2087187047536,2088222527408
 	
-	;BindingTable::root 44, Implementation::standardSurface1_Implementation
-	C: "OO",1579970253680,1592163852400
+	;BindingTable::root 46, Implementation::standardSurface1_Implementation
+	C: "OO",2101029629584,2088222527408
 	
 	;Geometry::, Model::Roof
-	C: "OO",1592228124784,1579404983664
+	C: "OO",2089982304672,2087261339696
 	
 	;Material::standardSurface1, Model::Roof
-	C: "OO",1592193088944,1579404983664
+	C: "OO",2087187047536,2087261339696
 }
