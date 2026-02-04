@@ -13,7 +13,7 @@ public partial class MoveToLastKnownPositionAction : Action
     
     protected override Status OnStart()
     {
-        if (EnemyAI.Value == null)
+        if (EnemyAI.Value == null || EnemyAI.Value.isDead)
             return Status.Failure;
         
         EnemyAI.Value.agent.ResetPath();
@@ -31,7 +31,7 @@ public partial class MoveToLastKnownPositionAction : Action
         else
             EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
 
-        if (EnemyAI.Value.agent.hasPath) // FIXME: smh this always throw false, idk y, need logic to end only when finished route
+        if (!EnemyAI.Value.IsEnemyStopped())
         {
             return Status.Running;
         }

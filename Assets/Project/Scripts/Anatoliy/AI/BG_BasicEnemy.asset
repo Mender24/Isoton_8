@@ -39,7 +39,7 @@ MonoBehaviour:
           rid: 2658388370545967298
         m_EndedNodes:
           rid: 2658388370545967299
-        m_VersionTimestamp: 639057512985304183
+        m_VersionTimestamp: 639057701050968680
     - rid: 2658388370545967296
       type: {class: BlackboardReference, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -1103,7 +1103,7 @@ MonoBehaviour:
   - rid: 4423224946654707871
   - rid: 4423224946654707998
   - rid: 8573170423278076245
-  m_VersionTimestamp: 639057512985304183
+  m_VersionTimestamp: 639057701050968680
   m_SerializedVersion: 1
   m_DebugInfo: {fileID: 1995842697281407225}
   m_RuntimeGraph: {fileID: -2565059558768620788}
@@ -1437,7 +1437,7 @@ MonoBehaviour:
     - rid: 4423224428092195588
       type: {class: ConditionalGuardNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
       data:
-        Position: {x: -0.054699898, y: 119.81921}
+        Position: {x: -0.054699898, y: 104.61922}
         ID:
           m_Value0: 12875812549913605173
           m_Value1: 2534821615083675494
@@ -1454,8 +1454,9 @@ MonoBehaviour:
         m_FieldValues: []
         <ConditionModels>k__BackingField:
         - rid: 4423224428092195671
-        <RequiresAllConditionsTrue>k__BackingField: 0
-        <ShouldTruncateNodeUI>k__BackingField: 0
+        - rid: 8573170423494083262
+        <RequiresAllConditionsTrue>k__BackingField: 1
+        <ShouldTruncateNodeUI>k__BackingField: 1
     - rid: 4423224428092195589
       type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
       data:
@@ -4681,6 +4682,52 @@ MonoBehaviour:
         m_NodeModel:
           rid: 8573170423278076245
         m_Connections: []
+    - rid: 8573170423494083262
+      type: {class: ConditionModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        ConditionType:
+          m_SerializableType: IsAgentDeadCondition, Assembly-CSharp, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        ConditionTypeID:
+          m_Value0: 7154787022043906213
+          m_Value1: 6715557118499731111
+        NodeModel:
+          rid: 4423224428092195588
+        m_FieldValues:
+        - rid: 8573170423494083335
+        OperatorFieldModel:
+          rid: -2
+    - rid: 8573170423494083335
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: EnemyAI
+        Type:
+          m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        LocalValue:
+          rid: 8573170423494083336
+        LinkedVariable:
+          rid: 8573170428625289226
+    - rid: 8573170423494083336
+      type: {class: 'BlackboardVariable`1[[EnemyAI, Assembly-CSharp]]', ns: Unity.Behavior,
+        asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 8573170428625289226
+      type: {class: 'TypedVariableModel`1[[EnemyAI, Assembly-CSharp]]', ns: Unity.Behavior.GraphFramework,
+        asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 3805181719984256273
+          m_Value1: 17802286070985025902
+        Name: AgentAI
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
 --- !u!114 &1881306162771345083
 MonoBehaviour:
   m_ObjectHideFlags: 1

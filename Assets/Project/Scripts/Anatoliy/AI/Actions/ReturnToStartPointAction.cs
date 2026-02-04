@@ -13,7 +13,7 @@ public partial class ReturnToStartPointAction : Action
     protected override Status OnStart()
     {
         
-        if (EnemyAI.Value.startPosition != Vector3.zero)
+        if (EnemyAI.Value.startPosition != Vector3.zero && !EnemyAI.Value.isDead)
         {
             if (EnemyAI.Value.agent.pathEndPosition != EnemyAI.Value.startPosition)
             {
@@ -30,7 +30,7 @@ public partial class ReturnToStartPointAction : Action
         if (EnemyAI.Value.playerDetected)
             return Status.Failure;
 
-        if (EnemyAI.Value.agent.remainingDistance <= EnemyAI.Value.agent.stoppingDistance) // FIXME: smh this always throw true, idk y, need logic to end only when finished route
+        if (EnemyAI.Value.IsEnemyStopped())
         {
             // EnemyAI.Value.startPosition = Vector3.zero;
             // EnemyAI.Value.agent.ResetPath();

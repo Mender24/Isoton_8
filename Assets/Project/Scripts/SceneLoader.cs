@@ -2,7 +2,6 @@ using Akila.FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,14 +25,24 @@ public class SceneLoader : MonoBehaviour
     private string _nextScene;
     private bool _isDone = true;
 
+    public Player Player => _player;
+
     private void Awake()
     {
         if (instance == null)
             instance = this;
         else
             Destroy(gameObject);
+    }
 
-        sceneNames = GetSceneNamesInBuild();
+    private void Start()
+    {
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(SetPlayer);
+    }
+
+    public void SetPlayer(string player)
+    {
+        _player = GetComponentInChildren<Player>();
     }
 
     public void LoadStartScene(string name)
@@ -41,7 +50,7 @@ public class SceneLoader : MonoBehaviour
         if (name == "")
         {
             string lastSaveScene = SaveManager.Instance.GetLastSceneName();
-            Debug.Log(lastSaveScene);
+
             if (lastSaveScene == "")
                 name = _startScene;
             else
@@ -77,8 +86,8 @@ public class SceneLoader : MonoBehaviour
     {
         if (_isUseSave)
         {
-            Debug.Log(_currentScene + " Save");
             SaveManager.Instance.SetLastSceneName(_currentScene);
+            SpawnManager.Instance.SavePlayer(_player.GetComponent<Actor>());
             SaveManager.Instance.Save();
         }
     }
@@ -243,29 +252,6 @@ public class SceneLoader : MonoBehaviour
                 return i;
 
         return -1;
-    }
-
-    private List<string> GetSceneNamesInBuild()
-    {
-        List<string> names = new List<string>();
-        var scenes = EditorBuildSettings.scenes;
-
-        foreach (var scene in scenes)
-        {
-            if (scene.enabled)
-            {
-                string sceneName = System.IO.Path.GetFileNameWithoutExtension(scene.path);
-                names.Add(sceneName);
-
-                if (_isDebug)
-                    Debug.Log("Scene found: " + sceneName);
-            }
-        }
-
-        if (_isDebug)
-            Debug.Log("Total scenes found: " + names.Count);
-
-        return names;
     }
 
     private GameObject FindGameObjectInSceneByName(Scene scene, string name)

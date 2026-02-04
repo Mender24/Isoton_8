@@ -19,6 +19,8 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float _spawnInterval = 5f;
     [Tooltip("Случайное отклонение от интервала спавна")]
     [SerializeField] private float _spawnIntervalVariation = 1f;
+    [Tooltip("Время, которое бот лежит мертвый после смерти в секундах")]
+    [SerializeField] private float _timeAfterDeath = 15f;
     
     [Header("Enemy Count Settings")]
     [SerializeField] private int _maxEnemiesAlive = 5;
@@ -155,6 +157,7 @@ public class EnemySpawner : MonoBehaviour
     
     private void SetupEnemy(EnemyAI enemy)
     {
+        enemy.spawnType = EnemyAI.SpawnSource.FromSpawner;
         enemy.playerTransform = _playerTransform;
         
         if (_increasedMemory)
@@ -211,7 +214,7 @@ public class EnemySpawner : MonoBehaviour
         
         if (enemy != null)
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(_timeAfterDeath);
             Destroy(enemy.gameObject);
         }
     }
