@@ -65,6 +65,12 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private float _heightSprayOffset = 0.25f;
     [SerializeField] private float _widthSprayOffset = 0.25f;
 
+    [Header("Damage Reaction Settings")]
+    [Tooltip("Минимальное время между реакциями на урон (анимация/стан)")]
+    [SerializeField] private float _damageReactionCooldown = 3f;
+    [Tooltip("Включить кулдаун реакции на урон")]
+    [SerializeField] private bool _enableDamageReactionCooldown = true;
+
     [Header("Movement")]
     public float walkSpeed = 2f;
     public float runSpeed = 5f;
@@ -141,8 +147,10 @@ public class EnemyAI : MonoBehaviour, IDamageable
     // [HideInInspector] public int is = 0;
     [HideInInspector] public Vector3 lastHeardNoisePosition;
     [HideInInspector] public bool heardNoise = false;
+    [HideInInspector] public bool isDead = false;
     private float _noiseInvestigationTimer = 0f;
     private AudioSource _lastHeardAudioSource;
+    private float _lastDamageReactionTime = -999f;
 
     private bool _detectionDelayActive = false;
     private bool _debugIsPlayerHit = false;
@@ -309,6 +317,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         
         isMeleeAttacking = true;
         meleeAttackTimer = _meleeAttackCooldown;
+        animationController.SetMeleeAttackType();
     }
 
     public void ExecuteMeleeAttack()
@@ -350,7 +359,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         if (playerTransform == null) return false;
         if (_mainCamera == null) return false;
-        Vector3 rayDirection = (_mainCamera.transform.position - transform.position).normalized;
+        Vector3 rayDirection = (_mainCamera.transform.position - transform.position - new Vector3(0, _visionHeight, 0)).normalized;
         float rayDistance = GetDistanceToMainCamera();
 
         if (rayDistance > _visionRange) return false;
@@ -364,8 +373,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, rayDirection, out hit, rayDistance, _obstacleLayer | _playerLayer))
+        if (Physics.Raycast(transform.position + new Vector3(0, _visionHeight, 0), rayDirection, out hit, rayDistance, _obstacleLayer | _playerLayer))
         {
+            
             if (hit.transform == playerTransform)
                 return true;
         }
@@ -441,6 +451,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
         playerDetected = false;
         timeSinceLastSeen = 0f;
         agent.speed = walkSpeed;
+
+        _lastDamageReactionTime = -999f;
     }
 
     public float GetDistanceToPlayer()
@@ -452,16 +464,125 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public float GetDistanceToMainCamera()
     {
         if (_mainCamera == null) return Mathf.Infinity;
-        return Vector3.Distance(transform.position, _mainCamera.transform.position + new Vector3(0, _visionHeight, 0));
+        return Vector3.Distance(transform.position + new Vector3(0, _visionHeight, 0), _mainCamera.transform.position);
     }
 
     public void Damage(float amount, GameObject damageSource)
     {
-        animationController?.PlayHit();
-
         _health -= amount;
+        
+        DetectAttacker(damageSource);
+
+        bool canReact = !_enableDamageReactionCooldown || 
+                        (Time.time - _lastDamageReactionTime >= _damageReactionCooldown);
+        
+        if (canReact)
+        {
+            _lastDamageReactionTime = Time.time;
+            
+            animationController?.PlayHit();
+            
+            if (_showDebugLogs)
+                Debug.Log($"[EnemyAI] Took {amount} damage and played hit reaction");
+        }
+        else
+        {
+            if (_showDebugLogs)
+            {
+                float cooldownRemaining = _damageReactionCooldown - (Time.time - _lastDamageReactionTime);
+                Debug.Log($"[EnemyAI] Took {amount} damage but ignored reaction (cooldown: {cooldownRemaining:F1}s)");
+            }
+        }
+        
         if (_health <= 0)
             Die();
+    }
+
+    private void DetectAttacker(GameObject damageSource)
+    {
+        if (isActivated && playerDetected)
+        {
+            UpdateLastKnownPosition();
+            return;
+        }
+        
+        if (!isActivated)
+        {
+            isActivated = true;
+            
+            if (_showDebugLogs)
+                Debug.Log("[EnemyAI] Activated by taking damage");
+        }
+        
+        if (CanSeePlayer())
+        {
+            if (!isAlerted)
+            {
+                StartDetection();
+                
+                if (_showDebugLogs)
+                    Debug.Log("[EnemyAI] Player detected after taking damage (visual)");
+            }
+            else
+            {
+                UpdateLastKnownPosition();
+            }
+        }
+        else
+        {
+            InvestigateDamageSource(damageSource);
+        }
+    }
+
+    private void InvestigateDamageSource(GameObject damageSource)
+    {
+        if (damageSource != null)
+        {
+            Transform sourceTransform = damageSource.transform;
+            
+            Vector3 suspiciousPosition = sourceTransform.position;
+            
+            if (playerTransform != null)
+            {
+                float distanceToPlayer = Vector3.Distance(suspiciousPosition, playerTransform.position);
+                
+                if (distanceToPlayer < 10f)
+                {
+                    suspiciousPosition = playerTransform.position;
+                    playerDetected = true;
+                }
+            }
+            
+            if (!isAlerted)
+            {
+                isAlerted = true;
+                startPosition = transform.position;
+                agent.speed = runSpeed;
+                
+                if (_showDebugLogs)
+                    Debug.Log("[EnemyAI] Alerted by damage, investigating source");
+            }
+            
+            lastKnownPlayerPosition = suspiciousPosition;
+            heardNoise = true;
+            lastHeardNoisePosition = suspiciousPosition;
+            _noiseInvestigationTimer = _noiseInvestigationTime;
+            
+            if (_showDebugLogs)
+                Debug.Log($"[EnemyAI] Investigating damage from position: {suspiciousPosition}");
+        }
+        else
+        {
+            if (!isAlerted)
+            {
+                isAlerted = true;
+                startPosition = transform.position;
+                agent.speed = runSpeed;
+                
+                if (_showDebugLogs)
+                    Debug.Log("[EnemyAI] Alerted by damage from unknown source");
+            }
+        }
     }
 
     public bool IsSwaped()
@@ -471,11 +592,21 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     private void Die()
     {
+        isDead = true;
+        startPosition = transform.position;
         isActivated = false;
-        if (agent.isOnNavMesh)
+        playerDetected = false;
+        isFire = false;
+        isAlerted = false;
+        isSearching = false;
+        isMeleeAttacking = false;
+        agent.isStopped = true;
+        agent.ResetPath();
+
+        var cols = GetComponentsInChildren<Collider>();
+        foreach (var col in cols)
         {
-            agent.isStopped = true;
-            agent.ResetPath();
+            col.enabled = false;
         }
 
         animationController?.SetDead(true);
@@ -484,7 +615,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public void OnDeathComplete()
     {
         Debug.Log("Enemy death animation complete");
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false);
     }
 
     public void PlayFootstepSound(int foot)
@@ -812,31 +943,53 @@ public class EnemyAI : MonoBehaviour, IDamageable
     string GetDebugInfo()
     {
         string info = $"Enemy AI Debug\n";
-        info += $"Activated: {isActivated}\n";
-        info += $"Alerted: {isAlerted}\n";
-        info += $"Searching: {isSearching}\n";
-        info += $"Detected player: {playerDetected}\n";
-        info += $"Started position: {startPosition}\n";
-        info += $"Last Known Position: {lastKnownPlayerPosition}\n";
+    info += $"Activated: {isActivated}\n";
+    info += $"Alerted: {isAlerted}\n";
+    info += $"Searching: {isSearching}\n";
+    info += $"Detected player: {playerDetected}\n";
+    info += $"Started position: {startPosition}\n";
+    info += $"Last Known Position: {lastKnownPlayerPosition}\n";
 
-        if (playerTransform != null)
+    if (playerTransform != null)
+    {
+        float distance = Vector3.Distance(transform.position, playerTransform.position);
+        Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
+        float angle = Vector3.Angle(transform.forward, dirToPlayer);
+
+        info += $"Distance to player: {distance:F1}m\n";
+        info += $"Angle to player: {angle:F1}°\n";
+    }
+
+    if (isAlerted)
+    {
+        info += $"Time Since Seen: {timeSinceLastSeen:F1}s / {forgetTime}s\n";
+        
+        if (combatType == CombatType.Ranged)
         {
-            float distance = Vector3.Distance(transform.position, playerTransform.position);
-            Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
-            float angle = Vector3.Angle(transform.forward, dirToPlayer);
-
-            info += $"Distance to player: {distance:F1}m\n";
-            info += $"Angle to player: {angle:F1}°\n";
-        }
-
-        if (isAlerted)
-        {
-            info += $"Time Since Seen: {timeSinceLastSeen:F1}s / {forgetTime}s\n";
             info += $"Firing: {isFire}\n";
             info += $"Reloading: {isReload}\n";
             info += $"Bullets in magazine: {_countBullet - currentBullet}\n";
         }
+        else if (combatType == CombatType.Melee)
+        {
+            info += $"Melee Attacking: {isMeleeAttacking}\n";
+            info += $"Attack Cooldown: {meleeAttackTimer:F1}s\n";
+        }
+    }
 
-        return info;
+    if (_enableDamageReactionCooldown)
+    {
+        float timeSinceReaction = Time.time - _lastDamageReactionTime;
+        bool canReact = timeSinceReaction >= _damageReactionCooldown;
+        
+        info += $"\nDamage Reaction: {(canReact ? "READY" : "ON COOLDOWN")}\n";
+        if (!canReact)
+        {
+            float cooldownRemaining = _damageReactionCooldown - timeSinceReaction;
+            info += $"Cooldown: {cooldownRemaining:F1}s\n";
+        }
+    }
+
+    return info;
     }
 }

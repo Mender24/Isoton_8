@@ -45,7 +45,8 @@ public partial class MeleeAttackPlayerAction : Action
         if (angleToTarget < 5f && !_hasInitiatedAttack && EnemyAI.Value.meleeAttackTimer <= 0 && EnemyAI.Value.IsInMeleeRange())
         {
             _hasInitiatedAttack = true;
-            if (EnemyAI.Value.agent.isOnNavMesh)
+            if (EnemyAI.Value.agent.isOnNavMesh && 
+            EnemyAI.Value.animationController.attackType == BasicEnemyAnimationController.MeleeAttackType.Stationary)
                 EnemyAI.Value.agent.isStopped = true;
             EnemyAI.Value.StartMeleeAttack();
         }
@@ -59,7 +60,8 @@ public partial class MeleeAttackPlayerAction : Action
         // Проверяем, не вышел ли игрок из зоны атаки
         if (!EnemyAI.Value.IsInMeleeRange())
         {
-            if (EnemyAI.Value.agent.isOnNavMesh)
+            if (EnemyAI.Value.agent.isOnNavMesh &&
+            EnemyAI.Value.animationController.attackType == BasicEnemyAnimationController.MeleeAttackType.Stationary)
                 EnemyAI.Value.agent.isStopped = false;
             return Status.Failure;
         }
@@ -67,7 +69,8 @@ public partial class MeleeAttackPlayerAction : Action
         // Если атака завершена
         if (_hasInitiatedAttack && !EnemyAI.Value.isMeleeAttacking)
         {
-            if (EnemyAI.Value.agent.isOnNavMesh)
+            if (EnemyAI.Value.agent.isOnNavMesh &&
+            EnemyAI.Value.animationController.attackType == BasicEnemyAnimationController.MeleeAttackType.Stationary)
                 EnemyAI.Value.agent.isStopped = false;
             return Status.Success;
         }

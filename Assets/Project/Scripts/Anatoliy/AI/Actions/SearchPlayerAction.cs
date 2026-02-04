@@ -20,7 +20,7 @@ public partial class SearchPatternNode : Action
     
     protected override Status OnStart()
     {
-        if (EnemyAI.Value == null) return Status.Failure;
+        if (EnemyAI.Value == null || EnemyAI.Value.isDead) return Status.Failure;
         
         _searchAttempts = 0;
         if (!EnemyAI.Value.agent.hasPath)
@@ -79,11 +79,22 @@ public partial class SearchPatternNode : Action
         Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * SearchRadius.Value;
         randomDirection += EnemyAI.Value.lastKnownPlayerPosition;
         
-        UnityEngine.AI.NavMeshHit hit;
-        if (UnityEngine.AI.NavMesh.SamplePosition(randomDirection, out hit, SearchRadius.Value, 1))
+        int attempts = 0;
+        while (attempts < 10)
         {
-            _searchPoint = hit.position;
-            EnemyAI.Value.agent.SetDestination(_searchPoint);
+            UnityEngine.AI.NavMeshHit hit;
+            if (UnityEngine.AI.NavMesh.SamplePosition(randomDirection, out hit, SearchRadius.Value, 1))
+            {
+                _searchPoint = hit.position;
+
+                UnityEngine.AI.NavMeshPath path = new();
+                if (EnemyAI.Value.agent.CalculatePath(_searchPoint, path))
+                {
+                    EnemyAI.Value.agent.SetDestination(_searchPoint);
+                    return;
+                }
+            }
+            attempts++;
         }
     }
     

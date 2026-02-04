@@ -13,7 +13,7 @@ public partial class MoveToLastKnownPositionAction : Action
     
     protected override Status OnStart()
     {
-        if (EnemyAI.Value == null)
+        if (EnemyAI.Value == null || EnemyAI.Value.isDead)
             return Status.Failure;
         
         EnemyAI.Value.agent.ResetPath();

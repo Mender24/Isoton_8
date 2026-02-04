@@ -211,7 +211,7 @@ public class EnemySpawner : MonoBehaviour
         
         if (enemy != null)
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(15f);
             Destroy(enemy.gameObject);
         }
     }
