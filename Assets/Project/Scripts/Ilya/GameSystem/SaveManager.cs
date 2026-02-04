@@ -24,11 +24,12 @@ public class SaveManager : MonoBehaviour
     public void SetLastSceneName(string name)
     {
         PlayerPrefs.SetString(_sceneNameSave, name);
+        PlayerPrefs.Save();
     }
 
     public string GetLastSceneName()
     {
-        return PlayerPrefs.GetString(_sceneNameSave, "");
+        return PlayerPrefs.GetString(_sceneNameSave);
     }
 
     public void Save()

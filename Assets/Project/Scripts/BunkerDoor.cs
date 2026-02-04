@@ -5,7 +5,9 @@ using UnityEngine;
 public class BunkerDoor : MonoBehaviour
 {
     //public Transform pivot_left;
+    public BunkerDoor _doubleDoor;
     public Transform pivot_hinge;
+    public float _angle = -90;
     public float roughness = 2;
 
     private Quaternion targetRotation;
@@ -26,16 +28,22 @@ public class BunkerDoor : MonoBehaviour
 
     public void ToggleDoor()
     {
-        targetRotation = targetRotation == Quaternion.Euler(0, -90, 0) ? Quaternion.identity : Quaternion.Euler(0, -90, 0);
+        targetRotation = targetRotation == Quaternion.Euler(0, _angle, 0) ? Quaternion.identity : Quaternion.Euler(0, _angle, 0);
     }
 
     public void OpenDoor()
     {
-        targetRotation = Quaternion.Euler(0, -90, 0);
+        if(_doubleDoor != null)
+            _doubleDoor.OpenDoor();
+
+        targetRotation = Quaternion.Euler(0, _angle, 0);
     }
 
     public void CloseDoor()
     {
+        if (_doubleDoor != null)
+            _doubleDoor.CloseDoor();
+
         targetRotation = Quaternion.identity;
     }
 }

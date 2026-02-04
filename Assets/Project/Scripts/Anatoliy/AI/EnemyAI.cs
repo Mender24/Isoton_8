@@ -171,14 +171,14 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         if (playerTransform == null) 
         {
-            if(SceneLoader.instance == null /*|| SceneLoader.instance.Player == null*/)
+            if(SceneLoader.instance == null || SceneLoader.instance.Player == null)
             {
                 playerTransform = FindFirstObjectByType<CharacterController>().transform;
             }
-            // else
-            // {
-            //     playerTransform = SceneLoader.instance.Player.transform;
-            // }
+            else
+            {
+                playerTransform = SceneLoader.instance.Player.transform;
+            }
         }
         
         if (_mainCamera == null)
