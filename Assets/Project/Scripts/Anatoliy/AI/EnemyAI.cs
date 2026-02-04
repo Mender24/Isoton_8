@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     [Header("References")]
     public NavMeshAgent agent;
+    public BehaviorGraphAgent behAgent;
     public BasicEnemyAnimationController animationController;
     public Transform playerTransform;
     [SerializeField] private string mainCameraTag = "MainCamera";
@@ -195,6 +196,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         }
 
         if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (behAgent == null) behAgent = GetComponent<BehaviorGraphAgent>();
         if (animationController == null) animationController = GetComponent<BasicEnemyAnimationController>();
         if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
 
@@ -204,6 +206,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         }
         agent.speed = walkSpeed;
         agent.stoppingDistance = stoppingDistance;
+        startPosition = transform.position;
     }
 
     void Update()
@@ -615,6 +618,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
         isMeleeAttacking = false;
         agent.isStopped = true;
         agent.ResetPath();
+        agent.enabled = false;
+        behAgent.enabled = false;
 
         var cols = GetComponentsInChildren<Collider>();
         foreach (var col in cols)
@@ -627,7 +632,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     public void OnDeathComplete()
     {
-        Debug.Log("Enemy death animation complete");
+        if (_showDebugLogs)
+            Debug.Log("Enemy death animation complete");
         // gameObject.SetActive(false);
     }
 
@@ -776,6 +782,10 @@ public class EnemyAI : MonoBehaviour, IDamageable
             if (!col.enabled)
                 col.enabled = true;
         }
+
+        agent.enabled = true;
+        agent.isStopped = false;
+        behAgent.enabled = true;
 
         transform.SetPosition(startPosition);
         agent.ResetPath();
