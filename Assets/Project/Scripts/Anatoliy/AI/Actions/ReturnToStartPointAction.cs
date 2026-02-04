@@ -13,7 +13,7 @@ public partial class ReturnToStartPointAction : Action
     protected override Status OnStart()
     {
         
-        if (EnemyAI.Value.startPosition != Vector3.zero)
+        if (EnemyAI.Value.startPosition != Vector3.zero && !EnemyAI.Value.isDead)
         {
             if (EnemyAI.Value.agent.pathEndPosition != EnemyAI.Value.startPosition)
             {
