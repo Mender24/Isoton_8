@@ -45,13 +45,13 @@ namespace Akila.FPSFramework
 
         private IEnumerator StartChangeSceneProcess()
         {
-            enterDoor.ToggleDoor();
+            enterDoor.CloseDoor();
 
             yield return new WaitForSeconds(1f);
             yield return StartCoroutine(SceneLoader.instance.SceneRotationProcess());
             yield return new WaitForSeconds(1f);
 
-            exitDoor.ToggleDoor();
+            exitDoor.OpenDoor();
         }
 
         private void ToggleLeaver()

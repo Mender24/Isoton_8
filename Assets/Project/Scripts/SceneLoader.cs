@@ -38,6 +38,24 @@ public class SceneLoader : MonoBehaviour
     private void Start()
     {
         SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(SetPlayer);
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetAllEnemies);
+    }
+
+    public void ResetAllEnemies(string name)
+    {
+        var enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy.spawnType == EnemyAI.SpawnSource.Manually)
+            {
+                enemy.FullReset();
+            }
+            else
+            {
+                Destroy(enemy.gameObject);
+            }
+        }
     }
 
     public void SetPlayer(string player)
