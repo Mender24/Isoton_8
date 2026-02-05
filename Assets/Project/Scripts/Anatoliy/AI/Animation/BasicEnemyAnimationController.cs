@@ -580,7 +580,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
     
     public void OnDeathAnimationStart()
     {
-        _enemyAI.agent.isStopped = true;
+        // _enemyAI.agent.isStopped = true;
         
         if (_showDebugLogs)
             Debug.Log("[Animation Event] Death animation complete");
@@ -588,7 +588,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
 
     public void OnDeathAnimationComplete()
     {
-        _enemyAI.agent.isStopped = false;
+        // _enemyAI.agent.isStopped = false;
         _enemyAI?.OnDeathComplete();
         
         if (_showDebugLogs)

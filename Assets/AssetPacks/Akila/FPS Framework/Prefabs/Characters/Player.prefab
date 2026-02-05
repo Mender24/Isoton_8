@@ -341,7 +341,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
+  near clip plane: 0.035
   far clip plane: 100000
   field of view: 75
   orthographic: 0
@@ -404,7 +404,8 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras: []
+  m_Cameras:
+  - {fileID: 1371622626281754618}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -1186,7 +1187,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 1.8
-  m_Radius: 0.3
+  m_Radius: 0.35
   m_SlopeLimit: 45
   m_StepOffset: 0.25
   m_SkinWidth: 0.08
@@ -1312,7 +1313,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   health: 100
-  destroyDelay: 0
+  destroyDelay: 2
   damageCameraShake: 0.2
   destroyOnDeath: 1
   destroyRoot: 0
@@ -1422,7 +1423,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2

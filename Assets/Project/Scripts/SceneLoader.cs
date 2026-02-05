@@ -2,7 +2,6 @@ using Akila.FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,23 +24,65 @@ public class SceneLoader : MonoBehaviour
     private string _currentScene;
     private string _nextScene;
     private bool _isDone = true;
+    private bool _isFirstLoad = false;
+
+    public Player Player => _player;
 
     private void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else
+        {
             Destroy(gameObject);
+            return;
+        }
+    }
 
-        sceneNames = GetSceneNamesInBuild();
+    private void Start()
+    {
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(SetPlayer);
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetAllEnemies);
+    }
+
+    public void ResetAllEnemies(string name)
+    {
+        var enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy.spawnType == EnemyAI.SpawnSource.Manually)
+            {
+                enemy.FullReset();
+            }
+            else
+            {
+                Destroy(enemy.gameObject);
+            }
+        }
+    }
+
+    public void SetPlayer(string player)
+    {
+        Player[] players = GetComponentsInChildren<Player>();
+        _player = players[players.Length - 1];
     }
 
     public void LoadStartScene(string name)
     {
+        if(!_isFirstLoad)
+        {
+            _isFirstLoad = true;
+            Inventory inventory = _player.GetComponentInChildren<Inventory>();
+            SpawnManager.Instance.LoadPlayerWeapon(inventory);
+        }
+
         if (name == "")
         {
             string lastSaveScene = SaveManager.Instance.GetLastSceneName();
-            Debug.Log(lastSaveScene);
+
             if (lastSaveScene == "")
                 name = _startScene;
             else
@@ -77,8 +118,8 @@ public class SceneLoader : MonoBehaviour
     {
         if (_isUseSave)
         {
-            Debug.Log(_currentScene + " Save");
             SaveManager.Instance.SetLastSceneName(_currentScene);
+            SpawnManager.Instance.SaveWeaponPlayer(_player.GetComponent<Actor>());
             SaveManager.Instance.Save();
         }
     }
@@ -243,29 +284,6 @@ public class SceneLoader : MonoBehaviour
                 return i;
 
         return -1;
-    }
-
-    private List<string> GetSceneNamesInBuild()
-    {
-        List<string> names = new List<string>();
-        var scenes = EditorBuildSettings.scenes;
-
-        foreach (var scene in scenes)
-        {
-            if (scene.enabled)
-            {
-                string sceneName = System.IO.Path.GetFileNameWithoutExtension(scene.path);
-                names.Add(sceneName);
-
-                if (_isDebug)
-                    Debug.Log("Scene found: " + sceneName);
-            }
-        }
-
-        if (_isDebug)
-            Debug.Log("Total scenes found: " + names.Count);
-
-        return names;
     }
 
     private GameObject FindGameObjectInSceneByName(Scene scene, string name)

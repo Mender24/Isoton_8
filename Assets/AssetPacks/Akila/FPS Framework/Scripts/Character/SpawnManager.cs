@@ -44,8 +44,9 @@ namespace Akila.FPSFramework
 
         private void Update()
         {
-            if(_isDeleteSave)
+            if (_isDeleteSave)
             {
+                Debug.Log("DeleteAll");
                 _isDeleteSave = false;
                 PlayerPrefs.DeleteAll();
             }
@@ -64,9 +65,12 @@ namespace Akila.FPSFramework
                 .SelectMany(t => t.GetComponentsInChildren<Transform>(true))
                 .FirstOrDefault(x => x.gameObject.transform.name == NameSearchObjectToNewScene)?.gameObject;
 
-            Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
-            sides[0].points = newArray;
-            _currentSpawnPointId = 0;
+            if (SpawnPoints != null)
+            {
+                Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
+                sides[0].points = newArray;
+                _currentSpawnPointId = 0;
+            }
         }
 
         public void MovePlayerStartPositionAndOn(Player player)
@@ -143,7 +147,7 @@ namespace Akila.FPSFramework
                 .FirstOrDefault();
 
             //SaveManager.LoadPlayer(inventory, _itemsPrefab);
-            LoadPlayer(inventory, _itemsPrefab);
+            ReadPlayerWeapon(inventory);
             //----
 
             if (newPlayerActorComponent && actorSelfActorComponent)
@@ -156,29 +160,59 @@ namespace Akila.FPSFramework
             Quaternion rotation = GetPlayerRotation(actorSelf.teamId);
 
             newActorObject.transform.SetPositionAndRotation(position, rotation);
+            newActorObject.transform.parent = transform.parent;
+            newActorObject.SetActive(true);
 
             return newActorObject;
         }
 
-        public void SavePlayer(Actor player)
-        {
-            PlayerPrefs.DeleteAll();
+        private List<string> _weaponSave = new();
 
+        public void WritePlayerWeapon(Actor player)
+        {
             Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
 
             for (int i = 0; i < weapons.Length; i++)
-                PlayerPrefs.SetString("Weapon" + i.ToString(), weapons[i].Name);
-
-            PlayerPrefs.Save();
+            {
+                _weaponSave.Add(weapons[i].Name);
+                Debug.Log("Weapon" + i.ToString() + " " + weapons[i].Name);
+            }
         }
 
-        public void LoadPlayer(Inventory inventory, List<InventoryItem> itemsPrefab)
+        public void ReadPlayerWeapon(Inventory inventory)
         {
-            for(int i = 0; i < _maxWeaponCount; i++)
+            for (int i = 0; i < _maxWeaponCount; i++)
             {
-                if(PlayerPrefs.HasKey("Weapon" + i))
+                if (i >= _weaponSave.Count)
+                    break;
+
+                InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == _weaponSave[i]);
+
+                if (prefab == null)
+                    break;
+
+                InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
+            }
+        }
+
+        public void SaveWeaponPlayer(Actor player)
+        {
+            Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
+
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                PlayerPrefs.SetString("Weapon" + i, weapons[i].Name);
+                Debug.Log("Weapon" + i.ToString() + " " + weapons[i].Name);
+            }
+        }
+
+        public void LoadPlayerWeapon(Inventory inventory)
+        {
+            for (int i = 0; i < _maxWeaponCount; i++)
+            {
+                if (PlayerPrefs.HasKey("Weapon" + i))
                 {
-                    InventoryItem prefab = itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
+                    InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
                 }
             }
