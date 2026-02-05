@@ -147,7 +147,7 @@ namespace Akila.FPSFramework
                 .FirstOrDefault();
 
             //SaveManager.LoadPlayer(inventory, _itemsPrefab);
-            LoadPlayer(inventory, _itemsPrefab);
+            LoadPlayer(inventory);
             //----
 
             if (newPlayerActorComponent && actorSelfActorComponent)
@@ -179,13 +179,13 @@ namespace Akila.FPSFramework
             PlayerPrefs.Save();
         }
 
-        public void LoadPlayer(Inventory inventory, List<InventoryItem> itemsPrefab)
+        public void LoadPlayer(Inventory inventory)
         {
             for(int i = 0; i < _maxWeaponCount; i++)
             {
                 if(PlayerPrefs.HasKey("Weapon" + i))
                 {
-                    InventoryItem prefab = itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
+                    InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
                 }
             }

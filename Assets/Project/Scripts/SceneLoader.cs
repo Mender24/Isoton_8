@@ -24,15 +24,21 @@ public class SceneLoader : MonoBehaviour
     private string _currentScene;
     private string _nextScene;
     private bool _isDone = true;
+    private bool _isFirstLoad = false;
 
     public Player Player => _player;
 
     private void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else
+        {
             Destroy(gameObject);
+            return;
+        }
     }
 
     private void Start()
@@ -60,11 +66,19 @@ public class SceneLoader : MonoBehaviour
 
     public void SetPlayer(string player)
     {
-        _player = GetComponentInChildren<Player>();
+        Player[] players = GetComponentsInChildren<Player>();
+        _player = players[players.Length - 1];
     }
 
     public void LoadStartScene(string name)
     {
+        if(!_isFirstLoad)
+        {
+            _isFirstLoad = true;
+            Inventory inventory = _player.GetComponentInChildren<Inventory>();
+            SpawnManager.Instance.LoadPlayer(inventory);
+        }
+
         if (name == "")
         {
             string lastSaveScene = SaveManager.Instance.GetLastSceneName();
