@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -68,7 +69,13 @@ public class EnemySpawner : MonoBehaviour
     {
         if (_findPlayerAutomatically && _playerTransform == null)
         {
-            var player = FindFirstObjectByType<CharacterController>();
+            CharacterController player;
+
+            if (SceneLoader.instance != null && SceneLoader.instance.Player != null)
+                player = SceneLoader.instance.Player.GetComponent<CharacterController>();
+            else
+                player = FindFirstObjectByType<CharacterController>();
+
             if (player != null)
             {
                 _playerTransform = player.transform;
