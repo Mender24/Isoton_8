@@ -76,7 +76,7 @@ public class SceneLoader : MonoBehaviour
         {
             _isFirstLoad = true;
             Inventory inventory = _player.GetComponentInChildren<Inventory>();
-            SpawnManager.Instance.LoadPlayer(inventory);
+            SpawnManager.Instance.LoadPlayerWeapon(inventory);
         }
 
         if (name == "")
@@ -119,7 +119,7 @@ public class SceneLoader : MonoBehaviour
         if (_isUseSave)
         {
             SaveManager.Instance.SetLastSceneName(_currentScene);
-            SpawnManager.Instance.SavePlayer(_player.GetComponent<Actor>());
+            SpawnManager.Instance.SaveWeaponPlayer(_player.GetComponent<Actor>());
             SaveManager.Instance.Save();
         }
     }
