@@ -1090,6 +1090,8 @@ namespace Akila.FPSFramework
                 else
                 {
                     shootEffect?.Invoke(damageable);
+                    damageable.Damage(totalDamage, actorGO); // Если у оружия есть shootEffect оно не наносит урон тк Damage не вызывается
+                    // Я хз как должно быть, но чтобы хоть как-то работало добавил строчку, можно оружие со скиллами сделать с 0 или 1 урона
                 }
                 bool shouldHighlight = damageable.Health <= 0;
 

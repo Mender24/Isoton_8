@@ -4082,6 +4082,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6881652079913812957}
+  - component: {fileID: 8244510905108996463}
+  - component: {fileID: 2401567681771182192}
+  - component: {fileID: 3514744178559477625}
   m_Layer: 8
   m_Name: head
   m_TagString: Untagged
@@ -4104,6 +4107,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6881652080159655831}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &8244510905108996463
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6881652079913812958}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.16
+  m_Center: {x: -0.09, y: 0, z: 0}
+--- !u!114 &2401567681771182192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6881652079913812958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  parent: 1
+  lifeTime: 60
+--- !u!114 &3514744178559477625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6881652079913812958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5d5fe333d286794ea408bc699d2b3fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bone: 10
+  m_damageMultipler: 2.5
+  m_isCritical: 0
 --- !u!1 &6881652079932318454
 GameObject:
   m_ObjectHideFlags: 0
@@ -6188,6 +6242,7 @@ GameObject:
   - component: {fileID: 2733046975915953009}
   - component: {fileID: 423112662875772378}
   - component: {fileID: 7698475277634065106}
+  - component: {fileID: -7904418886463465477}
   m_Layer: 8
   m_Name: BasicEnemy
   m_TagString: Enemy
@@ -6332,9 +6387,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.35
-  m_Height: 1.8
+  m_Height: 1.7
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!195 &1011661064639563882
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -6518,6 +6573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 1011661064639563882}
+  behAgent: {fileID: 0}
   animationController: {fileID: 7698475277634065106}
   playerTransform: {fileID: 0}
   mainCameraTag: MainCamera
@@ -6634,6 +6690,21 @@ MonoBehaviour:
   _idleVariationChance: 0.8
   _amountWinAnimations: 3
   _showDebugLogs: 0
+--- !u!114 &-7904418886463465477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6881652080201872441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  parent: 1
+  lifeTime: 60
 --- !u!1 &6881652080241917032
 GameObject:
   m_ObjectHideFlags: 0
