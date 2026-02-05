@@ -1,9 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BunkerDoor : MonoBehaviour
 {
+    [SerializeField] private bool _isMoveOpen = false;
+    [SerializeField] private float _lenMoveDoor = 4f;
+    [SerializeField] private float _speedMoveDoor = 4f;
+    [Space]
     //public Transform pivot_left;
     public BunkerDoor _doubleDoor;
     public Transform pivot_hinge;
@@ -11,19 +13,21 @@ public class BunkerDoor : MonoBehaviour
     public float roughness = 2;
 
     private Quaternion targetRotation;
+    private Vector3 _targetPosition = Vector3.zero;
     public bool isOpenInitially = false;
 
-    //private void Start()
-    //{
-    //    Debug.Log("Start");
-    //    if(isOpenInitially)
-    //        targetRotation = Quaternion.Euler(0, -90, 0);   
-    //}
+    private void Start()
+    {
+        _targetPosition = pivot_hinge.position;
+    }
 
     private void Update()
     {
-        if(targetRotation != pivot_hinge.localRotation)
+        if (!_isMoveOpen && targetRotation != pivot_hinge.localRotation)
             pivot_hinge.localRotation = Quaternion.Lerp(pivot_hinge.localRotation, Quaternion.Inverse(targetRotation), Time.deltaTime * roughness);
+
+        if (_isMoveOpen && pivot_hinge.position != _targetPosition)
+            pivot_hinge.position = Vector3.MoveTowards(pivot_hinge.position, _targetPosition, _speedMoveDoor * Time.deltaTime);
     }
 
     public void ToggleDoor()
@@ -33,10 +37,14 @@ public class BunkerDoor : MonoBehaviour
 
     public void OpenDoor()
     {
-        if(_doubleDoor != null)
+        if (_doubleDoor != null)
             _doubleDoor.OpenDoor();
 
-        targetRotation = Quaternion.Euler(0, _angle, 0);
+        if (!_isMoveOpen)
+            targetRotation = Quaternion.Euler(0, _angle, 0);
+
+        if (_isMoveOpen)
+            _targetPosition.y += _lenMoveDoor;
     }
 
     public void CloseDoor()
@@ -44,6 +52,10 @@ public class BunkerDoor : MonoBehaviour
         if (_doubleDoor != null)
             _doubleDoor.CloseDoor();
 
-        targetRotation = Quaternion.identity;
+        if (!_isMoveOpen)
+            targetRotation = Quaternion.identity;
+
+        if (_isMoveOpen)
+            _targetPosition.y -= _lenMoveDoor;
     }
 }
