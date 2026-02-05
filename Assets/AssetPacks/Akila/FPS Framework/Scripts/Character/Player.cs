@@ -7,7 +7,10 @@ namespace Akila.FPSFramework
 
         private void Awake()
         {
-            Instance = this;
+            if (Instance == null)
+                Instance = this;
+            else
+                Destroy(gameObject);
         }
     }
 }
