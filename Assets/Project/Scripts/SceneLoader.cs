@@ -77,6 +77,12 @@ public class SceneLoader : MonoBehaviour
         LoadStartScene(name);
     }
 
+    public void NewGame()
+    {
+        PlayerPrefs.DeleteAll();
+        LoadStartScene("");
+    }
+
     public void LoadStartScene(string name, bool isSave = false)
     {
         if(!_isFirstLoad)
