@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6077435407924495243}
   - component: {fileID: 8199212156293911795}
   - component: {fileID: 2473825344193212433}
+  - component: {fileID: 2874289572936575016}
   m_Layer: 0
   m_Name: small_tunnel_2m
   m_TagString: Untagged
@@ -40,7 +41,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8118156672895704372}
-  m_Mesh: {fileID: -1462094891292391985, guid: 5f51e41c08ca4524991425cd01bb49e4, type: 3}
+  m_Mesh: {fileID: -1462094891292391985, guid: c0cc85046fe67784c99d552bfb5ff1b1, type: 3}
 --- !u!23 &2473825344193212433
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -64,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1ad378d3ac753b9488d34e47e322fd67, type: 2}
+  - {fileID: 2100000, guid: a89d5cd318d3e7a42a404a6156887fff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -86,3 +87,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2874289572936575016
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8118156672895704372}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1462094891292391985, guid: c0cc85046fe67784c99d552bfb5ff1b1, type: 3}
