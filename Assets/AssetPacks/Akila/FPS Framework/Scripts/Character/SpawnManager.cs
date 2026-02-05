@@ -65,7 +65,7 @@ namespace Akila.FPSFramework
                 .SelectMany(t => t.GetComponentsInChildren<Transform>(true))
                 .FirstOrDefault(x => x.gameObject.transform.name == NameSearchObjectToNewScene)?.gameObject;
 
-            if(SpawnPoints != null)
+            if (SpawnPoints != null)
             {
                 Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
                 sides[0].points = newArray;
@@ -147,7 +147,7 @@ namespace Akila.FPSFramework
                 .FirstOrDefault();
 
             //SaveManager.LoadPlayer(inventory, _itemsPrefab);
-            LoadPlayer(inventory);
+            ReadPlayerWeapon(inventory);
             //----
 
             if (newPlayerActorComponent && actorSelfActorComponent)
@@ -166,24 +166,51 @@ namespace Akila.FPSFramework
             return newActorObject;
         }
 
-        public void SavePlayer(Actor player)
+        private List<string> _weaponSave = new();
+
+        public void WritePlayerWeapon(Actor player)
         {
             Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
 
             for (int i = 0; i < weapons.Length; i++)
             {
-                PlayerPrefs.SetString("Weapon" + i.ToString(), weapons[i].Name);
+                _weaponSave.Add(weapons[i].Name);
                 Debug.Log("Weapon" + i.ToString() + " " + weapons[i].Name);
             }
-
-            PlayerPrefs.Save();
         }
 
-        public void LoadPlayer(Inventory inventory)
+        public void ReadPlayerWeapon(Inventory inventory)
         {
-            for(int i = 0; i < _maxWeaponCount; i++)
+            for (int i = 0; i < _maxWeaponCount; i++)
             {
-                if(PlayerPrefs.HasKey("Weapon" + i))
+                if (i >= _weaponSave.Count)
+                    break;
+
+                InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == _weaponSave[i]);
+
+                if (prefab == null)
+                    break;
+
+                InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
+            }
+        }
+
+        public void SaveWeaponPlayer(Actor player)
+        {
+            Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
+
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                PlayerPrefs.SetString("Weapon" + i, weapons[i].Name);
+                Debug.Log("Weapon" + i.ToString() + " " + weapons[i].Name);
+            }
+        }
+
+        public void LoadPlayerWeapon(Inventory inventory)
+        {
+            for (int i = 0; i < _maxWeaponCount; i++)
+            {
+                if (PlayerPrefs.HasKey("Weapon" + i))
                 {
                     InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
