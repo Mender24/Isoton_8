@@ -759,12 +759,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -807,8 +807,8 @@ RectTransform:
   m_Children:
   - {fileID: 1596089036}
   - {fileID: 466931682}
-  - {fileID: 1644593638}
   - {fileID: 1427355111}
+  - {fileID: 1644593638}
   - {fileID: 761269906}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1011,7 +1011,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &385112603
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1260,10 +1260,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 224259804}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.00030517578, y: 0}
+  m_SizeDelta: {x: 0.0002, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &552376562 stripped
 GameObject:
@@ -1399,8 +1399,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 498.6, y: 646.4}
+  m_AnchoredPosition: {x: 30.490356, y: 0}
+  m_SizeDelta: {x: 534.28076, y: 474.40002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &761269907
 MonoBehaviour:
@@ -2489,7 +2489,7 @@ GameObject:
   - component: {fileID: 1427355113}
   - component: {fileID: 1427355112}
   m_Layer: 5
-  m_Name: Button_1
+  m_Name: NewGameButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2510,10 +2510,10 @@ RectTransform:
   - {fileID: 1379276860}
   m_Father: {fileID: 224259804}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: -145.8}
-  m_SizeDelta: {x: 256.1, y: 55.4}
+  m_AnchorMin: {x: 0.6544117, y: 0.366658}
+  m_AnchorMax: {x: 0.6544117, y: 0.366658}
+  m_AnchoredPosition: {x: 2.5, y: -2.7999878}
+  m_SizeDelta: {x: 257.1, y: 55.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1427355112
 MonoBehaviour:
@@ -2561,8 +2561,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1065807088}
         m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: LoadStartMenu
-        m_Mode: 5
+        m_MethodName: NewGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2886,10 +2886,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 224259804}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.00018310547, y: 0}
+  m_SizeDelta: {x: 0, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1596089037
 MonoBehaviour:
@@ -3061,7 +3061,7 @@ GameObject:
   - component: {fileID: 1644593640}
   - component: {fileID: 1644593639}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ContinueButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3082,10 +3082,10 @@ RectTransform:
   - {fileID: 191187842}
   m_Father: {fileID: 224259804}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: -227}
-  m_SizeDelta: {x: 256.1, y: 55.4}
+  m_AnchorMin: {x: 0.65900004, y: 0.2847525}
+  m_AnchorMax: {x: 0.65900004, y: 0.2847525}
+  m_AnchoredPosition: {x: -7, y: 4}
+  m_SizeDelta: {x: 256.1, y: 55.399994}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1644593639
 MonoBehaviour:
