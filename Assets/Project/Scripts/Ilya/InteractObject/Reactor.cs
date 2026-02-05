@@ -132,15 +132,8 @@ public class Reactor : MonoBehaviour, IDamageable
 
         _reactorObject.SetActive(false);
 
-        Vector3 target = _doorEndLocation.transform.position + new Vector3(0, _lenPathDoorEnd, 0);
-
-        while (_doorEndLocation.transform.position != target)
-        {
-            _doorEndLocation.transform.position = Vector3.MoveTowards(_doorEndLocation.transform.position, target, _speedMoveShield * Time.deltaTime);
-
-            yield return null;
-        }
-
         OnDeath?.Invoke();
+
+        SceneLoader.instance.UseForceOpenDoorNextTransition();
     }
 }
