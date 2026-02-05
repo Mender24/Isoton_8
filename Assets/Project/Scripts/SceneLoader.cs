@@ -51,6 +51,10 @@ public class SceneLoader : MonoBehaviour
 
     public void ResetAllEnemies(string name)
     {
+        LoadStartMenu("");
+
+        return;
+
         var enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
 
         foreach (var enemy in enemies)
