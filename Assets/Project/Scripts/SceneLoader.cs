@@ -70,7 +70,12 @@ public class SceneLoader : MonoBehaviour
         _player = players[players.Length - 1];
     }
 
-    public void LoadStartScene(string name)
+    public void LoadStartMenu(string name)
+    {
+        LoadStartScene(name);
+    }
+
+    public void LoadStartScene(string name, bool isSave = false)
     {
         if(!_isFirstLoad)
         {
@@ -90,6 +95,9 @@ public class SceneLoader : MonoBehaviour
         }
 
         _currentScene = name;
+
+        if (isSave)
+            SavePlayerScene();
 
         SceneManager.LoadScene(name);
 

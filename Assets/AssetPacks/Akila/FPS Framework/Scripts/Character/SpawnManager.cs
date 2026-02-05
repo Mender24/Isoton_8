@@ -76,6 +76,7 @@ namespace Akila.FPSFramework
         public void MovePlayerStartPositionAndOn(Player player)
         {
             player.transform.position = sides[0].points[0].transform.position;
+            player.transform.rotation = sides[0].points[0].transform.localRotation;
             player.gameObject.SetActive(true);
         }
 
@@ -170,7 +171,8 @@ namespace Akila.FPSFramework
 
         public void WritePlayerWeapon(Actor player)
         {
-            Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
+            _weaponSave.Clear();
+            Firearm[] weapons = player.GetComponentsInChildren<Firearm>(true);
 
             for (int i = 0; i < weapons.Length; i++)
             {
@@ -197,12 +199,12 @@ namespace Akila.FPSFramework
 
         public void SaveWeaponPlayer(Actor player)
         {
-            Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
+            Firearm[] weapons = player.GetComponentsInChildren<Firearm>(true);
 
             for (int i = 0; i < weapons.Length; i++)
             {
                 PlayerPrefs.SetString("Weapon" + i, weapons[i].Name);
-                Debug.Log("Weapon" + i.ToString() + " " + weapons[i].Name);
+                Debug.Log("Save Weapon" + i.ToString() + " " + weapons[i].Name);
             }
         }
 
@@ -212,6 +214,7 @@ namespace Akila.FPSFramework
             {
                 if (PlayerPrefs.HasKey("Weapon" + i))
                 {
+                    Debug.Log(PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
                 }
