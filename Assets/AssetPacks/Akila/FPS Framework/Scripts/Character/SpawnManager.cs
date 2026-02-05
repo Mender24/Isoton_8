@@ -148,7 +148,7 @@ namespace Akila.FPSFramework
                 .FirstOrDefault();
 
             //SaveManager.LoadPlayer(inventory, _itemsPrefab);
-            ReadPlayerWeapon(inventory);
+            LoadPlayerWeapon(inventory);
             //----
 
             if (newPlayerActorComponent && actorSelfActorComponent)

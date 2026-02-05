@@ -51,6 +51,10 @@ public class SceneLoader : MonoBehaviour
 
     public void ResetAllEnemies(string name)
     {
+        LoadStartMenu("");
+
+        return;
+
         var enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
 
         foreach (var enemy in enemies)
@@ -75,6 +79,12 @@ public class SceneLoader : MonoBehaviour
     public void LoadStartMenu(string name)
     {
         LoadStartScene(name);
+    }
+
+    public void NewGame()
+    {
+        PlayerPrefs.DeleteAll();
+        LoadStartScene("");
     }
 
     public void LoadStartScene(string name, bool isSave = false)
