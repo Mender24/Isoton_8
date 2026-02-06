@@ -74,6 +74,7 @@ public class SceneLoader : MonoBehaviour
     {
         Player[] players = GetComponentsInChildren<Player>();
         _player = players[players.Length - 1];
+        GameManager.instance.Init(_player);
     }
 
     public void LoadStartMenu(string name)
