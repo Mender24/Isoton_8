@@ -674,12 +674,12 @@ public class EnemyAI : MonoBehaviour, IDamageable
             {
                 if (audioSource != null && audioSource.isPlaying)
                 {
-                    if (audioSource.volume >= _soundDetectionThreshold)
-                    {
+                    // if (audioSource.volume >= _soundDetectionThreshold)
+                    // {
                         lastHeardNoisePosition = audioSource.transform.position;
                         _lastHeardAudioSource = audioSource;
                         return true;
-                    }
+                    // }
                 }
             }
             
