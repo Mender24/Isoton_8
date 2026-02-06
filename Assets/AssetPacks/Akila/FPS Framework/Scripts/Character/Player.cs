@@ -7,7 +7,7 @@ namespace Akila.FPSFramework
 
         private void Awake()
         {
-            Instance = this;
+                Instance = this;
         }
     }
 }

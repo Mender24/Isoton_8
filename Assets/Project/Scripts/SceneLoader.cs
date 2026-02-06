@@ -26,6 +26,8 @@ public class SceneLoader : MonoBehaviour
     private bool _isDone = true;
     private bool _isFirstLoad = false;
 
+    private DoorControllerSceneChanger _nextLocationDC;
+
     public Player Player => _player;
 
     private void Awake()
@@ -49,6 +51,10 @@ public class SceneLoader : MonoBehaviour
 
     public void ResetAllEnemies(string name)
     {
+        LoadStartMenu("");
+
+        return;
+
         var enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
 
         foreach (var enemy in enemies)
@@ -68,9 +74,21 @@ public class SceneLoader : MonoBehaviour
     {
         Player[] players = GetComponentsInChildren<Player>();
         _player = players[players.Length - 1];
+        GameManager.instance.Init(_player);
     }
 
-    public void LoadStartScene(string name)
+    public void LoadStartMenu(string name)
+    {
+        LoadStartScene(name);
+    }
+
+    public void NewGame()
+    {
+        PlayerPrefs.DeleteAll();
+        LoadStartScene("");
+    }
+
+    public void LoadStartScene(string name, bool isSave = false)
     {
         if(!_isFirstLoad)
         {
@@ -91,10 +109,14 @@ public class SceneLoader : MonoBehaviour
 
         _currentScene = name;
 
+        if (isSave)
+            SavePlayerScene();
+
         SceneManager.LoadScene(name);
 
         int currentSceneInd = SerachIndexScene(name);
 
+        _loadedScene.Clear();
         _loadedScene.Enqueue(currentSceneInd);
 
         _nextScene = SerachTransitionScene(currentSceneInd);
@@ -194,6 +216,11 @@ public class SceneLoader : MonoBehaviour
         _isDone = true;
     }
 
+    public void UseForceOpenDoorNextTransition()
+    {
+        _nextLocationDC.ForceOpenEnterDoor();
+    }
+
     private void ActivateButton(string sceneName, bool isOpenNext = false)
     {
         ActivateButton(_sceneNames.IndexOf(sceneName), isOpenNext);
@@ -212,6 +239,8 @@ public class SceneLoader : MonoBehaviour
 
         if (dc == null)
             return;
+
+        _nextLocationDC = dc;
 
         if (!isOpenNext)
             dc.EnterNext();
@@ -295,6 +324,7 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator UnloadSceneByIndexAsync(int sceneIndex)
     {
+        Debug.Log("Try unload: " + sceneIndex);
         yield return SceneManager.UnloadSceneAsync(sceneIndex);
 
         if (_isDebug)

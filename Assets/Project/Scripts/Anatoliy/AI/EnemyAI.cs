@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public class EnemyAI : MonoBehaviour, IDamageable
 {
     public enum SpawnSource { FromSpawner, Manually }
-    public enum CombatType { Ranged, Melee }
+    public enum CombatType { Ranged, Melee, Boss }
 
     [Header("References")]
     public NavMeshAgent agent;
@@ -240,6 +240,11 @@ public class EnemyAI : MonoBehaviour, IDamageable
             Fire();
         }
 
+        if (combatType == CombatType.Boss && timeShoot <= 0 && CanSeePlayer())
+        {
+            Fire();
+        }
+
         timeShoot -= Time.deltaTime;
         
         if (_alertSoundTimer > 0)
@@ -388,7 +393,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position + new Vector3(0, _visionHeight, 0), rayDirection, out hit, rayDistance, _obstacleLayer | _playerLayer))
+        if (Physics.Raycast(transform.position + new Vector3(0, _visionHeight, 0), rayDirection, out hit, _visionRange, _obstacleLayer | _playerLayer))
         {
             
             if (hit.transform == playerTransform)
@@ -669,12 +674,12 @@ public class EnemyAI : MonoBehaviour, IDamageable
             {
                 if (audioSource != null && audioSource.isPlaying)
                 {
-                    if (audioSource.volume >= _soundDetectionThreshold)
-                    {
+                    // if (audioSource.volume >= _soundDetectionThreshold)
+                    // {
                         lastHeardNoisePosition = audioSource.transform.position;
                         _lastHeardAudioSource = audioSource;
                         return true;
-                    }
+                    // }
                 }
             }
             

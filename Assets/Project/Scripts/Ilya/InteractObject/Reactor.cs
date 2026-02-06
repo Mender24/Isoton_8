@@ -1,6 +1,7 @@
 using Akila.FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -32,6 +33,7 @@ public class Reactor : MonoBehaviour, IDamageable
 
     private UnityEvent onDeath = new UnityEvent();
 
+    public TextMeshPro showingText;
     public UnityEvent OnDeath => onDeath;
 
     private void OnDisable()
@@ -42,7 +44,10 @@ public class Reactor : MonoBehaviour, IDamageable
             _batterys[i].OnEndCooldown.RemoveListener(StartReactor);
         }
     }
-
+    private void Update()
+    {
+        showingText.text = _currentIndexLiveBattery.ToString();
+    }
     private void Start()
     {
         _health = _healthReactor;
@@ -94,6 +99,7 @@ public class Reactor : MonoBehaviour, IDamageable
         while(_batterys[_currentIndexLiveBattery].IsDead)
         {
             _currentIndexLiveBattery++;
+            
 
             if (_currentIndexLiveBattery >= _batterys.Count)
                 _currentIndexLiveBattery = 0;
@@ -132,15 +138,8 @@ public class Reactor : MonoBehaviour, IDamageable
 
         _reactorObject.SetActive(false);
 
-        Vector3 target = _doorEndLocation.transform.position + new Vector3(0, _lenPathDoorEnd, 0);
-
-        while (_doorEndLocation.transform.position != target)
-        {
-            _doorEndLocation.transform.position = Vector3.MoveTowards(_doorEndLocation.transform.position, target, _speedMoveShield * Time.deltaTime);
-
-            yield return null;
-        }
-
         OnDeath?.Invoke();
+
+        SceneLoader.instance.UseForceOpenDoorNextTransition();
     }
 }

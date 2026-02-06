@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +5,8 @@ namespace Akila.FPSFramework
 {
     public class DoorControllerSceneChanger : MonoBehaviour
     {
+        [SerializeField] private bool _isUseForceDontOpenDoor = false;
+        [Space]
         public Transform pivot;
         public BunkerDoor enterDoor;
         public BunkerDoor exitDoor;
@@ -15,7 +16,8 @@ namespace Akila.FPSFramework
 
         void Update()
         {
-            pivot.localRotation = Quaternion.Lerp(pivot.localRotation, targetRotation, Time.deltaTime * roughness);
+            if (pivot != null)
+                pivot.localRotation = Quaternion.Lerp(pivot.localRotation, targetRotation, Time.deltaTime * roughness);
         }
 
         public void ActivatedLeaver(bool isActive = false)
@@ -25,13 +27,16 @@ namespace Akila.FPSFramework
                 _isActivated = true;
                 ToggleLeaver();
 
-                if(isActive)
+                if (isActive)
                     StartCoroutine(StartChangeSceneProcess());
             }
         }
 
         public void EnterNext()
         {
+            if (_isUseForceDontOpenDoor)
+                return;
+
             ActivatedLeaver();
             enterDoor.CloseDoor();
             exitDoor.OpenDoor();
@@ -39,8 +44,26 @@ namespace Akila.FPSFramework
 
         public void EnterLastLocation()
         {
+            if (_isUseForceDontOpenDoor)
+                return;
+
             enterDoor.OpenDoor();
             exitDoor.CloseDoor();
+        }
+
+        public void ForceOpenEnterDoor()
+        {
+            enterDoor.OpenDoor();
+        }
+
+        public void ForceCloseEnterDoor()
+        {
+            enterDoor.CloseDoor();
+        }
+
+        public void ForceOpenExitDoor()
+        {
+            exitDoor.OpenDoor();
         }
 
         private IEnumerator StartChangeSceneProcess()
