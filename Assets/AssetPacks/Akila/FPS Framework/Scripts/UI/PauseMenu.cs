@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 
 namespace Akila.FPSFramework.UI
 {
@@ -69,7 +71,9 @@ namespace Akila.FPSFramework.UI
 
         public void LoadScene(string sceneName)
         {
-            StartCoroutine(Load(sceneName));
+            Player.Instance.gameObject.SetActive(false);
+            SceneManager.LoadScene(sceneName);
+            // StartCoroutine(Load(sceneName));
         }
 
         private IEnumerator Load(string sceneName)

@@ -70,6 +70,11 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
+    public void PlayerOff()
+    {
+        _player.gameObject.SetActive(false);
+    }
+
     public void SetPlayer(string player)
     {
         Player[] players = GetComponentsInChildren<Player>();
