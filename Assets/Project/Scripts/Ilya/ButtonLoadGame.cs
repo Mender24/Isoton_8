@@ -4,13 +4,23 @@ public class ButtonLoadGame : MonoBehaviour
 {
     public string sceneName;
 
+    private bool _isActive = true;
+
     public void LoadGame()
     {
-        SceneLoader.instance.LoadStartMenu(sceneName);
+        if(_isActive)
+        {
+            _isActive = false;
+            SceneLoader.instance.LoadStartMenu(sceneName);
+        }
     }
 
     public void LoadNewGame()
     {
-        SceneLoader.instance.NewGame();
+        if(_isActive)
+        {
+            _isActive = false;
+            SceneLoader.instance.NewGame();
+        }
     }
 }
