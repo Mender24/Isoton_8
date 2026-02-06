@@ -986,7 +986,10 @@ namespace Akila.FPSFramework
             Projectile newProjectile = Instantiate(preset.projectile, position, rotation);
 
             if(lightCreator != null)
+            {
+                Debug.Log("Fire!");
                 lightCreator.TurnOnLight();
+            }
 
             // Initialize the velocity of the projectile to zero
             Vector3 initialVelocity = Vector3.zero;
