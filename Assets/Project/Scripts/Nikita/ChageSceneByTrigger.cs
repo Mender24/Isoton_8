@@ -132,6 +132,7 @@ public class ChageSceneByTrigger : MonoBehaviour
         Debug.Log($"Загрузка сцены: {sceneName}");
 
         // Загружаем сцену
+        PlayerPrefs.DeleteAll();
         SceneManager.LoadScene(sceneName);
 
         isFading = false;
