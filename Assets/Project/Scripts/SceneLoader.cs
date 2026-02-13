@@ -2,7 +2,6 @@ using Akila.FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,52 +9,153 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader instance;
 
+    [SerializeField] private bool _isUseSave = true;
+    [Space]
     [SerializeField] private bool _isDebug = false;
     [SerializeField] private List<string> _sceneNames = new();
     [SerializeField] private string _transitionName = "Transition";
+    [SerializeField] private string _endSceneName = "End";
     [SerializeField] private string _startScene;
+    [Space]
+    [SerializeField] private Player _player;
 
     private List<string> sceneNames;
+    private Queue<int> _loadedScene = new();
     private string _currentScene;
     private string _nextScene;
     private bool _isDone = true;
+    private bool _isFirstLoad = false;
+
+    private DoorControllerSceneChanger _nextLocationDC;
+
+    public Player Player => _player;
 
     private void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else
+        {
             Destroy(gameObject);
-
-        sceneNames = GetSceneNamesInBuild();
+            return;
+        }
     }
 
-    public void LoadStartScene(string name)
+    private void Start()
     {
-        if(!name.StartsWith(_transitionName))
-            name = _startScene;
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(SetPlayer);
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetAllEnemies);
+    }
+
+    public void ResetAllEnemies(string name)
+    {
+        LoadStartMenu("");
+
+        return;
+
+        var enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy.spawnType == EnemyAI.SpawnSource.Manually)
+            {
+                enemy.FullReset();
+            }
+            else
+            {
+                Destroy(enemy.gameObject);
+            }
+        }
+    }
+
+    public void PlayerOff()
+    {
+        _player.gameObject.SetActive(false);
+    }
+
+    public void SetPlayer(string player)
+    {
+        Player[] players = GetComponentsInChildren<Player>();
+        _player = players[players.Length - 1];
+        GameManager.instance.Init(_player);
+    }
+
+    public void LoadStartMenu(string name)
+    {
+        LoadStartScene(name);
+    }
+
+    public void NewGame()
+    {
+        PlayerPrefs.DeleteAll();
+        LoadStartScene("");
+    }
+
+    public void LoadStartScene(string name, bool isSave = false)
+    {
+        if(!_isFirstLoad)
+        {
+            _isFirstLoad = true;
+            Inventory inventory = _player.GetComponentInChildren<Inventory>();
+            SpawnManager.Instance.LoadPlayerWeapon(inventory);
+        }
+
+        if (name == "")
+        {
+            string lastSaveScene = SaveManager.Instance.GetLastSceneName();
+
+            if (lastSaveScene == "")
+                name = _startScene;
+            else
+                name = lastSaveScene;
+        }
 
         _currentScene = name;
+
+        if (isSave)
+            SavePlayerScene();
 
         SceneManager.LoadScene(name);
 
         int currentSceneInd = SerachIndexScene(name);
+
+        _loadedScene.Clear();
+        _loadedScene.Enqueue(currentSceneInd);
 
         _nextScene = SerachTransitionScene(currentSceneInd);
 
         if (_nextScene == "")
             Debug.LogError("Uncorrect scene queue");
 
-        Debug.Log(_nextScene);
-
-        //SpawnManager.Instance.UpdateSpawnPoint(currentSceneInd);
-
         StartCoroutine(SceneLoadNext(currentSceneInd));
+        StartCoroutine(MovePlayerToPointStart());
+    }
+
+    public void LoadMenu()
+    {
+        _player.gameObject.SetActive(false);
+        _player.transform.position = transform.position;
+        _loadedScene.Clear();
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void SavePlayerScene()
+    {
+        if (_isUseSave)
+        {
+            SaveManager.Instance.SetLastSceneName(_currentScene);
+            SpawnManager.Instance.SaveWeaponPlayer(_player.GetComponent<Actor>());
+            SaveManager.Instance.Save();
+        }
     }
 
     public IEnumerator SceneRotationProcess()
     {
         _currentScene = _nextScene;
+
+        SavePlayerScene();
 
         GetCurrentSceneName();
 
@@ -68,29 +168,32 @@ public class SceneLoader : MonoBehaviour
             yield break;
         }
 
-        Debug.Log(sceneIndex);
-        int previousTransitionIndex = -1;
-        for (int i = sceneIndex - 1; i >= 0; i--)
-        {
-            if (_sceneNames[i].StartsWith(_transitionName) || _sceneNames[i] == "StartTunnel")
-            {
-                previousTransitionIndex = i;
-                break;
-            }
-        }
+        //int previousTransitionIndex = -1;
+        //for (int i = sceneIndex - 1; i >= 0; i--)
+        //{
+        //    if (_sceneNames[i].StartsWith(_transitionName) || _sceneNames[i] == "StartTunnel")
+        //    {
+        //        previousTransitionIndex = i;
+        //        break;
+        //    }
+        //}
 
-        if (previousTransitionIndex != -1)
-        {
-            for (int i = sceneIndex - 1; i > previousTransitionIndex; i--)
-                yield return StartCoroutine(UnloadSceneByIndexAsync(i));
+        //if (previousTransitionIndex != -1)
+        //{
+        //    for (int i = sceneIndex - 1; i > previousTransitionIndex; i--)
+        //        yield return StartCoroutine(UnloadSceneByIndexAsync(i));
 
-            yield return StartCoroutine(UnloadSceneByIndexAsync(previousTransitionIndex));
-        }
+        //    yield return StartCoroutine(UnloadSceneByIndexAsync(previousTransitionIndex));
+        //}
+        while (_loadedScene.Count > 1)
+            StartCoroutine(UnloadSceneByIndexAsync(_loadedScene.Dequeue()));
 
         int nextTransitionIndex = -1;
         for (int i = sceneIndex + 1; i < _sceneNames.Count; i++)
         {
-            if (_sceneNames[i].StartsWith(_transitionName))
+            _loadedScene.Enqueue(i);
+
+            if (_sceneNames[i].StartsWith(_transitionName) || _sceneNames[i].StartsWith(_endSceneName))
             {
                 nextTransitionIndex = i;
                 break;
@@ -118,6 +221,11 @@ public class SceneLoader : MonoBehaviour
         _isDone = true;
     }
 
+    public void UseForceOpenDoorNextTransition()
+    {
+        _nextLocationDC.ForceOpenEnterDoor();
+    }
+
     private void ActivateButton(string sceneName, bool isOpenNext = false)
     {
         ActivateButton(_sceneNames.IndexOf(sceneName), isOpenNext);
@@ -125,11 +233,19 @@ public class SceneLoader : MonoBehaviour
 
     private void ActivateButton(int sceneInd, bool isOpenNext = false)
     {
+        if (!_sceneNames[sceneInd].StartsWith(_transitionName))
+            return; 
+
         Scene scene = SceneManager.GetSceneByBuildIndex(sceneInd);
 
         DoorControllerSceneChanger dc = scene.GetRootGameObjects()
             .SelectMany(t => t.GetComponentsInChildren<DoorControllerSceneChanger>(true))
-            .First();
+            .FirstOrDefault();
+
+        if (dc == null)
+            return;
+
+        _nextLocationDC = dc;
 
         if (!isOpenNext)
             dc.EnterNext();
@@ -139,34 +255,60 @@ public class SceneLoader : MonoBehaviour
 
     private string SerachTransitionScene(int currentInd)
     {
-        for(int i = currentInd + 1; i < _sceneNames.Count; i++)
-            if (_sceneNames[i].StartsWith(_transitionName))
+        for (int i = currentInd + 1; i < _sceneNames.Count; i++)
+            if (_sceneNames[i].StartsWith(_transitionName) || _sceneNames[i].StartsWith(_endSceneName))
                 return _sceneNames[i];
 
         return "";
     }
 
+    private IEnumerator MovePlayerToPointStart()
+    {
+        while (true)
+        {
+            if(_isDone)
+                break;
+
+            yield return null;
+        }
+
+        SpawnManager.Instance.MovePlayerStartPositionAndOn(_player);
+    }
+
     private IEnumerator SceneLoadNext(int currentSceneInd)
     {
+        _isDone = false;
+
         int nextScene = -1;
         for (int i = currentSceneInd + 1; i < _sceneNames.Count; i++)
         {
-            if (_sceneNames[i].StartsWith(_transitionName))
+            _loadedScene.Enqueue(i);
+
+            if (_sceneNames[i].StartsWith(_transitionName) || _sceneNames[i].StartsWith(_endSceneName))
             {
                 nextScene = i;
                 break;
             }
-        }  
+        }
 
         if (nextScene != -1)
             for (int i = currentSceneInd + 1; i <= nextScene; i++)
                 yield return SceneManager.LoadSceneAsync(i, LoadSceneMode.Additive);
 
+        Scene scene = SceneManager.GetSceneByBuildIndex(currentSceneInd);
+
+        while(!scene.isLoaded)
+            yield return null;
+
         if (_currentScene.StartsWith(_transitionName))
             ActivateButton(currentSceneInd);
 
-        if(_nextScene != "")
+        if (_nextScene != "")
             ActivateButton(_nextScene, true);
+
+        SpawnManager.Instance.UpdateSpawnPoint(currentSceneInd);
+
+        _isDone = true;
     }
 
     private int SerachIndexScene(string name)
@@ -178,29 +320,6 @@ public class SceneLoader : MonoBehaviour
         return -1;
     }
 
-    private List<string> GetSceneNamesInBuild()
-    {
-        List<string> names = new List<string>();
-        var scenes = EditorBuildSettings.scenes;
-
-        foreach (var scene in scenes)
-        {
-            if (scene.enabled)
-            {
-                string sceneName = System.IO.Path.GetFileNameWithoutExtension(scene.path);
-                names.Add(sceneName);
-
-                if (_isDebug)
-                    Debug.Log("Scene found: " + sceneName);
-            }
-        }
-
-        if (_isDebug)
-            Debug.Log("Total scenes found: " + names.Count);
-
-        return names;
-    }
-
     private GameObject FindGameObjectInSceneByName(Scene scene, string name)
     {
         return scene.GetRootGameObjects()
@@ -210,6 +329,7 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator UnloadSceneByIndexAsync(int sceneIndex)
     {
+        Debug.Log("Try unload: " + sceneIndex);
         yield return SceneManager.UnloadSceneAsync(sceneIndex);
 
         if (_isDebug)
@@ -224,25 +344,25 @@ public class SceneLoader : MonoBehaviour
 
         Scene loadedScene = SceneManager.GetSceneByBuildIndex(sceneIndex);
 
-        if (loadedScene.isLoaded)
-        {
-            GameObject endLevelPoint = FindGameObjectInSceneByName(originalScene, "EndLevelPoint");
-            GameObject startLevelPoint = FindGameObjectInSceneByName(loadedScene, "StartLevelPoint");
-            GameObject levelContainer = FindGameObjectInSceneByName(loadedScene, "LevelContainer");
+        //if (loadedScene.isLoaded)
+        //{
+        //    GameObject endLevelPoint = FindGameObjectInSceneByName(originalScene, "EndLevelPoint");
+        //    GameObject startLevelPoint = FindGameObjectInSceneByName(loadedScene, "StartLevelPoint");
+        //    GameObject levelContainer = FindGameObjectInSceneByName(loadedScene, "LevelContainer");
 
-            if (endLevelPoint != null && startLevelPoint != null && levelContainer != null)
-            {
-                levelContainer.transform.eulerAngles = endLevelPoint.transform.eulerAngles;
-                levelContainer.transform.position -= startLevelPoint.transform.position - endLevelPoint.transform.position;
+        //    if (endLevelPoint != null && startLevelPoint != null && levelContainer != null)
+        //    {
+        //        levelContainer.transform.eulerAngles = endLevelPoint.transform.eulerAngles;
+        //        levelContainer.transform.position -= startLevelPoint.transform.position - endLevelPoint.transform.position;
 
-                if (_isDebug)
-                    Debug.Log("Scene ID " + sceneIndex + " loaded successfully.");
-            }
-            else
-            {
-                Debug.LogError("Couldn't find necessary game objects in the loaded scene.");
-            }
-        }
+        //        if (_isDebug)
+        //            Debug.Log("Scene ID " + sceneIndex + " loaded successfully.");
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("Couldn't find necessary game objects in the loaded scene.");
+        //    }
+        //}
     }
 
     private void GetCurrentSceneName()

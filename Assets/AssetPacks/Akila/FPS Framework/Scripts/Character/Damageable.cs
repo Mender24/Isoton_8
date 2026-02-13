@@ -128,6 +128,21 @@ namespace Akila.FPSFramework
         /// </summary>
         public Action OnHealingEnded;
 
+        /// <summary>
+        /// Event accessor for death event.
+        /// </summary>
+        public UnityEvent OnDeath => onDeath;
+
+        /// <summary>
+        /// If true, this damageable is currently disabled and cannot take damage.
+        /// </summary>
+        public bool isDamagableDisabled { get; set; }
+
+        /// <summary>
+        /// Returns the type of this damageable.
+        /// </summary>
+        public DamagableType damagableType => type;
+
         private void Awake()
         {
             maxHealth = health;
@@ -376,21 +391,6 @@ namespace Akila.FPSFramework
         }
 
         public bool IsSwaped() => true;
-
-        /// <summary>
-        /// Event accessor for death event.
-        /// </summary>
-        public UnityEvent OnDeath => onDeath;
-
-        /// <summary>
-        /// If true, this damageable is currently disabled and cannot take damage.
-        /// </summary>
-        public bool isDamagableDisabled { get; set; }
-
-        /// <summary>
-        /// Returns the type of this damageable.
-        /// </summary>
-        public DamagableType damagableType => type;
 
 
         [ContextMenu("Setup/Network Components")]

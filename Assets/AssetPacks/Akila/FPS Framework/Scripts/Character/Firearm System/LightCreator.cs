@@ -20,6 +20,7 @@ namespace Akila.FPSFramework
         {
             if (lightObject != null)
             {
+                Debug.Log("FireActive!");
                 lightObject.SetActive(true);
                 StartCoroutine(TurnOffLight(activeTime));
             }

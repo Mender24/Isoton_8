@@ -11,6 +11,7 @@ namespace Akila.FPSFramework
     {
         public static GameManager instance;
 
+        [SerializeField] private Player _player;
         [SerializeField] DeathCamera deathCamera;
         [SerializeField] UIManager uIManager;
 
@@ -21,12 +22,20 @@ namespace Akila.FPSFramework
                 instance = this;
             }
             else
+            {
                 Destroy(gameObject);
+                return;
+            }
 
             Instantiate(deathCamera, transform);
 
-            if(uIManager != null)
-                Instantiate(uIManager, transform);
+            Init(_player);
+        }
+
+        public void Init(Player player)
+        {
+            if (uIManager != null && player != null)
+                Instantiate(uIManager, player.transform);
         }
     }
 }

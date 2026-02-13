@@ -7,12 +7,18 @@ using UnityEngine.Events;
 
 public class EnemyAI : MonoBehaviour, IDamageable
 {
+    public enum SpawnSource { FromSpawner, Manually }
+    public enum CombatType { Ranged, Melee, Boss }
+
     [Header("References")]
     public NavMeshAgent agent;
+    public BehaviorGraphAgent behAgent;
     public BasicEnemyAnimationController animationController;
     public Transform playerTransform;
+    [SerializeField] private string mainCameraTag = "MainCamera";
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private LayerMask _obstacleLayer;
+    public SpawnSource spawnType = SpawnSource.Manually;
 
     [Header("Vision Settings")]
     [SerializeField] private float _fieldOfViewAngle = 110f;
@@ -25,12 +31,25 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private float _noiseInvestigationTime = 8f;
 
     [Header("Combat Settings")]
-    public float attackRange = 20f;
+    public CombatType combatType = CombatType.Ranged;
     public float forgetTime = 10f;
     public float stoppingDistance = 0.5f;
     [SerializeField] private float _health = 100;
     [SerializeField] private float _detectionDelay = 0.9f;
+
+    [Header("Melee Combat Settings")]
+    [SerializeField] private float _meleeAttackRange = 2f;
+    public float meleeAttackLength = 3.0f;
+    [SerializeField] private float _meleeAttackCooldown = 1.5f;
+    [SerializeField] private float _meleeDamage = 20f;
+    [SerializeField] private LayerMask _meleeHitLayers;
+    [SerializeField] private Vector3 _meleeAttackOffset = new Vector3(0, 1f, 1f);
+    [SerializeField] private float _meleeAttackRadius = 1f;
+
+    [Header("Range Combat Settings")]
+    public float attackRange = 20f;
     [SerializeField] private GameObject _prefabBullet;
+    [SerializeField] private Transform _shotStartTransform;
     [SerializeField] private float _damage = 5f;
     [SerializeField] private float _speedBullet;
     [SerializeField] private int _countBullet = 20;
@@ -39,15 +58,20 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private float _timeBetweenShot = 0.5f;
     public float timeReload = 3f;
     [SerializeField] private float _bulletLifetime = 2f;
-    [SerializeField] private Vector3 _agentCenterOffset = new(0, 0.5f, 0);
 
     [Header("Shoot Target Offset")]
     [SerializeField] private float _xShootTargetOffset = 0;
     [SerializeField] private float _yShootTargetOffset = 1;
 
     [Header("Spray Shoot Offset")]
-    [SerializeField] private float _heightSprayOffset = 0.5f;
-    [SerializeField] private float _widthSprayOffset = 2;
+    [SerializeField] private float _heightSprayOffset = 0.25f;
+    [SerializeField] private float _widthSprayOffset = 0.25f;
+
+    [Header("Damage Reaction Settings")]
+    [Tooltip("Минимальное время между реакциями на урон (анимация/стан)")]
+    [SerializeField] private float _damageReactionCooldown = 3f;
+    [Tooltip("Включить кулдаун реакции на урон")]
+    [SerializeField] private bool _enableDamageReactionCooldown = true;
 
     [Header("Movement")]
     public float walkSpeed = 2f;
@@ -109,12 +133,14 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [SerializeField] private Color _hearingRangeColor = new Color(0f, 0.5f, 1f, 0.1f);
 
     // AI States
-    [HideInInspector] public bool isActivated = false;
+    public bool isActivated = false;
     [HideInInspector] public bool playerDetected = false;
     [HideInInspector] public bool isAlerted = false;
     [HideInInspector] public bool isSearching = false;
     [HideInInspector] public Vector3 lastKnownPlayerPosition;
     [HideInInspector] public float timeSinceLastSeen = 0f;
+    [HideInInspector] public bool isMeleeAttacking = false;
+    [HideInInspector] public float meleeAttackTimer = 0f;
 
     [HideInInspector] public bool isReload = false;
     [HideInInspector] public bool isFire = false;
@@ -122,33 +148,70 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [HideInInspector] public int currentBullet = 0;
     [HideInInspector] public Vector3 lastHeardNoisePosition;
     [HideInInspector] public bool heardNoise = false;
+    [HideInInspector] public bool isDead = false;
     private float _noiseInvestigationTimer = 0f;
     private AudioSource _lastHeardAudioSource;
+    private float _lastDamageReactionTime = -999f;
+    private float _alertSoundDelay = 30f;
+    private float _alertSoundTimer = 0f;
 
     private bool _detectionDelayActive = false;
     private bool _debugIsPlayerHit = false;
     private Vector3 _debugShotTargetPosition = new();
+    private Camera _mainCamera = null;
 
     public float Health { get => _health; set => _health = value; }
-    public bool isDamagableDisabled { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-    public bool allowDamageableEffects { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-    public bool DeadConfirmed { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-    public GameObject DamageSource { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public bool isDamagableDisabled { get; set; }
+    public bool allowDamageableEffects { get; set; }
+    public bool DeadConfirmed { get; set; }
+    public GameObject DamageSource { get; set; }
 
-    public UnityEvent OnDeath => throw new System.NotImplementedException();
+    public UnityEvent OnDeath { get; set; }
 
     void Start()
     {
+        if (playerTransform == null) 
+        {
+            if(SceneLoader.instance == null || SceneLoader.instance.Player == null)
+            {
+                playerTransform = FindFirstObjectByType<CharacterController>().transform;
+            }
+            else
+            {
+                playerTransform = SceneLoader.instance.Player.transform;
+            }
+        }
+        
+        if (_mainCamera == null)
+        {
+            var cameras = playerTransform.GetComponentsInChildren<Camera>();
+            foreach (var cam in cameras)
+            {
+                if (cam.tag == mainCameraTag)
+                {
+                    _mainCamera = cam;
+                    break;
+                }
+            }
+        }
+
         if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (behAgent == null) behAgent = GetComponent<BehaviorGraphAgent>();
         if (animationController == null) animationController = GetComponent<BasicEnemyAnimationController>();
         if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
 
+        if (playerTransform != null)
+        {
+            playerTransform.GetComponent<Damageable>().OnDeath.AddListener(OnPlayerDeath);
+        }
         agent.speed = walkSpeed;
         agent.stoppingDistance = stoppingDistance;
+        startPosition = transform.position;
     }
 
     void Update()
     {
+        if (playerTransform == null) return;
         if (!isActivated) return;
 
         if (isAlerted && !CanSeePlayer())
@@ -161,14 +224,31 @@ public class EnemyAI : MonoBehaviour, IDamageable
             }
         }
 
+        if (combatType == CombatType.Melee && isMeleeAttacking)
+        {
+            meleeAttackTimer -= Time.deltaTime;
+            if (meleeAttackTimer <= 0)
+            {
+                isMeleeAttacking = false;
+            }
+        }
+
         UpdateNoiseInvestigation();
 
-        if(isFire && timeShoot <= 0)
+        if(combatType == CombatType.Ranged && isFire && timeShoot <= 0)
+        {
+            Fire();
+        }
+
+        if (combatType == CombatType.Boss && timeShoot <= 0 && CanSeePlayer())
         {
             Fire();
         }
 
         timeShoot -= Time.deltaTime;
+        
+        if (_alertSoundTimer > 0)
+            _alertSoundTimer -= Time.deltaTime;
     }
 
     public void StartFire()
@@ -196,7 +276,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         targetPosition.y += yRandomSprayOffset + _yShootTargetOffset;
         targetPosition.x += xRandomSprayOffset + _xShootTargetOffset;
 
-        Vector3 bulletStartPosition = transform.position + _agentCenterOffset;
+        Vector3 bulletStartPosition = _shotStartTransform.position;//transform.position + _agentCenterOffset;
 
         AiProjectile bullet = PoolManager.Instance.GetObgect<AiProjectile>();
         bullet.transform.position = bulletStartPosition;
@@ -245,10 +325,62 @@ public class EnemyAI : MonoBehaviour, IDamageable
         }
     }
 
+    public bool IsInMeleeRange()
+    {
+        if (playerTransform == null) return false;
+        return Vector3.Distance(transform.position, playerTransform.position) <= _meleeAttackRange;
+    }
+
+    public void StartMeleeAttack()
+    {
+        if (meleeAttackTimer > 0 || !playerDetected) return;
+        
+        isMeleeAttacking = true;
+        meleeAttackTimer = _meleeAttackCooldown;
+        animationController.SetMeleeAttackType();
+    }
+
+    public void ExecuteMeleeAttack()
+    {
+        if (playerTransform == null) return;
+        
+        Vector3 attackPosition = transform.position + transform.forward * _meleeAttackOffset.z + 
+                                Vector3.up * _meleeAttackOffset.y;
+        
+        Collider[] hitColliders = Physics.OverlapSphere(attackPosition, _meleeAttackRadius, _meleeHitLayers);
+        
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.transform == playerTransform)
+            {
+                if (hitCollider.TryGetComponent(out Damageable damageable))
+                {
+                    damageable.Damage(_meleeDamage);
+                    
+                    if (_showDebugLogs)
+                        Debug.Log($"Melee hit player for {_meleeDamage} damage");
+                }
+                break;
+            }
+        }
+    }
+
+    public void AlertStarted()
+    {
+        agent.isStopped = true;
+    }
+
+    public void AlertCompleted()
+    {
+        agent.isStopped = false;
+    }
+
     public bool CanSeePlayer()
     {
-        Vector3 rayDirection = (playerTransform.position - transform.position).normalized;
-        float rayDistance = GetDistanceToPlayer();
+        if (playerTransform == null) return false;
+        if (_mainCamera == null) return false;
+        Vector3 rayDirection = (_mainCamera.transform.position - transform.position - new Vector3(0, _visionHeight, 0)).normalized;
+        float rayDistance = GetDistanceToMainCamera();
 
         if (rayDistance > _visionRange) return false;
 
@@ -261,8 +393,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, rayDirection, out hit, rayDistance, _obstacleLayer | _playerLayer))
+        if (Physics.Raycast(transform.position + new Vector3(0, _visionHeight, 0), rayDirection, out hit, _visionRange, _obstacleLayer | _playerLayer))
         {
+            
             if (hit.transform == playerTransform)
                 return true;
         }
@@ -293,7 +426,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private void StartDetection()
     {
         isAlerted = true;
-        lastKnownPlayerPosition = playerTransform.position;
+        // lastKnownPlayerPosition = playerTransform.position;
         startPosition = transform.position;
         timeSinceLastSeen = 0f;
         agent.speed = runSpeed;
@@ -304,8 +437,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         _detectionDelayActive = true;
 
-        if (_audioSource && _detectionSound)
+        if (_audioSource && _detectionSound && _alertSoundTimer <= 0)
         {
+            _alertSoundTimer = _alertSoundDelay;
             _audioSource.PlayOneShot(_detectionSound);
         }
 
@@ -320,9 +454,16 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         if (playerTransform != null)
         {
-            lastKnownPlayerPosition = playerTransform.position;
             timeSinceLastSeen = 0f;
+            StartCoroutine(UpdateLastKnownPositionDelay());
         }
+    }
+
+    private System.Collections.IEnumerator UpdateLastKnownPositionDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        if (playerTransform != null)
+            lastKnownPlayerPosition = playerTransform.position;
     }
 
     public void ForgetPlayer()
@@ -331,6 +472,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
         playerDetected = false;
         timeSinceLastSeen = 0f;
         agent.speed = walkSpeed;
+
+        _lastDamageReactionTime = -999f;
     }
 
     public float GetDistanceToPlayer()
@@ -339,13 +482,128 @@ public class EnemyAI : MonoBehaviour, IDamageable
         return Vector3.Distance(transform.position, playerTransform.position);
     }
 
+    public float GetDistanceToMainCamera()
+    {
+        if (_mainCamera == null) return Mathf.Infinity;
+        return Vector3.Distance(transform.position + new Vector3(0, _visionHeight, 0), _mainCamera.transform.position);
+    }
+
     public void Damage(float amount, GameObject damageSource)
     {
-        animationController?.PlayHit();
-
         _health -= amount;
+        
+        DetectAttacker(damageSource);
+
+        bool canReact = !_enableDamageReactionCooldown || 
+                        (Time.time - _lastDamageReactionTime >= _damageReactionCooldown);
+        
+        if (canReact)
+        {
+            _lastDamageReactionTime = Time.time;
+            
+            animationController?.PlayHit();
+            
+            if (_showDebugLogs)
+                Debug.Log($"[EnemyAI] Took {amount} damage and played hit reaction");
+        }
+        else
+        {
+            if (_showDebugLogs)
+            {
+                float cooldownRemaining = _damageReactionCooldown - (Time.time - _lastDamageReactionTime);
+                Debug.Log($"[EnemyAI] Took {amount} damage but ignored reaction (cooldown: {cooldownRemaining:F1}s)");
+            }
+        }
+        
         if (_health <= 0)
             Die();
+    }
+
+    private void DetectAttacker(GameObject damageSource)
+    {
+        if (isActivated && playerDetected)
+        {
+            UpdateLastKnownPosition();
+            return;
+        }
+        
+        if (!isActivated)
+        {
+            isActivated = true;
+            
+            if (_showDebugLogs)
+                Debug.Log("[EnemyAI] Activated by taking damage");
+        }
+        
+        if (CanSeePlayer())
+        {
+            if (!isAlerted)
+            {
+                StartDetection();
+                
+                if (_showDebugLogs)
+                    Debug.Log("[EnemyAI] Player detected after taking damage (visual)");
+            }
+            else
+            {
+                UpdateLastKnownPosition();
+            }
+        }
+        else
+        {
+            InvestigateDamageSource(damageSource);
+        }
+    }
+
+    private void InvestigateDamageSource(GameObject damageSource)
+    {
+        if (damageSource != null)
+        {
+            Transform sourceTransform = damageSource.transform;
+            
+            Vector3 suspiciousPosition = sourceTransform.position;
+            
+            if (playerTransform != null)
+            {
+                float distanceToPlayer = Vector3.Distance(suspiciousPosition, playerTransform.position);
+                
+                if (distanceToPlayer < 10f)
+                {
+                    suspiciousPosition = playerTransform.position;
+                    playerDetected = true;
+                }
+            }
+            
+            if (!isAlerted)
+            {
+                isAlerted = true;
+                startPosition = transform.position;
+                agent.speed = runSpeed;
+                
+                if (_showDebugLogs)
+                    Debug.Log("[EnemyAI] Alerted by damage, investigating source");
+            }
+            
+            lastKnownPlayerPosition = suspiciousPosition;
+            heardNoise = true;
+            lastHeardNoisePosition = suspiciousPosition;
+            _noiseInvestigationTimer = _noiseInvestigationTime;
+            
+            if (_showDebugLogs)
+                Debug.Log($"[EnemyAI] Investigating damage from position: {suspiciousPosition}");
+        }
+        else
+        {
+            if (!isAlerted)
+            {
+                isAlerted = true;
+                startPosition = transform.position;
+                agent.speed = runSpeed;
+                
+                if (_showDebugLogs)
+                    Debug.Log("[EnemyAI] Alerted by damage from unknown source");
+            }
+        }
     }
 
     public bool IsSwaped()
@@ -355,11 +613,23 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     private void Die()
     {
+        isDead = true;
+        startPosition = transform.position;
         isActivated = false;
-        if (agent.isOnNavMesh)
+        playerDetected = false;
+        isFire = false;
+        isAlerted = false;
+        isSearching = false;
+        isMeleeAttacking = false;
+        agent.isStopped = true;
+        agent.ResetPath();
+        agent.enabled = false;
+        behAgent.enabled = false;
+
+        var cols = GetComponentsInChildren<Collider>();
+        foreach (var col in cols)
         {
-            agent.isStopped = true;
-            agent.ResetPath();
+            col.enabled = false;
         }
 
         animationController?.SetDead(true);
@@ -367,8 +637,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     public void OnDeathComplete()
     {
-        Debug.Log("Enemy death animation complete");
-        gameObject.SetActive(false);
+        if (_showDebugLogs)
+            Debug.Log("Enemy death animation complete");
+        // gameObject.SetActive(false);
     }
 
     public void PlayFootstepSound(int foot)
@@ -394,22 +665,24 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public bool CanHearNoise()
     {
         if (playerDetected) return false;
-
-        Collider[] hearingColliders = Physics.OverlapSphere(transform.position, hearingRange, _playerLayer);
-
-        foreach (Collider collider in hearingColliders)
+        
+        if (GetDistanceToPlayer() < hearingRange)
         {
-            AudioSource audioSource = collider.GetComponentInChildren<AudioSource>();
-
-            if (audioSource != null && audioSource.isPlaying)
+            AudioSource[] audioSources = playerTransform.GetComponentsInChildren<AudioSource>();
+            
+            foreach (var audioSource in audioSources)
             {
-                if (audioSource.volume >= _soundDetectionThreshold)
+                if (audioSource != null && audioSource.isPlaying)
                 {
-                    lastHeardNoisePosition = audioSource.transform.position;
-                    _lastHeardAudioSource = audioSource;
-                    return true;
+                    // if (audioSource.volume >= _soundDetectionThreshold)
+                    // {
+                        lastHeardNoisePosition = audioSource.transform.position;
+                        _lastHeardAudioSource = audioSource;
+                        return true;
+                    // }
                 }
             }
+            
         }
 
         return false;
@@ -463,6 +736,79 @@ public class EnemyAI : MonoBehaviour, IDamageable
         return lastHeardNoisePosition;
     }
 
+    public bool IsEnemyStopped()
+    {
+        if (agent != null)
+        {
+            if (!agent.pathPending)
+            {
+                if (agent.remainingDistance <= agent.stoppingDistance)
+                {
+                    if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+            
+        return false;
+    }
+
+    public void FullReset()
+    {
+        _health = 100;
+        playerDetected = false;
+        isFire = false;
+        isAlerted = false;
+        isSearching = false;
+        isMeleeAttacking = false;
+        isActivated = false;
+        isDead = false;
+        isReload = false;
+        heardNoise = false;
+        _detectionDelayActive = false;
+        
+        timeSinceLastSeen = 0f;
+        meleeAttackTimer = 0f;
+        timeShoot = 0f;
+        currentBullet = 0;
+        _noiseInvestigationTimer = 0f;
+        _lastDamageReactionTime = -999f;
+
+        lastKnownPlayerPosition = Vector3.zero;
+        lastHeardNoisePosition = Vector3.zero;
+
+        _lastHeardAudioSource = null;
+        
+        var cols = GetComponentsInChildren<Collider>();
+        foreach (var col in cols)
+        {
+            if (!col.enabled)
+                col.enabled = true;
+        }
+
+        agent.enabled = true;
+        agent.isStopped = false;
+        behAgent.enabled = true;
+
+        transform.SetPosition(startPosition);
+        agent.ResetPath();
+        agent.SetDestination(startPosition);
+        animationController.ResetAnimationController();
+    }
+
+    private void OnPlayerDeath()
+    {
+        playerDetected = false;
+        isFire = false;
+        isAlerted = false;
+        isSearching = false;
+        isMeleeAttacking = false;
+        agent.ResetPath();
+        animationController.PlayWinning();
+    }
+
     void OnDrawGizmos()
     {
         // To make only main camera and scene view draw gizmos
@@ -470,7 +816,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         {
             if (_showDebug)
             {
-                Vector3 position = transform.position + _agentCenterOffset + new Vector3(0, _visionHeight, 0);
+                Vector3 position = transform.position + new Vector3(0, _visionHeight, 0);
 
                 if (_debugHearing)
                 {
@@ -502,7 +848,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
                         DrawVisionRaycast(position);
                     }
 
-                    if (_showShootingRaycast)
+                    if (_showShootingRaycast && combatType == CombatType.Ranged)
                     {
                         DrawShootRaycast(position);
                     }
@@ -510,6 +856,17 @@ public class EnemyAI : MonoBehaviour, IDamageable
                     if (_showLastKnownPosition && isAlerted)
                     {
                         DrawLastKnownPosition();
+                    }
+
+                    if (_debugVision && combatType == CombatType.Melee)
+                    {
+                        Gizmos.color = Color.red;
+                        Vector3 meleePos = transform.position + transform.forward * _meleeAttackOffset.z + 
+                                        Vector3.up * _meleeAttackOffset.y;
+                        Gizmos.DrawWireSphere(meleePos, _meleeAttackRadius);
+                        
+                        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+                        Gizmos.DrawWireSphere(transform.position + Vector3.up, _meleeAttackRange);
                     }
 
                     // Направление взгляда
@@ -569,7 +926,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
         if (playerTransform == null) return;
 
-        Vector3 directionToPlayer = (playerTransform.position - position).normalized;
+        Vector3 directionToPlayer = (Camera.current.transform.position - position).normalized;
         float distanceToPlayer = Vector3.Distance(position, playerTransform.position);
 
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
@@ -668,7 +1025,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
         {
             if (_showDebug && _showDebugInfo)
-                UnityEditor.Handles.Label(transform.position + _agentCenterOffset + Vector3.up * 3f, GetDebugInfo());
+                UnityEditor.Handles.Label(transform.position + Vector3.up * 3f, GetDebugInfo());
         }
 #endif
     }
@@ -676,30 +1033,53 @@ public class EnemyAI : MonoBehaviour, IDamageable
     string GetDebugInfo()
     {
         string info = $"Enemy AI Debug\n";
-        info += $"Activated: {isActivated}\n";
-        info += $"Alerted: {isAlerted}\n";
-        info += $"Searching: {isSearching}\n";
-        info += $"Detected player: {playerDetected}\n";
-        info += $"Started position: {startPosition}\n";
+    info += $"Activated: {isActivated}\n";
+    info += $"Alerted: {isAlerted}\n";
+    info += $"Searching: {isSearching}\n";
+    info += $"Detected player: {playerDetected}\n";
+    info += $"Started position: {startPosition}\n";
+    info += $"Last Known Position: {lastKnownPlayerPosition}\n";
 
-        if (playerTransform != null)
+    if (playerTransform != null)
+    {
+        float distance = Vector3.Distance(transform.position, playerTransform.position);
+        Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
+        float angle = Vector3.Angle(transform.forward, dirToPlayer);
+
+        info += $"Distance to player: {distance:F1}m\n";
+        info += $"Angle to player: {angle:F1}°\n";
+    }
+
+    if (isAlerted)
+    {
+        info += $"Time Since Seen: {timeSinceLastSeen:F1}s / {forgetTime}s\n";
+        
+        if (combatType == CombatType.Ranged)
         {
-            float distance = Vector3.Distance(transform.position, playerTransform.position);
-            Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
-            float angle = Vector3.Angle(transform.forward, dirToPlayer);
-
-            info += $"Distance to player: {distance:F1}m\n";
-            info += $"Angle to player: {angle:F1}°\n";
-        }
-
-        if (isAlerted)
-        {
-            info += $"Time Since Seen: {timeSinceLastSeen:F1}s / {forgetTime}s\n";
             info += $"Firing: {isFire}\n";
             info += $"Reloading: {isReload}\n";
             info += $"Bullets in magazine: {_countBullet - currentBullet}\n";
         }
+        else if (combatType == CombatType.Melee)
+        {
+            info += $"Melee Attacking: {isMeleeAttacking}\n";
+            info += $"Attack Cooldown: {meleeAttackTimer:F1}s\n";
+        }
+    }
 
-        return info;
+    if (_enableDamageReactionCooldown)
+    {
+        float timeSinceReaction = Time.time - _lastDamageReactionTime;
+        bool canReact = timeSinceReaction >= _damageReactionCooldown;
+        
+        info += $"\nDamage Reaction: {(canReact ? "READY" : "ON COOLDOWN")}\n";
+        if (!canReact)
+        {
+            float cooldownRemaining = _damageReactionCooldown - timeSinceReaction;
+            info += $"Cooldown: {cooldownRemaining:F1}s\n";
+        }
+    }
+
+    return info;
     }
 }
