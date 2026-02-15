@@ -71,6 +71,10 @@ namespace Akila.FPSFramework
                 sides[0].points = newArray;
                 _currentSpawnPointId = 0;
             }
+            else
+            {
+                Debug.Log("NotObject: " + NameSearchObjectToNewScene);
+            }
         }
 
         public void MovePlayerStartPositionAndOn(Player player)

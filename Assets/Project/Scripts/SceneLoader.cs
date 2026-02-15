@@ -49,25 +49,33 @@ public class SceneLoader : MonoBehaviour
         SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetAllEnemies);
     }
 
+
+    private int _currentIndexScene = 1;
+    public void LoadNextScene()
+    {
+        Debug.Log(_currentIndexScene);
+        SceneManager.LoadScene(_currentIndexScene++);
+
+        StartCoroutine(WaitLoadScene());
+    }
+
+    private IEnumerator WaitLoadScene()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        Scene scene = SceneManager.GetSceneAt(0);
+
+        while (!scene.isLoaded)
+            yield return null;
+
+        _isDone = true;
+        SpawnManager.Instance.UpdateSpawnPoint(_currentIndexScene - 1);
+        StartCoroutine(MovePlayerToPointStart());
+    }
+
     public void ResetAllEnemies(string name)
     {
         LoadStartMenu("");
-
-        return;
-
-        var enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
-
-        foreach (var enemy in enemies)
-        {
-            if (enemy.spawnType == EnemyAI.SpawnSource.Manually)
-            {
-                enemy.FullReset();
-            }
-            else
-            {
-                Destroy(enemy.gameObject);
-            }
-        }
     }
 
     public void PlayerOff()
@@ -168,23 +176,6 @@ public class SceneLoader : MonoBehaviour
             yield break;
         }
 
-        //int previousTransitionIndex = -1;
-        //for (int i = sceneIndex - 1; i >= 0; i--)
-        //{
-        //    if (_sceneNames[i].StartsWith(_transitionName) || _sceneNames[i] == "StartTunnel")
-        //    {
-        //        previousTransitionIndex = i;
-        //        break;
-        //    }
-        //}
-
-        //if (previousTransitionIndex != -1)
-        //{
-        //    for (int i = sceneIndex - 1; i > previousTransitionIndex; i--)
-        //        yield return StartCoroutine(UnloadSceneByIndexAsync(i));
-
-        //    yield return StartCoroutine(UnloadSceneByIndexAsync(previousTransitionIndex));
-        //}
         while (_loadedScene.Count > 1)
             StartCoroutine(UnloadSceneByIndexAsync(_loadedScene.Dequeue()));
 

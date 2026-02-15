@@ -6,6 +6,11 @@ public class ButtonLoadGame : MonoBehaviour
 
     private bool _isActive = true;
 
+    public void NextSceneLoad()
+    {
+        SceneLoader.instance.LoadNextScene();
+    }
+
     public void LoadGame()
     {
         if(_isActive)
