@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 3.51
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 1, g: 1, b: 1, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 4ba711b5b14a9dc4184265f00c287edf, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -17441,6 +17441,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: WP_pistol_Pickable
       objectReference: {fileID: 0}
+    - target: {fileID: 2286496992606056800, guid: 9d1dce19e6031924a824a49dbf42c61a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -29921,6 +29926,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: WP_pistol
       objectReference: {fileID: 0}
+    - target: {fileID: 8454439104143679184, guid: 1e26bff47bf5c6d468c937995fc6a6e0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9088232431757526122, guid: 1e26bff47bf5c6d468c937995fc6a6e0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -36511,6 +36521,80 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 146674415}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1708250351
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2006710271}
+    m_Modifications:
+    - target: {fileID: 11313187437623927, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_Name
+      value: DeathZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -94.30858
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -52.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -83.02995
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.25425982
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.967136
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 16730c32cecdb364c83331a2ac8a9365, type: 3}
+--- !u!4 &1708250352 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3564032252859599544, guid: 16730c32cecdb364c83331a2ac8a9365,
+    type: 3}
+  m_PrefabInstance: {fileID: 1708250351}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1711927947
 GameObject:
   m_ObjectHideFlags: 0
@@ -37276,6 +37360,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: OurGunPickable
+      objectReference: {fileID: 0}
+    - target: {fileID: 6746512339373615580, guid: b947db7da5dd7374da045640ea4011a0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -42245,6 +42334,7 @@ Transform:
   - {fileID: 2127396115}
   - {fileID: 307665609}
   - {fileID: 225838445}
+  - {fileID: 1708250352}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 150.541, z: 0}
 --- !u!1001 &2009288405
@@ -48511,6 +48601,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PistolAnim2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7657066420715195933, guid: 37aa3fff7ecf68242a6f098b0498012d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
