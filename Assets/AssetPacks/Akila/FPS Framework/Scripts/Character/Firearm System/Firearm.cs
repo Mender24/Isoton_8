@@ -816,7 +816,7 @@ namespace Akila.FPSFramework
             }
         }
 
-        private void DoFireDone(Vector3 position, Quaternion rotation, Vector3 direction)
+        protected virtual void DoFireDone(Vector3 position, Quaternion rotation, Vector3 direction)
         {
             // Exit the method if the firearm is not active.
             if (!isActive)
@@ -1589,7 +1589,8 @@ namespace Akila.FPSFramework
         public enum ShootingMechanism
         {
             Hitscan,
-            Projectiles
+            Projectiles,
+            SimpleProjectile
         }
 
         public enum ShootingDirection

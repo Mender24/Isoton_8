@@ -278,7 +278,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         Vector3 bulletStartPosition = _shotStartTransform.position;//transform.position + _agentCenterOffset;
 
-        AiProjectile bullet = PoolManager.Instance.GetObgect<AiProjectile>();
+        AiProjectile bullet = PoolManager.Instance.GetObject<AiProjectile>();
         bullet.transform.position = bulletStartPosition;
         bullet.gameObject.SetActive(true);
         bullet.Setup((targetPosition - bulletStartPosition).normalized, _bulletLifetime, _speedBullet);
