@@ -987,7 +987,6 @@ namespace Akila.FPSFramework
 
             if(lightCreator != null)
             {
-                Debug.Log("Fire!");
                 lightCreator.TurnOnLight();
             }
 
