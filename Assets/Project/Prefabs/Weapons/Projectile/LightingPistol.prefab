@@ -84,7 +84,8 @@ PrefabInstance:
       propertyPath: _specialOnHitEffectPrefab
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1069960484613499420, guid: b59bdbe3ae563544c9c624ef3653f87f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -93,6 +94,18 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2803723138147687673}
   m_SourcePrefab: {fileID: 100100000, guid: b59bdbe3ae563544c9c624ef3653f87f, type: 3}
+--- !u!4 &8196519260179428662 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 597552345267094241, guid: b59bdbe3ae563544c9c624ef3653f87f,
+    type: 3}
+  m_PrefabInstance: {fileID: 8787943881116006359}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8453447665038371742 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 911312323238108233, guid: b59bdbe3ae563544c9c624ef3653f87f,
+    type: 3}
+  m_PrefabInstance: {fileID: 8787943881116006359}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8587325461291015631 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1069960484613499416, guid: b59bdbe3ae563544c9c624ef3653f87f,
@@ -126,8 +139,8 @@ MonoBehaviour:
       m_Calls: []
   lightCreator: {fileID: 0}
   preset: {fileID: 11400000, guid: e290248e991c38448b893a8fca9855c3, type: 2}
-  muzzle: {fileID: 0}
-  casingEjectionPort: {fileID: 0}
+  muzzle: {fileID: 8453447665038371742}
+  casingEjectionPort: {fileID: 8196519260179428662}
   chamberingEffects: {fileID: 0}
   events:
     OnFireDemand:
