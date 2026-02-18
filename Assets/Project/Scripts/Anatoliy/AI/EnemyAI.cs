@@ -651,7 +651,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     private System.Collections.IEnumerator DisableColliders()
     {
-        yield return new WaitForSeconds(timeBeforeDiactivate/4);
+        yield return new WaitForSeconds(3f);
 
         var cols = GetComponentsInChildren<Collider>();
         foreach (var col in cols)

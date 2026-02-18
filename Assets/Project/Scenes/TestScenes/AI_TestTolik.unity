@@ -518,6 +518,7 @@ MonoBehaviour:
   _showHearingRange: 0
   _hearingRangeColor: {r: 0, g: 0.5, b: 1, a: 0.1}
   isActivated: 0
+  timeBeforeDiactivate: 20
   playerDetected: 0
   isAlerted: 0
   isSearching: 0
@@ -1133,6 +1134,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &221763580 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7825205097074764562, guid: c4e023b8e70729549aecdc8764d299e2,
+    type: 3}
+  m_PrefabInstance: {fileID: 1812297109}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 495fc870ab815fc4cb6e91935b9842b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &243831395
 GameObject:
   m_ObjectHideFlags: 0
@@ -1792,6 +1805,7 @@ GameObject:
   - component: {fileID: 663809579}
   - component: {fileID: 663809578}
   - component: {fileID: 663809582}
+  - component: {fileID: 663809583}
   m_Layer: 13
   m_Name: Ground
   m_TagString: Untagged
@@ -1919,6 +1933,38 @@ MonoBehaviour:
   m_VoxelSize: 0.1
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 565307eed075e1f4d90be8f5b782039e, type: 2}
+  m_BuildHeightMesh: 0
+--- !u!114 &663809583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663809577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 1479372276
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.21
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 546f02f9f38d8374cac4fe1cb22386ed, type: 2}
   m_BuildHeightMesh: 0
 --- !u!114 &745801898 stripped
 MonoBehaviour:
@@ -4414,6 +4460,84 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d832a5b833a49c143a9853fa0a79cdd1, type: 3}
+--- !u!1001 &1812297109
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3947139205911218929, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_Name
+      value: MeleeMutant
+      objectReference: {fileID: 0}
+    - target: {fileID: 3947139205911218929, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127768019120152211, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7443781999035610786, guid: c4e023b8e70729549aecdc8764d299e2,
+        type: 3}
+      propertyPath: m_Height
+      value: 2.7
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c4e023b8e70729549aecdc8764d299e2, type: 3}
 --- !u!1 &1868292084
 GameObject:
   m_ObjectHideFlags: 0
@@ -4777,7 +4901,7 @@ PrefabInstance:
     - target: {fileID: 5536652289085562827, guid: 3da1a827fa420c24f8020f494aee3d8d,
         type: 3}
       propertyPath: enemiesInZone.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5536652289085562827, guid: 3da1a827fa420c24f8020f494aee3d8d,
         type: 3}
@@ -4789,6 +4913,11 @@ PrefabInstance:
       propertyPath: 'enemiesInZone.Array.data[1]'
       value: 
       objectReference: {fileID: 745801898}
+    - target: {fileID: 5536652289085562827, guid: 3da1a827fa420c24f8020f494aee3d8d,
+        type: 3}
+      propertyPath: 'enemiesInZone.Array.data[2]'
+      value: 
+      objectReference: {fileID: 221763580}
     - target: {fileID: 7583282181922937897, guid: 3da1a827fa420c24f8020f494aee3d8d,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -4967,5 +5096,6 @@ SceneRoots:
   - {fileID: 137057248}
   - {fileID: 1796563341}
   - {fileID: 4053914944446833133}
+  - {fileID: 1812297109}
   - {fileID: 5682262477935645836}
   - {fileID: 972145167}
