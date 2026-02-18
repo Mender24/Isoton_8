@@ -221,14 +221,14 @@ public class BasicEnemyAnimationController : MonoBehaviour
                 Debug.Log($"[Animation] Alerted: {_cachedAlerted}");
         }
         
-        if (_enemyAI.playerDetected != _cachedPlayerDetected)
-        {
-            _cachedPlayerDetected = _enemyAI.playerDetected;
-            _animator.SetBool(AnimParams.PlayerDetected, _cachedPlayerDetected);
+        // if (_enemyAI.playerDetected != _cachedPlayerDetected)
+        // {
+        //     _cachedPlayerDetected = _enemyAI.playerDetected;
+        //     _animator.SetBool(AnimParams.PlayerDetected, _cachedPlayerDetected);
 
-            if (_showDebugLogs)
-                Debug.Log($"[Animation] PlayerDetected: {_cachedPlayerDetected}");
-        }
+        //     if (_showDebugLogs)
+        //         Debug.Log($"[Animation] PlayerDetected: {_cachedPlayerDetected}");
+        // }
 
         if (_enemyAI.isReload != _cachedReloading)
         {
