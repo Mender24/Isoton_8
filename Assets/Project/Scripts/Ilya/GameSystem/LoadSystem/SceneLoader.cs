@@ -57,7 +57,7 @@ public class SceneLoader : MonoBehaviour
 
     #region LoadSystem
 
-    private int _currentSceneIndex = -1;
+    private int _currentSceneIndex = 0;
     private int _nextSceneIndex = -1;
 
     public event UnityAction SceneLoadingComplete;
