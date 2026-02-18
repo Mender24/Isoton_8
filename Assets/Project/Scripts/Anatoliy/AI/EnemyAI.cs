@@ -165,7 +165,6 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public bool allowDamageableEffects { get; set; }
     public bool DeadConfirmed { get; set; }
     public GameObject DamageSource { get; set; }
-
     public UnityEvent OnDeath { get; set; }
 
     void Start()
@@ -207,6 +206,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         agent.speed = walkSpeed;
         agent.stoppingDistance = stoppingDistance;
         startPosition = transform.position;
+        Register();
     }
 
     void Update()
@@ -254,6 +254,11 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public void StartFire()
     {
         isFire = true;
+    }
+
+    public void Register()
+    {
+        EnemyCounter.Instance.Register(this);
     }
 
     private void Fire()

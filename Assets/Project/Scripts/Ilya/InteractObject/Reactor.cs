@@ -36,6 +36,11 @@ public class Reactor : MonoBehaviour, IDamageable
     public TextMeshPro showingText;
     public UnityEvent OnDeath => onDeath;
 
+    public void Register()
+    {
+
+    }
+
     private void OnDisable()
     {
         for (int i = 0; i < _batterys.Count; i++)

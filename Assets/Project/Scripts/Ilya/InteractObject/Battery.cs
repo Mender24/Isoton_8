@@ -51,6 +51,11 @@ public class Battery : MonoBehaviour, IDamageable
         }
     }
 
+    public void Register()
+    {
+
+    }
+
     public void OpenShield()
     {
         StartCoroutine(OpenShieldInteraction());

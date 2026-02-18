@@ -235,6 +235,10 @@ namespace Akila.FPSFramework
             }
         }
 
+        public void Register()
+        {
+
+        }
 
         private bool initialized = false;
 

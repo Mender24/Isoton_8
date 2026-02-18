@@ -24,6 +24,8 @@ namespace Akila.FPSFramework
         public UnityEvent OnDeath { get; }
 
         public bool IsSwaped();
+
+        public void Register();
     }
 
 }

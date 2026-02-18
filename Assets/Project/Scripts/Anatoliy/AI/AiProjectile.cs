@@ -23,9 +23,10 @@ public class AiProjectile : MonoBehaviour
     private TrailRenderer _trail;
     private Rigidbody _rb;
 
-    private float _lifeTime = 5;
+    [SerializeField] private float _lifeTime = 5;
+    public float LifeTime => _lifeTime;
 
-    public void Setup(Vector3 direction, float lifeTime, float speed)
+    public virtual void Setup(Vector3 direction, float lifeTime, float speed)
     {
         if(_trail == null)
             _trail = GetComponentInChildren<TrailRenderer>();
@@ -38,7 +39,6 @@ public class AiProjectile : MonoBehaviour
         _lifeTime = lifeTime;
 
         _velocity = (direction) * (speed);
-
         _rb.isKinematic = false;
 
         if (isActive)
@@ -85,7 +85,7 @@ public class AiProjectile : MonoBehaviour
         _lifeTime -= Time.deltaTime;
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         _rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
     }
