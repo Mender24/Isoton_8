@@ -30,19 +30,21 @@ namespace Akila.FPSFramework
 
         protected virtual void Update()
         {
-            foreach(Rigidbody rb in rigidbodies) rb.isKinematic = !isEnabled;
+            // foreach(Rigidbody rb in rigidbodies) rb.isKinematic = !isEnabled; // idk why it is here, anyway ragdoll will be used via enable/disable methods, so what the point to update every frame rbs
         }
 
         public virtual void Enable()
         {
             isEnabled = true;
             animator.enabled = false;
+            foreach(Rigidbody rb in rigidbodies) rb.isKinematic = !isEnabled;
         }
 
         public virtual void Disable()
         { 
             isEnabled = false;
             animator.enabled = true;
+            foreach(Rigidbody rb in rigidbodies) rb.isKinematic = !isEnabled;
         }
     }
 }
