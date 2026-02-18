@@ -3,16 +3,11 @@ using UnityEngine;
 
 public class TriggerExitLocation : MonoBehaviour
 {
-    [SerializeField] private string _nameNextLevel;
+    [SerializeField] private string _loadSceneName;
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Enter");
-
         if(other.TryGetComponent(out Player _))
-        {
-            Debug.Log("Exit");
-            SceneLoader.instance.LoadStartScene(_nameNextLevel, true);
-        }
+            SceneLoader.instance.LoadScenes(true, _loadSceneName, true);
     }
 }

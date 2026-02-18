@@ -817,8 +817,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
     void OnDrawGizmos()
     {
         // To make only main camera and scene view draw gizmos
-        if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
-        {
+        //if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
+        //{
             if (_showDebug)
             {
                 Vector3 position = transform.position + new Vector3(0, _visionHeight, 0);
@@ -879,7 +879,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
                     Gizmos.DrawRay(position, transform.forward * 2f);
                 }
             }
-        }
+        //}
     }
 
     void DrawFieldOfView(Vector3 position)
@@ -1027,11 +1027,11 @@ public class EnemyAI : MonoBehaviour, IDamageable
     {
 #if UNITY_EDITOR
         // To make only main camera and scene view draw gizmos
-        if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
-        {
+        //if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
+        //{
             if (_showDebug && _showDebugInfo)
                 UnityEditor.Handles.Label(transform.position + Vector3.up * 3f, GetDebugInfo());
-        }
+        //}
 #endif
     }
 
