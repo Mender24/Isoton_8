@@ -203,7 +203,7 @@ namespace Akila.FPSFramework
             {
                 if (PlayerPrefs.HasKey("Weapon" + i))
                 {
-                    Debug.Log(PlayerPrefs.GetString("Weapon" + i));
+                    Debug.Log("Load weapon: " + PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
                 }
