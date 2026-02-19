@@ -8,6 +8,5 @@ public class Weapone : Akila.FPSFramework.Firearm
         projectile.transform.position = muzzle.transform.position;
         projectile.gameObject.SetActive(true);
         projectile.Setup(direction, projectile.LifeTime, projectile.speed);
-        Debug.LogError("DoShoot pos" + position + " my pos " + transform.position);
     }
 }
