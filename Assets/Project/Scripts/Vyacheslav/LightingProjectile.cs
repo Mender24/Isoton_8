@@ -12,6 +12,7 @@ public class LightingProjectile : AiProjectile
     [SerializeField] private float _addItionalSizeValue = 0.1f;
     [SerializeField] private float _updateSizePeriod = 0.5f;
     [SerializeField] private float _maxRadius = 5f;
+    [SerializeField] private SphereCollider _collider;
      private float _nextUpdateSizeTime;
      private float _currentSize;
 
@@ -23,12 +24,17 @@ public class LightingProjectile : AiProjectile
         SetupSize();
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        
+        ReturnToPool();
+    }
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
         UpdateSize();
         TryDoDamage();
-
     }
 
     private void SetupSize()
@@ -43,12 +49,12 @@ public class LightingProjectile : AiProjectile
         if (Time.time> _nextUpdateSizeTime)
         {
             _nextUpdateSizeTime = Time.time + _updateSizePeriod;
-            _currentSize += _addItionalSizeValue;
-            _currentSize = Mathf.Clamp(_currentSize, 0, _maxRadius);
-            Debug.LogError("Current size" + _currentSize);
+            _currentSize = Mathf.Clamp(_currentSize + _addItionalSizeValue, 0, _maxRadius);
+            _collider.radius = _currentSize;
         }
         _effect.transform.localScale = _currentSize * Vector3.one;
         _testRadiusMesh.transform.localScale = _currentSize * 2 * Vector3.one;
+        _collider.radius = _currentSize;
         _testRadiusMesh.gameObject.SetActive(_isTestSize);
     }
 

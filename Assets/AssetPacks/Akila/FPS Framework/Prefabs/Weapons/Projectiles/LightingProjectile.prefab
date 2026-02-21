@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 9213985462605794866}
   - component: {fileID: 3475312254388310252}
   - component: {fileID: 4647695087898911005}
-  m_Layer: 0
+  - component: {fileID: 7545337541788808706}
+  m_Layer: 17
   m_Name: LightingProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,7 +85,7 @@ MonoBehaviour:
   force: 10
   defaultDecal: {fileID: 1000010844420130, guid: 4edabb1c0dde62743b137378c7d22980,
     type: 3}
-  hitRadius: 0.2
+  hitRadius: 0.02
   useAutoScaling: 0
   scaleMultipler: 1
   _damage: 10
@@ -93,8 +94,31 @@ MonoBehaviour:
   _isTestSize: 0
   _testRadiusMesh: {fileID: 27446100160860834}
   _effect: {fileID: 4422072500212898355}
-  _addItionalSizeValue: 0.1
-  _updateSizePeriod: 0.05
+  _addItionalSizeValue: 0.05
+  _updateSizePeriod: 0.02
+  _maxRadius: 2
+  _collider: {fileID: 7545337541788808706}
+--- !u!135 &7545337541788808706
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61363099449086174}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8192
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.02
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1389881282306740326
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5872206563536443737}
   - component: {fileID: 475014349910212380}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +276,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4422072500212898355}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,7 +311,7 @@ GameObject:
   - component: {fileID: 27446100160860834}
   - component: {fileID: 6240683769820193419}
   - component: {fileID: 8921885130991542619}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TestRadiusShower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -373,7 +397,7 @@ GameObject:
   - component: {fileID: 6039258917006491793}
   - component: {fileID: 29142390721830371}
   - component: {fileID: 4254968034438200794}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -459,6 +483,18 @@ PrefabInstance:
     - target: {fileID: 100000, guid: ca8124efa1821ab499a166f17d05dd2e, type: 3}
       propertyPath: m_Name
       value: plasma_beam_flare_blue
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: ca8124efa1821ab499a166f17d05dd2e, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: ca8124efa1821ab499a166f17d05dd2e, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: ca8124efa1821ab499a166f17d05dd2e, type: 3}
+      propertyPath: m_Layer
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: ca8124efa1821ab499a166f17d05dd2e, type: 3}
       propertyPath: m_LocalPosition.x
