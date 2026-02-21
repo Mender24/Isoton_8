@@ -56,6 +56,11 @@ public class Battery : MonoBehaviour, IDamageable
 
     }
 
+    public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+    {
+        return false;
+    }
+
     public void OpenShield()
     {
         StartCoroutine(OpenShieldInteraction());

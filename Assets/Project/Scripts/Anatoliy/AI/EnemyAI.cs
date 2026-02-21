@@ -261,6 +261,17 @@ public class EnemyAI : MonoBehaviour, IDamageable
         EnemyCounter.Instance.Register(this);
     }
 
+    [SerializeField] private CapsuleCollider _collider;
+
+    public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+    {
+        var height = _collider.height / 2;
+        var enemyCenter = transform.position + height * Vector3.up;
+        return Mathf.Abs(enemyCenter.x-sphereCenter.x) < sphereRadius + _collider.radius
+                && Mathf.Abs(enemyCenter.z - sphereCenter.z) < sphereRadius + _collider.radius
+                && Mathf.Abs(enemyCenter.y - sphereCenter.y) < sphereRadius + height; 
+    }
+
     private void Fire()
     {
         if (isReload)

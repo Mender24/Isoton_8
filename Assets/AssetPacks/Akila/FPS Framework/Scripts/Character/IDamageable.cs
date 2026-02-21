@@ -26,6 +26,8 @@ namespace Akila.FPSFramework
         public bool IsSwaped();
 
         public void Register();
+
+        public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius);
     }
 
 }

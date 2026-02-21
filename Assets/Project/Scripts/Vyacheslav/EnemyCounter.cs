@@ -17,7 +17,7 @@ public class EnemyCounter : MonoBehaviour
         List<IDamageable> res = new();
         foreach (var enemy in _enemies)
         {
-            if (enemy != null && Vector3.Distance(enemy.transform.position, center) < radius)
+            if (enemy != null && enemy.IsSphereCollision(center, radius))
             {
                 Debug.LogError(enemy.transform.gameObject.name + " " +Vector3.Distance(enemy.transform.position, center));
                 res.Add(enemy);

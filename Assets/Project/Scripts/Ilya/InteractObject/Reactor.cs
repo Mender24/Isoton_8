@@ -99,6 +99,11 @@ public class Reactor : MonoBehaviour, IDamageable
         StartCoroutine(CooldownNextBattery());
     }
 
+    public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+    {
+        return false;
+    }
+
     public bool IsSwaped()
     {
         throw new System.NotImplementedException();

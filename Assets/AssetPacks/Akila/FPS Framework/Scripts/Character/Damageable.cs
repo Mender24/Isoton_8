@@ -300,6 +300,11 @@ namespace Akila.FPSFramework
             UpdateUI();
         }
 
+        public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+        {
+            return false;
+        }
+
         private void UpdateUI()
         {
             if (!allowDamageableEffects) return;
