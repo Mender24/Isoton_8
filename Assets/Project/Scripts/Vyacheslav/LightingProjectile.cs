@@ -11,6 +11,7 @@ public class LightingProjectile : AiProjectile
     [SerializeField] private Transform _effect;
     [SerializeField] private float _addItionalSizeValue = 0.1f;
     [SerializeField] private float _updateSizePeriod = 0.5f;
+    [SerializeField] private float _maxRadius = 5f;
      private float _nextUpdateSizeTime;
      private float _currentSize;
 
@@ -43,6 +44,7 @@ public class LightingProjectile : AiProjectile
         {
             _nextUpdateSizeTime = Time.time + _updateSizePeriod;
             _currentSize += _addItionalSizeValue;
+            _currentSize = Mathf.Clamp(_currentSize, 0, _maxRadius);
             Debug.LogError("Current size" + _currentSize);
         }
         _effect.transform.localScale = _currentSize * Vector3.one;
