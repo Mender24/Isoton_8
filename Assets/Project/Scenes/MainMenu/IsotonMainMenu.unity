@@ -1650,11 +1650,16 @@ MonoBehaviour:
   _isPlayAwake: 1
   _ambiemtSource: {fileID: 2121254962}
   _audioClipInTransition: {fileID: 0}
+  _maxVolumeTransition: 0.2
   _audioAmbientInIdLocation:
   - AudioClip: {fileID: 8300000, guid: 2ef02d15c8f42f04a8b4f532a3bb7bb7, type: 3}
+    MaxVolume: 0.35
     IdLocation: 0
-  _speedDown: 1
-  _speedUp: 0.4
+  - AudioClip: {fileID: 8300000, guid: 526430dfc090b76498b46816ea6834b4, type: 3}
+    MaxVolume: 0.015
+    IdLocation: 1
+  _speedDown: 0.15
+  _speedUp: 0.34
   _randomAudioClip: []
   _radius: 5
   _percentageOccurence: 0.2
@@ -2594,19 +2599,19 @@ MonoBehaviour:
   _isDebug: 1
   _sceneNames:
   - IsotonMainMenu
-  - StartTunnel
+  - Lvl1
   - Transition_1-2
   - Lvl2
   - Transition_2-BOSS
-  - End_BossFightACT1
-  - Lvl3
-  - Transition_3-4
+  - Lvl3_End_BossColieum
   - Lvl4
+  - Transition_3-4
+  - Lvl5_Reactor
   - Transition_4-5
   - End_RunawayLvl
   _transitionName: Transition
   _endSceneName: End
-  _startScene: StartTunnel
+  _startScene: Lvl1
   _player: {fileID: 1082240042}
 --- !u!4 &1065807089
 Transform:
@@ -5749,11 +5754,11 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 526430dfc090b76498b46816ea6834b4, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
