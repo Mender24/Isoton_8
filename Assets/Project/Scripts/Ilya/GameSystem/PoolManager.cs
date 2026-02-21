@@ -36,7 +36,7 @@ public class PoolManager : MonoBehaviour
         InitPoolManager();
     }
 
-    public T GetObgect<T>() where T : MonoBehaviour
+    public T GetObject<T>() where T : MonoBehaviour
     {
         Stack<MonoBehaviour> stackObj = _objectPools[typeof(T)];
 

@@ -22,10 +22,9 @@ public class AiProjectile : MonoBehaviour
     private Vector3 _velocity;
     private TrailRenderer _trail;
     private Rigidbody _rb;
-
     private float _lifeTime = 5;
 
-    public void Setup(Vector3 direction, float lifeTime, float speed)
+    public virtual void Setup(Vector3 direction, float lifeTime, float speed)
     {
         if(_trail == null)
             _trail = GetComponentInChildren<TrailRenderer>();
@@ -38,13 +37,12 @@ public class AiProjectile : MonoBehaviour
         _lifeTime = lifeTime;
 
         _velocity = (direction) * (speed);
-
         _rb.isKinematic = false;
 
         if (isActive)
             _rb.AddForce(_velocity, ForceMode.VelocityChange);
 
-        transform.localScale = useAutoScaling ? Vector3.zero : Vector3.one * scaleMultipler;
+        transform.localScale = useAutoScaling ? Vector3.one : Vector3.one * scaleMultipler;
 
         if (_trail) _trail.widthMultiplier = useAutoScaling ? 0 : scaleMultipler;
     }
@@ -78,14 +76,14 @@ public class AiProjectile : MonoBehaviour
             _lifeTime = int.MaxValue;
             _rb.isKinematic = true;
             PoolManager.Instance.SetObject(this);
-
+            Debug.LogError("StopProj");
             return;
         }
 
         _lifeTime -= Time.deltaTime;
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         _rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
     }

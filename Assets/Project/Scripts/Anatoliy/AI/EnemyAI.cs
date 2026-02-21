@@ -167,7 +167,6 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public bool allowDamageableEffects { get; set; }
     public bool DeadConfirmed { get; set; }
     public GameObject DamageSource { get; set; }
-
     public UnityEvent OnDeath { get; set; }
 
     void Start()
@@ -210,6 +209,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         agent.speed = walkSpeed;
         agent.stoppingDistance = stoppingDistance;
         startPosition = transform.position;
+        Register();
     }
 
     void Update()
@@ -259,6 +259,22 @@ public class EnemyAI : MonoBehaviour, IDamageable
         isFire = true;
     }
 
+    public void Register()
+    {
+        EnemyCounter.Instance.Register(this);
+    }
+
+    [SerializeField] private CapsuleCollider _collider;
+
+    public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+    {
+        var height = _collider.height / 2;
+        var enemyCenter = transform.position + height * Vector3.up;
+        return Mathf.Abs(enemyCenter.x-sphereCenter.x) < sphereRadius + _collider.radius
+                && Mathf.Abs(enemyCenter.z - sphereCenter.z) < sphereRadius + _collider.radius
+                && Mathf.Abs(enemyCenter.y - sphereCenter.y) < sphereRadius + height; 
+    }
+
     private void Fire()
     {
         if (isReload)
@@ -281,7 +297,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         Vector3 bulletStartPosition = _shotStartTransform.position;//transform.position + _agentCenterOffset;
 
-        AiProjectile bullet = PoolManager.Instance.GetObgect<AiProjectile>();
+        AiProjectile bullet = PoolManager.Instance.GetObject<AiProjectile>();
         bullet.transform.position = bulletStartPosition;
         bullet.gameObject.SetActive(true);
         bullet.Setup((targetPosition - bulletStartPosition).normalized, _bulletLifetime, _speedBullet);

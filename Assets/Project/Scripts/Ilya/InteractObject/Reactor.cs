@@ -38,6 +38,11 @@ public class Reactor : MonoBehaviour, IDamageable
     public TextMeshPro showingText;
     public UnityEvent OnDeath => onDeath;
 
+    public void Register()
+    {
+
+    }
+
     private void OnDisable()
     {
         for (int i = 0; i < _batterys.Count; i++)
@@ -92,6 +97,11 @@ public class Reactor : MonoBehaviour, IDamageable
         }
 
         StartCoroutine(CooldownNextBattery());
+    }
+
+    public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+    {
+        return false;
     }
 
     public bool IsSwaped()

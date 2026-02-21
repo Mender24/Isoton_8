@@ -816,7 +816,7 @@ namespace Akila.FPSFramework
             }
         }
 
-        private void DoFireDone(Vector3 position, Quaternion rotation, Vector3 direction)
+        protected virtual void DoFireDone(Vector3 position, Quaternion rotation, Vector3 direction)
         {
             // Exit the method if the firearm is not active.
             if (!isActive)
@@ -857,8 +857,19 @@ namespace Akila.FPSFramework
                     Firearm.UpdateHits(this, preset.defaultDecal, ray, hit, damage, preset.decalDirection, ShootEffect);
                 }
             }
+
+            if (preset.shootingMechanism == ShootingMechanism.Special)
+            {
+                DoSpecialShoot(position, rotation, currentFireDirection, preset.muzzleVelocity, preset.range);
+            }
+        }
+
+        protected virtual void DoSpecialShoot(Vector3 position, Quaternion rotation, Vector3 direction, float speed, float range)
+        {
+
         }
         [SerializeField] private OnHitEffect _onHitEffect = OnHitEffect.None;
+
 
         protected virtual void ShootEffect(IDamageable damageable)
         {
@@ -964,7 +975,7 @@ namespace Akila.FPSFramework
         /// <returns>Returns the spawned <see cref="Projectile"/> instance.</returns>
         /// <exception cref="System.NullReferenceException">Thrown when the projectile prefab or preset is null.</exception>
         /// <exception cref="System.ArgumentException">Thrown when the speed or range is less than or equal to zero.</exception>
-        public Projectile SpawnProjectile(Vector3 position, Quaternion rotation, Vector3 direction, float speed, float range)
+        public virtual Projectile SpawnProjectile(Vector3 position, Quaternion rotation, Vector3 direction, float speed, float range)
         {
             // Check if the preset or projectile prefab is null
             if (preset == null)
@@ -990,20 +1001,25 @@ namespace Akila.FPSFramework
                 lightCreator.TurnOnLight();
             }
 
+
+            // Set up the new projectile with the given parameters: owner, direction, initial velocity, speed, and range
+            newProjectile.Setup(this, direction, CalcInivitalVelocity(), speed, range);
+
+            // Return the newly spawned projectile
+            return newProjectile;
+        }
+
+        private Vector3 CalcInivitalVelocity()
+        {
             // Initialize the velocity of the projectile to zero
-            Vector3 initialVelocity = Vector3.zero;
+            Vector3 res = Vector3.zero;
 
             // If a character manager exists, add its velocity to the initial velocity of the projectile
             if (characterManager)
             {
-                initialVelocity += characterManager.velocity;
+                res += characterManager.velocity;
             }
-
-            // Set up the new projectile with the given parameters: owner, direction, initial velocity, speed, and range
-            newProjectile.Setup(this, direction, initialVelocity, speed, range);
-
-            // Return the newly spawned projectile
-            return newProjectile;
+            return res;
         }
 
         /// <summary>
@@ -1588,7 +1604,8 @@ namespace Akila.FPSFramework
         public enum ShootingMechanism
         {
             Hitscan,
-            Projectiles
+            Projectiles,
+            Special
         }
 
         public enum ShootingDirection
