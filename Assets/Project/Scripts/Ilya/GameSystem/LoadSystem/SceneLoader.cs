@@ -29,11 +29,15 @@ public class SceneLoader : MonoBehaviour
     private DoorControllerSceneChanger _nextLocationDC;
 
     public Player Player => _player;
-    public string CurrentScene => _sceneNames[_currentSceneIndex];
+    public string CurrentSceneName => _sceneNames[_currentSceneIndex];
+    public int CurrentSceneId => _currentSceneIndex;
     public string NextScene => _sceneNames[_nextSceneIndex];
+    public bool CheckCurrentSceneTransition => _sceneNames[_currentSceneIndex].Contains(_transitionName);
 
     public bool IsLoad { get; private set; }
     public bool IsInitPlayer { get; private set; }
+
+    public event UnityAction LevelLoaded;
 
     private void Awake()
     {
@@ -162,6 +166,8 @@ public class SceneLoader : MonoBehaviour
 
         if (_isDebug)
             Debug.Log("Scenes load complete");
+
+        LevelLoaded?.Invoke();
     }
 
     private void HardLoadScene(int index)

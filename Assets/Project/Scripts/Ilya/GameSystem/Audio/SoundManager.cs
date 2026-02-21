@@ -5,14 +5,20 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
+    private static SoundManager _instance;
+
+    public static SoundManager Instance => _instance;
+
     [SerializeField] private bool _isPlayAwake = true;
     [SerializeField] private AudioSource _ambiemtSource;
     [Header("AmbientInLocation")]
     [SerializeField] private AudioClip _audioClipInTransition;
+    [SerializeField] private float _maxVolumeTransition;
+    [Space]
     [SerializeField] private List<AudioClipInLocation> _audioAmbientInIdLocation = new();
     [SerializeField] private float _speedDown = 2f;
     [SerializeField] private float _speedUp = 2f;
-    private static Dictionary<int, AudioClip> _ambientInIdLocationAudioClip;
+    private static Dictionary<int, AudioClipInLocation> _ambientInIdLocationAudioClip;
 
     public static float SpeedDown { get; private set; }
     public static float SpeedUp { get; private set; }
@@ -32,10 +38,20 @@ public class SoundManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        SceneLoader.instance.LevelLoaded -= OnLevelLoaded;
+
         _isDestroy = true;
     }
 
     private void Awake()
+    {
+        if (_instance == null)
+            _instance = this;
+        else
+            Destroy(gameObject);
+    }
+
+    private void Start()
     {
         _isDestroy = false;
 
@@ -44,7 +60,7 @@ public class SoundManager : MonoBehaviour
         InitScriptedAudioClip();
 
         if (_isPlayAwake)
-            SetAmbientClip(_ambiemtSource, 0, false);
+            StartCoroutine(SetAmbientClip(_ambiemtSource, 0, false));
     }
 
     #region AmbientInLocation
@@ -60,56 +76,86 @@ public class SoundManager : MonoBehaviour
         _ambientInIdLocationAudioClip = new();
 
         foreach(AudioClipInLocation locationAudioClip in _audioAmbientInIdLocation)
-            _ambientInIdLocationAudioClip.Add(locationAudioClip.IdLocation, locationAudioClip.AudioClip);
+            _ambientInIdLocationAudioClip.Add(locationAudioClip.IdLocation, locationAudioClip);
+
+        SceneLoader.instance.LevelLoaded += OnLevelLoaded;
     }
 
-    public static async void SetAmbientClip(AudioSource audioSource, int idLocation, bool isTransition)
+    public IEnumerator SetAmbientClip(AudioSource audioSource, int idLocation, bool isTransition)
     {
-        if (audioSource == null)
+        if (audioSource == null || (idLocation != -1 && !_ambientInIdLocationAudioClip.ContainsKey(idLocation)))
         {
             Debug.LogWarning("Audio source is null!");
-            return;
+        }
+        else
+        {
+            _isDestroy = false;
+
+            if (audioSource.isPlaying)
+                yield return VolumeDown(audioSource);
+
+            if (isTransition && _audioClipInTransition != null)
+                audioSource.clip = _audioClipInTransition;
+            else if (!isTransition)
+                audioSource.clip = _ambientInIdLocationAudioClip[idLocation].AudioClip;
+            else
+                goto exit;
+
+            audioSource.Play();
+
+            yield return VolumeUp(audioSource, !isTransition ? _ambientInIdLocationAudioClip[idLocation].MaxVolume : _maxVolumeTransition);
         }
 
-        if(audioSource.isPlaying)
-            await VolumeDown(audioSource);
-
-        if (!_ambientInIdLocationAudioClip.ContainsKey(idLocation))
-            return;
-
-        if (isTransition)
-            idLocation++;
-
-        Debug.Log(_ambientInIdLocationAudioClip[idLocation]);
-        audioSource.clip = _ambientInIdLocationAudioClip[idLocation];
-        audioSource.Play();
-
-        await VolumeUp(audioSource);
+    exit:;
     }
 
-    private static async Task VolumeUp(AudioSource audioSource)
+    public void TransitionIn()
     {
-        while(audioSource.volume < 1)
-        {
-            if (_isDestroy)
-                break;
+        StopAllCoroutines();
 
+        StartCoroutine(SetAmbientClip(_ambiemtSource, -1, true));
+    }
+
+    public void TransitionOut()
+    {
+        StopAllCoroutines();
+
+        StartCoroutine(SetAmbientClip(_ambiemtSource, SceneLoader.instance.CurrentSceneId, false));
+    }
+
+    private void OnLevelLoaded()
+    {
+        int currentLocationId = SceneLoader.instance.CurrentSceneId;
+        bool isTransition = SceneLoader.instance.CheckCurrentSceneTransition;
+
+        StopAllCoroutines();
+
+        StartCoroutine(SetAmbientClip(_ambiemtSource, currentLocationId, isTransition));
+    }
+
+    private IEnumerator VolumeUp(AudioSource audioSource, float border)
+    {
+        while(audioSource.volume < 1 && audioSource.volume < border)
+        {
             audioSource.volume += Time.unscaledDeltaTime * SpeedUp;
 
-            await Task.Yield();
+            if(audioSource.volume > border)
+                audioSource.volume = border;
+
+            yield return null;
         }
     }
 
-    private static async Task VolumeDown(AudioSource audioSource)
+    private IEnumerator VolumeDown(AudioSource audioSource)
     {
         while (audioSource.volume > 0)
         {
-            if (_isDestroy)
-                break;
-
             audioSource.volume -= Time.unscaledDeltaTime * SpeedDown;
 
-            await Task.Yield();
+            if (audioSource.volume < 0)
+                audioSource.volume = 0;
+
+            yield return null;
         }
     }
 
@@ -147,6 +193,7 @@ public class SoundManager : MonoBehaviour
 public class AudioClipInLocation
 {
     public AudioClip AudioClip;
+    public float MaxVolume;
     public int IdLocation;
 }
 
