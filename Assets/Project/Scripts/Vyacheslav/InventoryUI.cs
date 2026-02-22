@@ -51,13 +51,13 @@ public class InventoryUI : MonoBehaviour
 
     private void AddWeapone(InventoryItem weapone)
     {
+        Debug.Log("AddItem");
         _viewNotes.Add(new InventoryViewNote(weapone));
         UpdateWeaponeAll(_viewNotes.Count-1);
     }
 
     private void UpdateWeaponeAll(int index)
     {
-        SetActive(true);
         var iterator = 0;
         foreach (var slot in _slots)
         {
@@ -72,6 +72,7 @@ public class InventoryUI : MonoBehaviour
             }
             iterator++;
         }
+        SetActive(true);
     }
 
     private void ShowWeaponeAll()

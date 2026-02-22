@@ -20,6 +20,7 @@ public partial class MoveToLastKnownPositionAction : Action
         Vector3 vecWithNoY = new Vector3(EnemyAI.Value.lastKnownPlayerPosition.x, GameObject.transform.position.y, EnemyAI.Value.lastKnownPlayerPosition.z);
         EnemyAI.Value.agent.SetDestination(vecWithNoY);
         EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
+        EnemyAI.Value.isSearching = true;
         
         return Status.Running;
     }
@@ -31,7 +32,7 @@ public partial class MoveToLastKnownPositionAction : Action
         else
             EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
 
-        if (EnemyAI.Value.agent.hasPath) // FIXME: smh this always throw false, idk y, need logic to end only when finished route
+        if (!EnemyAI.Value.IsEnemyStopped())
         {
             return Status.Running;
         }
@@ -42,6 +43,7 @@ public partial class MoveToLastKnownPositionAction : Action
 
     protected override void OnEnd()
     {
+        EnemyAI.Value.isSearching = false;
         EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
     }
 }

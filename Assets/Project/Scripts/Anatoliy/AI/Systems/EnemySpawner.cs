@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -19,6 +20,8 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float _spawnInterval = 5f;
     [Tooltip("Случайное отклонение от интервала спавна")]
     [SerializeField] private float _spawnIntervalVariation = 1f;
+    [Tooltip("Время, которое бот лежит мертвый после смерти в секундах")]
+    [SerializeField] private float _timeAfterDeath = 15f;
     
     [Header("Enemy Count Settings")]
     [SerializeField] private int _maxEnemiesAlive = 5;
@@ -66,7 +69,13 @@ public class EnemySpawner : MonoBehaviour
     {
         if (_findPlayerAutomatically && _playerTransform == null)
         {
-            var player = FindFirstObjectByType<CharacterController>();
+            CharacterController player;
+
+            if (SceneLoader.instance != null && SceneLoader.instance.Player != null)
+                player = SceneLoader.instance.Player.GetComponent<CharacterController>();
+            else
+                player = FindFirstObjectByType<CharacterController>();
+
             if (player != null)
             {
                 _playerTransform = player.transform;
@@ -155,6 +164,7 @@ public class EnemySpawner : MonoBehaviour
     
     private void SetupEnemy(EnemyAI enemy)
     {
+        enemy.spawnType = EnemyAI.SpawnSource.FromSpawner;
         enemy.playerTransform = _playerTransform;
         
         if (_increasedMemory)
@@ -211,7 +221,7 @@ public class EnemySpawner : MonoBehaviour
         
         if (enemy != null)
         {
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(_timeAfterDeath);
             Destroy(enemy.gameObject);
         }
     }

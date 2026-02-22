@@ -329,6 +329,23 @@ public class BasicEnemyAnimationController : MonoBehaviour
     #region Public Animation Controls
     
     /// <summary>
+    /// Обнуляет все состояния возвращая в изначальное
+    /// </summary>
+    public void ResetAnimationController()
+    {
+        _animator.SetBool(AnimParams.IsAlerted, false);
+        _animator.SetBool(AnimParams.Walking, false);
+        _animator.SetBool(AnimParams.Running, false);
+        _animator.SetBool(AnimParams.Aiming, false);
+        _animator.SetBool(AnimParams.Shooting, false);
+        _animator.SetBool(AnimParams.Reloading, false);
+        _animator.SetBool(AnimParams.MeleeAttacking, false);
+
+        ResetAllCachedValues();
+        ResetAllTriggers();
+    }
+
+    /// <summary>
     /// Проигрывает анимацию обнаружения игрока
     /// </summary>
     public void PlayAlert()
@@ -563,7 +580,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
     
     public void OnDeathAnimationStart()
     {
-        _enemyAI.agent.isStopped = true;
+        // _enemyAI.agent.isStopped = true;
         
         if (_showDebugLogs)
             Debug.Log("[Animation Event] Death animation complete");
@@ -571,7 +588,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
 
     public void OnDeathAnimationComplete()
     {
-        _enemyAI.agent.isStopped = false;
+        // _enemyAI.agent.isStopped = false;
         _enemyAI?.OnDeathComplete();
         
         if (_showDebugLogs)
@@ -655,6 +672,22 @@ public class BasicEnemyAnimationController : MonoBehaviour
         _animator.ResetTrigger(AnimParams.Hit);
         _animator.ResetTrigger(AnimParams.Reload);
         _animator.ResetTrigger(AnimParams.Search);
+        _animator.ResetTrigger(AnimParams.Winning);
+    }
+
+    /// <summary>
+    /// Сбросить все кэшируемые значения
+    /// </summary>
+    public void ResetAllCachedValues()
+    {
+        _cachedAiming = false;
+        _cachedAlerted = false;
+        _cachedMeleeAttacking = false;
+        _cachedPlayerDetected = false;
+        _cachedReloading = false;
+        _cachedRunning = false;
+        _cachedSpeed = 0.0f;
+        _cachedWalking = false;
     }
 
     /// <summary>

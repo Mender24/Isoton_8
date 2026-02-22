@@ -44,8 +44,9 @@ namespace Akila.FPSFramework
 
         private void Update()
         {
-            if(_isDeleteSave)
+            if (_isDeleteSave)
             {
+                Debug.Log("DeleteAll");
                 _isDeleteSave = false;
                 PlayerPrefs.DeleteAll();
             }
@@ -64,14 +65,18 @@ namespace Akila.FPSFramework
                 .SelectMany(t => t.GetComponentsInChildren<Transform>(true))
                 .FirstOrDefault(x => x.gameObject.transform.name == NameSearchObjectToNewScene)?.gameObject;
 
-            Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
-            sides[0].points = newArray;
-            _currentSpawnPointId = 0;
+            if (SpawnPoints != null)
+            {
+                Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
+                sides[0].points = newArray;
+                _currentSpawnPointId = 0;
+            }
         }
 
         public void MovePlayerStartPositionAndOn(Player player)
         {
-            player.transform.position = sides[0].points[0].transform.position;
+            player.transform.position = sides[0].points[0].position;
+            player.transform.rotation = sides[0].points[0].rotation;
             player.gameObject.SetActive(true);
         }
 
@@ -143,7 +148,7 @@ namespace Akila.FPSFramework
                 .FirstOrDefault();
 
             //SaveManager.LoadPlayer(inventory, _itemsPrefab);
-            LoadPlayer(inventory, _itemsPrefab);
+            //LoadPlayerWeapon(inventory);
             //----
 
             if (newPlayerActorComponent && actorSelfActorComponent)
@@ -152,33 +157,54 @@ namespace Akila.FPSFramework
                 newPlayerActorComponent.deaths = actorSelfActorComponent.deaths;
             }
 
-            Vector3 position = GetPlayerPosition(actorSelf.teamId);
-            Quaternion rotation = GetPlayerRotation(actorSelf.teamId);
+            //Vector3 position = GetPlayerPosition(actorSelf.teamId);
+            //Quaternion rotation = GetPlayerRotation(actorSelf.teamId);
 
-            newActorObject.transform.SetPositionAndRotation(position, rotation);
+            //newActorObject.transform.SetPositionAndRotation(position, rotation);
+            newActorObject.transform.parent = transform.parent;
+            newActorObject.SetActive(true);
 
             return newActorObject;
         }
 
-        public void SavePlayer(Actor player)
-        {
-            PlayerPrefs.DeleteAll();
+        private List<string> _weaponSave = new();
 
-            Firearm[] weapons = player.GetComponentsInChildren<Firearm>();
+        public void WritePlayerWeapon(Actor player)
+        {
+            _weaponSave.Clear();
+            Firearm[] weapons = player.GetComponentsInChildren<Firearm>(true);
 
             for (int i = 0; i < weapons.Length; i++)
-                PlayerPrefs.SetString("Weapon" + i.ToString(), weapons[i].Name);
-
-            PlayerPrefs.Save();
+            {
+                _weaponSave.Add(weapons[i].Name);
+                Debug.Log("Weapon" + i.ToString() + " " + weapons[i].Name);
+            }
         }
 
-        public void LoadPlayer(Inventory inventory, List<InventoryItem> itemsPrefab)
+        public void ReadPlayerWeapon(Inventory inventory)
         {
-            for(int i = 0; i < _maxWeaponCount; i++)
+            for (int i = 0; i < _maxWeaponCount; i++)
             {
-                if(PlayerPrefs.HasKey("Weapon" + i))
+                if (i >= _weaponSave.Count)
+                    break;
+
+                InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == _weaponSave[i]);
+
+                if (prefab == null)
+                    break;
+
+                InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
+            }
+        }
+
+        public void LoadPlayerWeapon(Inventory inventory)
+        {
+            for (int i = 0; i < _maxWeaponCount; i++)
+            {
+                if (PlayerPrefs.HasKey("Weapon" + i))
                 {
-                    InventoryItem prefab = itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
+                    Debug.Log("Load weapon: " + PlayerPrefs.GetString("Weapon" + i));
+                    InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
                 }
             }
@@ -186,20 +212,12 @@ namespace Akila.FPSFramework
 
         public Transform GetPlayerSpawnPoint(int sideId)
         {
-            //int pointIndex = Random.Range(0, sides[sideId].points.Length);
-
             return sides[sideId].points[_currentSpawnPointId];
         }
 
         public Vector3 GetPlayerPosition(int sideId)
         {
-            Vector3 addedPosition = UnityEngine.Random.insideUnitCircle * spawnRadius;
-
-            addedPosition.z = addedPosition.y;
-
-            addedPosition.y = 0;
-
-            return GetPlayerSpawnPoint(sideId).position + addedPosition;
+            return GetPlayerSpawnPoint(sideId).position;
         }
 
         public Quaternion GetPlayerRotation(int sideId)
