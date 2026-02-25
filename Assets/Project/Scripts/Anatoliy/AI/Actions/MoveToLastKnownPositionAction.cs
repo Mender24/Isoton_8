@@ -1,50 +1,50 @@
-using System;
-using Unity.Behavior;
-using UnityEngine;
-using Action = Unity.Behavior.Action;
-using Unity.Properties;
-using Unity.VisualScripting;
+// using System;
+// using Unity.Behavior;
+// using UnityEngine;
+// using Action = Unity.Behavior.Action;
+// using Unity.Properties;
+// using Unity.VisualScripting;
 
-[Serializable, GeneratePropertyBag]
-[NodeDescription(name: "MoveToLastKnownPosition", story: "[EnemyAI] moves to last known position", category: "Action", id: "ff484dcfaa9e11c54778b5055ba6816a")]
-public partial class MoveToLastKnownPositionAction : Action
-{
-    [SerializeReference] public BlackboardVariable<EnemyAI> EnemyAI;
+// [Serializable, GeneratePropertyBag]
+// [NodeDescription(name: "MoveToLastKnownPosition", story: "[EnemyAI] moves to last known position", category: "Action", id: "ff484dcfaa9e11c54778b5055ba6816a")]
+// public partial class MoveToLastKnownPositionAction : Action
+// {
+//     [SerializeReference] public BlackboardVariable<EnemyAI> EnemyAI;
     
-    protected override Status OnStart()
-    {
-        if (EnemyAI.Value == null || EnemyAI.Value.isDead)
-            return Status.Failure;
+//     protected override Status OnStart()
+//     {
+//         if (EnemyAI.Value == null || EnemyAI.Value.isDead)
+//             return Status.Failure;
         
-        EnemyAI.Value.agent.ResetPath();
-        Vector3 vecWithNoY = new Vector3(EnemyAI.Value.lastKnownPlayerPosition.x, GameObject.transform.position.y, EnemyAI.Value.lastKnownPlayerPosition.z);
-        EnemyAI.Value.agent.SetDestination(vecWithNoY);
-        EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
-        EnemyAI.Value.isSearching = true;
+//         EnemyAI.Value.agent.ResetPath();
+//         Vector3 vecWithNoY = new Vector3(EnemyAI.Value.lastKnownPlayerPosition.x, GameObject.transform.position.y, EnemyAI.Value.lastKnownPlayerPosition.z);
+//         EnemyAI.Value.agent.SetDestination(vecWithNoY);
+//         EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
+//         EnemyAI.Value.isSearching = true;
         
-        return Status.Running;
-    }
+//         return Status.Running;
+//     }
     
-    protected override Status OnUpdate()
-    {
-        if (EnemyAI.Value.isReload)
-            EnemyAI.Value.agent.speed = 0;
-        else
-            EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
+//     protected override Status OnUpdate()
+//     {
+//         if (EnemyAI.Value.isReload)
+//             EnemyAI.Value.agent.speed = 0;
+//         else
+//             EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
 
-        if (!EnemyAI.Value.IsEnemyStopped())
-        {
-            return Status.Running;
-        }
+//         if (!EnemyAI.Value.IsEnemyStopped())
+//         {
+//             return Status.Running;
+//         }
         
-        EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
-        return Status.Success;
-    }
+//         EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
+//         return Status.Success;
+//     }
 
-    protected override void OnEnd()
-    {
-        EnemyAI.Value.isSearching = false;
-        EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
-    }
-}
+//     protected override void OnEnd()
+//     {
+//         EnemyAI.Value.isSearching = false;
+//         EnemyAI.Value.agent.speed = EnemyAI.Value.runSpeed;
+//     }
+// }
 

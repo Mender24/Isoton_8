@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Properties;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,12 +13,12 @@ namespace Unity.Behavior
         description: "Moves a GameObject along way points (transform children of a GameObject) using NavMeshAgent." +
         "\nIf NavMeshAgent is not available on the [Agent] or its children, moves the Agent using its transform.",
         category: "Action/Navigation",
-        story: "[Agent] with [EnemyAI] patrols along waypoints",
+        story: "[Agent] with [Enemy] patrols along waypoints",
         id: "f0cd1414118e67c47214e54fc922c793")]
     internal partial class PatrolAction : Action
     {
         [SerializeReference] public BlackboardVariable<GameObject> Agent;
-        [SerializeReference] public BlackboardVariable<EnemyAI> EnemyAI;
+        [SerializeReference] public BlackboardVariable<EnemyBase> Enemy;
         [SerializeReference] public BlackboardVariable<float> DistanceThreshold = new(0.2f);
         [SerializeReference] public BlackboardVariable<string> AnimatorSpeedParam = new("SpeedMagnitude");
         [Tooltip("Should patrol restart from the latest point?")]
@@ -44,7 +45,7 @@ namespace Unity.Behavior
                 return Status.Failure;
             }
 
-            Waypoints.Value = EnemyAI.Value.patrolPoints;
+            Waypoints.Value = Enemy.Value.PatrolPoints;
 
             if (Waypoints.Value == null || Waypoints.Value.Count == 0)
             {
@@ -52,8 +53,8 @@ namespace Unity.Behavior
                 return Status.Failure;
             }
 
-            Speed.Value = EnemyAI.Value.walkSpeed;
-            WaypointWaitTime.Value = EnemyAI.Value.waypointWaitTime;
+            Speed.Value = Enemy.Value.Navigation.WalkSpeed;
+            WaypointWaitTime.Value = Enemy.Value.WaypointWaitTime;
 
             Initialize();
 
@@ -71,7 +72,7 @@ namespace Unity.Behavior
                 return Status.Failure;
             }
 
-            if (EnemyAI.Value.playerDetected)
+            if (Enemy.Value.State.PlayerDetected)
             {
                 // UpdateAnimatorSpeed(0f);
 

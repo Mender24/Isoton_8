@@ -127,15 +127,6 @@ MonoBehaviour:
           m_Value1: 0
         Name: 
         m_Value: 5
-    - rid: 8573170475016126602
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 0
-          m_Value1: 0
-        Name: 
-        m_Value: 3
     - rid: 8573170475016126605
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
         asm: Unity.Behavior}
@@ -336,8 +327,8 @@ MonoBehaviour:
           rid: 2658388370545967295
         m_Parent:
           rid: 8573170475016126740
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126745
       type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -361,10 +352,10 @@ MonoBehaviour:
           rid: 2658388370545967295
         m_Parent:
           rid: 8573170475016126741
-        EnemyAI:
-          rid: 4423224654985691786
-        seesPlayer:
-          rid: 4423224654985691790
+        Agent:
+          rid: -2
+        SeesPlayer:
+          rid: -2
     - rid: 8573170475016126747
       type: {class: PlayerDetectedAction, ns: , asm: Assembly-CSharp}
       data:
@@ -375,8 +366,8 @@ MonoBehaviour:
           rid: 2658388370545967295
         m_Parent:
           rid: 8573170475016126741
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126748
       type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -410,29 +401,29 @@ MonoBehaviour:
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126751
       type: {class: IsAgentActiveCondition, ns: , asm: Assembly-CSharp}
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126752
       type: {class: IsAgentActiveCondition, ns: , asm: Assembly-CSharp}
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126753
       type: {class: IsAgentDeadCondition, ns: , asm: Assembly-CSharp}
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126754
       type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -530,8 +521,8 @@ MonoBehaviour:
           rid: 2658388370545967295
         m_Parent:
           rid: 8573170475016126755
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126761
       type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -564,8 +555,8 @@ MonoBehaviour:
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126764
       type: {class: SelectorComposite, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -605,22 +596,22 @@ MonoBehaviour:
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126768
       type: {class: IsAgentNotAlertedCondition, ns: , asm: Assembly-CSharp}
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126769
       type: {class: IsEnemyNotHeardNoiseCondition, ns: , asm: Assembly-CSharp}
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126770
       type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -762,8 +753,8 @@ MonoBehaviour:
           rid: 2658388370545967295
         m_Parent:
           rid: 8573170475016126771
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126781
       type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -812,12 +803,12 @@ MonoBehaviour:
           rid: 2658388370545967295
         m_Parent:
           rid: 8573170475016126773
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
         SearchRadius:
           rid: 8573170475016126601
-        stoppingDistance:
-          rid: 8573170475016126602
+        StoppingDistance:
+          rid: 8573170830759690435
     - rid: 8573170475016126785
       type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -841,8 +832,8 @@ MonoBehaviour:
           rid: 2658388370545967295
         m_Parent:
           rid: 8573170475016126774
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126787
       type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -866,15 +857,15 @@ MonoBehaviour:
           rid: 2658388370545967295
         m_Parent:
           rid: 8573170475016126775
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126789
       type: {class: IsAgentPatrollingCondition, ns: , asm: Assembly-CSharp}
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126790
       type: {class: PatrolAction, ns: Unity.Behavior, asm: Assembly-CSharp}
       data:
@@ -887,8 +878,8 @@ MonoBehaviour:
           rid: 8573170475016126778
         Agent:
           rid: 4423224654985691785
-        EnemyAI:
-          rid: 4423224654985691786
+        Enemy:
+          rid: -2
         DistanceThreshold:
           rid: 8573170475016126605
         AnimatorSpeedParam:
@@ -922,8 +913,8 @@ MonoBehaviour:
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
     - rid: 8573170475016126794
       type: {class: VariableComparisonCondition, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -940,8 +931,17 @@ MonoBehaviour:
       data:
         Graph:
           rid: 2658388370545967295
-        EnemyAI:
-          rid: 4423224654985691786
+        Agent:
+          rid: -2
+    - rid: 8573170830759690435
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
+        asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 3
 --- !u!114 &-1572920391276014896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,7 +1098,7 @@ MonoBehaviour:
   - rid: 4423224946654707871
   - rid: 4423224946654707998
   - rid: 8573170423278076245
-  m_VersionTimestamp: 639059487412826037
+  m_VersionTimestamp: 639076595043968142
   m_SerializedVersion: 1
   m_DebugInfo: {fileID: 1995842697281407225}
   m_RuntimeGraph: {fileID: -2565059558768620788}
@@ -1141,39 +1141,39 @@ MonoBehaviour:
     NamedChildren: []
     IsPlaceholder: 0
   - Name: MoveToLastKnownPosition
-    Story: '[EnemyAI] moves to last known position'
+    Story: '[Agent] moves to last known position'
     RuntimeTypeString: MoveToLastKnownPositionAction, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 14200305556535462143
       m_Value1: 7674598149884049479
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
   - Name: SearchPlayer
-    Story: '[EnemyAI] searches player'
+    Story: '[Agent] searches player'
     RuntimeTypeString: SearchPatternNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 14227045679322974463
       m_Value1: 7674598150689421383
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     - Name: SearchRadius
       Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
       Tooltip: 
-    - Name: stoppingDistance
+    - Name: StoppingDistance
       Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
@@ -1196,19 +1196,19 @@ MonoBehaviour:
     NamedChildren: []
     IsPlaceholder: 0
   - Name: AgentLookAndCheckPlayer
-    Story: '[EnemyAI] looks and checks if player'
+    Story: '[Agent] looks and checks if player'
     RuntimeTypeString: AgentSeesPlayerAction, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 8225733711322003946
       m_Value1: 11223225252467067086
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
-    - Name: seesPlayer
+    - Name: SeesPlayer
       Type:
         m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
@@ -1226,22 +1226,22 @@ MonoBehaviour:
     NamedChildren: []
     IsPlaceholder: 0
   - Name: PlayerDetected
-    Story: '[EnemyAI] on player detected'
+    Story: '[Agent] on player detected'
     RuntimeTypeString: PlayerDetectedAction, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 3799903200487941511
       m_Value1: 17942140714613394891
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
   - Name: Patrol
-    Story: '[Agent] with [EnemyAI] patrols along waypoints'
+    Story: '[Agent] with [Enemy] patrols along waypoints'
     RuntimeTypeString: Unity.Behavior.PatrolAction, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     RuntimeTypeID:
@@ -1253,9 +1253,9 @@ MonoBehaviour:
         m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
       Tooltip: 
-    - Name: EnemyAI
+    - Name: Enemy
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        m_SerializableType: EnemyBase, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
           PublicKeyToken=null
       Tooltip: 
     - Name: DistanceThreshold
@@ -1276,92 +1276,92 @@ MonoBehaviour:
     NamedChildren: []
     IsPlaceholder: 0
   - Name: AimAndShootAtPlayer
-    Story: '[EnemyAI] aims at player with animation and starts shooting'
-    RuntimeTypeString: AimAndShooAtPlayerAction, Assembly-CSharp, Version=0.0.0.0,
+    Story: '[Agent] aims at player with animation and starts shooting'
+    RuntimeTypeString: AimAndShootAtPlayerAction, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 14227045679322974463
       m_Value1: 7674597874939017282
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
   - Name: ReturnToStartPoint
-    Story: '[EnemyAI] returns to start point if it exists'
+    Story: '[Agent] returns to start point if it exists'
     RuntimeTypeString: ReturnToStartPointAction, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 8013750030640625873
       m_Value1: 10601576766103460408
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
   - Name: TryToHear
-    Story: '[EnemyAI] checks if hears anything'
+    Story: '[Agent] checks if hears anything'
     RuntimeTypeString: TryToHearAction, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 5844849389228733824
       m_Value1: 11483351592220796453
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
   - Name: MoveToNoise
-    Story: '[EnemyAI] moves to the heard noise'
+    Story: '[Agent] moves to the heard noise'
     RuntimeTypeString: MoveToNoiseAction, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 15936865930054171550
       m_Value1: 17409703406557249039
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
   - Name: MeleeAttackPlayer
-    Story: '[EnemyAI] attacks in melee'
+    Story: '[Agent] attacks in melee'
     RuntimeTypeString: MeleeAttackPlayerAction, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 2184601834721637784
       m_Value1: 8994399609000039008
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
   - Name: ChasePlayer
-    Story: '[EnemyAI] chases player'
+    Story: '[Agent] chases player'
     RuntimeTypeString: ChasePlayerAction, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     RuntimeTypeID:
       m_Value0: 11507962468996010657
       m_Value1: 10745017145755732526
     Variables:
-    - Name: EnemyAI
+    - Name: Agent
       Type:
-        m_SerializableType: EnemyAI, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
@@ -1393,8 +1393,8 @@ MonoBehaviour:
     m_Commands: []
   m_SubgraphsInfo: []
   m_BlackboardMissingManagedRef: 0
-  m_GraphMissingManagedRef: 0
-  m_HasMissingTypeInManagedRef: 0
+  m_GraphMissingManagedRef: 1
+  m_HasMissingTypeInManagedRef: 1
   references:
     version: 2
     RefIds:
