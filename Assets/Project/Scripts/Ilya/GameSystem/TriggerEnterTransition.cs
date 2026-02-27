@@ -6,7 +6,7 @@ public class TriggerEnterTransition : MonoBehaviour
 {
     [SerializeField] private GameObject _dontExitObject;
     [Space]
-    [SerializeField] private float _timeBeforeLoadNextLevel = 2f;
+    [SerializeField] private float _timeBeforeLoadNextLevel = 0;
     [SerializeField] private DoorControllerSceneChanger _doorControllerSceneChanger;
 
     private void OnTriggerEnter(Collider other)
@@ -15,20 +15,21 @@ public class TriggerEnterTransition : MonoBehaviour
         {
             BoxCollider boxCollider = GetComponent<BoxCollider>();
             boxCollider.enabled = false;
-            StartCoroutine(StartChangeScene());
+
+            if(_doorControllerSceneChanger.EnterDoorIsOpen)
+                StartCoroutine(StartChangeScene());
         }
     }
 
     private IEnumerator StartChangeScene()
     {
-        _dontExitObject.SetActive(true);
+        if(_dontExitObject != null)
+            _dontExitObject.SetActive(true);
 
-        _doorControllerSceneChanger.ForceCloseEnterDoor();
+        if (_doorControllerSceneChanger != null)
+            _doorControllerSceneChanger.ForceCloseEnterDoor();
 
         yield return new WaitForSeconds(_timeBeforeLoadNextLevel);
-        yield return StartCoroutine(SceneLoader.instance.SceneRotationProcess());
-        yield return new WaitForSeconds(1f);
-
-        _doorControllerSceneChanger.ForceOpenExitDoor();
+        SceneLoader.instance.LoadScenes(isUseSave: true);
     }
 }

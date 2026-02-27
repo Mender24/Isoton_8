@@ -235,6 +235,10 @@ namespace Akila.FPSFramework
             }
         }
 
+        public void Register()
+        {
+
+        }
 
         private bool initialized = false;
 
@@ -294,6 +298,11 @@ namespace Akila.FPSFramework
             }
 
             UpdateUI();
+        }
+
+        public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+        {
+            return false;
         }
 
         private void UpdateUI()
