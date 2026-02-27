@@ -11,6 +11,8 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader instance;
 
+    [Space]
+    [SerializeField] private bool _isUseRandomSystemSound = true;
     [SerializeField] private bool _isUseSave = true;
     [Space]
     [SerializeField] private bool _isDebug = false;
@@ -243,7 +245,9 @@ public class SceneLoader : MonoBehaviour
 
         SpawnManager.Instance.UpdateSpawnPoint(_currentSceneIndex);
 
-        if(isFirstSceneLoad && _isMovePostLoadScene)
+        SoundManager.Instance.ChangeStateSystemRandomSound(_isUseRandomSystemSound);
+
+        if (isFirstSceneLoad && _isMovePostLoadScene)
             SpawnManager.Instance.MovePlayerStartPositionAndOn(_player);
 
         if (CheckTransitionScene(_currentSceneIndex))

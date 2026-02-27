@@ -18,21 +18,27 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private List<AudioClipInLocation> _audioAmbientInIdLocation = new();
     [SerializeField] private float _speedDown = 2f;
     [SerializeField] private float _speedUp = 2f;
-    private static Dictionary<int, AudioClipInLocation> _ambientInIdLocationAudioClip;
+    private Dictionary<int, AudioClipInLocation> _ambientInIdLocationAudioClip;
 
-    public static float SpeedDown { get; private set; }
-    public static float SpeedUp { get; private set; }
+    public float SpeedDown { get; private set; }
+    public float SpeedUp { get; private set; }
 
     [Space]
     [Header("RandomAudioClip")]
-    [SerializeField] private List<ProfileRandomAudioClip> _randomAudioClip = new();
-    [SerializeField] private float _radius = 5f;
+    [SerializeField] private AudioSource _randomSoundSource;
+    [SerializeField] private bool _isChangePan;
     [SerializeField] private float _percentageOccurence = 0.2f;
-    [SerializeField] private float _timeBetween = 5f;
+    [SerializeField] private float _timeBetweenRandomAudio = 5f;
+    [SerializeField] private List<ProfileRandomAudioClip> _randomAudioClip = new();
+    private Dictionary<int, List<AudioClip>> _audioProfileLocationId = new();
+    private float _currentLastTimeRandomAudio = 0;
+    private bool _isActiveSystemRandomAudio = false;
+
     [Space]
     [Header("ScriptedAudioClip")]
+    [SerializeField] private AudioSource _scriptedAudioSourse;
     [SerializeField] private List<ScriptedAudioClip> _scriptedAudios = new();
-    private static Dictionary<string, AudioClip> _scriptedAudioClipInName;
+    private Dictionary<string, AudioClip> _scriptedAudioClipInName;
 
     private static bool _isDestroy = false;
 
@@ -61,6 +67,12 @@ public class SoundManager : MonoBehaviour
 
         if (_isPlayAwake)
             StartCoroutine(SetAmbientClip(_ambiemtSource, 0, false));
+    }
+
+    public void Update()
+    {
+        if(_isActiveSystemRandomAudio)
+            UpdateFrame();
     }
 
     #region AmbientInLocation
@@ -165,7 +177,60 @@ public class SoundManager : MonoBehaviour
 
     private void InitRandomAudioClip()
     {
+        foreach(var profile in _randomAudioClip)
+            _audioProfileLocationId.Add(profile.LocationId, profile.RandomAudioClip);
+    }
 
+    public void ChangeStateSystemRandomSound(bool isActive)
+    {
+        _isActiveSystemRandomAudio = isActive;
+    }
+
+    public void PlayRandomAudioClip(int currentIdLocation)
+    {
+        if(!_audioProfileLocationId.ContainsKey(currentIdLocation))
+        {
+            Debug.LogWarning("Sound profile not found!");
+            return;
+        }
+
+        List<AudioClip> audioClips = _audioProfileLocationId[currentIdLocation];
+        int randomValue = Random.Range(0, audioClips.Count);
+
+        _randomSoundSource.clip = audioClips[randomValue];
+
+        if (_isChangePan)
+            ChangeValuePan(_randomSoundSource);
+
+        _randomSoundSource.Play();
+    }
+
+    private void UpdateFrame()
+    {
+        _currentLastTimeRandomAudio -= Time.deltaTime;
+
+        if (_currentLastTimeRandomAudio <= 0)
+        {
+            _currentLastTimeRandomAudio = _timeBetweenRandomAudio;
+
+            float randomValue = Random.value;
+
+            if (randomValue <= _percentageOccurence)
+            {
+                int currentId = SceneLoader.instance.CurrentSceneId;
+
+                if (SceneLoader.instance.CheckCurrentSceneTransition)
+                    currentId++;
+
+                PlayRandomAudioClip(currentId);
+            }
+        }
+    }
+
+    private void ChangeValuePan(AudioSource audioSource)
+    {
+        float value = Random.value * 2f - 1;
+        audioSource.panStereo = value;
     }
 
     #endregion
@@ -180,10 +245,13 @@ public class SoundManager : MonoBehaviour
             _scriptedAudioClipInName.Add(clip.NameAudioClip, clip.AudioClip);
     }
 
-    public static void PlayScriptedSoundName(AudioSource audioSource, string name)
+    public void PlayScriptedSoundName(string name)
     {
-        audioSource.clip = _scriptedAudioClipInName[name];
-        audioSource.Play();
+        if(_scriptedAudioSourse == null)
+            return;
+
+        _scriptedAudioSourse.clip = _scriptedAudioClipInName[name];
+        _scriptedAudioSourse.Play();
     }
 
     #endregion
