@@ -13,6 +13,9 @@ public class LightingProjectile : AiProjectile
     [SerializeField] private float _updateSizePeriod = 0.5f;
     [SerializeField] private float _maxRadius = 5f;
     [SerializeField] private SphereCollider _collider;
+    [SerializeField] private float _damageRadiusBySizePerscent = 0.7f;
+    private float _damageRadius;
+
      private float _nextUpdateSizeTime;
      private float _currentSize;
 
@@ -50,11 +53,12 @@ public class LightingProjectile : AiProjectile
         {
             _nextUpdateSizeTime = Time.time + _updateSizePeriod;
             _currentSize = Mathf.Clamp(_currentSize + _addItionalSizeValue, 0, _maxRadius);
-            _collider.radius = _currentSize;
+            _damageRadius = _currentSize * _damageRadiusBySizePerscent;
         }
+
         _effect.transform.localScale = _currentSize * Vector3.one;
         _testRadiusMesh.transform.localScale = _currentSize * 2 * Vector3.one;
-        _collider.radius = _currentSize;
+        _collider.radius = _damageRadius;
         _testRadiusMesh.gameObject.SetActive(_isTestSize);
     }
 
@@ -65,7 +69,7 @@ public class LightingProjectile : AiProjectile
             return;
         }
         _nextAttackTime = Time.time + _period;
-        var enemies = EnemyCounter.Instance.GetEnemyBySphere(_currentSize, transform.position);
+        var enemies = EnemyCounter.Instance.GetEnemyBySphere(_damageRadius, transform.position);
         foreach (var enemy in enemies)
         {
             enemy.Damage(_damage, null);
