@@ -1,3 +1,4 @@
+using Akila.FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,13 +40,9 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private List<CellAudioClip> _scriptedAudios = new();
     private Dictionary<string, CellAudioClip> _scriptedAudioClipInName;
 
-    private static bool _isDestroy = false;
-
     private void OnDestroy()
     {
         SceneLoader.instance.LevelLoaded -= OnLevelLoaded;
-
-        _isDestroy = true;
     }
 
     private void Awake()
@@ -58,11 +55,11 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        _isDestroy = false;
-
         InitAmbientInLocation();
         InitRandomAudioClip();
         InitScriptedAudioClip();
+
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetScriptedAudioClip);
 
         if (_isPlayAwake)
             StartCoroutine(SetAmbientClip(_ambiemtSource, 0, false));
@@ -94,16 +91,20 @@ public class SoundManager : MonoBehaviour
 
     public IEnumerator SetAmbientClip(AudioSource audioSource, int idLocation, bool isTransition)
     {
-        if (audioSource == null || (idLocation != -1 && !_ambientInIdLocationAudioClip.ContainsKey(idLocation)))
+        if (audioSource == null)
         {
             Debug.LogWarning("Audio source is null!");
         }
         else
         {
-            _isDestroy = false;
-
             if (audioSource.isPlaying)
                 yield return VolumeDown(audioSource);
+
+            if(idLocation != -1 && !_ambientInIdLocationAudioClip.ContainsKey(idLocation))
+            {
+                Debug.LogWarning("Audio ambient is empty!");
+                goto exit;
+            }
 
             if (isTransition && _audioClipInTransition != null)
                 audioSource.clip = _audioClipInTransition;
@@ -242,6 +243,11 @@ public class SoundManager : MonoBehaviour
 
         foreach (CellAudioClip clip in _scriptedAudios)
             _scriptedAudioClipInName.Add(clip.NameAudioClip, clip);
+    }
+
+    public void ResetScriptedAudioClip(string name)
+    {
+        _scriptedAudioSourse.Stop();
     }
 
     public void PlayScriptedSoundName(string name)
