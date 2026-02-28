@@ -189,12 +189,12 @@ public class SoundManager : MonoBehaviour
         _isActiveSystemRandomAudio = isActive;
     }
 
-    public void PlayRandomAudioClip(int currentIdLocation)
+    public float PlayRandomAudioClip(int currentIdLocation)
     {
         if (!_audioProfileLocationId.ContainsKey(currentIdLocation))
         {
             Debug.LogWarning("Sound profile not found!");
-            return;
+            return 0;
         }
 
         List<CellAudioClip> audioClips = _audioProfileLocationId[currentIdLocation];
@@ -204,6 +204,8 @@ public class SoundManager : MonoBehaviour
             ChangePositionSource(_randomSoundSource);
 
         audioClips[randomValue].PlayAudioClipOneShot(_randomSoundSource);
+
+        return audioClips[randomValue].AudioClip.length;
     }
 
     private void UpdateFrame()
@@ -223,7 +225,7 @@ public class SoundManager : MonoBehaviour
                 if (SceneLoader.instance.CheckCurrentSceneTransition)
                     currentId++;
 
-                PlayRandomAudioClip(currentId);
+                _currentLastTimeRandomAudio += PlayRandomAudioClip(currentId);
             }
         }
     }
