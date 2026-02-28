@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
@@ -37,8 +36,8 @@ public class SoundManager : MonoBehaviour
     [Space]
     [Header("ScriptedAudioClip")]
     [SerializeField] private AudioSource _scriptedAudioSourse;
-    [SerializeField] private List<ScriptedAudioClip> _scriptedAudios = new();
-    private Dictionary<string, AudioClip> _scriptedAudioClipInName;
+    [SerializeField] private List<CellAudioClip> _scriptedAudios = new();
+    private Dictionary<string, CellAudioClip> _scriptedAudioClipInName;
 
     private static bool _isDestroy = false;
 
@@ -71,7 +70,7 @@ public class SoundManager : MonoBehaviour
 
     public void Update()
     {
-        if(_isActiveSystemRandomAudio)
+        if (_isActiveSystemRandomAudio)
             UpdateFrame();
     }
 
@@ -87,7 +86,7 @@ public class SoundManager : MonoBehaviour
 
         _ambientInIdLocationAudioClip = new();
 
-        foreach(AudioClipInLocation locationAudioClip in _audioAmbientInIdLocation)
+        foreach (AudioClipInLocation locationAudioClip in _audioAmbientInIdLocation)
             _ambientInIdLocationAudioClip.Add(locationAudioClip.IdLocation, locationAudioClip);
 
         SceneLoader.instance.LevelLoaded += OnLevelLoaded;
@@ -147,11 +146,11 @@ public class SoundManager : MonoBehaviour
 
     private IEnumerator VolumeUp(AudioSource audioSource, float border)
     {
-        while(audioSource.volume < 1 && audioSource.volume < border)
+        while (audioSource.volume < 1 && audioSource.volume < border)
         {
             audioSource.volume += Time.unscaledDeltaTime * SpeedUp;
 
-            if(audioSource.volume > border)
+            if (audioSource.volume > border)
                 audioSource.volume = border;
 
             yield return null;
@@ -177,7 +176,7 @@ public class SoundManager : MonoBehaviour
 
     private void InitRandomAudioClip()
     {
-        foreach(var profile in _randomAudioClip)
+        foreach (var profile in _randomAudioClip)
             _audioProfileLocationId.Add(profile.LocationId, profile.RandomAudioClip);
     }
 
@@ -188,7 +187,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayRandomAudioClip(int currentIdLocation)
     {
-        if(!_audioProfileLocationId.ContainsKey(currentIdLocation))
+        if (!_audioProfileLocationId.ContainsKey(currentIdLocation))
         {
             Debug.LogWarning("Sound profile not found!");
             return;
@@ -241,17 +240,16 @@ public class SoundManager : MonoBehaviour
     {
         _scriptedAudioClipInName = new();
 
-        foreach (ScriptedAudioClip clip in _scriptedAudios)
-            _scriptedAudioClipInName.Add(clip.NameAudioClip, clip.AudioClip);
+        foreach (CellAudioClip clip in _scriptedAudios)
+            _scriptedAudioClipInName.Add(clip.NameAudioClip, clip);
     }
 
     public void PlayScriptedSoundName(string name)
     {
-        if(_scriptedAudioSourse == null)
+        if (_scriptedAudioSourse == null)
             return;
 
-        _scriptedAudioSourse.clip = _scriptedAudioClipInName[name];
-        _scriptedAudioSourse.Play();
+        _scriptedAudioClipInName[name].PlayAudioClip(_scriptedAudioSourse);
     }
 
     #endregion
@@ -270,11 +268,4 @@ public class ProfileRandomAudioClip
 {
     public int LocationId;
     public List<AudioClip> RandomAudioClip;
-}
-
-[System.Serializable]
-public class ScriptedAudioClip
-{
-    public string NameAudioClip;
-    public AudioClip AudioClip;
 }
