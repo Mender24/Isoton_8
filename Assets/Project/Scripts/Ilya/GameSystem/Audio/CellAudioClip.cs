@@ -4,7 +4,6 @@ using UnityEngine;
 [Serializable]
 public class CellAudioClip
 {
-    public string NameAudioClip;
     public AudioClip AudioClip;
     [Range(0f, 1f)]
     public float Volume = 1;

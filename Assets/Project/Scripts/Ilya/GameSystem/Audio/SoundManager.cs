@@ -13,6 +13,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource _ambiemtSource;
     [Header("AmbientInLocation")]
     [SerializeField] private AudioClip _audioClipInTransition;
+    [Range(0, 1f)]
     [SerializeField] private float _maxVolumeTransition;
     [Space]
     [SerializeField] private List<AudioClipInLocation> _audioAmbientInIdLocation = new();
@@ -30,15 +31,15 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private float _percentageOccurence = 0.2f;
     [SerializeField] private float _timeBetweenRandomAudio = 5f;
     [SerializeField] private List<ProfileRandomAudioClip> _randomAudioClip = new();
-    private Dictionary<int, List<AudioClip>> _audioProfileLocationId = new();
+    private Dictionary<int, List<CellAudioClip>> _audioProfileLocationId = new();
     private float _currentLastTimeRandomAudio = 0;
     private bool _isActiveSystemRandomAudio = false;
 
     [Space]
     [Header("ScriptedAudioClip")]
     [SerializeField] private AudioSource _scriptedAudioSourse;
-    [SerializeField] private List<CellAudioClip> _scriptedAudios = new();
-    private Dictionary<string, CellAudioClip> _scriptedAudioClipInName;
+    [SerializeField] private List<ProfileScriptedAudioClip> _scriptedAudios = new();
+    private Dictionary<string, ProfileScriptedAudioClip> _scriptedAudioClipInName;
 
     private void OnDestroy()
     {
@@ -194,15 +195,13 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        List<AudioClip> audioClips = _audioProfileLocationId[currentIdLocation];
+        List<CellAudioClip> audioClips = _audioProfileLocationId[currentIdLocation];
         int randomValue = Random.Range(0, audioClips.Count);
-
-        _randomSoundSource.clip = audioClips[randomValue];
 
         if (_isChangePan)
             ChangeValuePan(_randomSoundSource);
 
-        _randomSoundSource.Play();
+        audioClips[randomValue].PlayAudioClipOneShot(_randomSoundSource);
     }
 
     private void UpdateFrame()
@@ -241,7 +240,7 @@ public class SoundManager : MonoBehaviour
     {
         _scriptedAudioClipInName = new();
 
-        foreach (CellAudioClip clip in _scriptedAudios)
+        foreach (ProfileScriptedAudioClip clip in _scriptedAudios)
             _scriptedAudioClipInName.Add(clip.NameAudioClip, clip);
     }
 
@@ -255,7 +254,7 @@ public class SoundManager : MonoBehaviour
         if (_scriptedAudioSourse == null)
             return;
 
-        _scriptedAudioClipInName[name].PlayAudioClip(_scriptedAudioSourse);
+        _scriptedAudioClipInName[name].Clip.PlayAudioClip(_scriptedAudioSourse);
     }
 
     #endregion
@@ -273,5 +272,12 @@ public class AudioClipInLocation
 public class ProfileRandomAudioClip
 {
     public int LocationId;
-    public List<AudioClip> RandomAudioClip;
+    public List<CellAudioClip> RandomAudioClip;
+}
+
+[System.Serializable]
+public class ProfileScriptedAudioClip
+{
+    public string NameAudioClip;
+    public CellAudioClip Clip;
 }
