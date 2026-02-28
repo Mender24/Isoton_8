@@ -1664,20 +1664,26 @@ MonoBehaviour:
   _speedUp: 0.34
   _randomSoundSource: {fileID: 1334220526}
   _isChangePan: 1
-  _percentageOccurence: 0.5
-  _timeBetweenRandomAudio: 5
+  _radiusInCircle: 2
+  _percentageOccurence: 0.8
+  _timeBetweenRandomAudio: 2
   _randomAudioClip:
-  - LocationId: 1
+  - LocationId: 6
     RandomAudioClip:
-    - {fileID: 8300000, guid: 6194e08e38973a547820e42a3131cb96, type: 3}
-    - {fileID: 8300000, guid: c50fb78c0e4c1f44b872ec0fbbe2cbbe, type: 3}
-    - {fileID: 8300000, guid: cd0ce80fac1bdbc4f9a0f990a2dcae20, type: 3}
-    - {fileID: 8300000, guid: 05b47d7adecacdc4386706e887788fde, type: 3}
+    - AudioClip: {fileID: 8300000, guid: 6f273506dba975848bb1c24958334385, type: 3}
+      Volume: 0
+    - AudioClip: {fileID: 8300000, guid: fdbe8e5fe058a89458cc214fc3583550, type: 3}
+      Volume: 0.12
+    - AudioClip: {fileID: 8300000, guid: 2c7459fa64258a049a8e917af30f25eb, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: d3509989bc982d249857def6d823671e, type: 3}
+      Volume: 0
   _scriptedAudioSourse: {fileID: 1678991048}
   _scriptedAudios:
   - NameAudioClip: GO
-    AudioClip: {fileID: 8300000, guid: 0f5990dc36c748d42b32c8b7ef5d0f59, type: 3}
-    Volume: 0.263
+    Clip:
+      AudioClip: {fileID: 8300000, guid: d6fb0b1602e070a43a65e4e254623028, type: 3}
+      Volume: 1
 --- !u!4 &592113776 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 493f88523d599ab4995e1eb1f14a1732,
@@ -3105,7 +3111,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

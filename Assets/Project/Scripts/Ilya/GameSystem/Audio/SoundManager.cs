@@ -1,6 +1,7 @@
 using Akila.FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AppUI.UI;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
@@ -27,7 +28,8 @@ public class SoundManager : MonoBehaviour
     [Space]
     [Header("RandomAudioClip")]
     [SerializeField] private AudioSource _randomSoundSource;
-    [SerializeField] private bool _isChangePan;
+    [SerializeField] private bool _isChangePositionAudioSource;
+    [SerializeField] private float _radiusInCircle = 2f;
     [SerializeField] private float _percentageOccurence = 0.2f;
     [SerializeField] private float _timeBetweenRandomAudio = 5f;
     [SerializeField] private List<ProfileRandomAudioClip> _randomAudioClip = new();
@@ -198,8 +200,8 @@ public class SoundManager : MonoBehaviour
         List<CellAudioClip> audioClips = _audioProfileLocationId[currentIdLocation];
         int randomValue = Random.Range(0, audioClips.Count);
 
-        if (_isChangePan)
-            ChangeValuePan(_randomSoundSource);
+        if (_isChangePositionAudioSource)
+            ChangePositionSource(_randomSoundSource);
 
         audioClips[randomValue].PlayAudioClipOneShot(_randomSoundSource);
     }
@@ -226,10 +228,19 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    private void ChangeValuePan(AudioSource audioSource)
+    private void ChangePositionSource(AudioSource audioSource)
     {
-        float value = Random.value * 2f - 1;
-        audioSource.panStereo = value;
+        float angle = Random.value * Mathf.PI * 2f;
+
+        Vector3 newPos = new(Mathf.Cos(angle) * _radiusInCircle, 0, Mathf.Sin(angle) * _radiusInCircle);
+
+        Player player = Player.Instance;
+
+        if (player == null)
+            return;
+
+        audioSource.transform.parent = player.transform;
+        audioSource.transform.localPosition = newPos;
     }
 
     #endregion
