@@ -85,7 +85,6 @@ public class AiProjectile : MonoBehaviour
         _lifeTime = int.MaxValue;
         _rb.isKinematic = true;
         PoolManager.Instance.SetObject(this);
-        Debug.LogError("StopProj");
     }
 
     protected virtual void FixedUpdate()
