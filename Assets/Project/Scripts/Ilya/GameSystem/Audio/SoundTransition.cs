@@ -7,6 +7,9 @@ public class SoundTransition : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (SoundManager.Instance == null)
+            return;
+
         if(other.TryGetComponent(out Player player))
         {
             if(!_isOut)
@@ -18,6 +21,9 @@ public class SoundTransition : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (SoundManager.Instance == null)
+            return;
+
         if (other.TryGetComponent(out Player player))
         {
             if (_isOut)
