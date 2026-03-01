@@ -180,6 +180,8 @@ public class SceneLoader : MonoBehaviour
         SceneManager.LoadScene(index);
     }
 
+    private Queue<LateActiveObject> _lateActives = new();
+
     private IEnumerator LoadScenesAsync(int startIndex, int count, bool isFirstSceneLoad)
     {
         if (count <= 0)
@@ -210,6 +212,20 @@ public class SceneLoader : MonoBehaviour
                 yield return null;
 
             operation.allowSceneActivation = true;
+
+            Scene scene = SceneManager.GetSceneByBuildIndex(i);
+            LateActiveObject late = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LateActiveObject>(true)).FirstOrDefault();
+
+            if(late != null)
+                _lateActives.Enqueue(late);
+        }
+
+        Debug.Log(_lateActives.Count);
+
+        while(_lateActives.Count > 0)
+        {
+            LateActiveObject lateActive = _lateActives.Dequeue();
+            yield return StartCoroutine(lateActive.StartActivate());
         }
 
         IsLoad = false;
