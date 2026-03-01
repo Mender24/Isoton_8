@@ -1,6 +1,9 @@
+using Akila.FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AppUI.UI;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class SoundManager : MonoBehaviour
 {
@@ -12,6 +15,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource _ambiemtSource;
     [Header("AmbientInLocation")]
     [SerializeField] private AudioClip _audioClipInTransition;
+    [Range(0, 1f)]
     [SerializeField] private float _maxVolumeTransition;
     [Space]
     [SerializeField] private List<AudioClipInLocation> _audioAmbientInIdLocation = new();
@@ -25,27 +29,24 @@ public class SoundManager : MonoBehaviour
     [Space]
     [Header("RandomAudioClip")]
     [SerializeField] private AudioSource _randomSoundSource;
-    [SerializeField] private bool _isChangePan;
+    [SerializeField] private bool _isChangePositionAudioSource;
+    [SerializeField] private float _radiusInCircle = 2f;
     [SerializeField] private float _percentageOccurence = 0.2f;
     [SerializeField] private float _timeBetweenRandomAudio = 5f;
     [SerializeField] private List<ProfileRandomAudioClip> _randomAudioClip = new();
-    private Dictionary<int, List<AudioClip>> _audioProfileLocationId = new();
+    private Dictionary<int, List<CellAudioClip>> _audioProfileLocationId = new();
     private float _currentLastTimeRandomAudio = 0;
     private bool _isActiveSystemRandomAudio = false;
 
     [Space]
     [Header("ScriptedAudioClip")]
     [SerializeField] private AudioSource _scriptedAudioSourse;
-    [SerializeField] private List<CellAudioClip> _scriptedAudios = new();
-    private Dictionary<string, CellAudioClip> _scriptedAudioClipInName;
-
-    private static bool _isDestroy = false;
+    [SerializeField] private List<ProfileScriptedAudioClip> _scriptedAudios = new();
+    private Dictionary<string, ProfileScriptedAudioClip> _scriptedAudioClipInName;
 
     private void OnDestroy()
     {
         SceneLoader.instance.LevelLoaded -= OnLevelLoaded;
-
-        _isDestroy = true;
     }
 
     private void Awake()
@@ -58,11 +59,13 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        _isDestroy = false;
-
         InitAmbientInLocation();
         InitRandomAudioClip();
         InitScriptedAudioClip();
+
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetScriptedAudioClip);
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetRandomAudioClip);
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(AddListenerPlayer);
 
         if (_isPlayAwake)
             StartCoroutine(SetAmbientClip(_ambiemtSource, 0, false));
@@ -94,16 +97,20 @@ public class SoundManager : MonoBehaviour
 
     public IEnumerator SetAmbientClip(AudioSource audioSource, int idLocation, bool isTransition)
     {
-        if (audioSource == null || (idLocation != -1 && !_ambientInIdLocationAudioClip.ContainsKey(idLocation)))
+        if (audioSource == null)
         {
             Debug.LogWarning("Audio source is null!");
         }
         else
         {
-            _isDestroy = false;
-
             if (audioSource.isPlaying)
                 yield return VolumeDown(audioSource);
+
+            if(idLocation != -1 && !_ambientInIdLocationAudioClip.ContainsKey(idLocation))
+            {
+                Debug.LogWarning("Audio ambient is empty!");
+                goto exit;
+            }
 
             if (isTransition && _audioClipInTransition != null)
                 audioSource.clip = _audioClipInTransition;
@@ -174,34 +181,36 @@ public class SoundManager : MonoBehaviour
 
     #region RandomAudioClip
 
-    private void InitRandomAudioClip()
-    {
-        foreach (var profile in _randomAudioClip)
-            _audioProfileLocationId.Add(profile.LocationId, profile.RandomAudioClip);
-    }
-
     public void ChangeStateSystemRandomSound(bool isActive)
     {
         _isActiveSystemRandomAudio = isActive;
     }
 
-    public void PlayRandomAudioClip(int currentIdLocation)
+    public float PlayRandomAudioClip(int currentIdLocation)
     {
         if (!_audioProfileLocationId.ContainsKey(currentIdLocation))
         {
             Debug.LogWarning("Sound profile not found!");
-            return;
+            return 0;
         }
 
-        List<AudioClip> audioClips = _audioProfileLocationId[currentIdLocation];
+        List<CellAudioClip> audioClips = _audioProfileLocationId[currentIdLocation];
         int randomValue = Random.Range(0, audioClips.Count);
 
-        _randomSoundSource.clip = audioClips[randomValue];
+        if (_isChangePositionAudioSource)
+            ChangePositionSource(_randomSoundSource);
 
-        if (_isChangePan)
-            ChangeValuePan(_randomSoundSource);
+        audioClips[randomValue].PlayAudioClipOneShot(_randomSoundSource);
 
-        _randomSoundSource.Play();
+        return audioClips[randomValue].AudioClip.length;
+    }
+
+    private void InitRandomAudioClip()
+    {
+        foreach (var profile in _randomAudioClip)
+            _audioProfileLocationId.Add(profile.LocationId, profile.RandomAudioClip);
+
+        AddListenerPlayer("");
     }
 
     private void UpdateFrame()
@@ -221,35 +230,65 @@ public class SoundManager : MonoBehaviour
                 if (SceneLoader.instance.CheckCurrentSceneTransition)
                     currentId++;
 
-                PlayRandomAudioClip(currentId);
+                _currentLastTimeRandomAudio += PlayRandomAudioClip(currentId);
             }
         }
     }
 
-    private void ChangeValuePan(AudioSource audioSource)
+    private void ChangePositionSource(AudioSource audioSource)
     {
-        float value = Random.value * 2f - 1;
-        audioSource.panStereo = value;
+        float angle = Random.value * Mathf.PI * 2f;
+
+        Vector3 newPos = new(Mathf.Cos(angle) * _radiusInCircle, 0, Mathf.Sin(angle) * _radiusInCircle);
+
+        Player player = Player.Instance;
+
+        if (player == null)
+            return;
+
+        audioSource.transform.parent = player.transform;
+        audioSource.transform.localPosition = newPos;
+    }
+
+    private void AddListenerPlayer(string name)
+    {
+        Player.Instance.Actor.Damageable.OnDeath.AddListener(OnDeathPlayer);
+    }
+
+    private void OnDeathPlayer()
+    {
+        _randomSoundSource.transform.parent = transform;
+    }
+
+    private void ResetRandomAudioClip(string name)
+    {
+        _randomSoundSource.Stop();
+        _currentLastTimeRandomAudio = 0;
     }
 
     #endregion
 
     #region ScriptedAudioClip
 
-    private void InitScriptedAudioClip()
-    {
-        _scriptedAudioClipInName = new();
-
-        foreach (CellAudioClip clip in _scriptedAudios)
-            _scriptedAudioClipInName.Add(clip.NameAudioClip, clip);
-    }
-
     public void PlayScriptedSoundName(string name)
     {
         if (_scriptedAudioSourse == null)
             return;
 
-        _scriptedAudioClipInName[name].PlayAudioClip(_scriptedAudioSourse);
+        _scriptedAudioClipInName[name].Clip.PlayAudioClip(_scriptedAudioSourse);
+    }
+
+    private void InitScriptedAudioClip()
+    {
+        _scriptedAudioClipInName = new();
+
+        foreach (ProfileScriptedAudioClip clip in _scriptedAudios)
+            _scriptedAudioClipInName.Add(clip.NameAudioClip, clip);
+    }
+
+    private void ResetScriptedAudioClip(string name)
+    {
+        _scriptedAudioSourse.Stop();
     }
 
     #endregion
@@ -267,5 +306,12 @@ public class AudioClipInLocation
 public class ProfileRandomAudioClip
 {
     public int LocationId;
-    public List<AudioClip> RandomAudioClip;
+    public List<CellAudioClip> RandomAudioClip;
+}
+
+[System.Serializable]
+public class ProfileScriptedAudioClip
+{
+    public string NameAudioClip;
+    public CellAudioClip Clip;
 }

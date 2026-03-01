@@ -29,7 +29,7 @@ public class EntitySoundManager : MonoBehaviour
         _basePitch = _fireAudioSource.pitch;
 
         foreach (var cell in _otherAudioClips)
-            _otherClips.Add(cell.NameAudioClip, cell);
+            _otherClips.Add(cell.AudioClip.name, cell);
     }
 
     public void PlayStepSound()
