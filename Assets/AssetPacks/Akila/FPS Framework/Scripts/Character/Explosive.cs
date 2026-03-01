@@ -136,7 +136,18 @@ namespace Akila.FPSFramework
             }
         }
 
+        public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+        {
+            return false;
+        }
+
         public bool IsSwaped() => false;
+
+        public void Register()
+        {
+            
+        }
+
 
         /// <summary>
         /// Tries to explode this explosive

@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class ButtonLoadGame : MonoBehaviour
 {
-    public string sceneName;
+    [SerializeField] private bool _isNewGame = false;
+    [SerializeField] private string _forceSceneLoad;
 
     private bool _isActive = true;
 
@@ -11,16 +12,7 @@ public class ButtonLoadGame : MonoBehaviour
         if(_isActive)
         {
             _isActive = false;
-            SceneLoader.instance.LoadStartMenu(sceneName);
-        }
-    }
-
-    public void LoadNewGame()
-    {
-        if(_isActive)
-        {
-            _isActive = false;
-            SceneLoader.instance.NewGame();
+            SceneLoader.instance.LoadScenes(true, _forceSceneLoad, !_isNewGame);
         }
     }
 }

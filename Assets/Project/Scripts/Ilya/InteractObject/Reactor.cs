@@ -23,6 +23,8 @@ public class Reactor : MonoBehaviour, IDamageable
     private int _batteryHealth;
     private float _health;
 
+    private DoorControllerSceneChanger _doorControllerSceneChanger;
+
     private int _currentIndexLiveBattery = 0;
 
     public bool isDamagableDisabled { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
@@ -36,6 +38,11 @@ public class Reactor : MonoBehaviour, IDamageable
     public TextMeshPro showingText;
     public UnityEvent OnDeath => onDeath;
 
+    public void Register()
+    {
+
+    }
+
     private void OnDisable()
     {
         for (int i = 0; i < _batterys.Count; i++)
@@ -48,7 +55,8 @@ public class Reactor : MonoBehaviour, IDamageable
     {
         showingText.text = _currentIndexLiveBattery.ToString();
     }
-    private void Start()
+
+    private IEnumerator Start()
     {
         _health = _healthReactor;
         _batteryHealth = _batterys.Count;
@@ -58,6 +66,11 @@ public class Reactor : MonoBehaviour, IDamageable
             _batterys[i].OnDeath.AddListener(OnDeathBattery);
             _batterys[i].OnEndCooldown.AddListener(StartReactor);
         }
+
+        while(SceneLoader.instance.IsLoad)
+            yield return null;
+
+        _doorControllerSceneChanger = SceneLoader.instance.GetDoorControllerNextTransition();
 
         StartReactor();
     }
@@ -84,6 +97,11 @@ public class Reactor : MonoBehaviour, IDamageable
         }
 
         StartCoroutine(CooldownNextBattery());
+    }
+
+    public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius)
+    {
+        return false;
     }
 
     public bool IsSwaped()
@@ -140,6 +158,7 @@ public class Reactor : MonoBehaviour, IDamageable
 
         OnDeath?.Invoke();
 
-        SceneLoader.instance.UseForceOpenDoorNextTransition();
+        if(_doorControllerSceneChanger != null)
+            _doorControllerSceneChanger.ForceOpenEnterDoor();
     }
 }

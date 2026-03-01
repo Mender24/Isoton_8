@@ -24,6 +24,10 @@ namespace Akila.FPSFramework
         public UnityEvent OnDeath { get; }
 
         public bool IsSwaped();
+
+        public void Register();
+
+        public bool IsSphereCollision(Vector3 sphereCenter, float sphereRadius);
     }
 
 }
