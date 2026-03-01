@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using static UnityEngine.Rendering.HDROutputUtils;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private bool _isUseSave = true;
     [Space]
     [SerializeField] private bool _isDebug = false;
+    [SerializeField] private float _timeWaitNextLoad = 2f;
     [SerializeField] private List<string> _sceneNames = new();
     [SerializeField] private string _transitionName = "Transition";
     [SerializeField] private string _endSceneName = "End";
@@ -180,7 +182,7 @@ public class SceneLoader : MonoBehaviour
         SceneManager.LoadScene(index);
     }
 
-    private Queue<LateActiveObject> _lateActives = new();
+    private Stack<LateActiveObject> _lateActives = new();
 
     private IEnumerator LoadScenesAsync(int startIndex, int count, bool isFirstSceneLoad)
     {
@@ -213,20 +215,10 @@ public class SceneLoader : MonoBehaviour
 
             operation.allowSceneActivation = true;
 
-            Scene scene = SceneManager.GetSceneByBuildIndex(i);
-            LateActiveObject late = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LateActiveObject>(true)).FirstOrDefault();
-
-            if(late != null)
-                _lateActives.Enqueue(late);
+            AddLateActiveObject(i);
         }
 
-        Debug.Log(_lateActives.Count);
-
-        while(_lateActives.Count > 0)
-        {
-            LateActiveObject lateActive = _lateActives.Dequeue();
-            yield return StartCoroutine(lateActive.StartActivate());
-        }
+        yield return StartCoroutine(StartLateActive());
 
         IsLoad = false;
 
@@ -236,6 +228,39 @@ public class SceneLoader : MonoBehaviour
         InitPostLoadScene(isFirstSceneLoad);
 
         SceneLoadingComplete?.Invoke();
+    }
+
+    private void AddLateActiveObject(int index)
+    {
+        Scene scene = SceneManager.GetSceneByBuildIndex(index);
+        LateActiveObject late = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LateActiveObject>()).FirstOrDefault();
+
+        if (late != null && !_sceneNames[index].Contains(_transitionName))
+        {
+            Debug.Log(late.name);
+            _lateActives.Push(late);
+        }
+    }
+
+    private IEnumerator StartLateActive()
+    {
+        if(_lateActives.Count > 0)
+        {
+            Debug.Log(_lateActives.Count);
+
+            while (_lateActives.Count > 1)
+            {
+                LateActiveObject lateActive = _lateActives.Pop();
+                StartCoroutine(lateActive.StartActivate());
+
+                if (_lateActives.Count > 1)
+                    yield return new WaitForSeconds(_timeWaitNextLoad);
+            }
+
+            yield return StartCoroutine(_lateActives.Pop().StartActivate());
+
+            Debug.Log("EndAll");
+        }
     }
 
     private IEnumerator UnloadScenesAsync()
