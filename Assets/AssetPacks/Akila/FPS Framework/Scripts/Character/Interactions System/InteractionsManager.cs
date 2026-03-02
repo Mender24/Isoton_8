@@ -70,6 +70,8 @@ namespace Akila.FPSFramework
         private string cachedBindingDisplayString;
         private IInteractable currentInteractable;
 
+        public IInteractable CurrentInteractable => currentInteractable;
+
         private readonly List<IInteractable> nearbyInteractables = new List<IInteractable>();
         private IInteractable closestInteractable = null;
 
