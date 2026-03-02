@@ -11,6 +11,8 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader instance;
 
+    [Space]
+    [SerializeField] private bool _isUseRandomSystemSound = true;
     [SerializeField] private bool _isUseSave = true;
     [Space]
     [SerializeField] private bool _isDebug = false;
@@ -29,11 +31,15 @@ public class SceneLoader : MonoBehaviour
     private DoorControllerSceneChanger _nextLocationDC;
 
     public Player Player => _player;
-    public string CurrentScene => _sceneNames[_currentSceneIndex];
+    public string CurrentSceneName => _sceneNames[_currentSceneIndex];
+    public int CurrentSceneId => _currentSceneIndex;
     public string NextScene => _sceneNames[_nextSceneIndex];
+    public bool CheckCurrentSceneTransition => _sceneNames[_currentSceneIndex].Contains(_transitionName);
 
     public bool IsLoad { get; private set; }
     public bool IsInitPlayer { get; private set; }
+
+    public event UnityAction LevelLoaded;
 
     private void Awake()
     {
@@ -162,6 +168,8 @@ public class SceneLoader : MonoBehaviour
 
         if (_isDebug)
             Debug.Log("Scenes load complete");
+
+        LevelLoaded?.Invoke();
     }
 
     private void HardLoadScene(int index)
@@ -237,7 +245,9 @@ public class SceneLoader : MonoBehaviour
 
         SpawnManager.Instance.UpdateSpawnPoint(_currentSceneIndex);
 
-        if(isFirstSceneLoad && _isMovePostLoadScene)
+        SoundManager.Instance.ChangeStateSystemRandomSound(_isUseRandomSystemSound);
+
+        if (isFirstSceneLoad && _isMovePostLoadScene)
             SpawnManager.Instance.MovePlayerStartPositionAndOn(_player);
 
         if (CheckTransitionScene(_currentSceneIndex))

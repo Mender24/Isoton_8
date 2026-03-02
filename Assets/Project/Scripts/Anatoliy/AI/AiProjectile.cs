@@ -58,7 +58,7 @@ public class AiProjectile : MonoBehaviour
 
             if (mainCamera != null)
             {
-                distanceFromMainCamera = Vector3.Distance(transform.position, mainCamera.transform.position); 
+                distanceFromMainCamera = Vector3.Distance(transform.position, mainCamera.transform.position);
                 scale = (distanceFromMainCamera * scaleMultipler) * (mainCamera.fieldOfView / 360);
             }
 
@@ -73,14 +73,18 @@ public class AiProjectile : MonoBehaviour
 
         if (_lifeTime <= 0)
         {
-            _lifeTime = int.MaxValue;
-            _rb.isKinematic = true;
-            PoolManager.Instance.SetObject(this);
-            // Debug.LogError("StopProj");
+            ReturnToPool();
             return;
         }
 
         _lifeTime -= Time.deltaTime;
+    }
+
+    protected void ReturnToPool()
+    {
+        _lifeTime = int.MaxValue;
+        _rb.isKinematic = true;
+        PoolManager.Instance.SetObject(this);
     }
 
     protected virtual void FixedUpdate()
