@@ -12,8 +12,10 @@ public class LightingProjectile : AiProjectile
     [SerializeField] private float _addItionalSizeValue = 0.1f;
     [SerializeField] private float _updateSizePeriod = 0.5f;
     [SerializeField] private float _maxRadius = 5f;
-    [SerializeField] private SphereCollider _collider;
+   // [SerializeField] private SphereCollider _collider;
     [SerializeField] private float _damageRadiusBySizePerscent = 0.7f;
+    [SerializeField] private LayerMask _wallLayerMask;
+    [SerializeField] private float _maxLifeDistance = 50f;
     private float _damageRadius;
 
      private float _nextUpdateSizeTime;
@@ -23,14 +25,30 @@ public class LightingProjectile : AiProjectile
 
     public override void Setup(Vector3 direction, float lifeTime, float speed)
     {
-        base.Setup(direction, lifeTime, speed);
+
+        base.Setup(direction, CalcLifeTime(direction, lifeTime, speed), speed);
         SetupSize();
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
+    //private void OnTriggerEnter(Collider other)
+    //{
         
-        ReturnToPool();
+    //    ReturnToPool();
+    //}
+
+    private float CalcLifeTime(Vector3 direction, float baselifeTime, float speed)
+    {
+        RaycastHit hit;
+        float lifeDistance;
+        if (Physics.Raycast(transform.position, direction, out hit, _maxLifeDistance, _wallLayerMask))
+        {
+            lifeDistance = Vector3.Distance(hit.point, transform.position);
+        }
+        else
+        {
+            lifeDistance = _maxLifeDistance;
+        }
+        return Mathf.Min( lifeDistance / speed, baselifeTime);
     }
 
     protected override void FixedUpdate()
@@ -58,7 +76,7 @@ public class LightingProjectile : AiProjectile
 
         _effect.transform.localScale = _currentSize * Vector3.one;
         _testRadiusMesh.transform.localScale = _currentSize * 2 * Vector3.one;
-        _collider.radius = _damageRadius;
+       // _collider.radius = _damageRadius;
         _testRadiusMesh.gameObject.SetActive(_isTestSize);
     }
 

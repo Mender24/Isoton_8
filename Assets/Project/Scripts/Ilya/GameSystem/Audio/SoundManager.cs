@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AppUI.UI;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class SoundManager : MonoBehaviour
 {
@@ -63,6 +64,8 @@ public class SoundManager : MonoBehaviour
         InitScriptedAudioClip();
 
         SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetScriptedAudioClip);
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetRandomAudioClip);
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(AddListenerPlayer);
 
         if (_isPlayAwake)
             StartCoroutine(SetAmbientClip(_ambiemtSource, 0, false));
@@ -178,12 +181,6 @@ public class SoundManager : MonoBehaviour
 
     #region RandomAudioClip
 
-    private void InitRandomAudioClip()
-    {
-        foreach (var profile in _randomAudioClip)
-            _audioProfileLocationId.Add(profile.LocationId, profile.RandomAudioClip);
-    }
-
     public void ChangeStateSystemRandomSound(bool isActive)
     {
         _isActiveSystemRandomAudio = isActive;
@@ -206,6 +203,14 @@ public class SoundManager : MonoBehaviour
         audioClips[randomValue].PlayAudioClipOneShot(_randomSoundSource);
 
         return audioClips[randomValue].AudioClip.length;
+    }
+
+    private void InitRandomAudioClip()
+    {
+        foreach (var profile in _randomAudioClip)
+            _audioProfileLocationId.Add(profile.LocationId, profile.RandomAudioClip);
+
+        AddListenerPlayer("");
     }
 
     private void UpdateFrame()
@@ -245,9 +250,33 @@ public class SoundManager : MonoBehaviour
         audioSource.transform.localPosition = newPos;
     }
 
+    private void AddListenerPlayer(string name)
+    {
+        Player.Instance.Actor.Damageable.OnDeath.AddListener(OnDeathPlayer);
+    }
+
+    private void OnDeathPlayer()
+    {
+        _randomSoundSource.transform.parent = transform;
+    }
+
+    private void ResetRandomAudioClip(string name)
+    {
+        _randomSoundSource.Stop();
+        _currentLastTimeRandomAudio = 0;
+    }
+
     #endregion
 
     #region ScriptedAudioClip
+
+    public void PlayScriptedSoundName(string name)
+    {
+        if (_scriptedAudioSourse == null)
+            return;
+
+        _scriptedAudioClipInName[name].Clip.PlayAudioClip(_scriptedAudioSourse);
+    }
 
     private void InitScriptedAudioClip()
     {
@@ -257,17 +286,9 @@ public class SoundManager : MonoBehaviour
             _scriptedAudioClipInName.Add(clip.NameAudioClip, clip);
     }
 
-    public void ResetScriptedAudioClip(string name)
+    private void ResetScriptedAudioClip(string name)
     {
         _scriptedAudioSourse.Stop();
-    }
-
-    public void PlayScriptedSoundName(string name)
-    {
-        if (_scriptedAudioSourse == null)
-            return;
-
-        _scriptedAudioClipInName[name].Clip.PlayAudioClip(_scriptedAudioSourse);
     }
 
     #endregion
