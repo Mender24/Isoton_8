@@ -25,6 +25,11 @@ namespace Akila.FPSFramework
             return transform;
         }
 
+        public void OffInteraction()
+        {
+            instant = false;
+        }
+
         public void Interact(InteractionsManager source)
         {
             if (isOneUse)

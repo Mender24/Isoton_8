@@ -34,7 +34,7 @@ public class InteractionHint : MonoBehaviour
 
         _sphereCollider.radius = _radiusHint;
         _sphereCollider.isTrigger = true;
-        _interactable = transform.parent.GetComponent<Interactable>();
+        _interactable = transform.parent.GetComponent<IInteractable>();
     }
 
     private void OnTriggerEnter(Collider other)
