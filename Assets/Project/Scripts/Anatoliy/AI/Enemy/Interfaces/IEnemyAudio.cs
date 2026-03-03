@@ -1,10 +1,12 @@
 public interface IEnemyAudio
 {
     void PlayDetectionSound();
-    void PlayAttackSound();
-    void PlayDeathSound();
-    void PlayHitSound();
     void PlayAlertSound();
-    void PlayFootstep(int foot);
+    void PlayAttackSound();
     void PlayReloadSound();
+    void PlayHitSound();
+    void PlayDeathSound();
+    void PlayFootstep(int foot);
+    void PlayNamedSound(string soundName);
+    void PlayRandomNamedSound();
 }

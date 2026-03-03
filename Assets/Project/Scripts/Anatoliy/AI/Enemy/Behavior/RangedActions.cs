@@ -12,13 +12,17 @@ public class AimAndShootAtPlayerAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Agent;
 
-    private EnemyBase _enemy;
-    private bool _hasStartedAiming;
+    private EnemyBase          _enemy;
+    private GrenadeThrowModule _grenadeModule;
+    private bool               _hasStartedAiming;
 
     protected override Status OnStart()
     {
         if (_enemy == null)
-            _enemy = Agent.Value.GetComponent<EnemyBase>();
+        {
+            _enemy         = Agent.Value.GetComponent<EnemyBase>();
+            _grenadeModule = Agent.Value.GetComponent<GrenadeThrowModule>();
+        }
 
         var e = _enemy;
         if (e == null || e.PlayerTransform == null) return Status.Failure;
@@ -49,6 +53,15 @@ public class AimAndShootAtPlayerAction : Action
         {
             _hasStartedAiming = true;
             e.StartAttack();
+        }
+
+        // Выход на бросок гранаты
+        if (e.State.ShouldThrowGrenade && _grenadeModule != null && _grenadeModule.CanThrowGrenade)
+        {
+            if (e is RangedEnemy ranged)
+                ranged.RangedCombat.StopFire();
+            e.Animator?.SetAiming(false);
+            return Status.Success;
         }
 
         return Status.Running;
@@ -93,13 +106,17 @@ public class AlwaysAimAndShootAtPlayerAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Agent;
 
-    private EnemyBase _enemy;
-    private bool _hasStartedAiming;
+    private EnemyBase          _enemy;
+    private GrenadeThrowModule _grenadeModule;
+    private bool               _hasStartedAiming;
 
     protected override Status OnStart()
     {
         if (_enemy == null)
-            _enemy = Agent.Value.GetComponent<EnemyBase>();
+        {
+            _enemy         = Agent.Value.GetComponent<EnemyBase>();
+            _grenadeModule = Agent.Value.GetComponent<GrenadeThrowModule>();
+        }
 
         var e = _enemy;
         if (e == null || e.PlayerTransform == null) return Status.Failure;
@@ -133,6 +150,15 @@ public class AlwaysAimAndShootAtPlayerAction : Action
         {
             _hasStartedAiming = true;
             e.StartAttack();
+        }
+
+        // Выход на бросок гранаты
+        if (e.State.ShouldThrowGrenade && _grenadeModule != null && _grenadeModule.CanThrowGrenade)
+        {
+            if (e is RangedEnemy ranged)
+                ranged.RangedCombat.StopFire();
+            e.Animator?.SetAiming(false);
+            return Status.Success;
         }
 
         return Status.Running;

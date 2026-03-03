@@ -10,6 +10,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     [SerializeField] private Transform _shotOrigin;
     [SerializeField] private Transform _playerTransform;
     [SerializeField] private LayerMask _playerLayer;
+    [SerializeField] private LayerMask _obstacleLayer;
 
     public bool  CanShoot    => !IsReloading && _config != null;
     public bool  IsFiring    => _state != null && _state.IsFiring;
@@ -17,27 +18,30 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     public float AttackRange => _config != null ? _config.AttackRange : 0f;
     public float ReloadTime  => _config != null ? _config.ReloadTime  : 3f;
 
-    private EnemyState _state;
-    private IEnemyAnimator _animator;
-    private EnemyDebugger _debugger;
+    private EnemyState         _state;
+    private EnemyNavigation    _navigation;
+    private IEnemyAnimator     _animator;
+    private IEnemyAudio        _audio;
+    private EnemyDebugger      _debugger;
+    private GrenadeThrowModule _grenadeModule;
     private bool _isPaused;
 
     private void Awake()
     {
-        _state    = GetComponent<EnemyState>();
-        _animator = GetComponent<IEnemyAnimator>();
-        _debugger = GetComponent<EnemyDebugger>();
+        _state         = GetComponent<EnemyState>();
+        _navigation    = GetComponent<EnemyNavigation>();
+        _animator      = GetComponent<IEnemyAnimator>();
+        _audio         = GetComponent<IEnemyAudio>();
+        _debugger      = GetComponent<EnemyDebugger>();
+        _grenadeModule = GetComponent<GrenadeThrowModule>();
     }
 
     private void Start()
     {
-        var anim = GetComponent<BasicEnemyAnimator>();
-        if (anim != null)
-        {
-            anim.OnHitReactionStarted   += () => _isPaused = true;
-            anim.OnHitReactionCompleted += () => _isPaused = false;
-        }
+        _state.OnIsReloadingChanged += ChangeMoving;
     }
+
+    public void SetPaused(bool paused) => _isPaused = paused;
 
     public void Initialize(Transform playerTransform)
     {
@@ -52,9 +56,10 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     public void StopFire()
     {
-        _state.IsFiring    = false;
-        _state.IsReloading = false;
+        _state.IsFiring      = false;
+        _state.IsReloading   = false;
         _state.ShootCooldown = 0f;
+        _animator?.SetReloading(false, 0f);
     }
 
     public void Tick(float deltaTime)
@@ -68,6 +73,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             if (_state.IsReloading && _state.ShootCooldown <= 0f)
             {
                 _state.IsReloading = false;
+                _animator?.SetReloading(false, 0f);
                 if (_state.PlayerDetected)
                     _state.IsFiring = true;
             }
@@ -89,6 +95,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         }
 
         _state.CurrentBullet++;
+        _grenadeModule?.OnBulletFired();
 
         Vector3 target = _playerTransform.position;
         target.y += Random.Range(-_config.HeightSprayOffset, _config.HeightSprayOffset) + _config.YOffset;
@@ -96,6 +103,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
         SpawnBullet(target);
         TryDealDamage(target);
+        _audio?.PlayAttackSound();
 
         if (_state.CurrentBullet >= _config.MagazineSize)
         {
@@ -103,6 +111,8 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             _state.IsFiring      = false;
             _state.IsReloading   = true;
             _state.ShootCooldown = _config.ReloadTime;
+            _animator?.SetReloading(true, _config.ReloadTime);
+            _audio?.PlayReloadSound();
         }
         else
         {
@@ -136,7 +146,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
         if (Random.value <= _config.ChanceToHit)
         {
-            if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, _playerLayer))
+            if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, _obstacleLayer | _playerLayer))
             {
                 if (rayHit.collider.TryGetComponent(out Damageable damageable))
                 {
@@ -149,5 +159,13 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         }
 
         _debugger?.SetLastShot(origin, target, hit);
+    }
+
+    private void ChangeMoving(bool isMoving)
+    {
+        if (isMoving)
+            _navigation.Stop();
+        else 
+            _navigation.Resume();
     }
 }

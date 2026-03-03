@@ -27,6 +27,7 @@ public partial class AgentSeesPlayerAction : Action
         if (_enemy == null) return Status.Failure;
 
         SeesPlayer.Value = _enemy.Perception.CanSeePlayer();
+        _enemy.State.PlayerIsSeen = SeesPlayer.Value;
 
         if (SeesPlayer.Value)
         {

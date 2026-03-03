@@ -69,7 +69,14 @@ public class EnemyPerception : MonoBehaviour
         if (!_state.IsAlerted || CanSeePlayer()) return;
 
         float dist = GetDistanceToPlayer();
-        if (dist < _minDistanceToForget) return;
+        // if (dist < _minDistanceToForget) 
+        // {
+        //     _state.PlayerDetected = true;
+        //     _state.TimeSinceLastSeen = 0f;
+        //     if (_playerTransform != null)
+        //         _state.LastKnownPlayerPosition = _playerTransform.position;
+        //     return;
+        // }
 
         _state.TimeSinceLastSeen += Time.deltaTime;
 
@@ -99,8 +106,12 @@ public class EnemyPerception : MonoBehaviour
         if (Vector3.Angle(transform.forward, dir) > _fieldOfViewAngle * 0.5f) return false;
 
         if (Physics.Raycast(eyePos, dir, out RaycastHit hit, _visionRange, _obstacleLayer | _playerLayer))
+        {
+            if (dist < _minDistanceToForget && hit.transform == _playerTransform)
+                return true;
             return hit.transform == _playerTransform;
-
+        }
+            
         return false;
     }
 

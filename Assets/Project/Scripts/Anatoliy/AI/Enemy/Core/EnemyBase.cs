@@ -122,21 +122,15 @@ public abstract class EnemyBase : MonoBehaviour
     public Node.Status OnPlayerDetected()
     {
         if (State.IsSearching)
-        {
             State.IsSearching = false;
-            TriggerAlert();
-            return Node.Status.Success;
-        }
 
         if (!State.IsAlerted)
-        {
-            _cachedIsAlerted = State.IsAlerted;
-
             TriggerAlert();
-            return Node.Status.Success;
-        }
 
-        return Node.Status.Failure;
+        if (!State.PlayerDetected)
+            Perception.StartDetection(() => { });
+
+        return Node.Status.Success;
     }
 
     private void TriggerAlert()
@@ -155,7 +149,11 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
     public void AlertStarted()  => Navigation.Stop();
-    public void AlertCompleted() => Navigation.Resume();
+    public void AlertCompleted()
+    {
+        Navigation.Resume();
+        Audio?.PlayAlertSound();
+    }
 
     public Node.Status OnNoiseDetected()
     {

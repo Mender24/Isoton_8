@@ -25,39 +25,48 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     [SerializeField] private int _amountWinAnimations = 3;
 
     [Header("Clip names (for speed sync)")]
-    [SerializeField] private string _reloadClipName    = "ReloadAssaultRifle";
-    [SerializeField] private string _meleeClipName     = "AttackRightClaws1Creature_RM";
+    [SerializeField] private string _reloadClipName         = "ReloadAssaultRifle";
+    [SerializeField] private string _meleeClipName          = "AttackRightClaws1Creature_RM";
+    [SerializeField] private string _grenadeWindUpClipName  = "GrenadeWindUp";
+    [SerializeField] private string _grenadeThrowClipName   = "GrenadeThrow";
 
     private static class P
     {
-        public const string Speed          = "Speed";
-        public const string Aiming         = "Aiming";
-        public const string IsAlerted      = "IsAlerted";
-        public const string Shooting       = "Shooting";
-        public const string Reloading      = "Reloading";
-        public const string ReloadSpeed    = "ReloadSpeed";
-        public const string MeleeAttack    = "MeleeAttack";
-        public const string MeleeAttacking = "MeleeAttacking";
-        public const string MeleeSpeed     = "MeleeSpeed";
-        public const string MeleeAttackType= "MeleeAttackType";
-        public const string HasAlerted     = "HasAlerted";
-        public const string IsDead         = "IsDead";
-        public const string RandomIdleF    = "RandomIdleF";
-        public const string WinNumber      = "WinNumber";
-        public const string Alert          = "Alert";
-        public const string Hit            = "Hit";
-        public const string Reload         = "Reload";
-        public const string Search         = "Search";
-        public const string Winning        = "Win";
+        public const string Speed               = "Speed";
+        public const string Aiming              = "Aiming";
+        public const string IsAlerted           = "IsAlerted";
+        public const string IsSearching         = "IsSearching";
+        public const string Shooting            = "Shooting";
+        public const string Reloading           = "Reloading";
+        public const string ReloadSpeed         = "ReloadSpeed";
+        public const string MeleeAttack         = "MeleeAttack";
+        public const string MeleeAttacking      = "MeleeAttacking";
+        public const string MeleeSpeed          = "MeleeSpeed";
+        public const string MeleeAttackType     = "MeleeAttackType";
+        public const string HasAlerted          = "HasAlerted";
+        public const string IsDead              = "IsDead";
+        public const string RandomIdleF         = "RandomIdleF";
+        public const string WinNumber           = "WinNumber";
+        public const string Alert               = "Alert";
+        public const string Hit                 = "Hit";
+        public const string Reload              = "Reload";
+        public const string Search              = "Search";
+        public const string Winning             = "Win";
+        public const string GrenadeWindUp       = "GrenadeWindUp";   // trigger
+        public const string GrenadeWindUpSpeed  = "GrenadeWindUpSpeed";
+        public const string GrenadeThrow        = "GrenadeThrow";   // trigger
+        public const string GrenadeThrowSpeed   = "GrenadeThrowSpeed";
+        public const string GrenadeCancel       = "GrenadeCancel";  // trigger — выход при прерывании
     }
 
     private float _cachedSpeed;
     private float _idleTimer;
-    private float _reloadClipLength = 2.8f;
-    private float _meleeClipLength  = 3.2f;
-    private bool  _wasMoving;
-    private bool  _isInMotion;
+    private float _reloadClipLength        = 2.8f;
+    private float _meleeClipLength         = 3.2f;
+    private float _grenadeWindUpClipLength = 0.8f;
+    private float _grenadeThrowClipLength  = 0.6f;
     private bool  _isInitialized;
+    private IEnemyAudio _audio;
 
     public System.Action OnAlertStarted;
     public System.Action OnAlertCompleted;
@@ -65,7 +74,9 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public System.Action OnHitReactionCompleted;
     public System.Action OnDeathCompleted;
     public System.Action OnMeleeHit;
-    public System.Action<int> OnFootstep;
+    public System.Action OnGrenadeWindUpComplete;
+    public System.Action OnGrenadeReleasePoint;
+    public System.Action OnGrenadeThrowComplete;
 
     private void Awake()
     {
@@ -73,6 +84,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         if (_agent      == null) _agent      = GetComponent<NavMeshAgent>();
         if (_state      == null) _state      = GetComponent<EnemyState>();
         if (_navigation == null) _navigation = GetComponent<EnemyNavigation>();
+        _audio = GetComponent<IEnemyAudio>();
     }
 
     private void Start()
@@ -81,11 +93,9 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
 
         if (_state != null)
         {
-            _state.OnAlertedChanged        += SetAlerted;
-            _state.OnIsFiringChanged       += SetShooting;
-            _state.OnIsReloadingChanged    += OnReloadingChanged;
-            _state.OnIsMeleeAttackingChanged += OnMeleeAttackingChanged;
-            _state.OnIsDeadChanged         += SetDead;
+            _state.OnAlertedChanged  += SetAlerted;
+            _state.OnIsFiringChanged += SetShooting;
+            _state.OnIsDeadChanged   += SetDead;
         }
 
         _isInitialized = true;
@@ -95,28 +105,12 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     {
         if (_state != null)
         {
-            _state.OnAlertedChanged        -= SetAlerted;
-            _state.OnIsFiringChanged       -= SetShooting;
-            _state.OnIsReloadingChanged    -= OnReloadingChanged;
-            _state.OnIsMeleeAttackingChanged -= OnMeleeAttackingChanged;
-            _state.OnIsDeadChanged         -= SetDead;
+            _state.OnAlertedChanged  -= SetAlerted;
+            _state.OnIsFiringChanged -= SetShooting;
+            _state.OnIsDeadChanged   -= SetDead;
         }
     }
 
-    private void OnReloadingChanged(bool isReloading)
-    {
-        var ranged = GetComponent<RangedCombatModule>();
-        float duration = ranged != null ? ranged.ReloadTime : 3f;
-        SetReloading(isReloading, duration);
-    }
-
-    private void OnMeleeAttackingChanged(bool isAttacking)
-    {
-        var melee = GetComponent<MeleeCombatModule>();
-        float duration = melee != null ? melee.AttackDuration : 3f;
-        bool inMotion = _isInMotion;
-        SetMeleeAttacking(isAttacking, duration, inMotion);
-    }
 
     private void OnValidate()
     {
@@ -136,6 +130,12 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
 
         var meleeClip = controller.animationClips.FirstOrDefault(c => c.name == _meleeClipName);
         if (meleeClip != null) _meleeClipLength = meleeClip.length;
+
+        var grenadeWindUpClip = controller.animationClips.FirstOrDefault(c => c.name == _grenadeWindUpClipName);
+        if (grenadeWindUpClip != null) _grenadeWindUpClipLength = grenadeWindUpClip.length;
+
+        var grenadeThrowClip = controller.animationClips.FirstOrDefault(c => c.name == _grenadeThrowClipName);
+        if (grenadeThrowClip != null) _grenadeThrowClipLength = grenadeThrowClip.length;
     }
 
     private void Update()
@@ -150,7 +150,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         if (_agent == null) return;
 
         float raw = _agent.velocity.magnitude;
-        float maxSpeed = Mathf.Max(_agent.speed, 0.001f);
+        float maxSpeed = Mathf.Max(_navigation.RunSpeed, 0.001f);
         float target = Mathf.Clamp01(raw / maxSpeed) * _speedMultiplier;
 
         if (target < _minSpeedThreshold) target = 0f;
@@ -158,11 +158,6 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _cachedSpeed = Mathf.Lerp(_cachedSpeed, target, _speedSmoothTime * Time.deltaTime * 10f);
         _animator.SetFloat(P.Speed, _cachedSpeed);
 
-        bool moving = raw > _minSpeedThreshold;
-        _isInMotion = moving;
-
-        if (moving) _wasMoving = true;
-        else if (_wasMoving) _wasMoving = false;
     }
 
     private void UpdateIdleVariations()
@@ -236,11 +231,34 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         if (!_isInitialized) return;
 
         // 1 = Stationary, 0 = InMotion
-        _animator.SetInteger(P.MeleeAttackType, inMotion ? 0 : 1);
+        _animator.SetFloat(P.MeleeAttackType, inMotion ? 0 : 1);
 
         float speed = attackDuration > 0f ? _meleeClipLength / attackDuration : 1f;
         _animator.SetFloat(P.MeleeSpeed, speed);
         _animator.SetBool(P.MeleeAttacking, isAttacking);
+    }
+
+    public void TriggerGrenadeWindUp(float windUpDuration)
+    {
+        if (!_isInitialized) return;
+        float speed = windUpDuration > 0f ? _grenadeWindUpClipLength / windUpDuration : 1f;
+        _animator.SetFloat(P.GrenadeWindUpSpeed, speed);
+        _animator.SetTrigger(P.GrenadeWindUp);
+    }
+
+    public void TriggerGrenadeThrow(float throwDuration)
+    {
+        if (!_isInitialized) return;
+        float speed = throwDuration > 0f ? _grenadeThrowClipLength / throwDuration : 1f;
+        _animator.SetFloat(P.GrenadeThrowSpeed, speed);
+        _animator.SetTrigger(P.GrenadeThrow);
+    }
+
+    public void CancelGrenadeThrow()
+    {
+        if (!_isInitialized) return;
+        _animator.ResetTrigger(P.GrenadeWindUp);  // на случай если триггер ещё не сработал
+        _animator.SetTrigger(P.GrenadeCancel);    // выбить из стейта если уже вошли
     }
 
     public void SetAlerted(bool isAlerted)
@@ -253,6 +271,11 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     {
         if (!_isInitialized) return;
         _animator.SetBool(P.IsDead, isDead);
+    }
+
+    public void ResetSearch()
+    {
+        _animator.ResetTrigger(P.Search);
     }
 
     public void ResetAnimator()
@@ -273,6 +296,9 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _animator.ResetTrigger(P.Reload);
         _animator.ResetTrigger(P.Search);
         _animator.ResetTrigger(P.Winning);
+        _animator.ResetTrigger(P.GrenadeWindUp);
+        _animator.ResetTrigger(P.GrenadeThrow);
+        _animator.ResetTrigger(P.GrenadeCancel);
 
         _cachedSpeed = 0f;
         _idleTimer = 0f;
@@ -299,8 +325,13 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void OnMeleeAttackHit()     => OnMeleeHit?.Invoke();
     public void OnMeleeAttackComplete() { /* опционально */ }
 
-    public void OnFootstepLeft()  => OnFootstep?.Invoke(0);
-    public void OnFootstepRight() => OnFootstep?.Invoke(1);
+    // Animation events — вызываются из clips в Animator Controller
+    public void OnGrenadeWindUpCompleteEvent() => OnGrenadeWindUpComplete?.Invoke();
+    public void OnGrenadeReleasePointEvent()   => OnGrenadeReleasePoint?.Invoke();
+    public void OnGrenadeThrowCompleteEvent()  => OnGrenadeThrowComplete?.Invoke();
+
+    public void OnFootstepLeft()  => _audio?.PlayFootstep(0);
+    public void OnFootstepRight() => _audio?.PlayFootstep(1);
 
     public void OnReloadComplete()
     {

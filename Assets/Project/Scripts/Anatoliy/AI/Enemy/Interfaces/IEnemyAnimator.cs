@@ -14,5 +14,10 @@ public interface IEnemyAnimator
     void SetAlerted(bool isAlerted);
     void SetDead(bool isDead);
 
+    void TriggerGrenadeWindUp(float windUpDuration);
+    void TriggerGrenadeThrow(float throwDuration);
+    void CancelGrenadeThrow();
+
+    void ResetSearch();
     void ResetAnimator();
 }

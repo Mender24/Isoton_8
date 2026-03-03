@@ -39,11 +39,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private float _lastReactionTime = -999f;
     private EnemyState _state;
     private IEnemyAnimator _animator;
+    private IEnemyAudio _audio;
 
     private void Awake()
     {
         _state    = GetComponent<EnemyState>();
         _animator = GetComponent<IEnemyAnimator>();
+        _audio    = GetComponent<IEnemyAudio>();
         _health   = _maxHealth;
     }
 
@@ -67,6 +69,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             _lastReactionTime = Time.time;
             _animator?.PlayHit();
+            _audio?.PlayHitSound();
         }
     }
 
@@ -82,6 +85,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         OnDeathInternal?.Invoke();
 
+        _audio?.PlayDeathSound();
         _animator?.SetDead(true);
         _ragdoll?.Enable();
 

@@ -41,7 +41,8 @@ public class EnemyActivationTrigger : MonoBehaviour
             {
                 if (enemy != null)
                 {
-                    enemy.State.IsActivated = true;
+                    if (enemy.State)
+                        enemy.State.IsActivated = true;
                     // enemy.PlayerTransform = other.transform;
                 }
             }            

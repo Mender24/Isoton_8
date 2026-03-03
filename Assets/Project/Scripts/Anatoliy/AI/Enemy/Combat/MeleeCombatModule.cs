@@ -14,13 +14,17 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
     public float AttackRange  => _config != null ? _config.AttackRange  : 2f;
     public float AttackDuration => _config != null ? _config.AttackDuration : 3f;
 
-    private EnemyState     _state;
-    private IEnemyAnimator _animator;
+    private EnemyState      _state;
+    private IEnemyAnimator  _animator;
+    private IEnemyAudio     _audio;
+    private EnemyNavigation _navigation;
 
     private void Awake()
     {
-        _state    = GetComponent<EnemyState>();
-        _animator = GetComponent<IEnemyAnimator>();
+        _state      = GetComponent<EnemyState>();
+        _animator   = GetComponent<IEnemyAnimator>();
+        _audio      = GetComponent<IEnemyAudio>();
+        _navigation = GetComponent<EnemyNavigation>();
     }
 
     public void Initialize(Transform playerTransform)
@@ -41,8 +45,9 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
         _state.IsMeleeAttacking = true;
         _state.MeleeAttackCooldown = _config.AttackCooldown;
 
-        bool inMotion = GetComponent<EnemyNavigation>()?.Agent.velocity.sqrMagnitude > 0.1f;
+        bool inMotion = _navigation != null && _navigation.Agent.velocity.sqrMagnitude > 0.5f;
         _animator?.SetMeleeAttacking(true, _config.AttackDuration, inMotion);
+        _audio?.PlayAttackSound();
     }
 
     public void ExecuteHit()

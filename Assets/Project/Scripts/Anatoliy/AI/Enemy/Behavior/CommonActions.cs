@@ -94,7 +94,7 @@ public partial class MoveToNoiseAction : Action
         if (Physics.Raycast(target + Vector3.up, Vector3.down, out RaycastHit hit, 100f))
             target.y = hit.point.y;
 
-        _enemy.Navigation.MoveTo(target, false);
+        _enemy.Navigation.MoveTo(target, true);
         return Status.Running;
     }
 
@@ -134,6 +134,7 @@ public partial class MoveToLastKnownPositionAction : Action
         e.Navigation.ResetPath();
         e.Navigation.MoveTo(dest, run: true);
         e.State.IsSearching = true;
+        e.Animator?.PlaySearch();
 
         return Status.Running;
     }
@@ -144,6 +145,8 @@ public partial class MoveToLastKnownPositionAction : Action
 
         if (e.State.IsReloading) e.Navigation.SetSpeed(0f);
         else                     e.Navigation.SetSpeed(e.Navigation.RunSpeed);
+        if (e.State.PlayerDetected) return Status.Failure;
+        if (e.State.HeardNoise) return Status.Failure;
 
         return e.IsEnemyStopped() ? Status.Success : Status.Running;
     }
@@ -178,6 +181,8 @@ public partial class ReturnToStartPointAction : Action
     protected override Status OnUpdate()
     {
         if (_enemy.State.PlayerDetected) return Status.Failure;
+        if (_enemy.State.HeardNoise) return Status.Failure;
+
         return _enemy.IsEnemyStopped() ? Status.Success : Status.Running;
     }
 }
