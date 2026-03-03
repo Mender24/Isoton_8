@@ -40,22 +40,21 @@ public class InteractionHint : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Player _))
-        {
             _isRange = true;
-        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.TryGetComponent(out Player _))
-        {
             _isRange = false;
-        }
     }
 
     public void Update()
     {
-        if (Player.Instance.InteractionsManager.CurrentInteractable != null && Player.Instance.InteractionsManager.CurrentInteractable.transform.gameObject.name == transform.parent.gameObject.name)
+        if (!_isRange && _circleImage.color.a == 0)
+            return;
+
+        if (Player.Instance.InteractionsManager.CurrentInteractable != null && transform.parent != null && Player.Instance.InteractionsManager.CurrentInteractable.transform.gameObject.name == transform.parent.gameObject.name)
             _isCurrentObject = true;
         else
             _isCurrentObject = false;
