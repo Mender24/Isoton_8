@@ -1,93 +1,294 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WaypointFollower : MonoBehaviour
 {
-    [Header("Настройки пути")]
-    [SerializeField] private List<Transform> waypoints = new List<Transform>();
-    [SerializeField] private float speed = 5f;
-    [SerializeField] private bool loop = true;
+    [Header("Настройки движения к конкретному waypoint")]
+    [SerializeField] private Transform targetWaypoint;
+    [SerializeField] private float maxSpeed = 5f;
+
+    [Header("Настройки ускорения и замедления")]
+    [SerializeField] private float accelerationTime = 2f; // Время разгона
+    [SerializeField] private float decelerationTime = 1.5f; // Время замедления
+    [SerializeField] private AnimationCurve accelerationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private AnimationCurve decelerationCurve = AnimationCurve.EaseInOut(0, 1, 1, 0); // Кривая замедления
+
+    [Header("Настройки торможения")]
+    [SerializeField] private float startDecelerationDistance = 3f; // Расстояние, на котором начинается замедление
+    [SerializeField] private float stoppingDistance = 0.1f; // Расстояние полной остановки
+    [SerializeField] private bool smoothStop = true; // Плавная остановка
 
     [Header("Активация")]
     [SerializeField] private bool isActive = false;
+    [SerializeField] private float startDelay = 0f;
 
-    private int currentWaypointIndex = 0;
+    [Header("Текущее состояние")]
+    [SerializeField] private float currentSpeed = 0f;
+    [SerializeField] private float accelerationProgress = 0f;
+    [SerializeField] private float decelerationProgress = 0f;
+    [SerializeField] private bool hasReachedTarget = false;
+    [SerializeField] private bool isDecelerating = false;
 
-    void Start()
-    {
-        // Проверка на минимальное количество точек
-        if (waypoints.Count < 2)
-        {
-            Debug.LogWarning("Добавьте минимум 2 waypoint для работы!");
-            enabled = false;
-            return;
-        }
-
-        // Если активен при старте, начинаем движение
-        if (isActive)
-        {
-            StartMoving();
-        }
-    }
+    private float startDelayTimer = 0f;
+    private bool isWaitingForStart = false;
+    private Vector3 lastTargetPosition;
+    private float distanceToTarget;
 
     void Update()
     {
-        if (!isActive || waypoints.Count < 2)
+        if (!isActive || targetWaypoint == null)
             return;
 
+        // Обработка задержки перед стартом
+        if (isWaitingForStart)
+        {
+            HandleStartDelay();
+            return;
+        }
+
+        // Если уже достигли цели
+        if (hasReachedTarget)
+            return;
+
+        // Обновляем расстояние до цели
+        distanceToTarget = Vector3.Distance(transform.position, targetWaypoint.position);
+
+        // Проверка достижения цели
+        if (distanceToTarget <= stoppingDistance)
+        {
+            ReachedTarget();
+            return;
+        }
+
+        // Определяем, нужно ли начинать замедление
+        bool shouldDecelerate = distanceToTarget <= startDecelerationDistance;
+
+        // Обновление ускорения/замедления
+        if (shouldDecelerate)
+        {
+            UpdateDeceleration();
+        }
+        else
+        {
+            UpdateAcceleration();
+        }
+
+        // Движение к целевому waypoint
         MoveToWaypoint();
+    }
+
+    private void HandleStartDelay()
+    {
+        startDelayTimer -= Time.deltaTime;
+
+        if (startDelayTimer <= 0)
+        {
+            isWaitingForStart = false;
+            accelerationProgress = 0f;
+            decelerationProgress = 0f;
+            currentSpeed = 0f;
+            isDecelerating = false;
+            hasReachedTarget = false;
+            Debug.Log("Задержка завершена. Начинаем движение!");
+        }
+    }
+
+    private void UpdateAcceleration()
+    {
+        isDecelerating = false;
+
+        // Увеличиваем прогресс ускорения
+        if (accelerationTime > 0 && accelerationProgress < 1f)
+        {
+            accelerationProgress += Time.deltaTime / accelerationTime;
+            accelerationProgress = Mathf.Clamp01(accelerationProgress);
+        }
+
+        // Сбрасываем прогресс замедления
+        decelerationProgress = 0f;
+
+        // Вычисляем текущую скорость по кривой ускорения
+        float accelerationFactor = accelerationCurve.Evaluate(accelerationProgress);
+        currentSpeed = maxSpeed * accelerationFactor;
+    }
+
+    private void UpdateDeceleration()
+    {
+        if (!smoothStop)
+        {
+            // Простое линейное замедление
+            float t = 1f - Mathf.Clamp01(distanceToTarget / startDecelerationDistance);
+            currentSpeed = Mathf.Lerp(maxSpeed, 0f, t);
+            return;
+        }
+
+        isDecelerating = true;
+
+        // Прогресс замедления на основе расстояния
+        float targetDecelerationProgress = 1f - Mathf.Clamp01(distanceToTarget / startDecelerationDistance);
+
+        // Плавно увеличиваем прогресс замедления
+        if (decelerationTime > 0)
+        {
+            float decelerationSpeed = 1f / decelerationTime;
+            decelerationProgress = Mathf.MoveTowards(decelerationProgress, targetDecelerationProgress,
+                                                     decelerationSpeed * Time.deltaTime);
+        }
+        else
+        {
+            decelerationProgress = targetDecelerationProgress;
+        }
+
+        // Сбрасываем прогресс ускорения
+        accelerationProgress = 0f;
+
+        // Вычисляем текущую скорость по кривой замедления
+        float decelerationFactor = decelerationCurve.Evaluate(decelerationProgress);
+        currentSpeed = maxSpeed * decelerationFactor;
     }
 
     private void MoveToWaypoint()
     {
-        // Проверка валидности текущего чекпоинта
-        if (currentWaypointIndex >= waypoints.Count || waypoints[currentWaypointIndex] == null)
-            return;
-
-        // Получаем позицию целевого чекпоинта
-        Vector3 targetPosition = waypoints[currentWaypointIndex].position;
-
-        // Движение к точке с постоянной скоростью
-        float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, step);
-
-        // Проверка достижения чекпоинта
-        if (Vector3.Distance(transform.position, targetPosition) < 0.01f)
+        // Проверка на движение цели
+        if (targetWaypoint.position != lastTargetPosition)
         {
-            ReachedWaypoint();
+            // Если цель двигается, корректируем параметры
+            if (!isDecelerating)
+            {
+                accelerationProgress = Mathf.Max(0, accelerationProgress - 0.1f);
+            }
         }
+        lastTargetPosition = targetWaypoint.position;
+
+        // Получаем направление к цели
+        Vector3 direction = (targetWaypoint.position - transform.position).normalized;
+
+        // Рассчитываем шаг движения
+        float step = currentSpeed * Time.deltaTime;
+
+        // Проверяем, не превышает ли шаг расстояние до цели
+        if (step > distanceToTarget)
+        {
+            transform.position = targetWaypoint.position;
+        }
+        else
+        {
+            // Плавное движение
+            transform.position += direction * step;
+        }
+
+        // Визуальная отладка (опционально)
+        Debug.DrawLine(transform.position, targetWaypoint.position,
+                       isDecelerating ? Color.red : Color.green);
     }
 
-    private void ReachedWaypoint()
+    private void ReachedTarget()
     {
-        // Переходим к следующей точке
-        currentWaypointIndex++;
+        hasReachedTarget = true;
+        currentSpeed = 0f;
+        accelerationProgress = 0f;
+        decelerationProgress = 0f;
+        isDecelerating = false;
+        transform.position = targetWaypoint.position; // Точное позиционирование
 
-        // Проверка конца маршрута
-        if (currentWaypointIndex >= waypoints.Count)
-        {
-            if (loop)
-            {
-                // Начинаем сначала
-                currentWaypointIndex = 0;
-            }
-            else
-            {
-                // Останавливаемся на последней точке
-                isActive = false;
-            }
-        }
+        Debug.Log($"Достигнут целевой waypoint: {targetWaypoint.name}");
+        OnTargetReached();
+    }
+
+    /// <summary>
+    /// Вызывается при достижении цели
+    /// </summary>
+    private void OnTargetReached()
+    {
+        // Здесь можно добавить дополнительную логику при достижении цели
+        // Например, активацию событий, анимаций и т.д.
     }
 
     // === Публичные методы ===
 
     /// <summary>
-    /// Начать движение
+    /// Установить новый целевой waypoint и начать движение к нему
+    /// </summary>
+    public void SetTargetWaypoint(Transform newTarget)
+    {
+        if (newTarget == null)
+        {
+            Debug.LogWarning("Целевой waypoint не может быть null!");
+            return;
+        }
+
+        targetWaypoint = newTarget;
+        ResetMovement();
+        Debug.Log($"Установлен новый целевой waypoint: {newTarget.name}");
+    }
+
+    /// <summary>
+    /// Начать движение к текущему целевому waypoint
     /// </summary>
     public void StartMoving()
     {
+        if (targetWaypoint == null)
+        {
+            Debug.LogWarning("Не установлен целевой waypoint!");
+            return;
+        }
+
         isActive = true;
-        Debug.Log("Движение начато");
+        hasReachedTarget = false;
+
+        if (startDelay > 0)
+        {
+            isWaitingForStart = true;
+            startDelayTimer = startDelay;
+            Debug.Log($"Движение к {targetWaypoint.name} начнется через {startDelay} секунд...");
+        }
+        else
+        {
+            isWaitingForStart = false;
+            accelerationProgress = 0f;
+            decelerationProgress = 0f;
+            currentSpeed = 0f;
+            isDecelerating = false;
+            Debug.Log($"Движение к {targetWaypoint.name} начато!");
+        }
+    }
+
+    /// <summary>
+    /// Начать движение к конкретному waypoint
+    /// </summary>
+    public void MoveToTarget(Transform target)
+    {
+        SetTargetWaypoint(target);
+        StartMoving();
+    }
+
+    /// <summary>
+    /// Начать движение к конкретному waypoint с указанной скоростью
+    /// </summary>
+    public void MoveToTarget(Transform target, float speed)
+    {
+        maxSpeed = speed;
+        SetTargetWaypoint(target);
+        StartMoving();
+    }
+
+    /// <summary>
+    /// Начать движение к конкретному waypoint с указанными параметрами
+    /// </summary>
+    public void MoveToTarget(Transform target, float speed, float delay, float accelTime, float decelTime = -1f)
+    {
+        maxSpeed = speed;
+        startDelay = delay;
+        accelerationTime = accelTime;
+
+        if (decelTime > 0)
+        {
+            decelerationTime = decelTime;
+        }
+
+        SetTargetWaypoint(target);
+        StartMoving();
     }
 
     /// <summary>
@@ -96,109 +297,131 @@ public class WaypointFollower : MonoBehaviour
     public void StopMoving()
     {
         isActive = false;
+        isWaitingForStart = false;
+        currentSpeed = 0f;
+        accelerationProgress = 0f;
+        decelerationProgress = 0f;
+        isDecelerating = false;
         Debug.Log("Движение остановлено");
     }
 
     /// <summary>
-    /// Включить/выключить движение
+    /// Сбросить состояние движения
     /// </summary>
-    public void SetActive(bool active)
+    public void ResetMovement()
     {
-        isActive = active;
-        Debug.Log($"Движение {(isActive ? "включено" : "выключено")}");
+        StopMoving();
+        hasReachedTarget = false;
     }
 
     /// <summary>
-    /// Переключить движение
+    /// Проверить, достигнут ли целевой waypoint
     /// </summary>
-    public void ToggleActive()
+    public bool HasReachedTarget()
     {
-        isActive = !isActive;
-        Debug.Log($"Движение {(isActive ? "включено" : "выключено")}");
+        return hasReachedTarget;
     }
 
     /// <summary>
-    /// Установить новую скорость
+    /// Получить расстояние до цели
     /// </summary>
-    public void SetSpeed(float newSpeed)
+    public float GetDistanceToTarget()
     {
-        speed = Mathf.Max(0, newSpeed);
-        Debug.Log($"Скорость установлена: {speed}");
+        if (targetWaypoint == null)
+            return -1f;
+
+        return Vector3.Distance(transform.position, targetWaypoint.position);
     }
 
     /// <summary>
-    /// Перейти к определенному чекпоинту
+    /// Получить текущую скорость
     /// </summary>
-    public void JumpToWaypoint(int index)
+    public float GetCurrentSpeed()
     {
-        if (index >= 0 && index < waypoints.Count)
+        return currentSpeed;
+    }
+
+    /// <summary>
+    /// Получить текущий целевой waypoint
+    /// </summary>
+    public Transform GetTargetWaypoint()
+    {
+        return targetWaypoint;
+    }
+
+    /// <summary>
+    /// Установить максимальную скорость
+    /// </summary>
+    public void SetMaxSpeed(float speed)
+    {
+        maxSpeed = Mathf.Max(0, speed);
+    }
+
+    /// <summary>
+    /// Установить время ускорения
+    /// </summary>
+    public void SetAccelerationTime(float time)
+    {
+        accelerationTime = Mathf.Max(0, time);
+    }
+
+    /// <summary>
+    /// Установить время замедления
+    /// </summary>
+    public void SetDecelerationTime(float time)
+    {
+        decelerationTime = Mathf.Max(0, time);
+    }
+
+    /// <summary>
+    /// Установить дистанцию начала торможения
+    /// </summary>
+    public void SetStartDecelerationDistance(float distance)
+    {
+        startDecelerationDistance = Mathf.Max(0, distance);
+    }
+
+    /// <summary>
+    /// Установить задержку старта
+    /// </summary>
+    public void SetStartDelay(float delay)
+    {
+        startDelay = Mathf.Max(0, delay);
+    }
+
+    /// <summary>
+    /// Проверить, замедляется ли объект
+    /// </summary>
+    public bool IsDecelerating()
+    {
+        return isDecelerating;
+    }
+
+    // Визуализация в редакторе
+    private void OnDrawGizmosSelected()
+    {
+        if (targetWaypoint != null)
         {
-            currentWaypointIndex = index;
-            transform.position = waypoints[currentWaypointIndex].position;
-            Debug.Log($"Переход к чекпоинту {index}");
+            // Рисуем линию к целевому waypoint
+            Gizmos.color = isDecelerating ? Color.red : Color.yellow;
+            Gizmos.DrawLine(transform.position, targetWaypoint.position);
+
+            // Рисуем сферу на целевом waypoint
+            Gizmos.color = hasReachedTarget ? Color.green : Color.red;
+            Gizmos.DrawSphere(targetWaypoint.position, 0.3f);
+
+            // Рисуем окружность stopping distance
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(targetWaypoint.position, stoppingDistance);
+
+            // Рисуем окружность начала торможения
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(targetWaypoint.position, startDecelerationDistance);
+
+            // Визуализируем текущую скорость (линия от объекта)
+            Gizmos.color = Color.white;
+            Vector3 speedDirection = (targetWaypoint.position - transform.position).normalized;
+            Gizmos.DrawRay(transform.position, speedDirection * (currentSpeed / maxSpeed) * 2f);
         }
-    }
-
-    /// <summary>
-    /// Начать движение с начала пути
-    /// </summary>
-    public void StartFromBeginning()
-    {
-        currentWaypointIndex = 0;
-        isActive = true;
-
-        if (waypoints.Count > 0 && waypoints[0] != null)
-        {
-            transform.position = waypoints[0].position;
-        }
-        Debug.Log("Движение начато с первого чекпоинта");
-    }
-
-    /// <summary>
-    /// Добавить чекпоинт в список
-    /// </summary>
-    public void AddWaypoint(Transform newWaypoint)
-    {
-        if (newWaypoint != null)
-        {
-            waypoints.Add(newWaypoint);
-            Debug.Log($"Добавлен новый чекпоинт. Всего: {waypoints.Count}");
-        }
-    }
-
-    /// <summary>
-    /// Удалить чекпоинт по индексу
-    /// </summary>
-    public void RemoveWaypoint(int index)
-    {
-        if (index >= 0 && index < waypoints.Count)
-        {
-            waypoints.RemoveAt(index);
-            Debug.Log($"Чекпоинт {index} удален. Осталось: {waypoints.Count}");
-        }
-    }
-
-    /// <summary>
-    /// Получить текущий индекс чекпоинта
-    /// </summary>
-    public int GetCurrentWaypointIndex()
-    {
-        return currentWaypointIndex;
-    }
-
-    /// <summary>
-    /// Получить текущее состояние активности
-    /// </summary>
-    public bool IsActive()
-    {
-        return isActive;
-    }
-
-    /// <summary>
-    /// Получить общее количество чекпоинтов
-    /// </summary>
-    public int GetWaypointCount()
-    {
-        return waypoints.Count;
     }
 }
