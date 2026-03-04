@@ -149,7 +149,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     {
         if (_agent == null) return;
 
-        float raw = _agent.velocity.magnitude;
+        float raw = (_state != null && _state.IsMeleeAttacking) ? 0f : _agent.velocity.magnitude;
         float maxSpeed = Mathf.Max(_navigation.RunSpeed, 0.001f);
         float target = Mathf.Clamp01(raw / maxSpeed) * _speedMultiplier;
 
@@ -157,7 +157,6 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
 
         _cachedSpeed = Mathf.Lerp(_cachedSpeed, target, _speedSmoothTime * Time.deltaTime * 10f);
         _animator.SetFloat(P.Speed, _cachedSpeed);
-
     }
 
     private void UpdateIdleVariations()

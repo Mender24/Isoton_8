@@ -48,6 +48,7 @@ public class EnemyState : MonoBehaviour
     }
 
     [HideInInspector] public bool IsAlertAnimationPlaying;
+    [HideInInspector] public bool IsHitReacting;
 
     [HideInInspector] public bool IsSearching;
     [HideInInspector] public float TimeSinceLastSeen;
@@ -102,6 +103,7 @@ public class EnemyState : MonoBehaviour
     {
         IsActivated = false;
         IsAlertAnimationPlaying = false;
+        IsHitReacting = false;
 
         if (fireEvents)
         {

@@ -35,6 +35,13 @@ public class AimAndShootAtPlayerAction : Action
     protected override Status OnUpdate()
     {
         var e = _enemy;
+
+        if (e.State.IsReloading)
+        {
+            e.Navigation.Stop();
+            return Status.Running;
+        }
+
         if (e.PlayerTransform == null || !e.State.PlayerDetected) return Status.Failure;
 
         if (e.State.IsAlertAnimationPlaying) return Status.Running;
@@ -129,6 +136,13 @@ public class AlwaysAimAndShootAtPlayerAction : Action
     protected override Status OnUpdate()
     {
         var e = _enemy;
+
+        if (e.State.IsReloading)
+        {
+            e.Navigation.Stop();
+            return Status.Running;
+        }
+
         if (e.PlayerTransform == null || !e.State.PlayerDetected) return Status.Failure;
 
         if (e.State.IsAlertAnimationPlaying) return Status.Running;

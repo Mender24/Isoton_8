@@ -103,12 +103,14 @@ public class EnemyPerception : MonoBehaviour
         float dist = Vector3.Distance(eyePos, _mainCamera.transform.position);
 
         if (dist > _visionRange) return false;
-        if (Vector3.Angle(transform.forward, dir) > _fieldOfViewAngle * 0.5f) return false;
+
+        if (dist >= _minDistanceToForget)
+        {
+            if (Vector3.Angle(transform.forward, dir) > _fieldOfViewAngle * 0.5f) return false;
+        }
 
         if (Physics.Raycast(eyePos, dir, out RaycastHit hit, _visionRange, _obstacleLayer | _playerLayer))
         {
-            if (dist < _minDistanceToForget && hit.transform == _playerTransform)
-                return true;
             return hit.transform == _playerTransform;
         }
             

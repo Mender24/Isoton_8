@@ -150,7 +150,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             {
                 if (rayHit.collider.TryGetComponent(out Damageable damageable))
                 {
-                    damageable.Damage(_config.Damage);
+                    damageable.Damage(_config.Damage, gameObject);
                     hit = true;
                 }
                 _debugger?.SetLastShot(origin, rayHit.point, hit);

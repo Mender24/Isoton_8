@@ -40,9 +40,14 @@ public class RangedEnemy : EnemyBase
     {
         _rangedCombat.SetPaused(true);
         _grenadeThrow?.Cancel();
+        Navigation.Stop();
     }
 
-    private void OnHitReactionCompleted() => _rangedCombat.SetPaused(false);
+    private void OnHitReactionCompleted()
+    {
+        _rangedCombat.SetPaused(false);
+        Navigation.Resume();
+    }
 
     private void Update()
     {

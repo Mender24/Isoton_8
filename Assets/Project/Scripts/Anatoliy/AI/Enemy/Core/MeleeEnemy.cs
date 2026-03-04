@@ -1,10 +1,14 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(MeleeCombatModule))]
 public class MeleeEnemy : EnemyBase
 {
-    private MeleeCombatModule _meleeCombat;
+    [SerializeField] private float _hitReactionDuration = 0.6f;
+
+    private MeleeCombatModule  _meleeCombat;
     private BasicEnemyAnimator _basicAnimator;
+    private Coroutine          _hitReactCoroutine;
 
     protected override void Awake()
     {
@@ -25,6 +29,30 @@ public class MeleeEnemy : EnemyBase
     {
         if (_basicAnimator != null)
             _basicAnimator.OnMeleeHit -= _meleeCombat.ExecuteHit;
+    }
+
+    protected override void OnDamaged(float amount, GameObject source)
+    {
+        base.OnDamaged(amount, source);
+
+        if (State.IsMeleeAttacking) return;
+
+        if (_hitReactCoroutine != null) StopCoroutine(_hitReactCoroutine);
+        _hitReactCoroutine = StartCoroutine(HitReactRoutine());
+    }
+
+    private IEnumerator HitReactRoutine()
+    {
+        State.IsHitReacting = true;
+        Navigation.Stop();
+
+        yield return new WaitForSeconds(_hitReactionDuration);
+
+        State.IsHitReacting = false;
+        if (!State.IsMeleeAttacking)
+            Navigation.Resume();
+
+        _hitReactCoroutine = null;
     }
 
     private void Update()

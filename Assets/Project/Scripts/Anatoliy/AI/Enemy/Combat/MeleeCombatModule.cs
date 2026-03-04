@@ -27,6 +27,22 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
         _navigation = GetComponent<EnemyNavigation>();
     }
 
+    private void Start()
+    {
+        _state.OnIsMeleeAttackingChanged += OnMeleeAttackingChanged;
+    }
+
+    private void OnMeleeAttackingChanged(bool isAttacking)
+    {
+        if (isAttacking)
+        {
+            _navigation.Stop();
+            _navigation.ResetPath();
+        }
+        else
+            _navigation.Resume();
+    }
+
     public void Initialize(Transform playerTransform)
     {
         _playerTransform = playerTransform;
@@ -42,10 +58,11 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
     {
         if (!CanAttack || !_state.PlayerDetected) return;
 
-        _state.IsMeleeAttacking = true;
+        bool inMotion = _navigation != null && _navigation.Agent.velocity.sqrMagnitude > 0.5f;
+
+        _state.IsMeleeAttacking = true; // fires OnIsMeleeAttackingChanged → Navigation.Stop()
         _state.MeleeAttackCooldown = _config.AttackCooldown;
 
-        bool inMotion = _navigation != null && _navigation.Agent.velocity.sqrMagnitude > 0.5f;
         _animator?.SetMeleeAttacking(true, _config.AttackDuration, inMotion);
         _audio?.PlayAttackSound();
     }
@@ -64,7 +81,7 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
             if (col.transform == _playerTransform)
             {
                 if (col.TryGetComponent(out Damageable d))
-                    d.Damage(_config.Damage);
+                    d.Damage(_config.Damage, gameObject);
                 break;
             }
         }

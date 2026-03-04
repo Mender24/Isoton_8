@@ -37,7 +37,10 @@ public class EnemyNavigation : MonoBehaviour
     public void Stop()
     {
         if (_agent.isOnNavMesh)
+        {
             _agent.isStopped = true;
+            _agent.velocity  = Vector3.zero;
+        }
     }
 
     public void Resume()

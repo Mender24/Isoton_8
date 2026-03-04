@@ -28,6 +28,12 @@ public partial class ChasePlayerAction : Action
         var e = _enemy;
         if (!e.State.PlayerDetected || e.PlayerTransform == null) return Status.Failure;
 
+        if (e.State.IsHitReacting)
+        {
+            e.Navigation.Stop();
+            return Status.Running;
+        }
+
         e.Navigation.MoveTo(e.PlayerTransform.position);
 
         if (e is MeleeEnemy melee && melee.IsInMeleeRange())
@@ -74,6 +80,13 @@ public partial class MeleeAttackPlayerAction : Action
     protected override Status OnUpdate()
     {
         var e = _enemy;
+
+        if (e.State.IsMeleeAttacking)
+        {
+            RotateTowardsPlayer(e);
+            return Status.Running;
+        }
+
         if (e.PlayerTransform == null || !e.State.PlayerDetected) return Status.Failure;
 
         RotateTowardsPlayer(e);
@@ -85,14 +98,9 @@ public partial class MeleeAttackPlayerAction : Action
             _melee.MeleeCombat.CanAttack && _melee.IsInMeleeRange())
         {
             _hasInitiatedAttack = true;
-
-            bool inMotion = e.Navigation.CurrentSpeed > 0.1f;
-            if (!inMotion) e.Navigation.Stop();
-
             e.StartAttack();
+            return Status.Running; // не продолжать в этом кадре — атака только началась
         }
-
-        if (e.State.IsMeleeAttacking) return Status.Running;
 
         if (!_melee.IsInMeleeRange())
         {
