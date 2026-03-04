@@ -21,7 +21,10 @@ namespace Akila.FPSFramework
             _inventory = GetComponentInChildren<Inventory>();
             _interactionsManager = GetComponentInChildren<InteractionsManager>();
             _actor = GetComponent<Actor>();
+        }
 
+        private void Start()
+        {
             gameObject.SetActive(false);
         }
     }
