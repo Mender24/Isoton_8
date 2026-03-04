@@ -87,6 +87,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [Header("Audio")]
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip _detectionSound;
+    [SerializeField] private AudioClip _detectionSound2;
     [SerializeField] private List<AudioClip> _footstepSounds;
 
     [Header("Debug Settings")]
@@ -207,6 +208,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
         agent.stoppingDistance = stoppingDistance;
         startPosition = transform.position;
         Register();
+        if (_detectionSound != null)
+            _audioSource.volume =0.2f;
     }
 
     void Update()
@@ -456,7 +459,13 @@ public class EnemyAI : MonoBehaviour, IDamageable
         if (_audioSource && _detectionSound && _alertSoundTimer <= 0)
         {
             _alertSoundTimer = _alertSoundDelay;
-            _audioSource.PlayOneShot(_detectionSound);
+
+            int random = Random.Range(0, 2);
+            if (random == 0)
+                _audioSource.PlayOneShot(_detectionSound);
+            else
+                if(_detectionSound2 != null)
+                _audioSource.PlayOneShot(_detectionSound2);
         }
 
         yield return new WaitForSeconds(_detectionDelay);
@@ -637,14 +646,9 @@ public class EnemyAI : MonoBehaviour, IDamageable
         isAlerted = false;
         isSearching = false;
         isMeleeAttacking = false;
-        // СТАЛО:
         agent.isStopped = true;
         agent.ResetPath();
-        agent.velocity = Vector3.zero;  // Останавливаем физику агента
-        if (agent.isOnNavMesh)          // Проверяем перед отключением
-            agent.enabled = false;
-        else
-            agent.enabled = false;      // Всё равно отключаем, но без ResetPath
+        agent.enabled = false;
         behAgent.enabled = false;
 
         var cols = GetComponentsInChildren<Collider>();
