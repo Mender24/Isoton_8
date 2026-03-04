@@ -637,9 +637,14 @@ public class EnemyAI : MonoBehaviour, IDamageable
         isAlerted = false;
         isSearching = false;
         isMeleeAttacking = false;
+        // СТАЛО:
         agent.isStopped = true;
         agent.ResetPath();
-        agent.enabled = false;
+        agent.velocity = Vector3.zero;  // Останавливаем физику агента
+        if (agent.isOnNavMesh)          // Проверяем перед отключением
+            agent.enabled = false;
+        else
+            agent.enabled = false;      // Всё равно отключаем, но без ResetPath
         behAgent.enabled = false;
 
         var cols = GetComponentsInChildren<Collider>();

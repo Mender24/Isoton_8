@@ -215,6 +215,8 @@ public class SceneLoader : MonoBehaviour
                 yield return null;
 
             operation.allowSceneActivation = true;
+            while (!operation.isDone)
+                yield return null;
         }
 
         IsLoad = false;
