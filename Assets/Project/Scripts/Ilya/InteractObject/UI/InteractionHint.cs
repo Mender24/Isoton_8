@@ -34,28 +34,27 @@ public class InteractionHint : MonoBehaviour
 
         _sphereCollider.radius = _radiusHint;
         _sphereCollider.isTrigger = true;
-        _interactable = transform.parent.GetComponent<Interactable>();
+        _interactable = transform.parent.GetComponent<IInteractable>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Player _))
-        {
             _isRange = true;
-        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.TryGetComponent(out Player _))
-        {
             _isRange = false;
-        }
     }
 
     public void Update()
     {
-        if (Player.Instance.InteractionsManager.CurrentInteractable != null && Player.Instance.InteractionsManager.CurrentInteractable.transform.gameObject.name == transform.parent.gameObject.name)
+        if (!_isRange && _circleImage.color.a == 0)
+            return;
+
+        if (Player.Instance.InteractionsManager.CurrentInteractable != null && transform.parent != null && Player.Instance.InteractionsManager.CurrentInteractable.transform.gameObject.name == transform.parent.gameObject.name)
             _isCurrentObject = true;
         else
             _isCurrentObject = false;

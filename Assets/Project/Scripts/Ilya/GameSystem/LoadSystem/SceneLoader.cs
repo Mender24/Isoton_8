@@ -68,6 +68,11 @@ public class SceneLoader : MonoBehaviour
 
     public event UnityAction SceneLoadingComplete;
 
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     public void LoadScenes(bool isFirstSceneLoad = false, string forceLoad = "", bool isUseSave = false)
     {
         if (isFirstSceneLoad)
@@ -210,6 +215,8 @@ public class SceneLoader : MonoBehaviour
                 yield return null;
 
             operation.allowSceneActivation = true;
+            while (!operation.isDone)
+                yield return null;
         }
 
         IsLoad = false;
