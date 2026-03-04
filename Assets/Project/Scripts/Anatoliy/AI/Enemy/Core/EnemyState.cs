@@ -59,6 +59,8 @@ public class EnemyState : MonoBehaviour
     [HideInInspector] public bool HeardNoise;
     [HideInInspector] public Vector3 LastHeardNoisePosition;
 
+    [HideInInspector] public float VisionMeterValue;
+
     private bool _isFiring;
     [HideInInspector]
     public bool IsFiring
