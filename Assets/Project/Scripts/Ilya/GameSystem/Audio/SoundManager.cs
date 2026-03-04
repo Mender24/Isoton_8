@@ -147,7 +147,7 @@ public class SoundManager : MonoBehaviour
         bool isTransition = SceneLoader.instance.CheckCurrentSceneTransition;
 
         StopAllCoroutines();
-
+        
         StartCoroutine(SetAmbientClip(_ambiemtSource, currentLocationId, isTransition));
     }
 

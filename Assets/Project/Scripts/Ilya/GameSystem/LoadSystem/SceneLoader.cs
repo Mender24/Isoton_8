@@ -59,6 +59,9 @@ public class SceneLoader : MonoBehaviour
     private void Start()
     {
         SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(RespawnPlayer);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     #region LoadSystem
@@ -67,6 +70,13 @@ public class SceneLoader : MonoBehaviour
     private int _nextSceneIndex = -1;
 
     public event UnityAction SceneLoadingComplete;
+
+    public void LoadMainMenu()
+    {
+        Player.Instance.gameObject.SetActive(false);
+        Destroy(gameObject);
+        SceneManager.LoadScene(0);
+    }
 
     public void LoadScenes(bool isFirstSceneLoad = false, string forceLoad = "", bool isUseSave = false)
     {
@@ -210,6 +220,8 @@ public class SceneLoader : MonoBehaviour
                 yield return null;
 
             operation.allowSceneActivation = true;
+            while (!operation.isDone)
+                yield return null;
         }
 
         IsLoad = false;
