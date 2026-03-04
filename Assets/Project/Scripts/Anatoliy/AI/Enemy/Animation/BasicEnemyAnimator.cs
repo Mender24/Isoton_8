@@ -52,11 +52,11 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         public const string Reload              = "Reload";
         public const string Search              = "Search";
         public const string Winning             = "Win";
-        public const string GrenadeWindUp       = "GrenadeWindUp";   // trigger
+        public const string GrenadeWindUp       = "GrenadeWindUp";
         public const string GrenadeWindUpSpeed  = "GrenadeWindUpSpeed";
-        public const string GrenadeThrow        = "GrenadeThrow";   // trigger
+        public const string GrenadeThrow        = "GrenadeThrow";
         public const string GrenadeThrowSpeed   = "GrenadeThrowSpeed";
-        public const string GrenadeCancel       = "GrenadeCancel";  // trigger — выход при прерывании
+        public const string GrenadeCancel       = "GrenadeCancel";
     }
 
     private float _cachedSpeed;
@@ -256,8 +256,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void CancelGrenadeThrow()
     {
         if (!_isInitialized) return;
-        _animator.ResetTrigger(P.GrenadeWindUp);  // на случай если триггер ещё не сработал
-        _animator.SetTrigger(P.GrenadeCancel);    // выбить из стейта если уже вошли
+        _animator.ResetTrigger(P.GrenadeWindUp);
+        _animator.SetTrigger(P.GrenadeCancel);
     }
 
     public void SetAlerted(bool isAlerted)

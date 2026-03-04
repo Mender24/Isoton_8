@@ -6,7 +6,6 @@ public class EnemyPerception : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private EnemyState _state;
-    [SerializeField] private string _mainCameraTag = "MainCamera";
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private LayerMask _obstacleLayer;
 
@@ -14,6 +13,21 @@ public class EnemyPerception : MonoBehaviour
     [SerializeField] private float _fieldOfViewAngle = 110f;
     [SerializeField] private float _visionRange = 15f;
     [SerializeField] private float _visionHeight = 0.5f;
+
+    [Header("Vision Meter")]
+    [SerializeField] private bool  _useVisionMeter       = false;
+    [SerializeField] private float _visionMeterSpeedFar  = 1.5f;
+    [SerializeField] private float _visionMeterSpeedNear = 3.0f;
+    [SerializeField] private float _visionMeterDecay     = 2.0f;
+
+    [Header("Multi-Ray Detection")]
+    [SerializeField] private bool     _useMultiRay = false;
+    [SerializeField] private Vector3[] _bodyCheckOffsets = new Vector3[]
+    {
+        new Vector3(0, 0.1f, 0),
+        new Vector3(0, 1.0f, 0),
+        new Vector3(0, 1.8f, 0),
+    };
 
     [Header("Hearing")]
     [SerializeField] private float _hearingRange = 10f;
@@ -25,15 +39,18 @@ public class EnemyPerception : MonoBehaviour
     [SerializeField] private float _minDistanceToForget = 4f;
 
     private Transform _playerTransform;
-    private Camera _mainCamera;
     private float _noiseTimer;
     private bool _detectionPending;
+    private float _visionMeter;
 
-    public float VisionRange  => _visionRange;
-    public float VisionHeight => _visionHeight;
-    public float FieldOfView  => _fieldOfViewAngle;
-    public float HearingRange => _hearingRange;
-    public float ForgetTime   => _forgetTime;
+    public float VisionRange    => _visionRange;
+    public float VisionHeight   => _visionHeight;
+    public float FieldOfView    => _fieldOfViewAngle;
+    public float HearingRange   => _hearingRange;
+    public float ForgetTime     => _forgetTime;
+    public float VisionMeter    => _visionMeter;
+    public bool  UseMultiRay    => _useMultiRay;
+    public Vector3[] BodyCheckOffsets => _bodyCheckOffsets;
 
     private void Awake()
     {
@@ -43,18 +60,6 @@ public class EnemyPerception : MonoBehaviour
     public void Initialize(Transform playerTransform)
     {
         _playerTransform = playerTransform;
-
-        if (_playerTransform != null)
-        {
-            foreach (var cam in _playerTransform.GetComponentsInChildren<Camera>())
-            {
-                if (cam.CompareTag(_mainCameraTag))
-                {
-                    _mainCamera = cam;
-                    break;
-                }
-            }
-        }
     }
 
     private void Update()
@@ -62,21 +67,12 @@ public class EnemyPerception : MonoBehaviour
         if (!_state.IsActivated || _state.IsDead) return;
         TickForget();
         TickNoise();
+        TickVisionMeter();
     }
 
     private void TickForget()
     {
-        if (!_state.IsAlerted || CanSeePlayer()) return;
-
-        float dist = GetDistanceToPlayer();
-        // if (dist < _minDistanceToForget) 
-        // {
-        //     _state.PlayerDetected = true;
-        //     _state.TimeSinceLastSeen = 0f;
-        //     if (_playerTransform != null)
-        //         _state.LastKnownPlayerPosition = _playerTransform.position;
-        //     return;
-        // }
+        if (!_state.IsAlerted || IsPlayerInSightRaw()) return;
 
         _state.TimeSinceLastSeen += Time.deltaTime;
 
@@ -94,26 +90,77 @@ public class EnemyPerception : MonoBehaviour
             _state.HeardNoise = false;
     }
 
+    private void TickVisionMeter()
+    {
+        if (!_useVisionMeter) return;
+
+        bool inSight = IsPlayerInSightRaw();
+        if (inSight)
+        {
+            float half = _visionRange / 2f;
+            float speed = GetDistanceToPlayer() > half ? _visionMeterSpeedFar : _visionMeterSpeedNear;
+            _visionMeter = Mathf.Clamp01(_visionMeter + Time.deltaTime * speed);
+        }
+        else
+        {
+            _visionMeter = Mathf.Clamp01(_visionMeter - Time.deltaTime * _visionMeterDecay);
+        }
+
+        _state.VisionMeterValue = _visionMeter;
+    }
+
     public bool CanSeePlayer()
     {
-        if (_playerTransform == null || _mainCamera == null) return false;
+        if (_useVisionMeter)
+            return _visionMeter >= 1f;
+
+        return IsPlayerInSightRaw();
+    }
+
+    private bool IsPlayerInSightRaw()
+    {
+        if (_playerTransform == null) return false;
 
         Vector3 eyePos = transform.position + Vector3.up * _visionHeight;
-        Vector3 dir = (_mainCamera.transform.position - eyePos).normalized;
-        float dist = Vector3.Distance(eyePos, _mainCamera.transform.position);
+        Vector3 playerCenter = _playerTransform.position + Vector3.up * 1.0f;
+        float dist = Vector3.Distance(eyePos, _playerTransform.position);
 
         if (dist > _visionRange) return false;
 
         if (dist >= _minDistanceToForget)
         {
+            Vector3 dir = (playerCenter - eyePos).normalized;
             if (Vector3.Angle(transform.forward, dir) > _fieldOfViewAngle * 0.5f) return false;
         }
 
-        if (Physics.Raycast(eyePos, dir, out RaycastHit hit, _visionRange, _obstacleLayer | _playerLayer))
+        return _useMultiRay ? MultiRayCheck(eyePos) : SingleRayCheck(eyePos, playerCenter);
+    }
+
+    private bool SingleRayCheck(Vector3 eyePos, Vector3 targetPoint)
+    {
+        Vector3 dir = (targetPoint - eyePos).normalized;
+        float dist = Vector3.Distance(eyePos, targetPoint) + 1f;
+
+        if (Physics.Raycast(eyePos, dir, out RaycastHit hit, dist, _obstacleLayer | _playerLayer))
+            return hit.transform == _playerTransform || hit.transform.IsChildOf(_playerTransform);
+
+        return false;
+    }
+
+    private bool MultiRayCheck(Vector3 eyePos)
+    {
+        foreach (var offset in _bodyCheckOffsets)
         {
-            return hit.transform == _playerTransform;
+            Vector3 target = _playerTransform.position + offset;
+            Vector3 dir = (target - eyePos).normalized;
+            float dist = Vector3.Distance(eyePos, target) + 1f;
+
+            if (Physics.Raycast(eyePos, dir, out RaycastHit hit, dist, _obstacleLayer | _playerLayer))
+            {
+                if (hit.transform == _playerTransform || hit.transform.IsChildOf(_playerTransform))
+                    return true;
+            }
         }
-            
         return false;
     }
 

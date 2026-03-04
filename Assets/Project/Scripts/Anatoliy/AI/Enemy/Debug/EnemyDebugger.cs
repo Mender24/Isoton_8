@@ -49,6 +49,9 @@ public class EnemyDebugger : MonoBehaviour
     [SerializeField] private Color _meleeRangeColor  = new Color(1f, 0f, 0f, 0.15f);
     [SerializeField] private Color _meleeHitboxColor = Color.red;
 
+    [Header("Vision Meter")]
+    [SerializeField] private bool  _showVisionMeter = true;
+
     [Header("Ranged Combat")]
     [SerializeField] private bool  _debugShooting       = true;
     [SerializeField] private bool  _showShotRaycast     = true;
@@ -186,6 +189,9 @@ public class EnemyDebugger : MonoBehaviour
         if (_showLastKnownPosition && _state != null && _state.IsAlerted &&
             _state.LastKnownPlayerPosition != Vector3.zero)
             DrawLastKnownPosition();
+
+        if (_showVisionMeter)
+            DrawVisionMeter(eyePos);
     }
 
     private void DrawFieldOfView(Vector3 pos, float fov, float range, bool alerted, bool seesPlayer)
@@ -223,29 +229,25 @@ public class EnemyDebugger : MonoBehaviour
     {
         if (_enemy == null || _enemy.PlayerTransform == null) return;
 
+        if (_perception != null && _perception.UseMultiRay)
+        {
+            DrawMultiRaycast(eyePos, fov);
+            return;
+        }
+
         Transform targetTransform = _enemy.PlayerTransform;
-        Vector3 targetPos = targetTransform.position;
+        Vector3 targetPos = targetTransform.position + Vector3.up * 1.0f;
 
-#if UNITY_EDITOR
-        if (Camera.current != null)
-            targetPos = Camera.current.transform.position;
-#endif
-
-        Vector3 dir  = (targetPos - eyePos).normalized;
-        float   dist = Vector3.Distance(eyePos, _enemy.PlayerTransform.position);
+        Vector3 dir   = (targetPos - eyePos).normalized;
+        float   dist  = Vector3.Distance(eyePos, targetPos);
         float   angle = Vector3.Angle(transform.forward, dir);
         bool    inFov = angle <= fov * 0.5f;
 
-        EnemyPerception p = _perception;
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(eyePos, dir, out hit, dist))
+        if (Physics.Raycast(eyePos, dir, out RaycastHit hit, dist + 1f))
         {
-            bool hitPlayer = hit.transform == _enemy.PlayerTransform;
+            bool hitPlayer = hit.transform == _enemy.PlayerTransform || hit.transform.IsChildOf(_enemy.PlayerTransform);
             Gizmos.color = (hitPlayer && inFov) ? _raycastHitColor : _raycastMissColor;
             Gizmos.DrawLine(eyePos, hit.point);
-            // Gizmos.DrawSphere(hit.point, 0.1f);
 
             if (!hitPlayer)
             {
@@ -256,13 +258,39 @@ public class EnemyDebugger : MonoBehaviour
         else
         {
             Gizmos.color = inFov ? _raycastHitColor : _raycastMissColor;
-            Gizmos.DrawLine(eyePos, _enemy.PlayerTransform.position);
+            Gizmos.DrawLine(eyePos, targetPos);
         }
 
         if (!inFov)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(_enemy.PlayerTransform.position, 0.5f);
+            Gizmos.DrawWireSphere(_enemy.PlayerTransform.position + Vector3.up, 0.5f);
+        }
+    }
+
+    private void DrawMultiRaycast(Vector3 eyePos, float fov)
+    {
+        foreach (var offset in _perception.BodyCheckOffsets)
+        {
+            Vector3 target = _enemy.PlayerTransform.position + offset;
+            Vector3 dir    = (target - eyePos).normalized;
+            float   dist   = Vector3.Distance(eyePos, target) + 1f;
+            float   angle  = Vector3.Angle(transform.forward, dir);
+            bool    inFov  = angle <= fov * 0.5f;
+
+            if (Physics.Raycast(eyePos, dir, out RaycastHit hit, dist))
+            {
+                bool hitPlayer = hit.transform == _enemy.PlayerTransform || hit.transform.IsChildOf(_enemy.PlayerTransform);
+                Gizmos.color = (hitPlayer && inFov) ? _raycastHitColor : _raycastMissColor;
+                Gizmos.DrawLine(eyePos, hit.point);
+                if (!hitPlayer)
+                    Gizmos.DrawWireSphere(hit.point, 0.1f);
+            }
+            else
+            {
+                Gizmos.color = inFov ? _raycastHitColor : _raycastMissColor;
+                Gizmos.DrawLine(eyePos, target);
+            }
         }
     }
 
@@ -282,6 +310,27 @@ public class EnemyDebugger : MonoBehaviour
             float progress = _state.TimeSinceLastSeen / _perception.ForgetTime;
             Gizmos.color = Color.Lerp(Color.red, Color.yellow, progress);
             Gizmos.DrawWireSphere(pos + Vector3.up * 2f, 0.3f * (1f - progress));
+        }
+    }
+
+    private void DrawVisionMeter(Vector3 eyePos)
+    {
+        if (_state == null || _state.VisionMeterValue <= 0f) return;
+
+        float meter = _state.VisionMeterValue;
+        float range = _perception != null ? _perception.VisionRange : 10f;
+
+        Gizmos.color = Color.Lerp(
+            new Color(1f, 1f, 0f, 0.4f),
+            new Color(1f, 0f, 0f, 0.6f),
+            meter
+        );
+        DrawCircle(eyePos, range * meter * 0.5f, 32);
+
+        if (meter >= 1f)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(eyePos + Vector3.up * 0.35f, 0.15f);
         }
     }
 
@@ -416,6 +465,9 @@ public class EnemyDebugger : MonoBehaviour
             sb.AppendLine($"Atk cd:    {_state.MeleeAttackCooldown:F1}s");
             sb.AppendLine($"In Range:  {_meleeCombat.IsInRange()}");
         }
+
+        if (_perception != null && _state.VisionMeterValue > 0f)
+            sb.AppendLine($"Vision Meter: {_state.VisionMeterValue * 100f:F0}%");
 
         if (_state.HeardNoise)
             sb.AppendLine($"HEARD NOISE");
