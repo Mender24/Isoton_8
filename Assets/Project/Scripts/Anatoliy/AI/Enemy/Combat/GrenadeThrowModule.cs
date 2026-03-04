@@ -9,6 +9,7 @@ public class GrenadeThrowModule : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Transform _throwOrigin;
+    [SerializeField] private Transform _grenadeHandBone;
 
     private EnemyState         _state;
     private IEnemyAnimator     _animator;
@@ -16,6 +17,7 @@ public class GrenadeThrowModule : MonoBehaviour
     private Transform          _playerTransform;
 
     private int _bulletsFiredSinceCheck;
+    private GameObject _heldGrenade;
 
     public GrenadeThrowPhase Phase { get; private set; } = GrenadeThrowPhase.Idle;
 
@@ -55,7 +57,6 @@ public class GrenadeThrowModule : MonoBehaviour
         _playerTransform = playerTransform;
     }
 
-    // Called by RangedCombatModule on every bullet fired
     public void OnBulletFired()
     {
         if (_config == null || _state.IsThrowingGrenade) return;
@@ -75,10 +76,10 @@ public class GrenadeThrowModule : MonoBehaviour
 
         Phase = GrenadeThrowPhase.WindingUp;
         _state.IsThrowingGrenade = true;
+        SpawnHeldGrenade();
         _animator?.TriggerGrenadeWindUp(_config.WindUpDuration);
     }
 
-    // Called from animation event via BasicEnemyAnimator
     private void HandleWindUpComplete()
     {
         if (Phase != GrenadeThrowPhase.WindingUp) return;
@@ -87,21 +88,19 @@ public class GrenadeThrowModule : MonoBehaviour
         _animator?.TriggerGrenadeThrow(_config.ThrowDuration);
     }
 
-    // Called from animation event at the moment grenade is released
     private void HandleReleasePoint()
     {
         if (Phase != GrenadeThrowPhase.Throwing) return;
+        DestroyHeldGrenade();
         SpawnGrenade();
     }
 
-    // Called from animation event when throw animation finishes
     private void HandleThrowComplete()
     {
         if (Phase != GrenadeThrowPhase.Throwing) return;
         FinishThrow();
     }
 
-    // Cancel mid-throw (hit reaction, player lost, etc.)
     public void Cancel()
     {
         if (Phase == GrenadeThrowPhase.Idle) return;
@@ -109,6 +108,7 @@ public class GrenadeThrowModule : MonoBehaviour
         Phase = GrenadeThrowPhase.Idle;
         _state.IsThrowingGrenade  = false;
         _state.ShouldThrowGrenade = false;
+        DestroyHeldGrenade();
         _animator?.CancelGrenadeThrow();
     }
 
@@ -124,6 +124,34 @@ public class GrenadeThrowModule : MonoBehaviour
         _state.IsThrowingGrenade  = false;
         _state.ShouldThrowGrenade = false;
         _state.GrenadeCooldown    = _config.ThrowCooldown;
+    }
+
+    private void SpawnHeldGrenade()
+    {
+        GameObject prefab = _config.GrenadeInHandPrefab != null
+            ? _config.GrenadeInHandPrefab
+            : _config.GrenadePrefab;
+
+        if (prefab == null) return;
+
+        Transform parent = _grenadeHandBone != null ? _grenadeHandBone : _throwOrigin;
+        if (parent == null) parent = transform;
+
+        _heldGrenade = Instantiate(prefab, parent.position, parent.rotation, parent);
+
+        if (_heldGrenade.TryGetComponent(out Rigidbody rb))
+            rb.isKinematic = true;
+        foreach (var col in _heldGrenade.GetComponentsInChildren<Collider>())
+            col.enabled = false;
+    }
+
+    private void DestroyHeldGrenade()
+    {
+        if (_heldGrenade != null)
+        {
+            Destroy(_heldGrenade);
+            _heldGrenade = null;
+        }
     }
 
     private void SpawnGrenade()
@@ -145,7 +173,7 @@ public class GrenadeThrowModule : MonoBehaviour
 
     private static Vector3 CalculateThrowVelocity(Vector3 from, Vector3 to, float time)
     {
-        // Standard projectile formula: v = (d - 0.5 * g * t^2) / t
+        // v = (d - 0.5 * g * t^2) / t
         return (to - from) / time - 0.5f * Physics.gravity * time;
     }
 }

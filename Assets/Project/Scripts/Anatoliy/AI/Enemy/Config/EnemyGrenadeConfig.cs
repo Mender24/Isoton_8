@@ -5,6 +5,8 @@ public class EnemyGrenadeConfig : ScriptableObject
 {
     [Header("Grenade Prefab")]
     public GameObject GrenadePrefab;
+    [Tooltip("Visual-only grenade held in hand before throw. Falls back to GrenadePrefab if null.")]
+    public GameObject GrenadeInHandPrefab;
 
     [Header("Throw Decision")]
     [Range(0f, 1f)]
