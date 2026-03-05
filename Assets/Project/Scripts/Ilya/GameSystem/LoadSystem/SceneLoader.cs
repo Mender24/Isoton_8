@@ -59,6 +59,9 @@ public class SceneLoader : MonoBehaviour
     private void Start()
     {
         SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(RespawnPlayer);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     #region LoadSystem
@@ -70,11 +73,16 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        Player.Instance.gameObject.SetActive(false);
+        Destroy(gameObject);
         SceneManager.LoadScene(0);
     }
 
     public void LoadScenes(bool isFirstSceneLoad = false, string forceLoad = "", bool isUseSave = false)
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         if (isFirstSceneLoad)
             _currentScene = forceLoad != "" ? forceLoad : (isUseSave ? SaveManager.GetLastSceneName() : _startScene);
 
