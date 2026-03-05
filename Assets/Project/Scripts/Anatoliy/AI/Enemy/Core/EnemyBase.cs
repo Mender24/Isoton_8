@@ -17,12 +17,13 @@ public abstract class EnemyBase : MonoBehaviour
     public System.Collections.Generic.List<GameObject> PatrolPoints = new();
     public float WaypointWaitTime = 1f;
 
-    public EnemyState      State       { get; private set; }
-    public EnemyHealth     Health      { get; private set; }
-    public EnemyPerception Perception  { get; private set; }
-    public EnemyNavigation Navigation  { get; private set; }
-    public IEnemyAnimator  Animator    { get; private set; }
-    public IEnemyAudio     Audio       { get; private set; }
+    public EnemyState        State       { get; private set; }
+    public EnemyHealth       Health      { get; private set; }
+    public EnemyPerception   Perception  { get; private set; }
+    public EnemyNavigation   Navigation  { get; private set; }
+    public IEnemyAnimator    Animator    { get; private set; }
+    public IEnemyAudio       Audio       { get; private set; }
+    public EnemyCoverModule  CoverModule { get; private set; }
 
     public Transform PlayerTransform => _playerTransform;
 
@@ -30,12 +31,13 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Awake()
     {
-        State      = GetComponent<EnemyState>();
-        Health     = GetComponent<EnemyHealth>();
-        Perception = GetComponent<EnemyPerception>();
-        Navigation = GetComponent<EnemyNavigation>();
-        Animator   = GetComponent<IEnemyAnimator>();
-        Audio      = GetComponent<IEnemyAudio>();
+        State       = GetComponent<EnemyState>();
+        Health      = GetComponent<EnemyHealth>();
+        Perception  = GetComponent<EnemyPerception>();
+        Navigation  = GetComponent<EnemyNavigation>();
+        Animator    = GetComponent<IEnemyAnimator>();
+        Audio       = GetComponent<IEnemyAudio>();
+        CoverModule = GetComponent<EnemyCoverModule>(); // null у MeleeEnemy
 
         if (_behaviorAgent == null)
             _behaviorAgent = GetComponent<BehaviorGraphAgent>();
@@ -58,6 +60,7 @@ public abstract class EnemyBase : MonoBehaviour
         ResolvePlayerTransform();
 
         Perception.Initialize(_playerTransform);
+        CoverModule?.Initialize(_playerTransform);
 
         State.StartPosition = transform.position;
 
@@ -97,6 +100,8 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void OnDeath()
     {
+        CoverModule?.ReleaseCover();
+
         if (_behaviorAgent != null)
             _behaviorAgent.enabled = false;
 
@@ -110,6 +115,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void OnPlayerDeath()
     {
+        CoverModule?.ReleaseCover();
         State.PlayerDetected = false;
         State.IsFiring = false;
         State.IsAlerted = false;

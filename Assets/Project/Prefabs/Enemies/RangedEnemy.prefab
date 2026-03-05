@@ -6112,6 +6112,7 @@ GameObject:
   - component: {fileID: 596298703566164461}
   - component: {fileID: 1096326905530644061}
   - component: {fileID: 5870818699915581356}
+  - component: {fileID: 2705138664914441156}
   m_Layer: 8
   m_Name: RangedEnemy
   m_TagString: Enemy
@@ -6408,6 +6409,10 @@ MonoBehaviour:
   HeardNoise: 0
   LastHeardNoisePosition: {x: 0, y: 0, z: 0}
   VisionMeterValue: 0
+  IsInCover: 0
+  HasCover: 0
+  CurrentCoverPoint: {x: 0, y: 0, z: 0}
+  CurrentCoverObject: {fileID: 0}
   CurrentBullet: 0
   ShootCooldown: 0
   MeleeAttackCooldown: 0
@@ -6456,7 +6461,7 @@ MonoBehaviour:
     m_Bits: 256
   _obstacleLayer:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 270337
   _fieldOfViewAngle: 110
   _visionRange: 20
   _visionHeight: 1.8
@@ -6472,7 +6477,7 @@ MonoBehaviour:
   _hearingRange: 10
   _noiseInvestigationTime: 8
   _detectionDelay: 0.5
-  _forgetTime: 4
+  _forgetTime: 30
   _minDistanceToForget: 4
 --- !u!114 &5677714126934959170
 MonoBehaviour:
@@ -6618,6 +6623,32 @@ MonoBehaviour:
   _maxAttackPitchVariation: 0.2
   _namedClips: []
   _detectionCooldown: 30
+--- !u!114 &2705138664914441156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3569886161779605784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8b7996a124f66b42893d69ce868e0bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _coverLayers:
+    serializedVersion: 2
+    m_Bits: 262144
+  _searchRadius: 20
+  _minCoverHeight: 0.8
+  _hideSensitivity: -0.25
+  _minDistanceFromPlayer: 1
+  _bravery: 2
+  _attackFromCoverCooldown: 2
+  _peekSearchRadius: 4
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 274689
+  _showDebug: 0
 --- !u!1 &3700810735188191434
 GameObject:
   m_ObjectHideFlags: 0

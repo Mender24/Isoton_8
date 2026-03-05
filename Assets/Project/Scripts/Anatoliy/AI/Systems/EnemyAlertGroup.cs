@@ -82,7 +82,7 @@ public class EnemyAlertGroup : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (!_useAlertRadius) return;
+        if (!_useAlertRadius || !_showDebug) return;
         Gizmos.color = new Color(1f, 0.4f, 0f, 0.25f);
         Gizmos.DrawSphere(transform.position, _alertRadius);
         Gizmos.color = new Color(1f, 0.4f, 0f, 0.8f);

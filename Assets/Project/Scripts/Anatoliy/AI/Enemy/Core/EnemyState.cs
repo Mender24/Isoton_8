@@ -61,6 +61,12 @@ public class EnemyState : MonoBehaviour
 
     [HideInInspector] public float VisionMeterValue;
 
+    // Cover
+    [HideInInspector] public bool      IsInCover;
+    [HideInInspector] public bool      HasCover;
+    [HideInInspector] public Vector3   CurrentCoverPoint;
+    [HideInInspector] public Transform CurrentCoverObject;
+
     private bool _isFiring;
     [HideInInspector]
     public bool IsFiring
@@ -136,6 +142,11 @@ public class EnemyState : MonoBehaviour
 
         HeardNoise             = false;
         LastHeardNoisePosition = Vector3.zero;
+
+        IsInCover           = false;
+        HasCover            = false;
+        CurrentCoverPoint   = Vector3.zero;
+        CurrentCoverObject  = null;
 
         CurrentBullet       = 0;
         ShootCooldown       = 0f;
