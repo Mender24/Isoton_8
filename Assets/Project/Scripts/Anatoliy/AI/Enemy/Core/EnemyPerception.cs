@@ -52,6 +52,8 @@ public class EnemyPerception : MonoBehaviour
     public bool  UseMultiRay    => _useMultiRay;
     public Vector3[] BodyCheckOffsets => _bodyCheckOffsets;
 
+    public void MultiplyForgetTime(float multiplier) => _forgetTime *= multiplier;
+
     private void Awake()
     {
         if (_state == null) _state = GetComponent<EnemyState>();

@@ -8,16 +8,23 @@ public class EnemyActivationTrigger : MonoBehaviour
 
     public EnemyAI[] enemiesInZone_legacy;
 
-    void Start()
+    void Awake()
     {
+        // Auto-collect from parent's children (siblings + their children) if not assigned manually
+        Transform searchRoot = transform.parent != null ? transform.parent : transform;
+
         if (enemiesInZone.Length == 0)
-        {
-            Debug.LogError("No enemies were assigned to the trigger " + gameObject.name);
-        }
+            enemiesInZone = searchRoot.GetComponentsInChildren<EnemyBase>();
 
         if (enemiesInZone_legacy.Length == 0)
+            enemiesInZone_legacy = searchRoot.GetComponentsInChildren<EnemyAI>();
+    }
+
+    void Start()
+    {
+        if (enemiesInZone.Length == 0 && enemiesInZone_legacy.Length == 0)
         {
-            Debug.LogError("No enemies were assigned to the trigger LEGACY " + gameObject.name);
+            Debug.LogWarning("No enemies found for trigger " + gameObject.name + ". Add enemies as children or siblings under a parent object.");
         }
     }
 
