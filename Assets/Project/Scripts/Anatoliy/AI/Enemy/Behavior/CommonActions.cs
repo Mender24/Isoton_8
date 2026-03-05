@@ -145,8 +145,9 @@ public partial class MoveToLastKnownPositionAction : Action
 
         if (e.State.IsReloading) e.Navigation.SetSpeed(0f);
         else                     e.Navigation.SetSpeed(e.Navigation.RunSpeed);
-        if (e.State.PlayerDetected) return Status.Failure;
-        if (e.State.HeardNoise) return Status.Failure;
+
+        if (e.State.PlayerIsSeen) return Status.Failure;
+        if (e.State.HeardNoise)   return Status.Failure;
 
         return e.IsEnemyStopped() ? Status.Success : Status.Running;
     }
@@ -299,7 +300,7 @@ public partial class SearchPatternNode : Action
     {
         var e = _enemy;
 
-        if (e.State.PlayerDetected)
+        if (e.State.PlayerIsSeen)
         {
             return Finish(e, Status.Failure);
         }

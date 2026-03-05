@@ -148,6 +148,16 @@ public abstract class EnemyBase : MonoBehaviour
         });
     }
 
+    public void AlertByGroup(Vector3 knownPlayerPos)
+    {
+        if (State.IsAlerted || State.IsDead || !State.IsActivated) return;
+
+        State.LastKnownPlayerPosition = knownPlayerPos;
+        State.TimeSinceLastSeen = 0f;
+        TriggerAlert();
+        State.PlayerDetected = true;
+    }
+
     public void AlertStarted()  => Navigation.Stop();
     public void AlertCompleted()
     {

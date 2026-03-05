@@ -50,7 +50,7 @@ public partial class SmartSearchPlayerAction : Action
     {
         var e = _enemy;
 
-        if (e.State.PlayerDetected) return Finish(Status.Failure);
+        if (e.State.PlayerIsSeen) return Finish(Status.Failure);
 
         if (!e.Navigation.Agent.hasPath || e.IsEnemyStopped())
         {

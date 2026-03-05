@@ -15,6 +15,9 @@ public class AimAndShootAtPlayerAction : Action
     private EnemyBase          _enemy;
     private GrenadeThrowModule _grenadeModule;
     private bool               _hasStartedAiming;
+    private float              _lostSightTimer;
+
+    private const float LostSightGracePeriod = 1.5f;
 
     protected override Status OnStart()
     {
@@ -28,6 +31,7 @@ public class AimAndShootAtPlayerAction : Action
         if (e == null || e.PlayerTransform == null) return Status.Failure;
 
         _hasStartedAiming = false;
+        _lostSightTimer   = 0f;
 
         return Status.Running;
     }
@@ -45,6 +49,15 @@ public class AimAndShootAtPlayerAction : Action
         if (e.PlayerTransform == null || !e.State.PlayerDetected) return Status.Failure;
 
         if (e.State.IsAlertAnimationPlaying) return Status.Running;
+
+        if (!e.State.PlayerIsSeen)
+        {
+            _lostSightTimer += Time.deltaTime;
+            if (_lostSightTimer >= LostSightGracePeriod)
+                return Status.Failure;
+            return Status.Running;
+        }
+        _lostSightTimer = 0f;
 
         if (!_hasStartedAiming)
         {
@@ -66,7 +79,6 @@ public class AimAndShootAtPlayerAction : Action
             e.StartAttack();
         }
 
-        // Выход на бросок гранаты
         if (e.State.ShouldThrowGrenade && _grenadeModule != null && _grenadeModule.CanThrowGrenade)
         {
             if (e is RangedEnemy ranged)
@@ -120,6 +132,9 @@ public class AlwaysAimAndShootAtPlayerAction : Action
     private EnemyBase          _enemy;
     private GrenadeThrowModule _grenadeModule;
     private bool               _hasStartedAiming;
+    private float              _lostSightTimer;
+
+    private const float LostSightGracePeriod = 1.5f;
 
     protected override Status OnStart()
     {
@@ -133,6 +148,7 @@ public class AlwaysAimAndShootAtPlayerAction : Action
         if (e == null || e.PlayerTransform == null) return Status.Failure;
 
         _hasStartedAiming = false;
+        _lostSightTimer   = 0f;
 
         return Status.Running;
     }
@@ -150,6 +166,15 @@ public class AlwaysAimAndShootAtPlayerAction : Action
         if (e.PlayerTransform == null || !e.State.PlayerDetected) return Status.Failure;
 
         if (e.State.IsAlertAnimationPlaying) return Status.Running;
+
+        if (!e.State.PlayerIsSeen)
+        {
+            _lostSightTimer += Time.deltaTime;
+            if (_lostSightTimer >= LostSightGracePeriod)
+                return Status.Failure;
+            return Status.Running;
+        }
+        _lostSightTimer = 0f;
 
         if (!_hasStartedAiming)
         {
@@ -174,7 +199,6 @@ public class AlwaysAimAndShootAtPlayerAction : Action
             e.StartAttack();
         }
 
-        // Выход на бросок гранаты
         if (e.State.ShouldThrowGrenade && _grenadeModule != null && _grenadeModule.CanThrowGrenade)
         {
             if (e is RangedEnemy ranged)
