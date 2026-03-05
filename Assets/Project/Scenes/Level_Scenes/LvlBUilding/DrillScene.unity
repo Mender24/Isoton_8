@@ -1898,12 +1898,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238c4b9a5935c8f4aac43505d935544f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypoints:
-  - {fileID: 1041895694}
-  - {fileID: 489127659}
-  speed: 3
-  loop: 1
+  targetWaypoint: {fileID: 0}
+  maxSpeed: 5
+  accelerationTime: 2
+  decelerationTime: 1.5
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  decelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  startDecelerationDistance: 3
+  stoppingDistance: 0.1
+  smoothStop: 1
   isActive: 1
+  startDelay: 0
+  currentSpeed: 0
+  accelerationProgress: 0
+  decelerationProgress: 0
+  hasReachedTarget: 0
+  isDecelerating: 0
 --- !u!1001 &111578626
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44970,6 +45026,142 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0382362dc085a43479165566939d18e7, type: 3}
+--- !u!1001 &3197405702422056015
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2171164122811934744, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_Name
+      value: CraneMetalConstruction
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -9.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 67.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -139
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -3.7493994e-33
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -6.123234e-17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 6.123234e-17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7418522139578111153, guid: 53f93bbaaa4f969419ca9d7db5159f9b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 53f93bbaaa4f969419ca9d7db5159f9b, type: 3}
+--- !u!1001 &5609588997569971901
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.0347805
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 95.437935
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -182.08774
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -3.7493994e-33
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -6.123234e-17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 6.123234e-17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3162387860648609838, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3971384228731833214, guid: 4b2cc67caac8250489bb2977a1fd4f71,
+        type: 3}
+      propertyPath: m_Name
+      value: CraneCabin
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4b2cc67caac8250489bb2977a1fd4f71, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -45050,4 +45242,6 @@ SceneRoots:
   - {fileID: 986612113}
   - {fileID: 1716652052}
   - {fileID: 1412816540}
+  - {fileID: 5609588997569971901}
+  - {fileID: 3197405702422056015}
   - {fileID: 2085276067}
