@@ -1,3 +1,4 @@
+using Akila.FPSFramework;
 using UnityEngine;
 
 public enum GrenadeThrowPhase { Idle, WindingUp, Throwing }
@@ -19,6 +20,9 @@ public class GrenadeThrowModule : MonoBehaviour
     private int _bulletsFiredSinceCheck;
     private GameObject _heldGrenade;
 
+    private float _grenadeDeathZone;
+    private float _grenadeDamageZone;
+
     public GrenadeThrowPhase Phase { get; private set; } = GrenadeThrowPhase.Idle;
 
     public bool CanThrowGrenade => _config != null
@@ -39,6 +43,19 @@ public class GrenadeThrowModule : MonoBehaviour
             _basicAnimator.OnGrenadeWindUpComplete += HandleWindUpComplete;
             _basicAnimator.OnGrenadeReleasePoint   += HandleReleasePoint;
             _basicAnimator.OnGrenadeThrowComplete  += HandleThrowComplete;
+        }
+
+        CacheExplosiveData();
+    }
+
+    private void CacheExplosiveData()
+    {
+        if (_config?.GrenadePrefab == null) return;
+
+        if (_config.GrenadePrefab.TryGetComponent(out Explosive explosive))
+        {
+            _grenadeDeathZone   = explosive.deathZone;
+            _grenadeDamageZone  = explosive.damageZone;
         }
     }
 
@@ -65,8 +82,12 @@ public class GrenadeThrowModule : MonoBehaviour
         if (_bulletsFiredSinceCheck >= _config.BulletsBeforeCheck)
         {
             _bulletsFiredSinceCheck = 0;
-            if (CanThrowGrenade && Random.value <= _config.ThrowChance)
+            if (CanThrowGrenade && Random.value <= _config.ThrowChance
+                && _playerTransform != null
+                && !IsLandingDangerousForAllies(_playerTransform.position))
+            {
                 _state.ShouldThrowGrenade = true;
+            }
         }
     }
 
@@ -169,6 +190,23 @@ public class GrenadeThrowModule : MonoBehaviour
 
         if (grenade.TryGetComponent(out Rigidbody rb))
             rb.linearVelocity = CalculateThrowVelocity(origin, landing, _config.ThrowTime);
+    }
+
+    private bool IsLandingDangerousForAllies(Vector3 landing)
+    {
+        if (_grenadeDamageZone <= 0f) return false;
+
+        if (Vector3.Distance(transform.position, landing) < _grenadeDamageZone)
+            return true;
+
+        foreach (var enemy in FindObjectsByType<EnemyBase>(FindObjectsSortMode.None))
+        {
+            if (enemy.gameObject == gameObject) continue;
+            if (Vector3.Distance(enemy.transform.position, landing) < _grenadeDamageZone)
+                return true;
+        }
+
+        return false;
     }
 
     private static Vector3 CalculateThrowVelocity(Vector3 from, Vector3 to, float time)
