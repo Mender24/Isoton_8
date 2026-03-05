@@ -65,6 +65,7 @@ public class EnemyPerception : MonoBehaviour
     private void Update()
     {
         if (!_state.IsActivated || _state.IsDead) return;
+        _state.PlayerIsSeen = CanSeePlayer();
         TickForget();
         TickNoise();
         TickVisionMeter();

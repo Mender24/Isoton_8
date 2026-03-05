@@ -35,9 +35,6 @@ public partial class AgentSeesPlayerAction : Action
             return Status.Success;
         }
 
-        if (_enemy is RangedEnemy)
-            _enemy.State.PlayerDetected = false;
-
         return Status.Failure;
     }
 }

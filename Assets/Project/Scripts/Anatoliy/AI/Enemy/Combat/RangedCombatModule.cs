@@ -74,7 +74,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             {
                 _state.IsReloading = false;
                 _animator?.SetReloading(false, 0f);
-                if (_state.PlayerDetected)
+                if (_state.PlayerIsSeen)
                     _state.IsFiring = true;
             }
 
@@ -88,7 +88,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     private void Fire()
     {
-        if (!_state.PlayerDetected)
+        if (!_state.PlayerIsSeen)
         {
             StopFire();
             return;

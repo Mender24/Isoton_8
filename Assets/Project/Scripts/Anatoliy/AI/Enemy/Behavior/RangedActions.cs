@@ -61,6 +61,10 @@ public class AimAndShootAtPlayerAction : Action
             _hasStartedAiming = true;
             e.StartAttack();
         }
+        else if (_hasStartedAiming && !e.State.IsFiring && !e.State.IsReloading && e.State.PlayerIsSeen)
+        {
+            e.StartAttack();
+        }
 
         // Выход на бросок гранаты
         if (e.State.ShouldThrowGrenade && _grenadeModule != null && _grenadeModule.CanThrowGrenade)
@@ -163,6 +167,10 @@ public class AlwaysAimAndShootAtPlayerAction : Action
         if (angle < 10f && !_hasStartedAiming)
         {
             _hasStartedAiming = true;
+            e.StartAttack();
+        }
+        else if (_hasStartedAiming && !e.State.IsFiring && !e.State.IsReloading && e.State.PlayerIsSeen)
+        {
             e.StartAttack();
         }
 
