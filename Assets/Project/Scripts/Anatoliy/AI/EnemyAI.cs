@@ -319,7 +319,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
             {
                 if (hit.collider.gameObject.TryGetComponent(out Damageable actor))
                 {
-                    actor.Damage(_damage);
+                    actor.Damage(_damage, gameObject);
 
                     if (_showDebug && _showShootingRaycast)
                     {
