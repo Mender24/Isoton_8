@@ -298,6 +298,7 @@ public class SoundManager : MonoBehaviour
 public class AudioClipInLocation
 {
     public AudioClip AudioClip;
+    [Range(0, 1f)]
     public float MaxVolume;
     public int IdLocation;
 }
