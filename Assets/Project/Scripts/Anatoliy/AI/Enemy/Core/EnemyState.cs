@@ -64,6 +64,7 @@ public class EnemyState : MonoBehaviour
     // Cover
     [HideInInspector] public bool      IsInCover;
     [HideInInspector] public bool      HasCover;
+    [HideInInspector] public bool      IsMovingToCover;
     [HideInInspector] public Vector3   CurrentCoverPoint;
     [HideInInspector] public Transform CurrentCoverObject;
 
@@ -145,6 +146,7 @@ public class EnemyState : MonoBehaviour
 
         IsInCover           = false;
         HasCover            = false;
+        IsMovingToCover     = false;
         CurrentCoverPoint   = Vector3.zero;
         CurrentCoverObject  = null;
 

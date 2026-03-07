@@ -66,6 +66,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     private float _grenadeWindUpClipLength = 0.8f;
     private float _grenadeThrowClipLength  = 0.6f;
     private bool  _isInitialized;
+    private bool  _isAiming;
+    private bool  _wasMovingToCover;
     private IEnemyAudio _audio;
 
     public System.Action OnAlertStarted;
@@ -143,6 +145,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         if (!_isInitialized) return;
         UpdateMovement();
         UpdateIdleVariations();
+        UpdateCoverMovementAiming();
     }
 
     private void UpdateMovement()
@@ -157,6 +160,17 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
 
         _cachedSpeed = Mathf.Lerp(_cachedSpeed, target, _speedSmoothTime * Time.deltaTime * 10f);
         _animator.SetFloat(P.Speed, _cachedSpeed);
+    }
+
+    private void UpdateCoverMovementAiming()
+    {
+        if (_state == null) return;
+
+        bool isMovingToCover = _state.IsMovingToCover;
+        if (isMovingToCover == _wasMovingToCover) return;
+
+        _wasMovingToCover = isMovingToCover;
+        _animator.SetBool(P.Aiming, isMovingToCover ? false : _isAiming);
     }
 
     private void UpdateIdleVariations()
@@ -208,6 +222,9 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void SetAiming(bool isAiming)
     {
         if (!_isInitialized) return;
+        _isAiming = isAiming;
+        // Не применяем к аниматору пока бот движется к укрытию
+        if (_state != null && _state.IsMovingToCover) return;
         _animator.SetBool(P.Aiming, isAiming);
     }
 
@@ -299,8 +316,10 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _animator.ResetTrigger(P.GrenadeThrow);
         _animator.ResetTrigger(P.GrenadeCancel);
 
-        _cachedSpeed = 0f;
-        _idleTimer = 0f;
+        _cachedSpeed        = 0f;
+        _idleTimer          = 0f;
+        _isAiming           = false;
+        _wasMovingToCover   = false;
     }
 
     public void OnAlertStart()

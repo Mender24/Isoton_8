@@ -53,6 +53,7 @@ public partial class MoveToCoverAction : Action
         if (!_enemy.State.HasCover)                return Status.Failure;
 
         _enemy.Navigation.MoveTo(_enemy.State.CurrentCoverPoint, run: true);
+        _enemy.State.IsMovingToCover = true;
         return Status.Running;
     }
 
@@ -63,6 +64,7 @@ public partial class MoveToCoverAction : Action
 
         if (_cover.IsAtCoverPoint())
         {
+            _enemy.State.IsMovingToCover = false;
             _enemy.State.IsInCover = true;
             _enemy.Navigation.Stop();
             return Status.Success;
@@ -73,6 +75,7 @@ public partial class MoveToCoverAction : Action
 
     protected override void OnEnd()
     {
+        _enemy.State.IsMovingToCover = false;
     }
 }
 
@@ -159,6 +162,7 @@ public partial class MoveToAttackPositionAction : Action
             return Status.Failure;
 
         _enemy.Navigation.MoveTo(peekPos, run: true);
+        _enemy.State.IsMovingToCover = true;
         _moving = true;
         return Status.Running;
     }
@@ -170,8 +174,13 @@ public partial class MoveToAttackPositionAction : Action
 
         if (_moving)
         {
-            if (_enemy.State.PlayerIsSeen) return Status.Success;
+            if (_enemy.State.PlayerIsSeen)
+            {
+                _enemy.State.IsMovingToCover = false;
+                return Status.Success;
+            }
             if (!_enemy.IsEnemyStopped()) return Status.Running;
+            _enemy.State.IsMovingToCover = false;
             _moving = false;
         }
 
@@ -186,6 +195,7 @@ public partial class MoveToAttackPositionAction : Action
 
     protected override void OnEnd()
     {
+        _enemy.State.IsMovingToCover = false;
         _moving      = false;
         _waitElapsed = 0f;
     }
