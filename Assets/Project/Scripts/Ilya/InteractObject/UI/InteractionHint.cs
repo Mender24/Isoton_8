@@ -49,12 +49,14 @@ public class InteractionHint : MonoBehaviour
             _isRange = false;
     }
 
-    public void Update()
+    public void LateUpdate()
     {
         if (!_isRange && _circleImage.color.a == 0)
             return;
 
-        if (Player.Instance.InteractionsManager.CurrentInteractable != null && transform.parent != null && Player.Instance.InteractionsManager.CurrentInteractable.transform.gameObject.name == transform.parent.gameObject.name)
+        if (!Player.Instance.InteractionsManager.IsDestroy 
+            && transform.parent != null 
+            && Player.Instance.InteractionsManager.transform.gameObject.name == transform.parent.gameObject.name)
             _isCurrentObject = true;
         else
             _isCurrentObject = false;

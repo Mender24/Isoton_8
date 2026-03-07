@@ -58,6 +58,7 @@ namespace Akila.FPSFramework
 
         /// <summary> Whether interactions are currently enabled. </summary>
         public bool IsActive { get; set; } = true;
+        public bool IsDestroy { get; set; } = true;
 
         /// <summary> Reference to the player's input handler. </summary>
         public CharacterInput CharacterInput { get; private set; }
@@ -74,6 +75,11 @@ namespace Akila.FPSFramework
 
         private readonly List<IInteractable> nearbyInteractables = new List<IInteractable>();
         private IInteractable closestInteractable = null;
+
+        private void OnDestroy()
+        {
+            IsDestroy = true;
+        }
 
         private void Start()
         {
