@@ -59,7 +59,9 @@ public class InteractionHint : MonoBehaviour
 
         if (!Player.Instance.InteractionsManager.IsDestroy 
             && transform.parent != null 
-            && Player.Instance.InteractionsManager.transform.gameObject.name == transform.parent.gameObject.name)
+            && Player.Instance.InteractionsManager.CurrentInteractable != null
+            && Player.Instance.InteractionsManager.CurrentInteractable.isInstant
+            && Player.Instance.InteractionsManager.CurrentInteractable.transform.name == transform.parent.gameObject.name)
             _isCurrentObject = true;
         else
             _isCurrentObject = false;

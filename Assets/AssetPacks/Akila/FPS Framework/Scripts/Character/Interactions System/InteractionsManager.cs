@@ -58,7 +58,7 @@ namespace Akila.FPSFramework
 
         /// <summary> Whether interactions are currently enabled. </summary>
         public bool IsActive { get; set; } = true;
-        public bool IsDestroy { get; set; } = true;
+        public bool IsDestroy { get; set; } = false;
 
         /// <summary> Reference to the player's input handler. </summary>
         public CharacterInput CharacterInput { get; private set; }
