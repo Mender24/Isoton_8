@@ -274,6 +274,8 @@ public class SceneLoader : MonoBehaviour
         IsInitPlayer = true;
         _isMovePostLoadScene = true;
 
+        Player.Instance.gameObject.SetActive(true);
+
         if (_isDebug)
             Debug.Log("Init complete");
     }
