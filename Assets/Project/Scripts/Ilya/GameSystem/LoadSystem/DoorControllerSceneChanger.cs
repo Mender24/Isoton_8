@@ -14,7 +14,15 @@ namespace Akila.FPSFramework
         public float roughness = 2;
         private Quaternion targetRotation;
 
+        private Interactable _interactable;
+
         public bool EnterDoorIsOpen => enterDoor.IsOpen;
+
+        private void Start()
+        {
+            if(TryGetComponent(out Interactable interactable))
+                _interactable = interactable;
+        }
 
         void Update()
         {
@@ -37,6 +45,10 @@ namespace Akila.FPSFramework
         public void EnterExitDoor()
         {
             ActivatedLeaver();
+
+            if (_interactable != null)
+                _interactable.OffInteraction();
+
             enterDoor.CloseDoor();
             exitDoor.OpenDoor();
         }

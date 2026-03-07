@@ -22,11 +22,11 @@ public class EntitySoundManager : MonoBehaviour
     [SerializeField] private AudioSource _otherAudioSource;
     [Space]
     [SerializeField] private List<CellAudioClip> _otherAudioClips;
-    private Dictionary<string, CellAudioClip> _otherClips;
+    private Dictionary<string, CellAudioClip> _otherClips = new();
 
     private void Awake()
     {
-        _basePitch = _fireAudioSource.pitch;
+        //_basePitch = _fireAudioSource.pitch;
 
         foreach (var cell in _otherAudioClips)
             _otherClips.Add(cell.AudioClip.name, cell);
@@ -50,7 +50,8 @@ public class EntitySoundManager : MonoBehaviour
         if (!_otherClips.ContainsKey(soundName))
             return;
 
-        _otherClips[soundName].PlayAudioClip(_otherAudioSource);
+        _otherClips[soundName].PlayAudioClip(_otherAudioSource, -1, true);
+        Debug.Log($"Play sound {soundName}");
     }
 
     public void PlayRandomOtherSound()
