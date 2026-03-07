@@ -138,7 +138,7 @@ public class SoundManager : MonoBehaviour
     {
         StopAllCoroutines();
 
-        StartCoroutine(SetAmbientClip(_ambiemtSource, SceneLoader.instance.CurrentSceneId, false));
+        StartCoroutine(SetAmbientClip(_ambiemtSource, SceneLoader.instance.GetIndexNotTransition, false));
     }
 
     private void OnLevelLoaded()
