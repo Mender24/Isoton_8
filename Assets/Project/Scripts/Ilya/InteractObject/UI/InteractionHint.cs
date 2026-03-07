@@ -52,7 +52,10 @@ public class InteractionHint : MonoBehaviour
     public void LateUpdate()
     {
         if (!_isRange && _circleImage.color.a == 0)
+        {
+            _addCircleImage.color = OddAlpha(_addCircleImage.color, _speedDown);
             return;
+        }
 
         if (!Player.Instance.InteractionsManager.IsDestroy 
             && transform.parent != null 
