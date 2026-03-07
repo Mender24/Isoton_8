@@ -28,6 +28,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2484882160784244914}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,7 +36,6 @@ Transform:
   m_Children:
   - {fileID: 5351456871428321834}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1127298105953324021
 MonoBehaviour:
@@ -55,9 +55,9 @@ MonoBehaviour:
     m_Bits: 6455
   deathZone: 3
   damageZone: 10
-  maxDamage: 150
-  force: 7
-  delay: 3
+  maxDamage: 50
+  force: 3
+  delay: 5
   ignoreGlobalScale: 1
   damageable: 1
   health: 1
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b251782f8f7af047b71c13eeda2e885, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forceMode: 2
+  forceMode: 0
   forceValue: {x: 0, y: 0, z: 0}
   torqueValue: {x: 3, y: 1, z: 1}
   stopOnCollision: 1
