@@ -5,6 +5,7 @@ namespace Akila.FPSFramework
     public class Player : MonoBehaviour
     {
         public static Player Instance;
+        public bool DEBUG_ShouldBeActive;
 
         private Inventory _inventory;
         private Actor _actor;
@@ -25,6 +26,7 @@ namespace Akila.FPSFramework
 
         private void Start()
         {
+            if (DEBUG_ShouldBeActive == false)
             gameObject.SetActive(false);
         }
     }
