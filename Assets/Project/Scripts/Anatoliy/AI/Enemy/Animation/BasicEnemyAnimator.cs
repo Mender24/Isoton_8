@@ -20,6 +20,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     [SerializeField] private float _idleVariationInterval = 5f;
     [SerializeField] private int   _idleVariationsCount   = 3;
     [SerializeField] private float _idleVariationChance   = 0.6f;
+    [SerializeField] private float _idleBlendSpeed        = 1.5f;
 
     [Header("Win animations")]
     [SerializeField] private int _amountWinAnimations = 3;
@@ -61,6 +62,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
 
     private float _cachedSpeed;
     private float _idleTimer;
+    private float _currentIdleF;
+    private float _targetIdleF;
     private float _reloadClipLength        = 2.8f;
     private float _meleeClipLength         = 3.2f;
     private float _grenadeWindUpClipLength = 0.8f;
@@ -99,6 +102,10 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
             _state.OnIsFiringChanged += SetShooting;
             _state.OnIsDeadChanged   += SetDead;
         }
+
+        _targetIdleF  = Random.Range(0, _idleVariationsCount);
+        _currentIdleF = _targetIdleF;
+        _animator.SetFloat(P.RandomIdleF, _currentIdleF);
 
         _isInitialized = true;
     }
@@ -145,6 +152,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         if (!_isInitialized) return;
         UpdateMovement();
         UpdateIdleVariations();
+        UpdateIdleBlend();
         UpdateCoverMovementAiming();
     }
 
@@ -182,11 +190,15 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         {
             _idleTimer = 0f;
             if (Random.value < _idleVariationChance)
-            {
-                float idle = Random.Range(0, _idleVariationsCount);
-                _animator.SetFloat(P.RandomIdleF, idle);
-            }
+                _targetIdleF = Random.Range(0, _idleVariationsCount);
         }
+    }
+
+    private void UpdateIdleBlend()
+    {
+        if (Mathf.Approximately(_currentIdleF, _targetIdleF)) return;
+        _currentIdleF = Mathf.MoveTowards(_currentIdleF, _targetIdleF, _idleBlendSpeed * Time.deltaTime);
+        _animator.SetFloat(P.RandomIdleF, _currentIdleF);
     }
 
     public void PlayAlert()
