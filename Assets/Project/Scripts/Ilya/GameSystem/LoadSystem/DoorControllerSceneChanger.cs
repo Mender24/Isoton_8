@@ -83,9 +83,6 @@ namespace Akila.FPSFramework
 
             yield return new WaitForSeconds(1f);
             SceneLoader.instance.LoadScenes(isUseSave: true);
-            //yield return new WaitForSeconds(1f);
-
-            //exitDoor.OpenDoor();
         }
 
         private void ToggleLeaver()

@@ -35,6 +35,15 @@ public class SceneLoader : MonoBehaviour
     public int CurrentSceneId => _currentSceneIndex;
     public string NextScene => _sceneNames[_nextSceneIndex];
     public bool CheckCurrentSceneTransition => _sceneNames[_currentSceneIndex].Contains(_transitionName);
+    public int GetIndexNotTransition { 
+        get
+        {
+            if (CheckCurrentSceneTransition)
+                return _currentSceneIndex + 1;
+
+            return _currentSceneIndex;
+        } 
+    }
 
     public bool IsLoad { get; private set; }
     public bool IsInitPlayer { get; private set; }
@@ -273,6 +282,8 @@ public class SceneLoader : MonoBehaviour
 
         IsInitPlayer = true;
         _isMovePostLoadScene = true;
+
+        Player.Instance.gameObject.SetActive(true);
 
         if (_isDebug)
             Debug.Log("Init complete");

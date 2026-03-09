@@ -49,12 +49,19 @@ public class InteractionHint : MonoBehaviour
             _isRange = false;
     }
 
-    public void Update()
+    public void LateUpdate()
     {
         if (!_isRange && _circleImage.color.a == 0)
+        {
+            _addCircleImage.color = OddAlpha(_addCircleImage.color, _speedDown);
             return;
+        }
 
-        if (Player.Instance.InteractionsManager.CurrentInteractable != null && transform.parent != null && Player.Instance.InteractionsManager.CurrentInteractable.transform.gameObject.name == transform.parent.gameObject.name)
+        if (!Player.Instance.InteractionsManager.IsDestroy 
+            && transform.parent != null 
+            && Player.Instance.InteractionsManager.CurrentInteractable != null
+            && Player.Instance.InteractionsManager.CurrentInteractable.isInstant
+            && Player.Instance.InteractionsManager.CurrentInteractable.transform.name == transform.parent.gameObject.name)
             _isCurrentObject = true;
         else
             _isCurrentObject = false;

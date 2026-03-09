@@ -138,7 +138,7 @@ public class SoundManager : MonoBehaviour
     {
         StopAllCoroutines();
 
-        StartCoroutine(SetAmbientClip(_ambiemtSource, SceneLoader.instance.CurrentSceneId, false));
+        StartCoroutine(SetAmbientClip(_ambiemtSource, SceneLoader.instance.GetIndexNotTransition, false));
     }
 
     private void OnLevelLoaded()
@@ -298,6 +298,7 @@ public class SoundManager : MonoBehaviour
 public class AudioClipInLocation
 {
     public AudioClip AudioClip;
+    [Range(0, 1f)]
     public float MaxVolume;
     public int IdLocation;
 }

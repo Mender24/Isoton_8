@@ -3,13 +3,15 @@ using Unity.Behavior;
 using UnityEngine;
 
 [Serializable, Unity.Properties.GeneratePropertyBag]
-[Condition(name: "IsAgentNOTDead", story: "Is [EnemyAI] NOT Dead", category: "Conditions", id: "a580808ce3e84a63a7b605659e73325d")]
+[Condition(name: "IsAgentNOTDead", story: "Is [Agent] NOT Dead", category: "Conditions", id: "a580808ce3e84a63a7b605659e73325d")]
 public partial class IsAgentDeadCondition : Condition
 {
-    [SerializeReference] public BlackboardVariable<EnemyAI> EnemyAI;
+    [SerializeReference] public BlackboardVariable<GameObject> Agent;
 
     public override bool IsTrue()
     {
-        return !EnemyAI.Value.isDead;
+        EnemyBase enemy;
+        bool res = Agent.Value.TryGetComponent(out enemy) ? (!enemy.State.IsDead) : false;
+        return res;
     }
 }
