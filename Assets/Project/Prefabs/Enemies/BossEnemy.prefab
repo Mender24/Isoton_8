@@ -6114,7 +6114,7 @@ GameObject:
   - component: {fileID: 5870818699915581356}
   - component: {fileID: 2705138664914441156}
   m_Layer: 8
-  m_Name: RangedEnemy
+  m_Name: BossEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6169,7 +6169,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3569886161779605784}
   m_Enabled: 1
-  m_AgentTypeID: -334000983
+  m_AgentTypeID: -1923039037
   m_Radius: 0.3
   m_Speed: 5
   m_Acceleration: 20
@@ -6431,7 +6431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8204342cd6ed1fb4aa798200d6dae1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
+  _maxHealth: 1000
   _ragdoll: {fileID: 3158560351237725744}
   _disableCollidersDelay: 3
   _deactivateSelfDelay: 20
@@ -6463,19 +6463,19 @@ MonoBehaviour:
   _obstacleLayer:
     serializedVersion: 2
     m_Bits: 274433
-  _fieldOfViewAngle: 110
-  _visionRange: 20
+  _fieldOfViewAngle: 130
+  _visionRange: 50
   _visionHeight: 1.8
   _useVisionMeter: 1
-  _visionMeterSpeedFar: 1.5
+  _visionMeterSpeedFar: 3
   _visionMeterSpeedNear: 3
-  _visionMeterDecay: 2
+  _visionMeterDecay: 1
   _useMultiRay: 1
   _bodyCheckOffsets:
   - {x: 0, y: 0.1, z: 0}
   - {x: 0, y: 1, z: 0}
   - {x: 0, y: 1.8, z: 0}
-  _hearingRange: 10
+  _hearingRange: 20
   _noiseInvestigationTime: 8
   _detectionDelay: 0.5
   _forgetTime: 30
@@ -6492,10 +6492,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81da6f4d415e2a04e9018f4ed57e734e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 2
-  _runSpeed: 5
+  _walkSpeed: 3
+  _runSpeed: 7
   _stoppingDistance: 0.2
-  _rotationSpeed: 20
+  _rotationSpeed: 50
 --- !u!114 &8304660869181586762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6640,11 +6640,11 @@ MonoBehaviour:
   _coverLayers:
     serializedVersion: 2
     m_Bits: 262144
-  _searchRadius: 20
+  _searchRadius: 10
   _minCoverHeight: 0.8
   _hideSensitivity: -0.25
   _minDistanceFromPlayer: 1
-  _bravery: 7
+  _bravery: 0
   _attackFromCoverCooldown: 2
   _peekSearchRadius: 4
   _obstacleMask:
@@ -12582,7 +12582,7 @@ AudioSource:
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1.4903177
+  m_Pitch: 1
   Loop: 0
   Mute: 0
   Spatialize: 0
