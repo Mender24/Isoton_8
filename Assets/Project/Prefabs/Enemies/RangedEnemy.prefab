@@ -361,7 +361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &172217651667889021
@@ -950,7 +950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &596901937413955722
@@ -2177,7 +2177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &1228449112326275008
@@ -6113,6 +6113,8 @@ GameObject:
   - component: {fileID: 1096326905530644061}
   - component: {fileID: 5870818699915581356}
   - component: {fileID: 2705138664914441156}
+  - component: {fileID: 1512331904244124512}
+  - component: {fileID: 2694631342351054972}
   m_Layer: 8
   m_Name: RangedEnemy
   m_TagString: Enemy
@@ -6333,7 +6335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 1
   lifeTime: 60
 --- !u!114 &3158560351237725744
@@ -6651,6 +6653,41 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 274689
   _showDebug: 0
+--- !u!114 &1512331904244124512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3569886161779605784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e530bc4c3e2ea4580e29cb9358b11f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodEffectPrefabs:
+  - {fileID: 893913727056456344, guid: adbcdb6ee09235244ad8cf01c1ed7186, type: 3}
+  bloodEffectPrefabsDestroy: 5
+  otherBloodEffectsData: []
+  destroy: 0
+  disabled: 0
+  disabledObjects: []
+--- !u!114 &2694631342351054972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3569886161779605784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e132ae7dab5908e4ebc78875032e25c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodProjectorPrefab: {fileID: 81780311032234737, guid: 20494e9a5a3996f4a87a98000e90a0b8,
+    type: 3}
+  zOffset: 0.1
+  destroyTime: 20
 --- !u!1 &3700810735188191434
 GameObject:
   m_ObjectHideFlags: 0
@@ -8308,7 +8345,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4366852639459076217
 Transform:
   m_ObjectHideFlags: 0
@@ -9077,7 +9114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &5708983787106115368
@@ -10114,7 +10151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!114 &1969589363610394171
@@ -10388,7 +10425,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &6421178884047782810
@@ -11375,7 +11412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &6812310133757964840
@@ -12229,7 +12266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &7374998583191074160
@@ -12533,7 +12570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &7549196538848570732
@@ -13638,7 +13675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &8195594291515377060
@@ -15093,7 +15130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a854272f4ea4d449a953a3e196770aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalVFX: {fileID: 733209293663125264, guid: fcd27e9b64f619746991b41c831fd719, type: 3}
+  decalVFX: {fileID: 0}
   parent: 0
   lifeTime: 60
 --- !u!1 &8639827233966785119
