@@ -38,7 +38,6 @@ public class RigidbodyPusherWithDelay : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(PushAfterDelay());
     }
 
     private IEnumerator PushAfterDelay()

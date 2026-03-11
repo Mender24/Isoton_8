@@ -77,7 +77,6 @@ public class EnemyPerception : MonoBehaviour
     {
         if (!_state.IsAlerted || IsPlayerInSightRaw()) return;
 
-        // Не забываем пока бот активно движется к укрытию
         if (_state.HasCover && !_state.IsInCover) return;
 
         _state.TimeSinceLastSeen += Time.deltaTime;

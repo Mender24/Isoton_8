@@ -2,13 +2,16 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using Akila.FPSFramework;
+using Biostart.Impact;
+using Biostart.Blood;
+
 
 /// <summary>
 /// Отвечает за здоровье, получение урона, смерть и ragdoll.
 /// Реализует IDamageable. При смерти стреляет OnDeath.
 /// </summary>
 [RequireComponent(typeof(EnemyState))]
-public class EnemyHealth : MonoBehaviour, IDamageable
+public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
 {
     [Header("Health")]
     [SerializeField] private float _maxHealth = 100f;
@@ -40,13 +43,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private EnemyState _state;
     private IEnemyAnimator _animator;
     private IEnemyAudio _audio;
+    private ImpactEffect _impactEffect;
+    private BloodProjector _bloodProjector;
 
     private void Awake()
     {
-        _state    = GetComponent<EnemyState>();
-        _animator = GetComponent<IEnemyAnimator>();
-        _audio    = GetComponent<IEnemyAudio>();
-        _health   = _maxHealth;
+        _state         = GetComponent<EnemyState>();
+        _animator      = GetComponent<IEnemyAnimator>();
+        _audio         = GetComponent<IEnemyAudio>();
+        _impactEffect   = GetComponent<ImpactEffect>();
+        _bloodProjector = GetComponent<BloodProjector>();
+        _health        = _maxHealth;
     }
 
     public void Damage(float amount, GameObject damageSource)
@@ -60,6 +67,24 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         if (_health <= 0f)
             Die();
+    }
+
+    public void OnHitInChildren(HitInfo hitInfo)
+    {
+        if (_state.IsDead) return;
+
+        RaycastHit hit = hitInfo.raycastHit;
+
+        if (_impactEffect != null)
+            _impactEffect.SpawnBloodEffect(hit.point, hit.normal);
+
+        if (_bloodProjector != null && _bloodProjector.bloodProjectorPrefab != null)
+        {
+            Vector3 pos = hit.point + hit.normal * _bloodProjector.zOffset;
+            GameObject proj = Instantiate(_bloodProjector.bloodProjectorPrefab, pos, Quaternion.LookRotation(hit.normal));
+            proj.transform.SetParent(hit.collider != null ? hit.collider.transform : transform);
+            Destroy(proj, _bloodProjector.destroyTime);
+        }
     }
 
     private void TryPlayHitReaction()
