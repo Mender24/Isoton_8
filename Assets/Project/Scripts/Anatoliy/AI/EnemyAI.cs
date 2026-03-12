@@ -87,6 +87,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     [Header("Audio")]
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip _detectionSound;
+    [SerializeField] private AudioClip _detectionSound2;
     [SerializeField] private List<AudioClip> _footstepSounds;
 
     [Header("Debug Settings")]
@@ -134,6 +135,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     // AI States
     public bool isActivated = false;
+    public float timeBeforeDiactivate = 20f;
     [HideInInspector] public bool playerDetected = false;
     [HideInInspector] public bool isAlerted = false;
     [HideInInspector] public bool isSearching = false;
@@ -159,6 +161,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private bool _debugIsPlayerHit = false;
     private Vector3 _debugShotTargetPosition = new();
     private Camera _mainCamera = null;
+    private Ragdoll _ragdoll = null;
 
     public float Health { get => _health; set => _health = value; }
     public bool isDamagableDisabled { get; set; }
@@ -198,6 +201,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         if (behAgent == null) behAgent = GetComponent<BehaviorGraphAgent>();
         if (animationController == null) animationController = GetComponent<BasicEnemyAnimationController>();
         if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
+        if (_ragdoll == null) _ragdoll = GetComponent<Ragdoll>();
 
         if (playerTransform != null)
         {
@@ -207,6 +211,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
         agent.stoppingDistance = stoppingDistance;
         startPosition = transform.position;
         Register();
+        if (_detectionSound != null)
+            _audioSource.volume =0.2f;
     }
 
     void Update()
@@ -313,7 +319,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
             {
                 if (hit.collider.gameObject.TryGetComponent(out Damageable actor))
                 {
-                    actor.Damage(_damage);
+                    actor.Damage(_damage, gameObject);
 
                     if (_showDebug && _showShootingRaycast)
                     {
@@ -456,7 +462,13 @@ public class EnemyAI : MonoBehaviour, IDamageable
         if (_audioSource && _detectionSound && _alertSoundTimer <= 0)
         {
             _alertSoundTimer = _alertSoundDelay;
-            _audioSource.PlayOneShot(_detectionSound);
+
+            int random = Random.Range(0, 2);
+            if (random == 0)
+                _audioSource.PlayOneShot(_detectionSound);
+            else
+                if(_detectionSound2 != null)
+                _audioSource.PlayOneShot(_detectionSound2);
         }
 
         yield return new WaitForSeconds(_detectionDelay);
@@ -642,13 +654,11 @@ public class EnemyAI : MonoBehaviour, IDamageable
         agent.enabled = false;
         behAgent.enabled = false;
 
-        var cols = GetComponentsInChildren<Collider>();
-        foreach (var col in cols)
-        {
-            col.enabled = false;
-        }
-
         animationController?.SetDead(true);
+
+        _ragdoll.Enable();
+
+        StartAfterDeathTimer();
     }
 
     public void OnDeathComplete()
@@ -656,6 +666,35 @@ public class EnemyAI : MonoBehaviour, IDamageable
         if (_showDebugLogs)
             Debug.Log("Enemy death animation complete");
         // gameObject.SetActive(false);
+    }
+
+    public void StartAfterDeathTimer()
+    {
+        StartCoroutine(DisableColliders());
+        StartCoroutine(DiactivateSelf());
+    }
+
+    private System.Collections.IEnumerator DisableColliders()
+    {
+        yield return new WaitForSeconds(3f);
+
+        var cols = GetComponentsInChildren<Collider>();
+        foreach (var col in cols)
+        {
+            col.enabled = false;
+        }
+
+        var rbs = GetComponentsInChildren<Rigidbody>();
+        foreach (var rb in rbs)
+        {
+            rb.isKinematic = true;
+        }
+    }
+
+    private System.Collections.IEnumerator DiactivateSelf()
+    {
+        yield return new WaitForSeconds(timeBeforeDiactivate);
+        gameObject.SetActive(false);
     }
 
     public void PlayFootstepSound(int foot)
@@ -797,11 +836,19 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         _lastHeardAudioSource = null;
         
+        _ragdoll.Disable();
+        
         var cols = GetComponentsInChildren<Collider>();
         foreach (var col in cols)
         {
             if (!col.enabled)
                 col.enabled = true;
+        }
+
+        var rbs = GetComponentsInChildren<Rigidbody>();
+        foreach (var rb in rbs)
+        {
+            rb.isKinematic = false;
         }
 
         agent.enabled = true;

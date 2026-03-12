@@ -41,16 +41,17 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private bool _showSpawnPoints = true;
     [SerializeField] private Color _spawnPointColor = Color.green;
     
-    private List<EnemyAI> _activeEnemies = new();
+    private List<EnemyBase> _activeNewEnemies = new();
+    private List<EnemyAI>   _activeEnemies    = new();
     private int _totalSpawnedCount = 0;
     private float _nextSpawnTime = 0f;
     private bool _isSpawning = false;
-    
-    public int ActiveEnemyCount => _activeEnemies.Count;
+
+    public int ActiveEnemyCount => _activeNewEnemies.Count + _activeEnemies.Count;
     public int TotalSpawnedCount => _totalSpawnedCount;
-    public bool CanSpawn => _enableSpawning && 
+    public bool CanSpawn => _enableSpawning &&
                            (_endlessMode || _totalSpawnedCount < _totalEnemiesToSpawn) &&
-                           _activeEnemies.Count < _maxEnemiesAlive;
+                           ActiveEnemyCount < _maxEnemiesAlive;
 
     #region Initialization
     
@@ -131,61 +132,119 @@ public class EnemySpawner : MonoBehaviour
         }
     }
     
-    public EnemyAI SpawnEnemy()
+    public MonoBehaviour SpawnEnemy()
     {
         if (_enemyPrefab == null || _spawnPoints.Count == 0)
         {
             Debug.LogError("[EnemySpawner] Cannot spawn - missing prefab or spawn points!");
             return null;
         }
-        
+
         Transform spawnPoint = GetRandomSpawnPoint();
-        
         GameObject enemyObject = Instantiate(_enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-        EnemyAI enemy = enemyObject.GetComponent<EnemyAI>();
-        
-        if (enemy == null)
+
+        EnemyBase newEnemy = enemyObject.GetComponent<EnemyBase>();
+        if (newEnemy != null)
         {
-            Debug.LogError("[EnemySpawner] Spawned prefab doesn't have EnemyAI component!");
-            Destroy(enemyObject);
-            return null;
+            SetupNewEnemy(newEnemy);
+            _activeNewEnemies.Add(newEnemy);
+            _totalSpawnedCount++;
+
+            if (_showDebug)
+                Debug.Log($"[EnemySpawner] Spawned new enemy #{_totalSpawnedCount} at {spawnPoint.name}. Active: {ActiveEnemyCount}/{_maxEnemiesAlive}");
+
+            return newEnemy;
         }
-        
-        SetupEnemy(enemy);
-        
-        _activeEnemies.Add(enemy);
-        _totalSpawnedCount++;
-        
-        if (_showDebug)
-            Debug.Log($"[EnemySpawner] Spawned enemy #{_totalSpawnedCount} at {spawnPoint.name}. Active: {_activeEnemies.Count}/{_maxEnemiesAlive}");
-        
-        return enemy;
+
+        EnemyAI legacyEnemy = enemyObject.GetComponent<EnemyAI>();
+        if (legacyEnemy != null)
+        {
+            SetupLegacyEnemy(legacyEnemy);
+            _activeEnemies.Add(legacyEnemy);
+            _totalSpawnedCount++;
+
+            if (_showDebug)
+                Debug.Log($"[EnemySpawner] Spawned legacy enemy #{_totalSpawnedCount} at {spawnPoint.name}. Active: {ActiveEnemyCount}/{_maxEnemiesAlive}");
+
+            return legacyEnemy;
+        }
+
+        Debug.LogError("[EnemySpawner] Spawned prefab has neither EnemyBase nor EnemyAI component!");
+        Destroy(enemyObject);
+        return null;
     }
-    
-    private void SetupEnemy(EnemyAI enemy)
+
+    // ── Новая система ──────────────────────────────────────────────────────────
+
+    private void SetupNewEnemy(EnemyBase enemy)
+    {
+        if (_increasedMemory)
+            enemy.Perception.MultiplyForgetTime(_forgetTimeMultiplier);
+
+        enemy.State.IsActivated = true;
+
+        if (_aggroOnSpawn && _playerTransform != null)
+            StartCoroutine(AggroNewEnemyOnSpawn(enemy));
+
+        StartCoroutine(MonitorNewEnemyDeath(enemy));
+    }
+
+    private IEnumerator AggroNewEnemyOnSpawn(EnemyBase enemy)
+    {
+        // Ждём Start() врага
+        yield return new WaitForSeconds(0.1f);
+
+        if (enemy == null || enemy.State.IsDead) yield break;
+
+        enemy.State.IsAlerted = true;
+        enemy.State.PlayerDetected = true;
+        enemy.State.LastKnownPlayerPosition = _playerTransform.position;
+        enemy.State.TimeSinceLastSeen = 0f;
+        enemy.Navigation.SetSpeed(enemy.Navigation.RunSpeed);
+
+        if (_showDebug)
+            Debug.Log("[EnemySpawner] New enemy aggro'd on spawn");
+    }
+
+    private IEnumerator MonitorNewEnemyDeath(EnemyBase enemy)
+    {
+        while (enemy != null && !enemy.State.IsDead)
+            yield return new WaitForSeconds(0.5f);
+
+        _activeNewEnemies.Remove(enemy);
+
+        if (_showDebug)
+            Debug.Log($"[EnemySpawner] New enemy died. Active: {ActiveEnemyCount}/{_maxEnemiesAlive}");
+
+        if (enemy != null)
+        {
+            yield return new WaitForSeconds(_timeAfterDeath);
+            Destroy(enemy.gameObject);
+        }
+    }
+
+    // ── Legacy система ─────────────────────────────────────────────────────────
+
+    private void SetupLegacyEnemy(EnemyAI enemy)
     {
         enemy.spawnType = EnemyAI.SpawnSource.FromSpawner;
         enemy.playerTransform = _playerTransform;
-        
+
         if (_increasedMemory)
-        {
             enemy.forgetTime *= _forgetTimeMultiplier;
-        }
-        
+
         enemy.isActivated = true;
-        
+
         if (_aggroOnSpawn && _playerTransform != null)
-        {
-            StartCoroutine(AggroEnemyOnSpawn(enemy));
-        }
-        
-        StartCoroutine(MonitorEnemyDeath(enemy));
+            StartCoroutine(AggroLegacyEnemyOnSpawn(enemy));
+
+        StartCoroutine(MonitorLegacyEnemyDeath(enemy));
     }
-    
-    private IEnumerator AggroEnemyOnSpawn(EnemyAI enemy)
+
+    private IEnumerator AggroLegacyEnemyOnSpawn(EnemyAI enemy)
     {
         yield return new WaitForSeconds(0.1f);
-        
+
         if (enemy != null && _playerTransform != null)
         {
             enemy.isAlerted = true;
@@ -193,32 +252,25 @@ public class EnemySpawner : MonoBehaviour
             enemy.lastKnownPlayerPosition = _playerTransform.position;
             enemy.startPosition = enemy.transform.position;
             enemy.timeSinceLastSeen = 0f;
-            
+
             if (enemy.agent != null)
-            {
                 enemy.agent.speed = enemy.runSpeed;
-            }
-            
+
             if (_showDebug)
-                Debug.Log($"[EnemySpawner] Enemy aggro'd on spawn");
+                Debug.Log("[EnemySpawner] Legacy enemy aggro'd on spawn");
         }
     }
-    
-    private IEnumerator MonitorEnemyDeath(EnemyAI enemy)
+
+    private IEnumerator MonitorLegacyEnemyDeath(EnemyAI enemy)
     {
         while (enemy != null && enemy.isActivated)
-        {
             yield return new WaitForSeconds(0.5f);
-        }
-        
-        if (_activeEnemies.Contains(enemy))
-        {
-            _activeEnemies.Remove(enemy);
-            
-            if (_showDebug)
-                Debug.Log($"[EnemySpawner] Enemy died. Active: {_activeEnemies.Count}/{_maxEnemiesAlive}");
-        }
-        
+
+        _activeEnemies.Remove(enemy);
+
+        if (_showDebug)
+            Debug.Log($"[EnemySpawner] Legacy enemy died. Active: {ActiveEnemyCount}/{_maxEnemiesAlive}");
+
         if (enemy != null)
         {
             yield return new WaitForSeconds(_timeAfterDeath);
@@ -254,7 +306,7 @@ public class EnemySpawner : MonoBehaviour
             Debug.Log($"[EnemySpawner] Spawning {(enabled ? "enabled" : "disabled")}");
     }
     
-    public EnemyAI ForceSpawnEnemy()
+    public MonoBehaviour ForceSpawnEnemy()
     {
         return SpawnEnemy();
     }

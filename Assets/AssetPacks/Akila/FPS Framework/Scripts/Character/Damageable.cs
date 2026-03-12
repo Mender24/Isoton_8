@@ -384,6 +384,8 @@ namespace Akila.FPSFramework
             }
         }
 
+        public event UnityAction<GameObject> DamageApplied;
+
         /// <summary>
         /// Applies damage to this damageable.
         /// </summary>
@@ -394,7 +396,10 @@ namespace Akila.FPSFramework
             health -= amount;
 
             if(damageSource != null)
+            {
                 this.DamageSource = damageSource;
+                DamageApplied?.Invoke(damageSource);
+            }
 
             autoHealDelayTime = autoHealDelay;
         }

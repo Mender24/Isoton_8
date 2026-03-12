@@ -37,6 +37,15 @@ public class SceneLoader : MonoBehaviour
     public int CurrentSceneId => _currentSceneIndex;
     public string NextScene => _sceneNames[_nextSceneIndex];
     public bool CheckCurrentSceneTransition => _sceneNames[_currentSceneIndex].Contains(_transitionName);
+    public int GetIndexNotTransition { 
+        get
+        {
+            if (CheckCurrentSceneTransition)
+                return _currentSceneIndex + 1;
+
+            return _currentSceneIndex;
+        } 
+    }
 
     public bool IsLoad { get; private set; }
     public bool IsInitPlayer { get; private set; }
@@ -61,6 +70,9 @@ public class SceneLoader : MonoBehaviour
     private void Start()
     {
         SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(RespawnPlayer);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     #region LoadSystem
@@ -70,8 +82,18 @@ public class SceneLoader : MonoBehaviour
 
     public event UnityAction SceneLoadingComplete;
 
+    public void LoadMainMenu()
+    {
+        Player.Instance.gameObject.SetActive(false);
+        Destroy(gameObject);
+        SceneManager.LoadScene(0);
+    }
+
     public void LoadScenes(bool isFirstSceneLoad = false, string forceLoad = "", bool isUseSave = false)
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         if (isFirstSceneLoad)
             _currentScene = forceLoad != "" ? forceLoad : (isUseSave ? SaveManager.GetLastSceneName() : _startScene);
 
@@ -215,7 +237,11 @@ public class SceneLoader : MonoBehaviour
 
             operation.allowSceneActivation = true;
 
+            while (!operation.isDone)
+                yield return null;
+
             AddLateActiveObject(i);
+
         }
 
         yield return StartCoroutine(StartLateActive());
@@ -299,6 +325,8 @@ public class SceneLoader : MonoBehaviour
 
         IsInitPlayer = true;
         _isMovePostLoadScene = true;
+
+        Player.Instance.gameObject.SetActive(true);
 
         if (_isDebug)
             Debug.Log("Init complete");

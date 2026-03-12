@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 9213985462605794866}
   - component: {fileID: 3475312254388310252}
   - component: {fileID: 4647695087898911005}
-  - component: {fileID: 7545337541788808706}
   m_Layer: 17
   m_Name: LightingProjectile
   m_TagString: Untagged
@@ -97,28 +96,12 @@ MonoBehaviour:
   _addItionalSizeValue: 0.05
   _updateSizePeriod: 0.02
   _maxRadius: 2
-  _collider: {fileID: 7545337541788808706}
---- !u!135 &7545337541788808706
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 61363099449086174}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
+  _collider: {fileID: 0}
+  _damageRadiusBySizePerscent: 0.7
+  _wallLayerMask:
     serializedVersion: 2
     m_Bits: 8192
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.02
-  m_Center: {x: 0, y: 0, z: 0}
+  _maxLifeDistance: 50
 --- !u!1 &1389881282306740326
 GameObject:
   m_ObjectHideFlags: 0

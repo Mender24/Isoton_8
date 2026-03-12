@@ -42,7 +42,7 @@ public class AiProjectile : MonoBehaviour
         if (isActive)
             _rb.AddForce(_velocity, ForceMode.VelocityChange);
 
-        transform.localScale = useAutoScaling ? Vector3.one : Vector3.one * scaleMultipler;
+        transform.localScale = useAutoScaling ? Vector3.zero : Vector3.one * scaleMultipler;
 
         if (_trail) _trail.widthMultiplier = useAutoScaling ? 0 : scaleMultipler;
     }
@@ -85,7 +85,6 @@ public class AiProjectile : MonoBehaviour
         _lifeTime = int.MaxValue;
         _rb.isKinematic = true;
         PoolManager.Instance.SetObject(this);
-        Debug.LogError("StopProj");
     }
 
     protected virtual void FixedUpdate()
