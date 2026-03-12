@@ -7,6 +7,7 @@ public class LateActiveObject : MonoBehaviour
     [SerializeField] private bool _isEnableActivator = true;
     [SerializeField] private bool _isStartActive = false;
     [Space]
+    [SerializeField] private bool _isFrameSkip = false;
     [SerializeField] private int _countObjectInFrame = 3;
     [SerializeField] private float _timeBetweenActive = 0.1f;
     [SerializeField] private LateActivatorObjects _objects;
@@ -35,7 +36,10 @@ public class LateActiveObject : MonoBehaviour
                 {
                     currentActive = 0;
 
-                    time = _timeBetweenActive;
+                    if(_isFrameSkip)
+                        time = Time.deltaTime;
+                    else
+                        time = _timeBetweenActive;
 
                     while (time > 0f)
                     {

@@ -6,6 +6,7 @@ namespace Akila.FPSFramework
     public class DoorControllerSceneChanger : MonoBehaviour
     {
         [SerializeField] private bool _isUseForceDontOpenDoor = false;
+        [SerializeField] private bool _isUseLateLoadedSystem = false;
         [Space]
         public Transform pivot;
         public BunkerDoor enterDoor;
@@ -81,8 +82,12 @@ namespace Akila.FPSFramework
         {
             enterDoor.CloseDoor();
 
-            yield return new WaitForSeconds(1f);
-            SceneLoader.instance.LoadScenes(isUseSave: true);
+            yield return new WaitForSeconds(2f);
+
+            if(!_isUseForceDontOpenDoor)
+                SceneLoader.instance.LoadScenes(isUseSave: true);
+            else
+                SceneLoader.instance.FinishLateLoadScene();
         }
 
         private void ToggleLeaver()
