@@ -69,9 +69,11 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(RespawnPlayer);
+
+        yield return new WaitForSeconds(0.2f);
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -93,8 +95,6 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadScenes(bool isFirstSceneLoad = false, string forceLoad = "", bool isUseSave = false)
     {
-        LockCursor();
-
         if (isFirstSceneLoad)
             _currentScene = forceLoad != "" ? forceLoad : (isUseSave ? SaveManager.GetLastSceneName() : _startScene);
 
@@ -186,7 +186,8 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator ProcessLoadScenes(int startSceneIndex, bool isFirstSceneLoad)
     {
-        yield return StartCoroutine(UnloadScenesAsync());
+        if(_loadedScene.Count > 1)
+            yield return StartCoroutine(UnloadScenesAsync());
 
         if (_isDebug)
             Debug.Log("Unload scenes complete");
@@ -203,7 +204,6 @@ public class SceneLoader : MonoBehaviour
     {
         _loadedScene.Clear();
         _loadedScene.Enqueue(index); // update loaded list
-
         SceneManager.LoadScene(index);
     }
 
@@ -342,6 +342,8 @@ public class SceneLoader : MonoBehaviour
 
         Player.Instance.gameObject.SetActive(true);
 
+        LockCursor();
+
         if (_isDebug)
             Debug.Log("Init complete");
     }
@@ -459,7 +461,7 @@ public class SceneLoader : MonoBehaviour
         if (_isDebug)
             Debug.Log("Start late unloaded scene");
 
-        yield return StartCoroutine(UnloadScenesAsync(_currentCountLoadedScene));
+        yield return StartCoroutine(UnloadScenesAsync(_currentCountLoadedScene - 1));
 
         if (_isDebug)
             Debug.Log("Finish late unloaded scene");
