@@ -67,6 +67,7 @@ public class EnemyState : MonoBehaviour
     [HideInInspector] public bool      IsMovingToCover;
     [HideInInspector] public Vector3   CurrentCoverPoint;
     [HideInInspector] public Transform CurrentCoverObject;
+    [HideInInspector] public float     LastDamageTime;
 
     private bool _isFiring;
     [HideInInspector]
@@ -149,6 +150,7 @@ public class EnemyState : MonoBehaviour
         IsMovingToCover     = false;
         CurrentCoverPoint   = Vector3.zero;
         CurrentCoverObject  = null;
+        LastDamageTime      = -999f;
 
         CurrentBullet       = 0;
         ShootCooldown       = 0f;

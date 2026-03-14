@@ -6362,7 +6362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee3ab523d3fe4ef46863800c8e6900d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _config: {fileID: 11400000, guid: 8cba86cf73123f943a069c194bb9ed7b, type: 2}
+  _config: {fileID: 11400000, guid: a3c4538b7d13aae44a29a042267091e5, type: 2}
   _shotOrigin: {fileID: 5274902460061781643}
   _playerTransform: {fileID: 0}
   _playerLayer:
@@ -6414,6 +6414,7 @@ MonoBehaviour:
   IsMovingToCover: 0
   CurrentCoverPoint: {x: 0, y: 0, z: 0}
   CurrentCoverObject: {fileID: 0}
+  LastDamageTime: 0
   CurrentBullet: 0
   ShootCooldown: 0
   MeleeAttackCooldown: 0
@@ -6646,6 +6647,7 @@ MonoBehaviour:
   _minDistanceFromPlayer: 1
   _bravery: 0
   _attackFromCoverCooldown: 2
+  _maxCoverIterations: 4
   _peekSearchRadius: 4
   _obstacleMask:
     serializedVersion: 2

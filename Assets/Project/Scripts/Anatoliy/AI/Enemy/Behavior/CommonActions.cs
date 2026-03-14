@@ -94,6 +94,18 @@ public partial class MoveToNoiseAction : Action
         if (Physics.Raycast(target + Vector3.up, Vector3.down, out RaycastHit hit, 100f))
             target.y = hit.point.y;
 
+        if (NavMesh.SamplePosition(target, out NavMeshHit navHit, 3f, NavMesh.AllAreas))
+        {
+            var path = new NavMeshPath();
+            if (!_enemy.Navigation.Agent.CalculatePath(navHit.position, path) ||
+                path.status == NavMeshPathStatus.PathInvalid)
+                return Status.Failure;
+        }
+        else
+        {
+            return Status.Failure;
+        }
+
         _enemy.Navigation.MoveTo(target, true);
         return Status.Running;
     }
@@ -130,6 +142,13 @@ public partial class MoveToLastKnownPositionAction : Action
         var e = _enemy;
         Vector3 dest = e.State.LastKnownPlayerPosition;
         dest.y = e.transform.position.y;
+
+        var path = new NavMeshPath();
+        if (!e.Navigation.Agent.CalculatePath(dest, path) ||
+            path.status == NavMeshPathStatus.PathInvalid)
+        {
+            return Status.Failure;
+        }
 
         e.Navigation.ResetPath();
         e.Navigation.MoveTo(dest, run: true);
@@ -287,12 +306,15 @@ public partial class SearchPatternNode : Action
         _searchAttempts = 0;
         _cachedStoppingDistance = e.Navigation.Agent.stoppingDistance;
         e.Navigation.SetStoppingDistance(StoppingDistance.Value);
+
+        if (!TryMoveToSearchPoint(e))
+        {
+            e.Navigation.SetStoppingDistance(_cachedStoppingDistance);
+            return Status.Failure;
+        }
+
         e.State.IsSearching = true;
         e.Animator?.PlaySearch();
-
-        if (!e.Navigation.Agent.hasPath)
-            TryMoveToSearchPoint(e);
-
         return Status.Running;
     }
 
@@ -323,13 +345,15 @@ public partial class SearchPatternNode : Action
         return result;
     }
 
-    private void TryMoveToSearchPoint(EnemyBase e)
+    private bool TryMoveToSearchPoint(EnemyBase e)
     {
         if (e.Navigation.TryGetRandomNavPoint(
             e.State.LastKnownPlayerPosition, SearchRadius.Value, out Vector3 point))
         {
             e.Navigation.MoveTo(point);
+            return true;
         }
+        return false;
     }
 
     protected override void OnEnd()

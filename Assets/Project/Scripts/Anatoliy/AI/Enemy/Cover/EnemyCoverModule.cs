@@ -21,8 +21,10 @@ public class EnemyCoverModule : MonoBehaviour
     [Tooltip("0=всегда в укрытие, 10=никогда. Вероятность выбрать укрытие против прямой атаки.")]
     [SerializeField, Range(0, 10)] private int _bravery = 3;
     [SerializeField] private float _attackFromCoverCooldown = 2f;
+    [Tooltip("Сколько атак из одного укрытия, прежде чем поменять его. 0 = никогда не менять.")]
+    [SerializeField, Min(0)] private int _maxCoverIterations = 3;
 
-    [Header("Peek (выход для атаки)")]
+    [Header("Peek")]
     [SerializeField] private float _peekSearchRadius = 4f;
     [SerializeField] private LayerMask _obstacleMask;
     [SerializeField] private bool _showDebug = false;
@@ -40,6 +42,7 @@ public class EnemyCoverModule : MonoBehaviour
     private Transform       _playerTransform;
     private CoverPoint      _currentCoverPoint;
     private bool?           _cachedCoverDecision;
+    private int             _coverIterations;
 
     private readonly Collider[] _searchBuffer = new Collider[32];
 
@@ -56,7 +59,8 @@ public class EnemyCoverModule : MonoBehaviour
 
     public bool FindAndOccupyCover()
     {
-        if (_state.HasCover && !IsCoverBlown()) return true;
+        bool iterationsExceeded = _maxCoverIterations > 0 && _coverIterations >= _maxCoverIterations;
+        if (_state.HasCover && !IsCoverBlown() && !iterationsExceeded) return true;
 
         ReleaseCover();
 
@@ -84,6 +88,7 @@ public class EnemyCoverModule : MonoBehaviour
         }
 
         _cachedCoverDecision = null;
+        _coverIterations     = 0;
         OnCoverReleased?.Invoke();
     }
 
@@ -175,6 +180,9 @@ public class EnemyCoverModule : MonoBehaviour
     }
 
     public void ResetCoverDecision() => _cachedCoverDecision = null;
+
+    /// <summary>Вызывается после каждой атаки из укрытия. При достижении лимита — сменит укрытие.</summary>
+    public void IncrementCoverIterations() => _coverIterations++;
 
     /// <summary>Commander назначает конкретное укрытие.</summary>
     public void ForceSetCover(Vector3 coverPoint, Transform coverObject)

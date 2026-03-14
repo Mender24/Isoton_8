@@ -110,6 +110,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void OnDamaged(float amount, GameObject source)
     {
+        State.LastDamageTime = Time.time;
         Perception.InvestigateDamageSource(source);
     }
 
