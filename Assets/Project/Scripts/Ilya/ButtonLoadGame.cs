@@ -15,4 +15,13 @@ public class ButtonLoadGame : MonoBehaviour
             SceneLoader.instance.LoadScenes(true, _forceSceneLoad, !_isNewGame);
         }
     }
+
+    public void LoadMeinMenu()
+    {
+        if (_isActive)
+        {
+            _isActive = false;
+            SceneLoader.instance.LoadMainMenu();
+        }
+    }
 }

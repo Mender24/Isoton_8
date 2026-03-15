@@ -570,7 +570,7 @@ namespace Akila.FPSFramework
             {
                 isRotationDefault = proceduralAnimator.IsDefaultingInRotation(preset.maxAimDeviation, true, true, false);
             }
-
+            
             if (preset.isFireActive)
             {
                 // Handle fire mode switch

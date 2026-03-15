@@ -6,6 +6,9 @@ public class SpawnPoint : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
+        if (SpawnManager.Instance == null)
+            return;
+           
         if(other != null && other.TryGetComponent(out Actor actor))
         {
             BoxCollider bc = GetComponent<BoxCollider>();

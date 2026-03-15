@@ -1,5 +1,4 @@
 using Akila.FPSFramework;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,10 @@ public class SceneLoader : MonoBehaviour
     [Space]
     [SerializeField] private bool _isUseRandomSystemSound = true;
     [SerializeField] private bool _isUseSave = true;
+    [Space]
+    [Header("LateLoadSystem")]
+    [SerializeField] private bool _isUseFullLate = true;
+    [SerializeField] private float _timeWaitNextLoad = 2f;
     [Space]
     [SerializeField] private bool _isDebug = false;
     [SerializeField] private List<string> _sceneNames = new();
@@ -35,6 +38,16 @@ public class SceneLoader : MonoBehaviour
     public int CurrentSceneId => _currentSceneIndex;
     public string NextScene => _sceneNames[_nextSceneIndex];
     public bool CheckCurrentSceneTransition => _sceneNames[_currentSceneIndex].Contains(_transitionName);
+    public int GetIndexNotTransition
+    {
+        get
+        {
+            if (CheckCurrentSceneTransition)
+                return _currentSceneIndex + 1;
+
+            return _currentSceneIndex;
+        }
+    }
 
     public bool IsLoad { get; private set; }
     public bool IsInitPlayer { get; private set; }
@@ -56,9 +69,14 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(RespawnPlayer);
+
+        yield return new WaitForSeconds(0.2f);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     #region LoadSystem
@@ -67,6 +85,13 @@ public class SceneLoader : MonoBehaviour
     private int _nextSceneIndex = -1;
 
     public event UnityAction SceneLoadingComplete;
+
+    public void LoadMainMenu()
+    {
+        Player.Instance.gameObject.SetActive(false);
+        Destroy(gameObject);
+        SceneManager.LoadScene(0);
+    }
 
     public void LoadScenes(bool isFirstSceneLoad = false, string forceLoad = "", bool isUseSave = false)
     {
@@ -109,29 +134,31 @@ public class SceneLoader : MonoBehaviour
             }
         }
 
-        SearchAllIndex(_currentSceneIndex);
+        _nextSceneIndex = SearchAllIndex(_currentSceneIndex);
     }
 
-    private void SearchAllIndex(int startSceneIndex)
+    private int SearchAllIndex(int startSceneIndex)
     {
-        _nextSceneIndex = -1;
+        int nextSceneIndex = -1;
 
         for (int i = startSceneIndex + 1; i < _sceneNames.Count; i++)
         {
             if (_sceneNames[i].Contains(_endSceneName) || _sceneNames[i].Contains(_transitionName))
             {
-                _nextSceneIndex = i;
+                nextSceneIndex = i;
                 break;
             }
         }
 
         if (_isDebug)
-            Debug.Log("Search current index scene: " + _currentSceneIndex + " next index scene: " + _nextSceneIndex);
+            Debug.Log("Search current index scene: " + _currentSceneIndex + " next index scene: " + nextSceneIndex);
+
+        return nextSceneIndex;
     }
 
     private bool CheckTransitionScene(int sceneIndex)
     {
-        if(sceneIndex < 0 || sceneIndex >= _sceneNames.Count)
+        if (sceneIndex < 0 || sceneIndex >= _sceneNames.Count)
             return false;
 
         return _sceneNames[sceneIndex].Contains(_transitionName);
@@ -159,7 +186,8 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator ProcessLoadScenes(int startSceneIndex, bool isFirstSceneLoad)
     {
-        yield return StartCoroutine(UnloadScenesAsync());
+        if(_loadedScene.Count > 1)
+            yield return StartCoroutine(UnloadScenesAsync());
 
         if (_isDebug)
             Debug.Log("Unload scenes complete");
@@ -176,11 +204,12 @@ public class SceneLoader : MonoBehaviour
     {
         _loadedScene.Clear();
         _loadedScene.Enqueue(index); // update loaded list
-
         SceneManager.LoadScene(index);
     }
 
-    private IEnumerator LoadScenesAsync(int startIndex, int count, bool isFirstSceneLoad)
+    private Stack<LateActiveObject> _lateActives = new();
+
+    private IEnumerator LoadScenesAsync(int startIndex, int count, bool isFirstSceneLoad, bool isLateLoadScene = false)
     {
         if (count <= 0)
             count = 1;
@@ -206,29 +235,81 @@ public class SceneLoader : MonoBehaviour
 
             AsyncOperation operation = SceneManager.LoadSceneAsync(i, LoadSceneMode.Additive);
 
-            while(operation.progress < 0.9)
+            while (operation.progress < 0.9)
                 yield return null;
 
             operation.allowSceneActivation = true;
+
+            while (!operation.isDone)
+                yield return null;
+
+            if (isLateLoadScene)
+                AddLateActiveObject(i);
         }
+
+        if (isLateLoadScene)
+            yield return StartCoroutine(StartLateActive());
 
         IsLoad = false;
 
         if (_isDebug)
             Debug.Log("Loading scene complete");
 
-        InitPostLoadScene(isFirstSceneLoad);
+        if (!isLateLoadScene)
+            InitPostLoadScene(isFirstSceneLoad);
 
         SceneLoadingComplete?.Invoke();
     }
 
-    private IEnumerator UnloadScenesAsync()
+    private void AddLateActiveObject(int index)
     {
-        while(_loadedScene.Count > 1)
+        Scene scene = SceneManager.GetSceneByBuildIndex(index);
+        LateActiveObject late = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LateActiveObject>()).FirstOrDefault();
+
+        if (late != null && !_sceneNames[index].Contains(_transitionName))
+            _lateActives.Push(late);
+    }
+
+    private IEnumerator StartLateActive()
+    {
+        if (_lateActives.Count > 0)
+        {
+            if (_isDebug)
+                Debug.Log("Late Active scene: " + _lateActives.Count);
+
+            while (_lateActives.Count > 1)
+            {
+                LateActiveObject lateActive = _lateActives.Pop();
+
+                if (_isUseFullLate)
+                {
+                    yield return StartCoroutine(lateActive.StartActivate());
+                    continue;
+                }
+
+                StartCoroutine(lateActive.StartActivate());
+
+                if (_lateActives.Count > 1)
+                    yield return new WaitForSeconds(_timeWaitNextLoad);
+            }
+
+            yield return StartCoroutine(_lateActives.Pop().StartActivate());
+
+            if (_isDebug)
+                Debug.Log("End LateLoad");
+        }
+    }
+
+    private IEnumerator UnloadScenesAsync(int count = -1)
+    {
+        if (count == -1)
+            count = _loadedScene.Count;
+
+        for(int i = 0; i < count; i++)
         {
             int unloadSceneIndex = _loadedScene.Dequeue();
 
-            if(_isDebug)
+            if (_isDebug)
                 Debug.Log("Unload scene index: " + unloadSceneIndex);
 
             yield return SceneManager.UnloadSceneAsync(unloadSceneIndex);
@@ -258,6 +339,10 @@ public class SceneLoader : MonoBehaviour
 
         IsInitPlayer = true;
         _isMovePostLoadScene = true;
+
+        Player.Instance.gameObject.SetActive(true);
+
+        LockCursor();
 
         if (_isDebug)
             Debug.Log("Init complete");
@@ -297,6 +382,95 @@ public class SceneLoader : MonoBehaviour
 
     #endregion
 
+    #region LateLoadSystem
+
+    private int _currentEndTransition = -1;
+    private int _nextEndScene = -1;
+    private int _currentCountLoadedScene;
+
+    private bool _isProgressLoadingScenes = false;
+    private bool _isProgressUnloadingScenes = false;
+    private bool _isScenesLoaded = false;
+    private SpeedType _speedType;
+
+    public bool IsProgressLoadingScenes => _isProgressLoadingScenes;
+    public bool IsProgressUnloadingScenes => _isProgressUnloadingScenes;
+    public bool IsScenesLoaded => _isScenesLoaded;
+    public SpeedType SpeedType => _speedType;
+
+    public void LateLoadScene()
+    {
+        _currentCountLoadedScene = _loadedScene.Count;
+        _currentEndTransition = _nextSceneIndex;
+
+        if (_currentEndTransition == -1)
+        {
+            Debug.LogError("currentEndTransition is null!");
+            return;
+        }
+
+        _nextEndScene = SearchAllIndex(_currentEndTransition);
+
+        if (_nextEndScene == -1)
+        {
+            Debug.LogError("Not found end scene!");
+            return;
+        }
+
+        IsInitPlayer = false;
+
+        if (_isDebug)
+        {
+            Debug.Log("Start LateLoadScene");
+            Debug.Log("_currentEndTransition: " + _currentEndTransition + " _nextEndScene: " + _nextEndScene);
+            Debug.Log("Count loaded scene: " + _currentCountLoadedScene);
+        }
+
+        StartCoroutine(StartLateLoadScene());
+    }
+
+    public void FinishLateLoadScene()
+    {
+        _currentSceneIndex = _currentEndTransition;
+        _nextSceneIndex = _nextEndScene;
+
+        InitPostLoadScene(false);
+
+        StartCoroutine(StartLateUnloadScenes());
+    }
+
+    private IEnumerator StartLateLoadScene()
+    {
+        _isProgressLoadingScenes = true;
+
+        _speedType = SpeedType.Slowly;
+
+        yield return StartCoroutine(LoadScenesAsync(_currentEndTransition + 1, _nextEndScene - _currentEndTransition, false, true));
+
+        if (_isDebug)
+            Debug.Log("Finish late loaded scene");
+
+        _isProgressLoadingScenes = false;
+        _isScenesLoaded = true;
+    }
+
+    private IEnumerator StartLateUnloadScenes()
+    {
+        _isProgressUnloadingScenes = true;
+
+        if (_isDebug)
+            Debug.Log("Start late unloaded scene");
+
+        yield return StartCoroutine(UnloadScenesAsync(_currentCountLoadedScene - 1));
+
+        if (_isDebug)
+            Debug.Log("Finish late unloaded scene");
+
+        _isProgressUnloadingScenes = false;
+    }
+
+    #endregion
+
     #region RespawnPlayer
 
     public void RespawnPlayer(string player)
@@ -314,6 +488,14 @@ public class SceneLoader : MonoBehaviour
 
     #region AdditionalFunction
 
+    public void PriorityUp()
+    {
+        if (_speedType == SpeedType.VeryFast)
+            return;
+
+        _speedType = _speedType++;
+    }
+
     public DoorControllerSceneChanger GetDoorControllerNextTransition()
     {
         if (!_sceneNames[_nextSceneIndex].Contains(_transitionName))
@@ -322,5 +504,24 @@ public class SceneLoader : MonoBehaviour
         return FindDoorControolerInScene(_nextSceneIndex);
     }
 
+    private void LockCursor()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void UnlockCursor()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
     #endregion
+}
+
+public enum SpeedType
+{
+    Slowly,
+    Fast,
+    VeryFast,
 }
