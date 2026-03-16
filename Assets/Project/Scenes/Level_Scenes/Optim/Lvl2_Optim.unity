@@ -7122,6 +7122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 1
@@ -7129,6 +7130,8 @@ MonoBehaviour:
   _countObjectInFrame: 10
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &183274438
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25717,6 +25720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 1
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -25724,6 +25728,20 @@ MonoBehaviour:
   _countObjectInFrame: 5
   _timeBetweenActive: 0.1
   _objects: {fileID: 520947212}
+  _multiplicativeCoeffSpeed:
+  - SpeedType: 0
+    CountInFrameObject: 3
+    TimeBetweenActive: 0.1
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 7
+    TimeBetweenActive: 0.1
+    IsFrameSkip: 0
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  _currentSpeedType: 0
 --- !u!114 &520947212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70747,6 +70765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -70754,6 +70773,8 @@ MonoBehaviour:
   _countObjectInFrame: 6
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1545731904
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -77988,6 +78009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -77995,6 +78017,8 @@ MonoBehaviour:
   _countObjectInFrame: 10
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!114 &1664705851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78007,6 +78031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -78014,6 +78039,8 @@ MonoBehaviour:
   _countObjectInFrame: 10
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1667298799
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -85426,6 +85453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -85433,6 +85461,8 @@ MonoBehaviour:
   _countObjectInFrame: 15
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!114 &1770075050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85445,6 +85475,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -85452,6 +85483,8 @@ MonoBehaviour:
   _countObjectInFrame: 15
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!114 &1770075051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85464,6 +85497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -85471,6 +85505,8 @@ MonoBehaviour:
   _countObjectInFrame: 10
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!114 &1770075052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85483,6 +85519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -85490,6 +85527,8 @@ MonoBehaviour:
   _countObjectInFrame: 6
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1770724865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87713,6 +87752,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -87720,6 +87760,8 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1825746634
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -88408,6 +88450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -88415,6 +88458,8 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!114 &1836806413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88427,6 +88472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -88434,6 +88480,8 @@ MonoBehaviour:
   _countObjectInFrame: 4
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1839203630
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93962,6 +94010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -93969,6 +94018,8 @@ MonoBehaviour:
   _countObjectInFrame: 6
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1930133267
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -95353,6 +95404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -95360,6 +95412,8 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1977344684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -95679,6 +95733,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 0
@@ -95686,6 +95741,8 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1986121563
 PrefabInstance:
   m_ObjectHideFlags: 0

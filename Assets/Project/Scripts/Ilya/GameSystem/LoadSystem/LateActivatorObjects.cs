@@ -6,11 +6,11 @@ public class LateActivatorObjects : MonoBehaviour
 {
     [SerializeField] private List<LateActiveObject> _lateActivators = new();
 
-    public IEnumerator ActivateLateActiveObject()
+    public IEnumerator ActivateLateActiveObject(SpeedTypeProfile speedProfile = null)
     {
         foreach (var activate in _lateActivators)
         {
-            yield return StartCoroutine(activate.StartActivate());
+            yield return StartCoroutine(activate.StartActivate(speedProfile));
         }
     }
 }

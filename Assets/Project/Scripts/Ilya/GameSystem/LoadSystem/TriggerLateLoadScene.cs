@@ -10,8 +10,6 @@ public class TriggerLateLoadScene : MonoBehaviour
     {
         if(other.TryGetComponent(out Player player))
         {
-            Debug.Log("Trigger");
-
             BoxCollider boxCollider = GetComponent<BoxCollider>();
             boxCollider.enabled = false;
 

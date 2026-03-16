@@ -243,12 +243,14 @@ public class SceneLoader : MonoBehaviour
             while (!operation.isDone)
                 yield return null;
 
-            if (isLateLoadScene)
+            if (isLateLoadScene || isFirstSceneLoad)
                 AddLateActiveObject(i);
         }
 
-        if (isLateLoadScene)
-            yield return StartCoroutine(StartLateActive());
+        _isProgressAsyncLoadingScene = false;
+
+        if (isLateLoadScene || isFirstSceneLoad)
+            yield return StartCoroutine(StartLateActive(isFirstSceneLoad ? SpeedType.VeryFast : SpeedType.Slowly));
 
         IsLoad = false;
 
@@ -270,8 +272,10 @@ public class SceneLoader : MonoBehaviour
             _lateActives.Push(late);
     }
 
-    private IEnumerator StartLateActive()
+    private IEnumerator StartLateActive(SpeedType speedType = SpeedType.Slowly)
     {
+        _speedType = speedType;
+
         if (_lateActives.Count > 0)
         {
             if (_isDebug)
@@ -389,11 +393,13 @@ public class SceneLoader : MonoBehaviour
     private int _currentCountLoadedScene;
 
     private bool _isProgressLoadingScenes = false;
+    private bool _isProgressAsyncLoadingScene = false;
     private bool _isProgressUnloadingScenes = false;
     private bool _isScenesLoaded = false;
-    private SpeedType _speedType;
+    private SpeedType _speedType = SpeedType.Slowly;
 
     public bool IsProgressLoadingScenes => _isProgressLoadingScenes;
+    public bool IsProgressAsyncLoadingScene => _isProgressAsyncLoadingScene;
     public bool IsProgressUnloadingScenes => _isProgressUnloadingScenes;
     public bool IsScenesLoaded => _isScenesLoaded;
     public SpeedType SpeedType => _speedType;
@@ -434,6 +440,9 @@ public class SceneLoader : MonoBehaviour
         _currentSceneIndex = _currentEndTransition;
         _nextSceneIndex = _nextEndScene;
 
+        if(_isUseSave)
+            StartCoroutine(SaveDataPlayer());
+
         InitPostLoadScene(false);
 
         StartCoroutine(StartLateUnloadScenes());
@@ -442,6 +451,7 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator StartLateLoadScene()
     {
         _isProgressLoadingScenes = true;
+        _isProgressAsyncLoadingScene = true;
 
         _speedType = SpeedType.Slowly;
 
