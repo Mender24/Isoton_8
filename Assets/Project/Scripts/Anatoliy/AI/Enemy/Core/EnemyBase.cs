@@ -27,10 +27,13 @@ public abstract class EnemyBase : MonoBehaviour
 
     public Transform PlayerTransform => _playerTransform;
 
-    private bool _cachedIsAlerted = false;
+    public bool IsSpawnedBySpawner { get; set; }
+
+    private Vector3 _initialPosition;
 
     protected virtual void Awake()
     {
+        _initialPosition = transform.position;
         State       = GetComponent<EnemyState>();
         Health      = GetComponent<EnemyHealth>();
         Perception  = GetComponent<EnemyPerception>();
@@ -110,6 +113,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void OnDamaged(float amount, GameObject source)
     {
+        State.LastDamageTime = Time.time;
         Perception.InvestigateDamageSource(source);
     }
 
@@ -152,6 +156,27 @@ public abstract class EnemyBase : MonoBehaviour
         Perception.StartDetection(() => {
             // Вызывается когда задержка обнаружения прошла
         });
+    }
+
+    public void Activate()
+    {
+        State.IsActivated = true;
+    }
+
+    public void ActivateWithBehavior()
+    {
+        if (_behaviorAgent != null)
+            _behaviorAgent.enabled = true;
+        Activate();
+    }
+
+    public void ActivateAlerted()
+    {
+        ActivateWithBehavior();
+        if (_playerTransform != null)
+            State.LastKnownPlayerPosition = _playerTransform.position;
+        TriggerAlert();
+        State.PlayerDetected = true;
     }
 
     public void AlertByGroup(Vector3 knownPlayerPos)
@@ -197,16 +222,25 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Register()
     {
-        // EnemyCounter.Instance?.Register(this); // get rid of this
+        if (EnemyCounter.Instance != null)
+            EnemyCounter.Instance.Register(Health);
     }
 
     public virtual void FullReset()
     {
-        State.ResetState();
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        CoverModule?.ReleaseCover();
+
+        State.ResetState(fireEvents: true);
+        State.StartPosition = _initialPosition;
+
         Health.ResetHealth();
 
+        transform.position = _initialPosition;
         Navigation.EnableAgent();
-        Navigation.MoveTo(State.StartPosition, false);
+        Navigation.MoveTo(_initialPosition, false);
 
         if (_behaviorAgent != null)
             _behaviorAgent.enabled = true;

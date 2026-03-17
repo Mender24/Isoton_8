@@ -73,6 +73,24 @@ public class EnemyNavigation : MonoBehaviour
         return !_agent.hasPath || _agent.velocity.sqrMagnitude == 0f;
     }
 
+    public void FaceTo(Vector3 worldPosition)
+    {
+        Vector3 dir = worldPosition - _agent.transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.001f) return;
+        Quaternion target = Quaternion.LookRotation(dir);
+        _agent.transform.rotation = Quaternion.Slerp(
+            _agent.transform.rotation, target, _rotationSpeed * Time.deltaTime);
+    }
+
+    public bool IsFacing(Vector3 worldPosition, float thresholdDeg = 5f)
+    {
+        Vector3 dir = worldPosition - _agent.transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.001f) return true;
+        return Vector3.Angle(_agent.transform.forward, dir) <= thresholdDeg;
+    }
+
     public bool TryGetRandomNavPoint(Vector3 origin, float radius, out Vector3 result)
     {
         result = Vector3.zero;

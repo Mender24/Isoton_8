@@ -2,7 +2,15 @@ using UnityEngine;
 
 public class EnemyActivationTrigger : MonoBehaviour
 {
+    public enum Mode
+    {
+        Default,        // просто IsActivated = true
+        WithBehavior,   // включить BehaviorAgent + активировать
+        Alerted         // включить BehaviorAgent + сразу в боевое состояние
+    }
+
     public EnemyBase[] enemiesInZone;
+    public Mode activationMode = Mode.Default;
     public bool activateOnce = true;
     private bool _hasActivated = false;
 
@@ -46,11 +54,12 @@ public class EnemyActivationTrigger : MonoBehaviour
 
             foreach (var enemy in enemiesInZone)
             {
-                if (enemy != null)
+                if (enemy == null) continue;
+                switch (activationMode)
                 {
-                    if (enemy.State)
-                        enemy.State.IsActivated = true;
-                    // enemy.PlayerTransform = other.transform;
+                    case Mode.WithBehavior: enemy.ActivateWithBehavior(); break;
+                    case Mode.Alerted:      enemy.ActivateAlerted();      break;
+                    default:               enemy.Activate();              break;
                 }
             }            
             
