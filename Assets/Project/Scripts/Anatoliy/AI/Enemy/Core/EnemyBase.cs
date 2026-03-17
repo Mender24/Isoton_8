@@ -27,8 +27,6 @@ public abstract class EnemyBase : MonoBehaviour
 
     public Transform PlayerTransform => _playerTransform;
 
-    private bool _cachedIsAlerted = false;
-
     protected virtual void Awake()
     {
         State       = GetComponent<EnemyState>();
@@ -155,6 +153,27 @@ public abstract class EnemyBase : MonoBehaviour
         });
     }
 
+    public void Activate()
+    {
+        State.IsActivated = true;
+    }
+
+    public void ActivateWithBehavior()
+    {
+        if (_behaviorAgent != null)
+            _behaviorAgent.enabled = true;
+        Activate();
+    }
+
+    public void ActivateAlerted()
+    {
+        ActivateWithBehavior();
+        if (_playerTransform != null)
+            State.LastKnownPlayerPosition = _playerTransform.position;
+        TriggerAlert();
+        State.PlayerDetected = true;
+    }
+
     public void AlertByGroup(Vector3 knownPlayerPos)
     {
         if (State.IsAlerted || State.IsDead || !State.IsActivated) return;
@@ -198,7 +217,8 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Register()
     {
-        // EnemyCounter.Instance?.Register(this); // get rid of this
+        if (EnemyCounter.Instance != null)
+            EnemyCounter.Instance.Register(Health);
     }
 
     public virtual void FullReset()
