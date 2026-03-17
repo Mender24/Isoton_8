@@ -1,14 +1,10 @@
-using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(MeleeCombatModule))]
 public class MeleeEnemy : EnemyBase
 {
-    [SerializeField] private float _hitReactionDuration = 0.6f;
-
     private MeleeCombatModule  _meleeCombat;
     private BasicEnemyAnimator _basicAnimator;
-    private Coroutine          _hitReactCoroutine;
 
     protected override void Awake()
     {
@@ -22,37 +18,35 @@ public class MeleeEnemy : EnemyBase
         _meleeCombat.Initialize(PlayerTransform);
 
         if (_basicAnimator != null)
-            _basicAnimator.OnMeleeHit += _meleeCombat.ExecuteHit;
+        {
+            _basicAnimator.OnMeleeHit             += _meleeCombat.ExecuteHit;
+            _basicAnimator.OnHitReactionStarted   += OnHitReactionStarted;
+            _basicAnimator.OnHitReactionCompleted += OnHitReactionCompleted;
+        }
     }
 
     private void OnDestroy()
     {
         if (_basicAnimator != null)
-            _basicAnimator.OnMeleeHit -= _meleeCombat.ExecuteHit;
+        {
+            _basicAnimator.OnMeleeHit             -= _meleeCombat.ExecuteHit;
+            _basicAnimator.OnHitReactionStarted   -= OnHitReactionStarted;
+            _basicAnimator.OnHitReactionCompleted -= OnHitReactionCompleted;
+        }
     }
 
-    protected override void OnDamaged(float amount, GameObject source)
+    private void OnHitReactionStarted()
     {
-        base.OnDamaged(amount, source);
-
         if (State.IsMeleeAttacking) return;
-
-        if (_hitReactCoroutine != null) StopCoroutine(_hitReactCoroutine);
-        _hitReactCoroutine = StartCoroutine(HitReactRoutine());
-    }
-
-    private IEnumerator HitReactRoutine()
-    {
         State.IsHitReacting = true;
         Navigation.Stop();
+    }
 
-        yield return new WaitForSeconds(_hitReactionDuration);
-
+    private void OnHitReactionCompleted()
+    {
         State.IsHitReacting = false;
         if (!State.IsMeleeAttacking)
             Navigation.Resume();
-
-        _hitReactCoroutine = null;
     }
 
     private void Update()
