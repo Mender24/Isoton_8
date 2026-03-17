@@ -27,8 +27,13 @@ public abstract class EnemyBase : MonoBehaviour
 
     public Transform PlayerTransform => _playerTransform;
 
+    public bool IsSpawnedBySpawner { get; set; }
+
+    private Vector3 _initialPosition;
+
     protected virtual void Awake()
     {
+        _initialPosition = transform.position;
         State       = GetComponent<EnemyState>();
         Health      = GetComponent<EnemyHealth>();
         Perception  = GetComponent<EnemyPerception>();
@@ -223,11 +228,19 @@ public abstract class EnemyBase : MonoBehaviour
 
     public virtual void FullReset()
     {
-        State.ResetState();
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        CoverModule?.ReleaseCover();
+
+        State.ResetState(fireEvents: true);
+        State.StartPosition = _initialPosition;
+
         Health.ResetHealth();
 
+        transform.position = _initialPosition;
         Navigation.EnableAgent();
-        Navigation.MoveTo(State.StartPosition, false);
+        Navigation.MoveTo(_initialPosition, false);
 
         if (_behaviorAgent != null)
             _behaviorAgent.enabled = true;

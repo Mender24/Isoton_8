@@ -177,6 +177,8 @@ public class EnemySpawner : MonoBehaviour
 
     private void SetupNewEnemy(EnemyBase enemy)
     {
+        enemy.IsSpawnedBySpawner = true;
+
         if (_increasedMemory)
             enemy.Perception.MultiplyForgetTime(_forgetTimeMultiplier);
 

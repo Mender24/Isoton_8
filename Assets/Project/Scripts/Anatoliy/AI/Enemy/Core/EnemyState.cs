@@ -120,6 +120,7 @@ public class EnemyState : MonoBehaviour
             IsDead              = false;
             IsAlerted           = false;
             PlayerDetected      = false;
+            PlayerIsSeen        = false;
             IsFiring            = false;
             IsReloading         = false;
             IsMeleeAttacking    = false;
@@ -130,11 +131,14 @@ public class EnemyState : MonoBehaviour
             _isDead              = false;
             _isAlerted           = false;
             _playerDetected      = false;
+            _playerIsSeen        = false;
             _isFiring            = false;
             _isReloading         = false;
             _isMeleeAttacking    = false;
             _isThrowingGrenade   = false;
         }
+
+        VisionMeterValue = 0f;
 
         IsSearching       = false;
         TimeSinceLastSeen = 0f;
