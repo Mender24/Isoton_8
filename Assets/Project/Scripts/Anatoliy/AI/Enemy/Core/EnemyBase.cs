@@ -214,6 +214,13 @@ public abstract class EnemyBase : MonoBehaviour
         return Node.Status.Failure;
     }
 
+    public void HearNearbyShot(Vector3 shooterPosition)
+    {
+        if (State.IsDead || !State.IsActivated || State.PlayerDetected) return;
+
+        Perception.HearNearbyShot(shooterPosition);
+    }
+
     public bool IsEnemyStopped() => Navigation.HasReachedDestination();
 
     public Vector3 GetNoiseInvestigationTarget() => Perception.GetNoiseTarget();

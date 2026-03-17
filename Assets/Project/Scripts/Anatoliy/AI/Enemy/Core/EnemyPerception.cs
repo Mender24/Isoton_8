@@ -43,6 +43,9 @@ public class EnemyPerception : MonoBehaviour
     private bool _detectionPending;
     private float _visionMeter;
 
+    private bool _pendingNearbyShot;
+    private Vector3 _pendingNearbyShooterPos;
+
     public float VisionRange    => _visionRange;
     public float VisionHeight   => _visionHeight;
     public float FieldOfView    => _fieldOfViewAngle;
@@ -187,6 +190,15 @@ public class EnemyPerception : MonoBehaviour
     {
         if (_state.PlayerDetected || _playerTransform == null) return false;
 
+        if (_pendingNearbyShot)
+        {
+            _pendingNearbyShot = false;
+            _state.LastHeardNoisePosition = _pendingNearbyShooterPos;
+            _state.HeardNoise = true;
+            _noiseTimer = _noiseInvestigationTime;
+            return true;
+        }
+
         if (Vector3.Distance(transform.position, _playerTransform.position) > _hearingRange) return false;
 
         foreach (var src in _playerTransform.GetComponentsInChildren<AudioSource>())
@@ -240,6 +252,14 @@ public class EnemyPerception : MonoBehaviour
         _state.HeardNoise = true;
         _state.LastHeardNoisePosition = suspiciousPos;
         _noiseTimer = _noiseInvestigationTime;
+    }
+
+    public void HearNearbyShot(Vector3 shooterPosition)
+    {
+        if (_state.IsDead || !_state.IsActivated || _state.PlayerDetected) return;
+
+        _pendingNearbyShooterPos = shooterPosition;
+        _pendingNearbyShot = true;
     }
 
     public float GetDistanceToPlayer()
