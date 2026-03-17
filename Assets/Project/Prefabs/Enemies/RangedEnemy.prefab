@@ -6192,7 +6192,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3569886161779605784}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
   m_Name: 
@@ -6416,6 +6416,7 @@ MonoBehaviour:
   IsMovingToCover: 0
   CurrentCoverPoint: {x: 0, y: 0, z: 0}
   CurrentCoverObject: {fileID: 0}
+  LastDamageTime: 0
   CurrentBullet: 0
   ShootCooldown: 0
   MeleeAttackCooldown: 0
@@ -6648,6 +6649,7 @@ MonoBehaviour:
   _minDistanceFromPlayer: 1
   _bravery: 7
   _attackFromCoverCooldown: 2
+  _maxCoverIterations: 3
   _peekSearchRadius: 4
   _obstacleMask:
     serializedVersion: 2
