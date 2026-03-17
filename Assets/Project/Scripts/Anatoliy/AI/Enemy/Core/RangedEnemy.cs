@@ -38,6 +38,7 @@ public class RangedEnemy : EnemyBase
 
     private void OnHitReactionStarted()
     {
+        _rangedCombat.StopFire();
         _rangedCombat.SetPaused(true);
         _grenadeThrow?.Cancel();
         Navigation.Stop();

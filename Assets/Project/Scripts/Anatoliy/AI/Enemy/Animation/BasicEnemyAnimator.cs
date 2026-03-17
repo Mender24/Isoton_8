@@ -25,6 +25,12 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     [Header("Win animations")]
     [SerializeField] private int _amountWinAnimations = 3;
 
+    [Header("Search animations")]
+    [SerializeField] private int _amountSearchAnimations = 1;
+
+    [Header("Hit animations")]
+    [SerializeField] private int _amountHitAnimations = 1;
+
     [Header("Clip names (for speed sync)")]
     [SerializeField] private string _reloadClipName         = "ReloadAssaultRifle";
     [SerializeField] private string _meleeClipName          = "AttackRightClaws1Creature_RM";
@@ -48,6 +54,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         public const string IsDead              = "IsDead";
         public const string RandomIdleF         = "RandomIdleF";
         public const string WinNumber           = "WinNumber";
+        public const string SearchNumber        = "SearchNumber";
+        public const string HitNumber           = "HitNumber";
         public const string Alert               = "Alert";
         public const string Hit                 = "Hit";
         public const string Reload              = "Reload";
@@ -210,6 +218,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void PlaySearch()
     {
         if (!_isInitialized) return;
+        _animator.SetInteger(P.SearchNumber, Random.Range(0, _amountSearchAnimations));
         _animator.SetTrigger(P.Search);
     }
 
@@ -223,6 +232,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void PlayHit()
     {
         if (!_isInitialized) return;
+        _animator.SetInteger(P.HitNumber, Random.Range(0, _amountHitAnimations));
         _animator.SetTrigger(P.Hit);
     }
 
