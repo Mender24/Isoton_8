@@ -43,7 +43,8 @@ namespace Akila.FPSFramework
 
         public void OpenNameNotes(string name)
         {
-            MenusManager.OpenMenu(name);
+            if(MenusManager.activeMenu == null || !MenusManager.activeMenu.IsOpen)
+                MenusManager.OpenMenu(name);
         }
     }
 }

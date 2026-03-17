@@ -56,7 +56,7 @@ namespace Akila.FPSFramework.UI
             }
 
             activeMenu = menu;
-            previousMenu = Menus.Find(m => m.IsOpen = true);
+            previousMenu = Menus.Find(m => m.IsOpen == true);
 
             menu.IsOpen = true;
 
@@ -176,12 +176,12 @@ namespace Akila.FPSFramework.UI
 
         private void LateUpdate()
         {
-            if(previousMenuInputAction.triggered)
-            {
-                CloseAllMenus(new Menu[] { previousMenu });
+            //if(previousMenuInputAction.triggered)
+            //{
+            //    CloseAllMenus(new Menu[] { previousMenu });
 
-                if(previousMenu) OpenMenu(previousMenu);
-            }
+            //    if(previousMenu) OpenMenu(previousMenu);
+            //}
         }
     }
 }
