@@ -40,7 +40,6 @@ public class LateActiveObject : MonoBehaviour
         {
             if(!_isMain && speedProfile != null && speedProfile.SpeedType == SpeedType.VeryFast)
             {
-                Debug.Log("VeryFast");
                 _countObjectInFrame = speedProfile.CountInFrameObject;
                 _timeBetweenActive = speedProfile.TimeBetweenActive;
                 _isFrameSkip = speedProfile.IsFrameSkip;

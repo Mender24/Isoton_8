@@ -17,6 +17,7 @@ public class SceneLoader : MonoBehaviour
     [Header("LateLoadSystem")]
     [SerializeField] private bool _isUseFullLate = true;
     [SerializeField] private float _timeWaitNextLoad = 2f;
+    [SerializeField] private float _timeWaitUnloadScene = 2f;
     [Space]
     [SerializeField] private bool _isDebug = false;
     [SerializeField] private List<string> _sceneNames = new();
@@ -103,6 +104,9 @@ public class SceneLoader : MonoBehaviour
 
         if (isFirstSceneLoad)               // search startIndex
         {
+            if (_currentScene == "" || _currentScene == _sceneNames[0])
+                _currentScene = _startScene;
+
             SearchAllIndex(_currentScene);
 
             if (_isDebug)
@@ -306,6 +310,8 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator UnloadScenesAsync(int count = -1)
     {
+        yield return new WaitForSeconds(_timeWaitUnloadScene);
+
         if (count == -1)
             count = _loadedScene.Count;
 

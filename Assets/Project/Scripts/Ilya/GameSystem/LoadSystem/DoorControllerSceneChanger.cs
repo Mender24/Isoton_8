@@ -82,7 +82,7 @@ namespace Akila.FPSFramework
         {
             enterDoor.CloseDoor();
 
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
 
             if(!_isUseForceDontOpenDoor)
                 SceneLoader.instance.LoadScenes(isUseSave: true);

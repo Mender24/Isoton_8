@@ -3493,6 +3493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 1
@@ -3500,6 +3501,8 @@ MonoBehaviour:
   _countObjectInFrame: 1
   _timeBetweenActive: 0.5
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1 &1148815351
 GameObject:
   m_ObjectHideFlags: 0
@@ -3925,6 +3928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 1
@@ -3932,6 +3936,8 @@ MonoBehaviour:
   _countObjectInFrame: 2
   _timeBetweenActive: 0.3
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!43 &1271519848
 Mesh:
   m_ObjectHideFlags: 0
@@ -4155,6 +4161,16 @@ PrefabInstance:
       propertyPath: exitDoor
       value: 
       objectReference: {fileID: 1592228178}
+    - target: {fileID: 3481681011450008934, guid: dd2139cf010368943b3aaa105a3c2937,
+        type: 3}
+      propertyPath: _isUseLateLoadedSystem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481681011450008934, guid: dd2139cf010368943b3aaa105a3c2937,
+        type: 3}
+      propertyPath: _isUseForceDontOpenDoor
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3558471524701893866, guid: dd2139cf010368943b3aaa105a3c2937,
         type: 3}
       propertyPath: isOpenInitially
@@ -5923,6 +5939,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 1
@@ -5930,6 +5947,8 @@ MonoBehaviour:
   _countObjectInFrame: 5
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!114 &1918300389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5942,6 +5961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 1
@@ -5949,6 +5969,8 @@ MonoBehaviour:
   _countObjectInFrame: 5
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!114 &1918300390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5961,6 +5983,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 1
@@ -5968,6 +5991,8 @@ MonoBehaviour:
   _countObjectInFrame: 5
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!114 &1918300391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5980,6 +6005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
   _isStartActive: 1
@@ -5987,6 +6013,8 @@ MonoBehaviour:
   _countObjectInFrame: 5
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
+  _multiplicativeCoeffSpeed: []
+  _currentSpeedType: 0
 --- !u!1001 &1918858180
 PrefabInstance:
   m_ObjectHideFlags: 0
