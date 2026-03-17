@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEngine;
+using Akila.FPSFramework.UI;
 
 namespace Akila.FPSFramework
 {
@@ -14,6 +15,7 @@ namespace Akila.FPSFramework
         public PlayerCard PlayerCard { get; set; }
         public Hitmarker Hitmarker { get; set; }
         public KillFeed KillFeed { get; set; }
+        public MenusManager MenusManager { get; set; }
 
         private void Awake()
         {
@@ -26,6 +28,7 @@ namespace Akila.FPSFramework
             PlayerCard = GetComponentInChildren<PlayerCard>();
             Hitmarker = GetComponentInChildren<Hitmarker>();
             KillFeed = GetComponentInChildren<KillFeed>();
+            MenusManager = GetComponent<MenusManager>();
         }
 
         public void LoadGame(string name)
@@ -36,6 +39,11 @@ namespace Akila.FPSFramework
         public void Quit()
         {
             Application.Quit();
+        }
+
+        public void OpenNameNotes(string name)
+        {
+            MenusManager.OpenMenu(name);
         }
     }
 }
