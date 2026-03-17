@@ -4,7 +4,6 @@ public class EnemyResetter : MonoBehaviour
 {
     public void ResetAllEnemies()
     {
-        // Новая система — включаем поиск inactive, чтобы найти мёртвых (отключённых) врагов
         var newEnemies = FindObjectsByType<EnemyBase>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var enemy in newEnemies)
         {
@@ -16,7 +15,7 @@ public class EnemyResetter : MonoBehaviour
                 Destroy(enemy.gameObject);
         }
 
-        // Legacy система
+        // Legacy
         var legacyEnemies = FindObjectsByType<EnemyAI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var enemy in legacyEnemies)
         {
