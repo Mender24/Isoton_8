@@ -458,6 +458,7 @@ public class SceneLoader : MonoBehaviour
     {
         _isProgressLoadingScenes = true;
         _isProgressAsyncLoadingScene = true;
+        _isProgressUnloadingScenes = true;
 
         _speedType = SpeedType.Slowly;
 
@@ -472,8 +473,6 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator StartLateUnloadScenes()
     {
-        _isProgressUnloadingScenes = true;
-
         if (_isDebug)
             Debug.Log("Start late unloaded scene");
 

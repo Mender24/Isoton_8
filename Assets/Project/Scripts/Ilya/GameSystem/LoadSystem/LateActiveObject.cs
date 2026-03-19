@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class LateActiveObject : MonoBehaviour
 {
+    [SerializeField] private LateActiveObject _postLoadActive;
     [SerializeField] private bool _isMain = false;
     [SerializeField] private bool _isEnable = true;
     [SerializeField] private bool _isEnableActivator = true;
@@ -38,6 +39,8 @@ public class LateActiveObject : MonoBehaviour
     {
         if (_isEnable)
         {
+            StartCoroutine(PostLoadActiveObject(speedProfile));
+
             if(!_isMain && speedProfile != null && speedProfile.SpeedType == SpeedType.VeryFast)
             {
                 _countObjectInFrame = speedProfile.CountInFrameObject;
@@ -73,6 +76,17 @@ public class LateActiveObject : MonoBehaviour
 
         if (_objects != null && _isEnableActivator)
             yield return StartCoroutine(_objects.ActivateLateActiveObject(GetSpeedTypeProfile(_currentSpeedType)));
+    }
+
+    private IEnumerator PostLoadActiveObject(SpeedTypeProfile speedProfile = null)
+    {
+        if (_postLoadActive != null)
+        {
+            while (SceneLoader.instance.IsProgressUnloadingScenes)
+                yield return null;
+
+            StartCoroutine(_postLoadActive.StartActivate());
+        }
     }
 
     private void ChangeSpeedActive(SpeedType speedType)
