@@ -149,6 +149,7 @@ namespace Akila.FPSFramework
                 .OfType<Inventory>()
                 .FirstOrDefault();
 
+            LoadPlayerWeapon(inventory);
             //SaveManager.LoadPlayer(inventory, _itemsPrefab);
             //LoadPlayerWeapon(inventory);
             //----

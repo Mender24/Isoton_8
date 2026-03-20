@@ -15,12 +15,38 @@ public class LateActiveObject : MonoBehaviour
     [SerializeField] private int _countObjectInFrame = 3;
     [SerializeField] private float _timeBetweenActive = 0.1f;
     [SerializeField] private LateActivatorObjects _objects;
-    [SerializeField] private List<SpeedTypeProfile> _multiplicativeCoeffSpeed = new();
+    [SerializeField]
+    private List<SpeedTypeProfile> _multiplicativeCoeffSpeedType = new()
+    {
+        new SpeedTypeProfile()
+        {
+            SpeedType = SpeedType.Slowly,
+            CountInFrameObject = 5,
+            TimeBetweenActive = 0.15f,
+            IsFrameSkip = false,
+        },
+        new SpeedTypeProfile()
+        {
+            SpeedType = SpeedType.Fast,
+            CountInFrameObject = 10,
+            TimeBetweenActive = 0,
+            IsFrameSkip = true,
+        },
+        new SpeedTypeProfile()
+        {
+            SpeedType = SpeedType.VeryFast,
+            CountInFrameObject = 40,
+            TimeBetweenActive = 0,
+            IsFrameSkip = true,
+        }
+    };
 
     [SerializeField] private SpeedType _currentSpeedType = SpeedType.Slowly;
 
     private IEnumerator Start()
     {
+        ChangeSpeedActive(_currentSpeedType);
+
         if (_isStartActive)
         {
             yield return StartActivate();
@@ -89,7 +115,7 @@ public class LateActiveObject : MonoBehaviour
         }
     }
 
-    private void ChangeSpeedActive(SpeedType speedType)
+    public void ChangeSpeedActive(SpeedType speedType)
     {
         _currentSpeedType = speedType;
 
@@ -98,11 +124,17 @@ public class LateActiveObject : MonoBehaviour
         _countObjectInFrame = profile.CountInFrameObject;
         _timeBetweenActive = profile.TimeBetweenActive;
         _isFrameSkip = profile.IsFrameSkip;
+
+        if(_objects != null)
+            _objects.ChangeSpeedProfile(_currentSpeedType);
+
+        if(_postLoadActive != null)
+            _postLoadActive.ChangeSpeedActive(_currentSpeedType);
     }
 
     private SpeedTypeProfile GetSpeedTypeProfile(SpeedType speedType)
     {
-        foreach (SpeedTypeProfile profile in _multiplicativeCoeffSpeed)
+        foreach (SpeedTypeProfile profile in _multiplicativeCoeffSpeedType)
             if (profile.SpeedType == _currentSpeedType)
                 return profile;
 
