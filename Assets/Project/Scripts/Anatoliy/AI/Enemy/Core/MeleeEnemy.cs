@@ -61,4 +61,10 @@ public class MeleeEnemy : EnemyBase
     public IMeleeCombat MeleeCombat => _meleeCombat;
 
     public bool IsInMeleeRange() => _meleeCombat.IsInRange();
+
+    public override void FullReset()
+    {
+        base.FullReset();
+        _meleeCombat.Initialize(PlayerTransform);
+    }
 }

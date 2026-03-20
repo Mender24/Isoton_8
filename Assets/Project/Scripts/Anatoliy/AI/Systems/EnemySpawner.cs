@@ -224,8 +224,6 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    // ── Legacy система ─────────────────────────────────────────────────────────
-
     private void SetupLegacyEnemy(EnemyAI enemy)
     {
         enemy.spawnType = EnemyAI.SpawnSource.FromSpawner;

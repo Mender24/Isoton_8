@@ -24,6 +24,14 @@ public class AiProjectile : MonoBehaviour
     private Rigidbody _rb;
     private float _lifeTime = 5;
 
+    public void ClearTrail()
+    {
+        if (_trail == null)
+            _trail = GetComponentInChildren<TrailRenderer>(true);
+        if (_trail != null)
+            _trail.Clear();
+    }
+
     public virtual void Setup(Vector3 direction, float lifeTime, float speed)
     {
         if(_trail == null)
@@ -31,6 +39,8 @@ public class AiProjectile : MonoBehaviour
 
         if (_rb == null)
             _rb = GetComponent<Rigidbody>();
+
+        _trail?.Clear();
 
         this.direction = direction;
         this.speed = speed;

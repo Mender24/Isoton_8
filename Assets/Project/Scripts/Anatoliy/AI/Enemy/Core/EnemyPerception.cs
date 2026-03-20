@@ -67,6 +67,16 @@ public class EnemyPerception : MonoBehaviour
         _playerTransform = playerTransform;
     }
 
+    public void Reset(Transform playerTransform)
+    {
+        StopAllCoroutines();
+        _playerTransform    = playerTransform;
+        _noiseTimer         = 0f;
+        _detectionPending   = false;
+        _visionMeter        = 0f;
+        _pendingNearbyShot  = false;
+    }
+
     private void Update()
     {
         if (!_state.IsActivated || _state.IsDead) return;

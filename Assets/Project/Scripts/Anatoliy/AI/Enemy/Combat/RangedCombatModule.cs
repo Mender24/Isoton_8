@@ -128,6 +128,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         if (bullet == null) return;
 
         bullet.transform.position = _shotOrigin.position;
+        bullet.ClearTrail();          // очищаем до SetActive, иначе старый трейл виден один кадр
         bullet.gameObject.SetActive(true);
         bullet.Setup(
             _shotOrigin.position != target ? (target - _shotOrigin.position).normalized : transform.forward,

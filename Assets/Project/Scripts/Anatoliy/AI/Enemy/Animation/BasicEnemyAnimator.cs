@@ -320,6 +320,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     {
         if (!_isInitialized) return;
 
+        _animator.Rebind();
+
         _animator.SetBool(P.IsDead, false);
         _animator.SetBool(P.IsAlerted, false);
         _animator.SetBool(P.HasAlerted, false);
@@ -328,15 +330,9 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _animator.SetBool(P.MeleeAttacking, false);
         _animator.SetBool(P.Shooting, false);
         _animator.SetFloat(P.Speed, 0f);
+        _animator.SetFloat(P.RandomIdleF, _currentIdleF);
 
-        _animator.ResetTrigger(P.Alert);
-        _animator.ResetTrigger(P.Hit);
-        _animator.ResetTrigger(P.Reload);
-        _animator.ResetTrigger(P.Search);
-        _animator.ResetTrigger(P.Winning);
-        _animator.ResetTrigger(P.GrenadeWindUp);
-        _animator.ResetTrigger(P.GrenadeThrow);
-        _animator.ResetTrigger(P.GrenadeCancel);
+        _animator.Update(0f);
 
         _cachedSpeed        = 0f;
         _idleTimer          = 0f;
