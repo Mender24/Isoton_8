@@ -184,4 +184,18 @@ public class StationaryEnemy : EnemyBase
 
     public override bool CanAttack()   => _rangedCombat.CanShoot;
     public override void StartAttack() => _rangedCombat.StartFire();
+
+    public override void FullReset()
+    {
+        base.FullReset();
+        _guardState = GuardState.Idle;
+        _coverTimer = 0f;
+        _rangedCombat.StopFire();
+        _rangedCombat.SetPaused(false);
+        _rangedCombat.Initialize(PlayerTransform);
+        Navigation.Stop();
+        Navigation.Agent.updateRotation = false;
+        _basicAnimator?.SetAiming(false);
+        if (_animator != null) _animator.ResetTrigger("CrouchDown");
+    }
 }

@@ -90,7 +90,7 @@ public class EnemyPerception : MonoBehaviour
     {
         if (!_state.IsAlerted || IsPlayerInSightRaw()) return;
 
-        if (_state.HasCover && !_state.IsInCover) return;
+        if (_state.IsMovingToCover) return;
 
         _state.TimeSinceLastSeen += Time.deltaTime;
 

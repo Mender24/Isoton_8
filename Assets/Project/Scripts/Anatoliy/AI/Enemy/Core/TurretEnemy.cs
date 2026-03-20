@@ -83,4 +83,15 @@ public class TurretEnemy : EnemyBase
 
     public override bool CanAttack()   => _rangedCombat.CanShoot;
     public override void StartAttack() => _rangedCombat.StartFire();
+
+    public override void FullReset()
+    {
+        base.FullReset();
+        _shootTimer     = 0f;
+        _waitingToShoot = false;
+        _rangedCombat.StopFire();
+        _rangedCombat.Initialize(PlayerTransform);
+        Navigation.Stop();
+        Navigation.Agent.updateRotation = false;
+    }
 }

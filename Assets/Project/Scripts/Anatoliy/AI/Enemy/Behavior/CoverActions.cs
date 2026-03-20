@@ -61,8 +61,8 @@ public partial class MoveToCoverAction : Action
 
     protected override Status OnUpdate()
     {
-        if (_enemy.State.IsDead)           return Status.Failure;
-        if (!_enemy.State.PlayerDetected)  return Status.Failure;
+        if (_enemy.State.IsDead)        return Status.Failure;
+        if (!_enemy.State.IsAlerted)    return Status.Failure;
 
         if (_cover.IsAtCoverPoint())
         {
@@ -112,8 +112,8 @@ public partial class WaitInCoverAction : Action
 
     protected override Status OnUpdate()
     {
-        if (_enemy.State.IsDead)          return Status.Failure;
-        if (!_enemy.State.PlayerDetected) return Status.Failure;
+        if (_enemy.State.IsDead)       return Status.Failure;
+        if (!_enemy.State.IsAlerted)   return Status.Failure;
 
         // Игрок выстрелил в бота — ответный огонь
         if (Time.time - _enemy.State.LastDamageTime <= ReturnFireWindow.Value)
@@ -173,7 +173,10 @@ public partial class MoveToAttackPositionAction : Action
         if (_enemy.State.PlayerIsSeen) return Status.Success;
 
         if (!_cover.TryGetPeekPosition(out Vector3 peekPos))
+        {
+            _cover.IncrementCoverIterations();
             return Status.Failure;
+        }
 
         _enemy.Navigation.MoveTo(peekPos, run: true);
         _moving = true;

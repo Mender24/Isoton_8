@@ -24,6 +24,8 @@ GameObject:
   - component: {fileID: 3648282844375542397}
   - component: {fileID: 7360628979022855765}
   - component: {fileID: 6551807137948163267}
+  - component: {fileID: 2131816946872532695}
+  - component: {fileID: 6103055296649925271}
   m_Layer: 8
   m_Name: CrawlerScriptedEnemy
   m_TagString: Enemy
@@ -498,6 +500,41 @@ MonoBehaviour:
   _dropZoneMinDist: 1.5
   _dropZoneMaxDist: 3
   _dropAttempts: 20
+--- !u!114 &2131816946872532695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666818101253455073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e530bc4c3e2ea4580e29cb9358b11f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodEffectPrefabs:
+  - {fileID: 893913727056456344, guid: adbcdb6ee09235244ad8cf01c1ed7186, type: 3}
+  bloodEffectPrefabsDestroy: 5
+  otherBloodEffectsData: []
+  destroy: 0
+  disabled: 0
+  disabledObjects: []
+--- !u!114 &6103055296649925271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666818101253455073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e132ae7dab5908e4ebc78875032e25c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodProjectorPrefab: {fileID: 81780311032234737, guid: 20494e9a5a3996f4a87a98000e90a0b8,
+    type: 3}
+  zOffset: 0.1
+  destroyTime: 20
 --- !u!1 &6776858310548868598
 GameObject:
   m_ObjectHideFlags: 0

@@ -387,6 +387,28 @@ public class ScriptedCeilingCrawler : EnemyBase
             EnterPhase(Phase.CeilingPatrol);
     }
 
+    public override void FullReset()
+    {
+        StopAllCoroutines();
+
+        _phase            = Phase.CeilingPatrol;
+        _patrolIndex      = 0;
+        _patrolWaiting    = false;
+        _isNavigatingBack = false;
+        _returnTimer      = 0f;
+        _dropElapsed      = 0f;
+        _attackTimer      = 0f;
+
+        Navigation.Agent.updatePosition = true;
+
+        base.FullReset();
+
+        if (_aligner != null) _aligner.IsActive = true;
+
+        Activate();
+        EnterPhase(Phase.CeilingPatrol);
+    }
+
     protected override void OnDamaged(float amount, GameObject source)
     {
         base.OnDamaged(amount, source);

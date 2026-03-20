@@ -3,7 +3,7 @@ using Akila.FPSFramework;
 
 /// <summary>
 /// Триггер, который приказывает ScriptedCeilingCrawler прыгнуть с потолка к игроку.
-/// Поместите этот компонент на объект с Collider (Is Trigger = true).
+/// Поместите этот компонент на объект с триггером.
 /// Автоматически находит ближайшего ScriptedCeilingCrawler в дочерних / родительских объектах,
 /// если массив _crawlers не задан вручную.
 /// </summary>
@@ -36,7 +36,6 @@ public class CrawlerDropTrigger : MonoBehaviour
             Debug.LogWarning($"[CrawlerDropTrigger] {gameObject.name}: краулеры не найдены. " +
                              "Добавьте их вручную или разместите триггер как дочерний/сестринский объект краулера.");
 
-        // Сброс при респауне игрока
         if (SpawnManager.Instance != null)
             SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(_ => _triggered = false);
     }
