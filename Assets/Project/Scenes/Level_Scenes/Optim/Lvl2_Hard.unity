@@ -4169,6 +4169,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 0
@@ -4177,7 +4179,19 @@ MonoBehaviour:
   _countObjectInFrame: 1
   _timeBetweenActive: 0.2
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &283688211
 PrefabInstance:
@@ -7514,6 +7528,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -7522,7 +7538,19 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!4 &466860843 stripped
 Transform:
@@ -7977,6 +8005,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 1
   _isEnable: 1
   _isEnableActivator: 1
@@ -7985,17 +8015,17 @@ MonoBehaviour:
   _countObjectInFrame: 1
   _timeBetweenActive: 0.05
   _objects: {fileID: 520947212}
-  _multiplicativeCoeffSpeed:
+  _multiplicativeCoeffSpeedType:
   - SpeedType: 0
-    CountInFrameObject: 1
-    TimeBetweenActive: 0.05
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
     IsFrameSkip: 0
   - SpeedType: 1
-    CountInFrameObject: 5
-    TimeBetweenActive: 0.1
-    IsFrameSkip: 0
-  - SpeedType: 2
     CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
     TimeBetweenActive: 0
     IsFrameSkip: 1
   _currentSpeedType: 0
@@ -8114,6 +8144,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -8122,7 +8154,19 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &541160048
 PrefabInstance:
@@ -9153,6 +9197,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -9161,7 +9207,19 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &606232641
 PrefabInstance:
@@ -16515,6 +16573,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc7d9a0674dea434e8786f01ab1fdd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -16523,7 +16583,19 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1072920192
 PrefabInstance:

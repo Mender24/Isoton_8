@@ -7123,6 +7123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 0
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -7131,7 +7132,19 @@ MonoBehaviour:
   _countObjectInFrame: 10
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &183274438
 PrefabInstance:
@@ -8742,6 +8755,26 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 493095321471414229, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 493095321471414229, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 493095321471414229, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 493095321471414229, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 539740487187130316, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_Layer
@@ -8875,12 +8908,12 @@ PrefabInstance:
     - target: {fileID: 2085251369621646533, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100.33
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2085251369621646533, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 41.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2108122580940135956, guid: e236f170a08072441804db35805ff900,
         type: 3}
@@ -9130,7 +9163,7 @@ PrefabInstance:
     - target: {fileID: 3328074302110945048, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 21.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328074302110945048, guid: e236f170a08072441804db35805ff900,
         type: 3}
@@ -9447,6 +9480,26 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 5488460772494266716, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488460772494266716, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488460772494266716, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488460772494266716, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5517312508544225965, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_Layer
@@ -9672,6 +9725,26 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 6392971622347631430, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6392971622347631430, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6392971622347631430, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6392971622347631430, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6469248685636964171, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_Layer
@@ -9695,12 +9768,12 @@ PrefabInstance:
     - target: {fileID: 6481834678631228336, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 30.310001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6481834678631228336, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 33.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6481834678631228336, guid: e236f170a08072441804db35805ff900,
         type: 3}
@@ -9955,6 +10028,26 @@ PrefabInstance:
     - target: {fileID: 7425880167650932068, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428995899596440651, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428995899596440651, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428995899596440651, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428995899596440651, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7524549684692552475, guid: e236f170a08072441804db35805ff900,
@@ -10247,6 +10340,26 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[2]'
       value: 
       objectReference: {fileID: 2100000, guid: a89d5cd318d3e7a42a404a6156887fff, type: 2}
+    - target: {fileID: 9089550881182324916, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089550881182324916, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089550881182324916, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089550881182324916, guid: e236f170a08072441804db35805ff900,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9089969568794259152, guid: e236f170a08072441804db35805ff900,
         type: 3}
       propertyPath: m_Layer
@@ -25723,6 +25836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 1302877735}
+  _isActiveObject: 1
   _isMain: 1
   _isEnable: 1
   _isEnableActivator: 1
@@ -25731,15 +25845,15 @@ MonoBehaviour:
   _countObjectInFrame: 5
   _timeBetweenActive: 0.1
   _objects: {fileID: 520947212}
-  _multiplicativeCoeffSpeed:
+  _multiplicativeCoeffSpeedType:
   - SpeedType: 0
-    CountInFrameObject: 3
-    TimeBetweenActive: 0.1
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
     IsFrameSkip: 0
   - SpeedType: 1
-    CountInFrameObject: 7
-    TimeBetweenActive: 0.1
-    IsFrameSkip: 0
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   - SpeedType: 2
     CountInFrameObject: 40
     TimeBetweenActive: 0
@@ -60536,6 +60650,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 0
   _isMain: 1
   _isEnable: 1
   _isEnableActivator: 1
@@ -60544,17 +60659,17 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed:
+  _multiplicativeCoeffSpeedType:
   - SpeedType: 0
-    CountInFrameObject: 1
+    CountInFrameObject: 5
     TimeBetweenActive: 0.15
     IsFrameSkip: 0
   - SpeedType: 1
-    CountInFrameObject: 2
+    CountInFrameObject: 10
     TimeBetweenActive: 0
     IsFrameSkip: 1
   - SpeedType: 2
-    CountInFrameObject: 3
+    CountInFrameObject: 40
     TimeBetweenActive: 0
     IsFrameSkip: 1
   _currentSpeedType: 0
@@ -65712,6 +65827,89 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1419896740}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1427051888
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 568732404129763821, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 4.3474774
+      objectReference: {fileID: 0}
+    - target: {fileID: 568732404129763821, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_Center.x
+      value: -0.5702081
+      objectReference: {fileID: 0}
+    - target: {fileID: 568732404129763821, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_Center.z
+      value: 9.977184e-16
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 98.513794
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -9.78
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.256613
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874818454767359436, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4499641640771268899, guid: 41f7e9c18fb0ef64d9d2cd21c342f954,
+        type: 3}
+      propertyPath: m_Name
+      value: TriggerLateLoadScene
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 41f7e9c18fb0ef64d9d2cd21c342f954, type: 3}
 --- !u!1001 &1427093600
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70929,6 +71127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -70937,7 +71136,19 @@ MonoBehaviour:
   _countObjectInFrame: 6
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1545731904
 PrefabInstance:
@@ -78174,6 +78385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -78182,7 +78394,19 @@ MonoBehaviour:
   _countObjectInFrame: 10
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!114 &1664705851
 MonoBehaviour:
@@ -78197,6 +78421,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -78205,7 +78430,19 @@ MonoBehaviour:
   _countObjectInFrame: 10
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1667298799
 PrefabInstance:
@@ -85675,6 +85912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -85683,7 +85921,19 @@ MonoBehaviour:
   _countObjectInFrame: 15
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!114 &1770075050
 MonoBehaviour:
@@ -85698,6 +85948,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -85706,7 +85957,19 @@ MonoBehaviour:
   _countObjectInFrame: 15
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!114 &1770075051
 MonoBehaviour:
@@ -85721,6 +85984,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -85729,7 +85993,19 @@ MonoBehaviour:
   _countObjectInFrame: 10
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!114 &1770075052
 MonoBehaviour:
@@ -85744,6 +86020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -85752,7 +86029,19 @@ MonoBehaviour:
   _countObjectInFrame: 6
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1770724865
 PrefabInstance:
@@ -87978,6 +88267,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -87986,7 +88276,19 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1825746634
 PrefabInstance:
@@ -88677,6 +88979,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -88685,7 +88988,19 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!114 &1836806413
 MonoBehaviour:
@@ -88700,6 +89015,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -88708,7 +89024,19 @@ MonoBehaviour:
   _countObjectInFrame: 4
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1839203630
 PrefabInstance:
@@ -94239,6 +94567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -94247,7 +94576,19 @@ MonoBehaviour:
   _countObjectInFrame: 6
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1930133267
 PrefabInstance:
@@ -95634,6 +95975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -95642,7 +95984,19 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1977344684
 PrefabInstance:
@@ -95964,6 +96318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postLoadActive: {fileID: 0}
+  _isActiveObject: 1
   _isMain: 0
   _isEnable: 1
   _isEnableActivator: 1
@@ -95972,7 +96327,19 @@ MonoBehaviour:
   _countObjectInFrame: 3
   _timeBetweenActive: 0.1
   _objects: {fileID: 0}
-  _multiplicativeCoeffSpeed: []
+  _multiplicativeCoeffSpeedType:
+  - SpeedType: 0
+    CountInFrameObject: 5
+    TimeBetweenActive: 0.15
+    IsFrameSkip: 0
+  - SpeedType: 1
+    CountInFrameObject: 10
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
+  - SpeedType: 2
+    CountInFrameObject: 40
+    TimeBetweenActive: 0
+    IsFrameSkip: 1
   _currentSpeedType: 0
 --- !u!1001 &1986121563
 PrefabInstance:
@@ -103556,4 +103923,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1427051888}
   - {fileID: 520947210}

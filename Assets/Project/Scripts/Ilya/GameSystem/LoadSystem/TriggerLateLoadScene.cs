@@ -13,11 +13,14 @@ public class TriggerLateLoadScene : MonoBehaviour
             BoxCollider boxCollider = GetComponent<BoxCollider>();
             boxCollider.enabled = false;
 
+            if (_isPriorityUp)
+            {
+                SceneLoader.instance.PriorityUp();
+                return;
+            }
+
             if (!SceneLoader.instance.IsScenesLoaded && !SceneLoader.instance.IsProgressLoadingScenes)
                 StartAddLoadScene();
-
-            if (_isPriorityUp)
-                SceneLoader.instance.PriorityUp();
         }
     }
 

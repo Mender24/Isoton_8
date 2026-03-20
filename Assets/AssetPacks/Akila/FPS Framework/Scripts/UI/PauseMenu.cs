@@ -53,8 +53,6 @@ namespace Akila.FPSFramework.UI
 
         public void Pause()
         {
-            Debug.Log("Pause");
-
             if(UIManager.Instance.MenusManager.activeMenu != null && UIManager.Instance.MenusManager.activeMenu.isNote)
             {
                 FPSFrameworkCore.IsPaused = false;

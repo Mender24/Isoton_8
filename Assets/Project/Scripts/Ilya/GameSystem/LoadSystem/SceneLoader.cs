@@ -441,13 +441,16 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(StartLateLoadScene());
     }
 
-    public void FinishLateLoadScene()
+    public IEnumerator FinishLateLoadScene()
     {
         _currentSceneIndex = _currentEndTransition;
         _nextSceneIndex = _nextEndScene;
 
         if(_isUseSave)
             StartCoroutine(SaveDataPlayer());
+
+        while (_isProgressLoadingScenes)
+            yield return null;
 
         InitPostLoadScene(false);
 
@@ -474,7 +477,7 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator StartLateUnloadScenes()
     {
         if (_isDebug)
-            Debug.Log("Start late unloaded scene");
+            Debug.Log("Start late unloaded scene count: " + (_currentCountLoadedScene - 1));
 
         yield return StartCoroutine(UnloadScenesAsync(_currentCountLoadedScene - 1));
 
