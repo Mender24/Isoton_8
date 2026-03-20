@@ -84,10 +84,10 @@ namespace Akila.FPSFramework
 
             yield return null;
 
-            if(!_isUseForceDontOpenDoor)
+            if(!_isUseLateLoadedSystem)
                 SceneLoader.instance.LoadScenes(isUseSave: true);
             else
-                SceneLoader.instance.FinishLateLoadScene();
+                StartCoroutine(SceneLoader.instance.FinishLateLoadScene());
         }
 
         private void ToggleLeaver()

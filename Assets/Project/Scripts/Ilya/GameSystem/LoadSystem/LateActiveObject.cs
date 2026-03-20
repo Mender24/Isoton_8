@@ -6,6 +6,7 @@ using UnityEngine;
 public class LateActiveObject : MonoBehaviour
 {
     [SerializeField] private LateActiveObject _postLoadActive;
+    [SerializeField] private bool _isActiveObject = false;
     [SerializeField] private bool _isMain = false;
     [SerializeField] private bool _isEnable = true;
     [SerializeField] private bool _isEnableActivator = true;
@@ -15,12 +16,38 @@ public class LateActiveObject : MonoBehaviour
     [SerializeField] private int _countObjectInFrame = 3;
     [SerializeField] private float _timeBetweenActive = 0.1f;
     [SerializeField] private LateActivatorObjects _objects;
-    [SerializeField] private List<SpeedTypeProfile> _multiplicativeCoeffSpeed = new();
+    [SerializeField]
+    private List<SpeedTypeProfile> _multiplicativeCoeffSpeedType = new()
+    {
+        new SpeedTypeProfile()
+        {
+            SpeedType = SpeedType.Slowly,
+            CountInFrameObject = 5,
+            TimeBetweenActive = 0.15f,
+            IsFrameSkip = false,
+        },
+        new SpeedTypeProfile()
+        {
+            SpeedType = SpeedType.Fast,
+            CountInFrameObject = 10,
+            TimeBetweenActive = 0,
+            IsFrameSkip = true,
+        },
+        new SpeedTypeProfile()
+        {
+            SpeedType = SpeedType.VeryFast,
+            CountInFrameObject = 40,
+            TimeBetweenActive = 0,
+            IsFrameSkip = true,
+        }
+    };
 
     [SerializeField] private SpeedType _currentSpeedType = SpeedType.Slowly;
 
     private IEnumerator Start()
     {
+        ChangeSpeedActive(_currentSpeedType);
+
         if (_isStartActive)
         {
             yield return StartActivate();
@@ -48,34 +75,37 @@ public class LateActiveObject : MonoBehaviour
                 _isFrameSkip = speedProfile.IsFrameSkip;
             }
 
-            int currentActive = 0;
-            float time;
-
-            foreach (Transform obj in transform)
+            if(_isActiveObject)
             {
-                currentActive++;
-                obj.gameObject.SetActive(true);
+                int currentActive = 0;
+                float time;
 
-                if (currentActive >= _countObjectInFrame)
+                foreach (Transform obj in transform)
                 {
-                    currentActive = 0;
+                    currentActive++;
+                    obj.gameObject.SetActive(true);
 
-                    if (_isFrameSkip)
-                        time = Time.deltaTime;
-                    else
-                        time = _timeBetweenActive;
-
-                    while (time > 0f)
+                    if (currentActive >= _countObjectInFrame)
                     {
-                        time -= Time.deltaTime;
-                        yield return null;
+                        currentActive = 0;
+
+                        if (_isFrameSkip)
+                            time = Time.deltaTime;
+                        else
+                            time = _timeBetweenActive;
+
+                        while (time > 0f)
+                        {
+                            time -= Time.deltaTime;
+                            yield return null;
+                        }
                     }
                 }
             }
+            
+            if (_objects != null && _isEnableActivator)
+                yield return StartCoroutine(_objects.ActivateLateActiveObject(GetSpeedTypeProfile(_currentSpeedType)));
         }
-
-        if (_objects != null && _isEnableActivator)
-            yield return StartCoroutine(_objects.ActivateLateActiveObject(GetSpeedTypeProfile(_currentSpeedType)));
     }
 
     private IEnumerator PostLoadActiveObject(SpeedTypeProfile speedProfile = null)
@@ -89,7 +119,7 @@ public class LateActiveObject : MonoBehaviour
         }
     }
 
-    private void ChangeSpeedActive(SpeedType speedType)
+    public void ChangeSpeedActive(SpeedType speedType)
     {
         _currentSpeedType = speedType;
 
@@ -98,11 +128,17 @@ public class LateActiveObject : MonoBehaviour
         _countObjectInFrame = profile.CountInFrameObject;
         _timeBetweenActive = profile.TimeBetweenActive;
         _isFrameSkip = profile.IsFrameSkip;
+
+        if(_objects != null)
+            _objects.ChangeSpeedProfile(_currentSpeedType);
+
+        if(_postLoadActive != null)
+            _postLoadActive.ChangeSpeedActive(_currentSpeedType);
     }
 
     private SpeedTypeProfile GetSpeedTypeProfile(SpeedType speedType)
     {
-        foreach (SpeedTypeProfile profile in _multiplicativeCoeffSpeed)
+        foreach (SpeedTypeProfile profile in _multiplicativeCoeffSpeedType)
             if (profile.SpeedType == _currentSpeedType)
                 return profile;
 

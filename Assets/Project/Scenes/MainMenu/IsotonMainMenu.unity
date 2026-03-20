@@ -2273,6 +2273,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1065807089}
     m_Modifications:
+    - target: {fileID: 374009933901206597, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: isDeleteItem
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1320913092677034065, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -2418,6 +2423,41 @@ PrefabInstance:
       propertyPath: destroyDelay
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: onDeath.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: onDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: onDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 999456211}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: onDeath.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: onDeath.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: DropAllItems
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: onDeath.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Akila.FPSFramework.Inventory, Akila.FPSFramework
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824016436430896429, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: onDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3917014405222904205, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
       propertyPath: m_Name
@@ -2462,6 +2502,11 @@ PrefabInstance:
         type: 3}
       propertyPath: near clip plane
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6858393402172927151, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: _isStartOff
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2595,7 +2640,8 @@ MonoBehaviour:
   _isUseSave: 1
   _isUseFullLate: 1
   _timeWaitNextLoad: 2
-  _isDebug: 0
+  _timeWaitUnloadScene: 2
+  _isDebug: 1
   _sceneNames:
   - IsotonMainMenu
   - Lvl1
@@ -3279,7 +3325,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isNewGame: 1
-  _forceSceneLoad: 
+  _forceSceneLoad: Transition_1-2
 --- !u!1001 &1430247804
 PrefabInstance:
   m_ObjectHideFlags: 0

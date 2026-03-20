@@ -13,4 +13,10 @@ public class LateActivatorObjects : MonoBehaviour
             yield return StartCoroutine(activate.StartActivate(speedProfile));
         }
     }
+
+    public void ChangeSpeedProfile(SpeedType speedProfile)
+    {
+        foreach (var activate in _lateActivators)
+            activate.ChangeSpeedActive(speedProfile);
+    }
 }
