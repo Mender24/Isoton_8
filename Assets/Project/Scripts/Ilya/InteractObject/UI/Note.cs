@@ -1,5 +1,6 @@
 using Akila.FPSFramework;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Note : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class Note : MonoBehaviour
 
     public void OpenNote()
     {
+        FPSFrameworkCore.IsPaused = true;
         UIManager.Instance.OpenNameNotes(_nameNote);
     }
 }

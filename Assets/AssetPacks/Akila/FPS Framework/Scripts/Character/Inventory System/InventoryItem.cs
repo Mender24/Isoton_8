@@ -487,21 +487,21 @@ namespace Akila.FPSFramework
                 }
 
                 // Check if the item is a Firearm or Throwable and throw an appropriate error message
-                if (GetComponent<Firearm>() != null)
-                {
-                    Debug.LogError($"[InventoryItem] Failed to drop '{name}' because the 'replacement' field is null. " +
-                                   "For Firearm items, ensure the replacement field is assigned in the Firearm preset.");
-                }
-                else if (GetComponent<Throwable>() != null)
-                {
-                    Debug.LogError($"[InventoryItem] Failed to drop '{name}' because the 'replacement' field is null. " +
-                                   "For Throwable items, ensure the replacement field is assigned in the Throwable component.");
-                }
-                else
-                {
-                    Debug.LogError($"[InventoryItem] Failed to drop '{name}' because the 'replacement' field is null. " +
-                                   "Ensure the replacement field is assigned to your custom public field as intended.");
-                }
+                //if (GetComponent<Firearm>() != null)
+                //{
+                //    Debug.LogError($"[InventoryItem] Failed to drop '{name}' because the 'replacement' field is null. " +
+                //                   "For Firearm items, ensure the replacement field is assigned in the Firearm preset.");
+                //}
+                //else if (GetComponent<Throwable>() != null)
+                //{
+                //    Debug.LogError($"[InventoryItem] Failed to drop '{name}' because the 'replacement' field is null. " +
+                //                   "For Throwable items, ensure the replacement field is assigned in the Throwable component.");
+                //}
+                //else
+                //{
+                //    Debug.LogError($"[InventoryItem] Failed to drop '{name}' because the 'replacement' field is null. " +
+                //                   "Ensure the replacement field is assigned to your custom public field as intended.");
+                //}
 
                 Destroy(gameObject);
                 return;

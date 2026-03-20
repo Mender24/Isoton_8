@@ -11,6 +11,7 @@ namespace Akila.FPSFramework
     [AddComponentMenu("Akila/FPS Framework/Player/Inventory")]
     public class Inventory : MonoBehaviour, IInventory
     {
+        public bool isDeleteItem = false;
         public List<InventoryItem> startItems = new List<InventoryItem>();
         public List<InventoryItem> items = new List<InventoryItem>();
         public List<InventoryCollectable> collectables = new List<InventoryCollectable>();
@@ -268,6 +269,9 @@ namespace Akila.FPSFramework
                 if (item != null)
                 {
                     item.Drop(false);
+
+                    if(isDeleteItem)
+                        Destroy(item);
                 }
             }
 

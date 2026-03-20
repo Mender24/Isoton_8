@@ -53,6 +53,14 @@ namespace Akila.FPSFramework.UI
 
         public void Pause()
         {
+            if(UIManager.Instance.MenusManager.activeMenu != null && UIManager.Instance.MenusManager.activeMenu.isNote)
+            {
+                FPSFrameworkCore.IsPaused = false;
+                UIManager.Instance.MenusManager.CloseMenu(UIManager.Instance.MenusManager.activeMenu);
+                UIManager.Instance.MenusManager.activeMenu = null;
+                return;
+            }
+
             FPSFrameworkCore.IsPaused = true;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -61,8 +69,16 @@ namespace Akila.FPSFramework.UI
 
         public void Unpause()
         {
-            if (IsOpen)
+            if (IsOpen || (UIManager.Instance.MenusManager.activeMenu != null && UIManager.Instance.MenusManager.activeMenu.isNote))
             {
+                if (UIManager.Instance.MenusManager.activeMenu != null && UIManager.Instance.MenusManager.activeMenu.isNote)
+                {
+                    FPSFrameworkCore.IsPaused = false;
+                    UIManager.Instance.MenusManager.CloseMenu(UIManager.Instance.MenusManager.activeMenu);
+                    UIManager.Instance.MenusManager.activeMenu = null;
+                    return;
+                }
+
                 FPSFrameworkCore.IsPaused = false;
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;

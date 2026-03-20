@@ -1,10 +1,16 @@
+using Akila.FPSFramework;
 using UnityEngine;
 
 public class EnemyResetter : MonoBehaviour
 {
-    public void ResetAllEnemies()
+    private void Start()
     {
-        var newEnemies = FindObjectsByType<EnemyBase>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(ResetAllEnemies);
+    }
+
+    public void ResetAllEnemies(string name)
+    {
+        var newEnemies = transform.GetComponentsInChildren<EnemyBase>(true);
         foreach (var enemy in newEnemies)
         {
             if (enemy == null) continue;
@@ -16,7 +22,7 @@ public class EnemyResetter : MonoBehaviour
         }
 
         // Legacy
-        var legacyEnemies = FindObjectsByType<EnemyAI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var legacyEnemies = transform.GetComponentsInChildren<EnemyAI>(true);
         foreach (var enemy in legacyEnemies)
         {
             if (enemy == null) continue;

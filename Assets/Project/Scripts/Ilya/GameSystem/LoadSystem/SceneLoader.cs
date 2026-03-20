@@ -441,13 +441,16 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(StartLateLoadScene());
     }
 
-    public void FinishLateLoadScene()
+    public IEnumerator FinishLateLoadScene()
     {
         _currentSceneIndex = _currentEndTransition;
         _nextSceneIndex = _nextEndScene;
 
         if(_isUseSave)
             StartCoroutine(SaveDataPlayer());
+
+        while (_isProgressLoadingScenes)
+            yield return null;
 
         InitPostLoadScene(false);
 
@@ -458,6 +461,7 @@ public class SceneLoader : MonoBehaviour
     {
         _isProgressLoadingScenes = true;
         _isProgressAsyncLoadingScene = true;
+        _isProgressUnloadingScenes = true;
 
         _speedType = SpeedType.Slowly;
 
@@ -472,10 +476,8 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator StartLateUnloadScenes()
     {
-        _isProgressUnloadingScenes = true;
-
         if (_isDebug)
-            Debug.Log("Start late unloaded scene");
+            Debug.Log("Start late unloaded scene count: " + (_currentCountLoadedScene - 1));
 
         yield return StartCoroutine(UnloadScenesAsync(_currentCountLoadedScene - 1));
 
@@ -497,7 +499,7 @@ public class SceneLoader : MonoBehaviour
         _isFirstLoad = false;
         _isMovePostLoadScene = false;
 
-        LoadScenes(true, "", true);
+        //LoadScenes(true, "", true);
     }
 
     #endregion

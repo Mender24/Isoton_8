@@ -188,6 +188,9 @@ public class SoundManager : MonoBehaviour
 
     public float PlayRandomAudioClip(int currentIdLocation)
     {
+        if (_randomSoundSource == null)
+            return 0;
+
         if (!_audioProfileLocationId.ContainsKey(currentIdLocation))
         {
             Debug.LogWarning("Sound profile not found!");
