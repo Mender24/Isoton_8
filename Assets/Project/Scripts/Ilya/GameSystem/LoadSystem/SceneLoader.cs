@@ -496,7 +496,7 @@ public class SceneLoader : MonoBehaviour
         _isFirstLoad = false;
         _isMovePostLoadScene = false;
 
-        LoadScenes(true, "", true);
+        //LoadScenes(true, "", true);
     }
 
     #endregion
