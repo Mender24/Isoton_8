@@ -117,6 +117,8 @@ public class LateActiveObject : MonoBehaviour
             while (SceneLoader.instance.IsProgressUnloadingScenes)
                 yield return null;
 
+            _postLoadActive.gameObject.SetActive(true);
+            yield return null;
             StartCoroutine(_postLoadActive.StartActivate());
         }
     }
