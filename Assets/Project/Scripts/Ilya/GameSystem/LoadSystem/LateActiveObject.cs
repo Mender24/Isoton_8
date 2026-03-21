@@ -44,6 +44,8 @@ public class LateActiveObject : MonoBehaviour
 
     [SerializeField] private SpeedType _currentSpeedType = SpeedType.Slowly;
 
+    public bool IsActiveObject => _isActiveObject;
+
     private IEnumerator Start()
     {
         ChangeSpeedActive(_currentSpeedType);

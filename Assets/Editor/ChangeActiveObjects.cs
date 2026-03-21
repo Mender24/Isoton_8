@@ -42,4 +42,56 @@ public class ChangeActiveObjects : MonoBehaviour
 
         Undo.CollapseUndoOperations(undoGroup);
     }
+
+    [MenuItem("Tools/Scene/OffLateActiveObject")]
+    static void OffLateActiveObject()
+    {
+        Undo.SetCurrentGroupName("OffLateActiveObject");
+        int undoGroup = Undo.GetCurrentGroup();
+
+        LateActiveObject[] allObjects = FindObjectsByType<LateActiveObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        foreach (LateActiveObject obj in allObjects)
+        {
+            if (!obj.IsActiveObject)
+                continue;
+
+            foreach(Transform child in obj.gameObject.transform)
+            {
+                if(child.gameObject.activeSelf)
+                {
+                    Undo.RecordObject(child, "Object off");
+                    child.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        Undo.CollapseUndoOperations(undoGroup);
+    }
+
+    [MenuItem("Tools/Scene/OnLateActiveObject")]
+    static void OnLateActiveObject()
+    {
+        Undo.SetCurrentGroupName("OnLateActiveObject");
+        int undoGroup = Undo.GetCurrentGroup();
+
+        LateActiveObject[] allObjects = FindObjectsByType<LateActiveObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        foreach (LateActiveObject obj in allObjects)
+        {
+            if (!obj.IsActiveObject)
+                continue;
+
+            foreach (Transform child in obj.gameObject.transform)
+            {
+                if (!child.gameObject.activeSelf)
+                {
+                    Undo.RecordObject(child, "Object on");
+                    child.gameObject.SetActive(true);
+                }
+            }
+        }
+
+        Undo.CollapseUndoOperations(undoGroup);
+    }
 }
