@@ -116,7 +116,7 @@ public class SceneLoader : MonoBehaviour
         {
             _currentSceneIndex = _nextSceneIndex;
 
-            SearchAllIndex(_currentSceneIndex);
+            _nextSceneIndex = SearchAllIndex(_currentSceneIndex);
         }
 
         IsInitPlayer = false;
@@ -139,6 +139,9 @@ public class SceneLoader : MonoBehaviour
         }
 
         _nextSceneIndex = SearchAllIndex(_currentSceneIndex);
+
+        if (_isDebug)
+            Debug.Log("NextSceneIndex: " + _nextSceneIndex);
     }
 
     private int SearchAllIndex(int startSceneIndex)
@@ -195,7 +198,7 @@ public class SceneLoader : MonoBehaviour
         _isProgressAsyncLoadingScene = true;
 
         if (_loadedScene.Count > 1)
-            yield return StartCoroutine(UnloadScenesAsync());
+            yield return StartCoroutine(UnloadScenesAsync(_loadedScene.Count - 1));
 
         if (_isDebug)
             Debug.Log("Unload scenes complete");
@@ -352,7 +355,7 @@ public class SceneLoader : MonoBehaviour
         if (CheckTransitionScene(_currentSceneIndex))
             OpenExitDoorTransition(FindDoorControolerInScene(_currentSceneIndex));
 
-        if (CheckTransitionScene(_nextSceneIndex))
+        if (_currentSceneIndex != _nextSceneIndex && CheckTransitionScene(_nextSceneIndex))
             OpenEnterDoorTransition(FindDoorControolerInScene(_nextSceneIndex));
 
         IsInitPlayer = true;
