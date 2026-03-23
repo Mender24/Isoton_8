@@ -138,7 +138,7 @@ public class SoundManager : MonoBehaviour
     {
         StopAllCoroutines();
 
-        StartCoroutine(SetAmbientClip(_ambiemtSource, SceneLoader.instance.CurrentSceneId, false));
+        StartCoroutine(SetAmbientClip(_ambiemtSource, SceneLoader.instance.GetIndexNotTransition, false));
     }
 
     private void OnLevelLoaded()
@@ -188,6 +188,9 @@ public class SoundManager : MonoBehaviour
 
     public float PlayRandomAudioClip(int currentIdLocation)
     {
+        if (_randomSoundSource == null)
+            return 0;
+
         if (!_audioProfileLocationId.ContainsKey(currentIdLocation))
         {
             Debug.LogWarning("Sound profile not found!");
@@ -298,6 +301,7 @@ public class SoundManager : MonoBehaviour
 public class AudioClipInLocation
 {
     public AudioClip AudioClip;
+    [Range(0, 1f)]
     public float MaxVolume;
     public int IdLocation;
 }

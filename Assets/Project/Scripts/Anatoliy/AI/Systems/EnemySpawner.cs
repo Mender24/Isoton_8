@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -178,10 +177,12 @@ public class EnemySpawner : MonoBehaviour
 
     private void SetupNewEnemy(EnemyBase enemy)
     {
+        enemy.IsSpawnedBySpawner = true;
+
         if (_increasedMemory)
             enemy.Perception.MultiplyForgetTime(_forgetTimeMultiplier);
 
-        enemy.State.IsActivated = true;
+        enemy.ActivateWithBehavior();
 
         if (_aggroOnSpawn && _playerTransform != null)
             StartCoroutine(AggroNewEnemyOnSpawn(enemy));
@@ -222,8 +223,6 @@ public class EnemySpawner : MonoBehaviour
             Destroy(enemy.gameObject);
         }
     }
-
-    // ── Legacy система ─────────────────────────────────────────────────────────
 
     private void SetupLegacyEnemy(EnemyAI enemy)
     {
@@ -322,6 +321,12 @@ public class EnemySpawner : MonoBehaviour
     
     public void KillAllEnemies()
     {
+        foreach (var enemy in _activeNewEnemies.ToArray())
+        {
+            if (enemy != null)
+                enemy.Health.Damage(999, gameObject);
+        }
+
         foreach (var enemy in _activeEnemies.ToArray())
         {
             if (enemy != null)
@@ -330,7 +335,7 @@ public class EnemySpawner : MonoBehaviour
                 enemy.Damage(999, gameObject);
             }
         }
-        
+
         if (_showDebug)
             Debug.Log("[EnemySpawner] Killed all enemies");
     }
@@ -397,7 +402,7 @@ public class EnemySpawner : MonoBehaviour
         if (_showDebug)
         {
             string info = $"Enemy Spawner\n";
-            info += $"Active: {_activeEnemies.Count}/{_maxEnemiesAlive}\n";
+            info += $"Active: {ActiveEnemyCount}/{_maxEnemiesAlive}\n";
             info += $"Total Spawned: {_totalSpawnedCount}";
             
             if (!_endlessMode)

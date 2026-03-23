@@ -11,6 +11,7 @@ namespace Akila.FPSFramework.UI
     [RequireComponent(typeof(CanvasGroup))]
     public class Menu : MonoBehaviour
     {
+        public bool isNote = false;
         /// <summary>
         /// Name of the menu (for identification purposes).
         /// </summary>

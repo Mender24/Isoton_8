@@ -42,6 +42,16 @@ public partial class SmartSearchPlayerAction : Action
             _hasObstacleLayer = true;
         }
 
+        // Нет ни одной достижимой точки — бот не может искать (напр. игрок за пределами NavMesh)
+        Vector3 origin = _enemy.State.LastKnownPlayerPosition;
+        List<Vector3> initial = GenerateCandidates(origin, SearchRadius.Value, CandidateCount.Value);
+        if (initial.Count == 0 &&
+            !_enemy.Navigation.TryGetRandomNavPoint(origin, SearchRadius.Value, out _))
+        {
+            _enemy.Navigation.SetStoppingDistance(_cachedStoppingDistance);
+            return Status.Failure;
+        }
+
         MoveToNextSearchPoint();
         return Status.Running;
     }

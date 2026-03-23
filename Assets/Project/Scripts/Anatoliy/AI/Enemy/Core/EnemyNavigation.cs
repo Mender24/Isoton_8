@@ -19,6 +19,7 @@ public class EnemyNavigation : MonoBehaviour
     public float CurrentSpeed   => _agent != null ? _agent.velocity.magnitude : 0f;
 
     private NavMeshAgent _agent;
+    private bool _locked;
 
     private void Awake()
     {
@@ -28,7 +29,7 @@ public class EnemyNavigation : MonoBehaviour
 
     public void MoveTo(Vector3 destination, bool run = true)
     {
-        if (!_agent.isOnNavMesh) return;
+        if (_locked || !_agent.isOnNavMesh) return;
         _agent.speed = run ? _runSpeed : _walkSpeed;
         _agent.isStopped = false;
         _agent.SetDestination(destination);
@@ -45,14 +46,26 @@ public class EnemyNavigation : MonoBehaviour
 
     public void Resume()
     {
-        if (_agent.isOnNavMesh)
-            _agent.isStopped = false;
+        if (_locked || !_agent.isOnNavMesh) return;
+        _agent.isStopped = false;
     }
 
     public void ResetPath()
     {
         if (_agent.isOnNavMesh)
             _agent.ResetPath();
+    }
+
+    public void Lock()
+    {
+        _locked = true;
+        Stop();
+        ResetPath();
+    }
+
+    public void Unlock()
+    {
+        _locked = false;
     }
 
     public void SetSpeed(float speed)
@@ -71,6 +84,24 @@ public class EnemyNavigation : MonoBehaviour
         if (_agent.pathPending) return false;
         if (_agent.remainingDistance > _agent.stoppingDistance) return false;
         return !_agent.hasPath || _agent.velocity.sqrMagnitude == 0f;
+    }
+
+    public void FaceTo(Vector3 worldPosition)
+    {
+        Vector3 dir = worldPosition - _agent.transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.001f) return;
+        Quaternion target = Quaternion.LookRotation(dir);
+        _agent.transform.rotation = Quaternion.Slerp(
+            _agent.transform.rotation, target, _rotationSpeed * Time.deltaTime);
+    }
+
+    public bool IsFacing(Vector3 worldPosition, float thresholdDeg = 5f)
+    {
+        Vector3 dir = worldPosition - _agent.transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.001f) return true;
+        return Vector3.Angle(_agent.transform.forward, dir) <= thresholdDeg;
     }
 
     public bool TryGetRandomNavPoint(Vector3 origin, float radius, out Vector3 result)

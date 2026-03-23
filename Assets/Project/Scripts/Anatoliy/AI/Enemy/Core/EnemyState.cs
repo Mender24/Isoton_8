@@ -67,6 +67,7 @@ public class EnemyState : MonoBehaviour
     [HideInInspector] public bool      IsMovingToCover;
     [HideInInspector] public Vector3   CurrentCoverPoint;
     [HideInInspector] public Transform CurrentCoverObject;
+    [HideInInspector] public float     LastDamageTime;
 
     private bool _isFiring;
     [HideInInspector]
@@ -119,6 +120,7 @@ public class EnemyState : MonoBehaviour
             IsDead              = false;
             IsAlerted           = false;
             PlayerDetected      = false;
+            PlayerIsSeen        = false;
             IsFiring            = false;
             IsReloading         = false;
             IsMeleeAttacking    = false;
@@ -129,11 +131,14 @@ public class EnemyState : MonoBehaviour
             _isDead              = false;
             _isAlerted           = false;
             _playerDetected      = false;
+            _playerIsSeen        = false;
             _isFiring            = false;
             _isReloading         = false;
             _isMeleeAttacking    = false;
             _isThrowingGrenade   = false;
         }
+
+        VisionMeterValue = 0f;
 
         IsSearching       = false;
         TimeSinceLastSeen = 0f;
@@ -149,6 +154,7 @@ public class EnemyState : MonoBehaviour
         IsMovingToCover     = false;
         CurrentCoverPoint   = Vector3.zero;
         CurrentCoverObject  = null;
+        LastDamageTime      = -999f;
 
         CurrentBullet       = 0;
         ShootCooldown       = 0f;

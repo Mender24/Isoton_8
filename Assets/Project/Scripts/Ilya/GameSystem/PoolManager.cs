@@ -40,10 +40,9 @@ public class PoolManager : MonoBehaviour
     {
         Stack<MonoBehaviour> stackObj = _objectPools[typeof(T)];
 
-        if (stackObj.Count != 0)
-            return (T)stackObj.Pop();
-        else
-            return CreateObject<T>();
+        MonoBehaviour obj = stackObj.Count != 0 ? stackObj.Pop() : CreateObject<T>();
+        obj.transform.SetParent(null);  // открепляем от PoolManager — Rigidbody и TrailRenderer работают в мировом пространстве
+        return (T)obj;
     }
 
     public void SetObject(MonoBehaviour obj)
@@ -51,6 +50,7 @@ public class PoolManager : MonoBehaviour
         if(_objectPools.TryGetValue(obj.GetType(), out var stack))
         {
             obj.gameObject.SetActive(false);
+            obj.transform.SetParent(transform);   // возвращаем под PoolManager для порядка
             obj.transform.position = transform.position;
             stack.Push(obj);
         }

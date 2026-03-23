@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(SphereCollider))]
+[RequireComponent(typeof(BoxCollider))]
 public class InteractionHint : MonoBehaviour
 {
     [SerializeField] private Canvas _canvas;
@@ -19,7 +19,7 @@ public class InteractionHint : MonoBehaviour
     [SerializeField] protected float _speedUp = 3f;
     [SerializeField] protected float _speedDown = 1f;
 
-    private SphereCollider _sphereCollider;
+    private BoxCollider _boxCollider;
     private IInteractable _interactable;
 
     private bool _isRange = false;
@@ -30,10 +30,10 @@ public class InteractionHint : MonoBehaviour
 
     private void Start()
     {
-        _sphereCollider = GetComponent<SphereCollider>();
+        _boxCollider = GetComponent<BoxCollider>();
 
-        _sphereCollider.radius = _radiusHint;
-        _sphereCollider.isTrigger = true;
+        _boxCollider.size = new Vector3(_radiusHint, _radiusHint, _radiusHint);
+        _boxCollider.isTrigger = true;
         _interactable = transform.parent.GetComponent<IInteractable>();
     }
 
@@ -49,12 +49,19 @@ public class InteractionHint : MonoBehaviour
             _isRange = false;
     }
 
-    public void Update()
+    public void LateUpdate()
     {
         if (!_isRange && _circleImage.color.a == 0)
+        {
+            _addCircleImage.color = OddAlpha(_addCircleImage.color, _speedDown);
             return;
+        }
 
-        if (Player.Instance.InteractionsManager.CurrentInteractable != null && transform.parent != null && Player.Instance.InteractionsManager.CurrentInteractable.transform.gameObject.name == transform.parent.gameObject.name)
+        if (!Player.Instance.InteractionsManager.IsDestroy 
+            && transform.parent != null 
+            && Player.Instance.InteractionsManager.CurrentInteractable != null
+            && Player.Instance.InteractionsManager.CurrentInteractable.isInstant
+            && Player.Instance.InteractionsManager.CurrentInteractable.transform.name == transform.parent.gameObject.name)
             _isCurrentObject = true;
         else
             _isCurrentObject = false;

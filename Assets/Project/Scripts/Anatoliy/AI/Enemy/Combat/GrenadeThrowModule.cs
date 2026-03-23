@@ -133,6 +133,13 @@ public class GrenadeThrowModule : MonoBehaviour
         _animator?.CancelGrenadeThrow();
     }
 
+    public void Reset(Transform playerTransform)
+    {
+        Cancel();
+        _bulletsFiredSinceCheck = 0;
+        _playerTransform        = playerTransform;
+    }
+
     public void Tick(float deltaTime)
     {
         if (_state.GrenadeCooldown > 0f)

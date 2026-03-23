@@ -38,7 +38,11 @@ namespace Akila.FPSFramework
 
         public UnityEvent<InventoryItem> onPickupPerformed;
 
-        public bool isInstant => true;
+        public bool isInstant => _isInstant;
+
+        public bool IsDestroy { get; private set; } = false;
+
+        private bool _isInstant = true;
 
         /// <summary>
         /// Called when the player interacts with this object.
@@ -142,7 +146,7 @@ namespace Akila.FPSFramework
 
             if (includeCollectable)
                 InteractWithCollectable(source);
-
+            _isInstant = false;
             Destroy(gameObject);
         }
 

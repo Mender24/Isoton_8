@@ -5,6 +5,7 @@ namespace Akila.FPSFramework
     public class Player : MonoBehaviour
     {
         public static Player Instance;
+        [SerializeField] private bool _isStartOff = false;
 
         private Inventory _inventory;
         private Actor _actor;
@@ -25,7 +26,8 @@ namespace Akila.FPSFramework
 
         private void Start()
         {
-            gameObject.SetActive(false);
+            if (_isStartOff)
+                gameObject.SetActive(false);
         }
     }
 }

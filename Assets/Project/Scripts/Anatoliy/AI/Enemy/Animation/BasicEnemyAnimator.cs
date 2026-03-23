@@ -20,9 +20,16 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     [SerializeField] private float _idleVariationInterval = 5f;
     [SerializeField] private int   _idleVariationsCount   = 3;
     [SerializeField] private float _idleVariationChance   = 0.6f;
+    [SerializeField] private float _idleBlendSpeed        = 1.5f;
 
     [Header("Win animations")]
     [SerializeField] private int _amountWinAnimations = 3;
+
+    [Header("Search animations")]
+    [SerializeField] private int _amountSearchAnimations = 1;
+
+    [Header("Hit animations")]
+    [SerializeField] private int _amountHitAnimations = 1;
 
     [Header("Clip names (for speed sync)")]
     [SerializeField] private string _reloadClipName         = "ReloadAssaultRifle";
@@ -47,6 +54,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         public const string IsDead              = "IsDead";
         public const string RandomIdleF         = "RandomIdleF";
         public const string WinNumber           = "WinNumber";
+        public const string SearchNumber        = "SearchNumber";
+        public const string HitNumber           = "HitNumber";
         public const string Alert               = "Alert";
         public const string Hit                 = "Hit";
         public const string Reload              = "Reload";
@@ -61,6 +70,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
 
     private float _cachedSpeed;
     private float _idleTimer;
+    private float _currentIdleF;
+    private float _targetIdleF;
     private float _reloadClipLength        = 2.8f;
     private float _meleeClipLength         = 3.2f;
     private float _grenadeWindUpClipLength = 0.8f;
@@ -99,6 +110,10 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
             _state.OnIsFiringChanged += SetShooting;
             _state.OnIsDeadChanged   += SetDead;
         }
+
+        _targetIdleF  = Random.Range(0, _idleVariationsCount);
+        _currentIdleF = _targetIdleF;
+        _animator.SetFloat(P.RandomIdleF, _currentIdleF);
 
         _isInitialized = true;
     }
@@ -145,6 +160,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         if (!_isInitialized) return;
         UpdateMovement();
         UpdateIdleVariations();
+        UpdateIdleBlend();
         UpdateCoverMovementAiming();
     }
 
@@ -182,11 +198,15 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         {
             _idleTimer = 0f;
             if (Random.value < _idleVariationChance)
-            {
-                float idle = Random.Range(0, _idleVariationsCount);
-                _animator.SetFloat(P.RandomIdleF, idle);
-            }
+                _targetIdleF = Random.Range(0, _idleVariationsCount);
         }
+    }
+
+    private void UpdateIdleBlend()
+    {
+        if (Mathf.Approximately(_currentIdleF, _targetIdleF)) return;
+        _currentIdleF = Mathf.MoveTowards(_currentIdleF, _targetIdleF, _idleBlendSpeed * Time.deltaTime);
+        _animator.SetFloat(P.RandomIdleF, _currentIdleF);
     }
 
     public void PlayAlert()
@@ -198,6 +218,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void PlaySearch()
     {
         if (!_isInitialized) return;
+        _animator.SetInteger(P.SearchNumber, Random.Range(0, _amountSearchAnimations));
         _animator.SetTrigger(P.Search);
     }
 
@@ -211,6 +232,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void PlayHit()
     {
         if (!_isInitialized) return;
+        _animator.SetInteger(P.HitNumber, Random.Range(0, _amountHitAnimations));
         _animator.SetTrigger(P.Hit);
     }
 
@@ -298,6 +320,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     {
         if (!_isInitialized) return;
 
+        _animator.Rebind();
+
         _animator.SetBool(P.IsDead, false);
         _animator.SetBool(P.IsAlerted, false);
         _animator.SetBool(P.HasAlerted, false);
@@ -306,15 +330,9 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _animator.SetBool(P.MeleeAttacking, false);
         _animator.SetBool(P.Shooting, false);
         _animator.SetFloat(P.Speed, 0f);
+        _animator.SetFloat(P.RandomIdleF, _currentIdleF);
 
-        _animator.ResetTrigger(P.Alert);
-        _animator.ResetTrigger(P.Hit);
-        _animator.ResetTrigger(P.Reload);
-        _animator.ResetTrigger(P.Search);
-        _animator.ResetTrigger(P.Winning);
-        _animator.ResetTrigger(P.GrenadeWindUp);
-        _animator.ResetTrigger(P.GrenadeThrow);
-        _animator.ResetTrigger(P.GrenadeCancel);
+        _animator.Update(0f);
 
         _cachedSpeed        = 0f;
         _idleTimer          = 0f;
