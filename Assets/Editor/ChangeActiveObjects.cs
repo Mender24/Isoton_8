@@ -60,7 +60,8 @@ public class ChangeActiveObjects : MonoBehaviour
             {
                 if(child.gameObject.activeSelf)
                 {
-                    Undo.RecordObject(child, "Object off");
+                    Undo.RecordObject(child.gameObject, "Object off");
+                    EditorUtility.SetDirty(child.gameObject);
                     child.gameObject.SetActive(false);
                 }
             }
@@ -86,7 +87,8 @@ public class ChangeActiveObjects : MonoBehaviour
             {
                 if (!child.gameObject.activeSelf)
                 {
-                    Undo.RecordObject(child, "Object on");
+                    Undo.RecordObject(child.gameObject, "Object on");
+                    EditorUtility.SetDirty(child.gameObject);
                     child.gameObject.SetActive(true);
                 }
             }
