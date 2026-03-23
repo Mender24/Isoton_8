@@ -79,6 +79,7 @@ namespace Akila.FPSFramework
         {
             player.transform.position = sides[0].points[0].position;
             player.transform.rotation = sides[0].points[0].rotation;
+            player.gameObject.SetActive(true);
         }
 
         public async void SpawnActor(IActor actorSelf, string actorObjName, float delay)
@@ -164,7 +165,7 @@ namespace Akila.FPSFramework
 
             //newActorObject.transform.SetPositionAndRotation(position, rotation);
             newActorObject.transform.parent = transform.parent;
-            newActorObject.SetActive(false);
+            newActorObject.SetActive(true);
 
             return newActorObject;
         }

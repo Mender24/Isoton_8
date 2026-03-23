@@ -5,32 +5,32 @@ using System.Collections;
 
 public class ChageSceneByTrigger : MonoBehaviour
 {
-    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ")]
-    [SerializeField] private string sceneName = ""; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [Header("Настройки сцены")]
+    [SerializeField] private string sceneName = ""; // Имя сцены для загрузки
 
-    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
-    [SerializeField] private string targetTag = "Player"; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-    [SerializeField] private bool oneTimeUse = true; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+    [Header("Настройки триггера")]
+    [SerializeField] private string targetTag = "Player"; // Тэг объекта-активатора
+    [SerializeField] private bool oneTimeUse = true; // Триггер срабатывает только один раз
 
-    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
-    [SerializeField] private float fadeDuration = 1.0f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-    [SerializeField] private Color fadeColor = Color.black; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [Header("Настройки затухания")]
+    [SerializeField] private float fadeDuration = 1.0f; // Длительность затухания
+    [SerializeField] private Color fadeColor = Color.black; // Цвет затухания
 
-    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)")]
-    [SerializeField] private Image fadeImage; // UI Image пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [Header("Компоненты (необязательно)")]
+    [SerializeField] private Image fadeImage; // UI Image для затухания
 
     private bool hasBeenUsed = false;
     private bool isFading = false;
 
     void Start()
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+        // Проверка имени сцены
         if (string.IsNullOrEmpty(sceneName))
         {
-            Debug.LogWarning($"пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ {gameObject.name}!");
+            Debug.LogWarning($"Не задано имя сцены для {gameObject.name}!");
         }
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+        // Создаем объект для затухания если не задан
         if (fadeImage == null)
         {
             CreateFadeImage();
@@ -43,19 +43,19 @@ public class ChageSceneByTrigger : MonoBehaviour
 
     void CreateFadeImage()
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ Canvas пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
-        Canvas canvas = FindFirstObjectByType<Canvas>();
+        // Создаем новый Canvas если нет
+        Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null)
         {
             GameObject canvasObj = new GameObject("FadeCanvas");
             canvas = canvasObj.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 9999; // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+            canvas.sortingOrder = 9999; // Самый верхний слой
             canvasObj.AddComponent<CanvasScaler>();
             canvasObj.AddComponent<GraphicRaycaster>();
         }
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Image пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Создаем Image для затухания
         GameObject fadeObj = new GameObject("FadeImage");
         fadeObj.transform.SetParent(canvas.transform);
 
@@ -63,7 +63,7 @@ public class ChageSceneByTrigger : MonoBehaviour
         fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 0);
         fadeImage.raycastTarget = false;
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+        // Растягиваем на весь экран
         RectTransform rt = fadeObj.GetComponent<RectTransform>();
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.one;
@@ -75,18 +75,18 @@ public class ChageSceneByTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Проверяем тег объекта, вошедшего в триггер
         if (other.CompareTag(targetTag))
         {
-            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            // Если триггер одноразовый и уже использован - выходим
             if (oneTimeUse && hasBeenUsed)
                 return;
 
-            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            // Если уже идет затухание - выходим
             if (isFading)
                 return;
 
-            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+            // Начинаем плавную смену сцены
             StartCoroutine(FadeAndLoadScene());
         }
     }
@@ -95,20 +95,20 @@ public class ChageSceneByTrigger : MonoBehaviour
     {
         isFading = true;
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Помечаем как использованный если одноразовый
         if (oneTimeUse)
         {
             hasBeenUsed = true;
         }
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Image пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Активируем Image для затухания
         if (fadeImage != null)
         {
             fadeImage.gameObject.SetActive(true);
             fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 0);
         }
 
-        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Фаза затемнения
         float elapsedTime = 0f;
         while (elapsedTime < fadeDuration)
         {
@@ -123,15 +123,15 @@ public class ChageSceneByTrigger : MonoBehaviour
             yield return null;
         }
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Завершаем затухание
         if (fadeImage != null)
         {
             fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 1);
         }
 
-        Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: {sceneName}");
+        Debug.Log($"Загрузка сцены: {sceneName}");
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+        // Загружаем сцену
         PlayerPrefs.DeleteAll();
         SceneManager.LoadScene(sceneName);
 
@@ -140,11 +140,11 @@ public class ChageSceneByTrigger : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Визуализация в редакторе
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, 1f);
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+        // Показываем имя сцены
         GUIStyle style = new GUIStyle();
         style.normal.textColor = Color.cyan;
         style.alignment = TextAnchor.MiddleCenter;
@@ -155,10 +155,10 @@ public class ChageSceneByTrigger : MonoBehaviour
 #endif
     }
 
-    // === пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ===
+    // === Публичные методы для ручного управления ===
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    /// Начать плавную загрузку сцены
     /// </summary>
     public void StartFadeAndLoad()
     {
@@ -169,7 +169,7 @@ public class ChageSceneByTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    /// Загрузить сцену с указанным именем
     /// </summary>
     public void LoadSceneWithFade(string newSceneName)
     {
@@ -178,7 +178,7 @@ public class ChageSceneByTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    /// Перезагрузить текущую сцену с затуханием
     /// </summary>
     public void ReloadSceneWithFade()
     {
@@ -187,14 +187,14 @@ public class ChageSceneByTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    /// Загрузить следующую сцену с затуханием
     /// </summary>
     public void LoadNextSceneWithFade()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex + 1;
 
-        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+        // Если это последняя сцена - загружаем первую
         if (nextSceneIndex >= SceneManager.sceneCountInBuildSettings)
         {
             nextSceneIndex = 0;
@@ -204,7 +204,7 @@ public class ChageSceneByTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    /// Установить цвет затухания
     /// </summary>
     public void SetFadeColor(Color color)
     {
@@ -212,7 +212,7 @@ public class ChageSceneByTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    /// Установить длительность затухания
     /// </summary>
     public void SetFadeDuration(float duration)
     {
@@ -220,7 +220,7 @@ public class ChageSceneByTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    /// Сбросить состояние триггера
     /// </summary>
     public void ResetTrigger()
     {
@@ -229,7 +229,7 @@ public class ChageSceneByTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    /// Плавное затемнение экрана без смены сцены
     /// </summary>
     public IEnumerator FadeOut()
     {
@@ -252,7 +252,7 @@ public class ChageSceneByTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    /// Плавное осветление экрана
     /// </summary>
     public IEnumerator FadeIn()
     {

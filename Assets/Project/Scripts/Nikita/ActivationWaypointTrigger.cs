@@ -2,40 +2,40 @@ using UnityEngine;
 
 public class ActivationWaypointTrigger : MonoBehaviour
 {
-    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
-    [SerializeField] private string targetTag = "Player"; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-    [SerializeField] private bool activateOnEnter = true; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-    [SerializeField] private bool deactivateOnExit = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-    [SerializeField] private bool oneTimeUse = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
-    [SerializeField] private bool requireKeyPress = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-    [SerializeField] private KeyCode activationKey = KeyCode.E; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [Header("Настройки триггера")]
+    [SerializeField] private string targetTag = "Player"; // Тэг объекта, который активирует триггер
+    [SerializeField] private bool activateOnEnter = true; // Активировать при входе
+    [SerializeField] private bool deactivateOnExit = false; // Деактивировать при выходе
+    [SerializeField] private bool oneTimeUse = false; // Триггер срабатывает только один раз
+    [SerializeField] private bool requireKeyPress = false; // Требовать нажатие клавиши
+    [SerializeField] private KeyCode activationKey = KeyCode.E; // Клавиша активации
 
-    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ WaypointFollower")]
+    [Header("Целевой WaypointFollower")]
     [SerializeField] private WaypointFollower targetWaypointFollower;
 
-    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ")]
+    [Header("Визуальная обратная связь")]
     [SerializeField] private bool showActivationPrompt = true;
-    // [SerializeField] private string activationMessage = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ E пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ";
-    [SerializeField] private GameObject activationHint; // UI пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ 3D пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private string activationMessage = "Нажмите E для активации";
+    [SerializeField] private GameObject activationHint; // UI элемент или 3D объект для подсказки
 
     private bool isPlayerInTrigger = false;
     private bool hasBeenUsed = false;
 
     void Start()
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ WaypointFollower
+        // Проверка наличия компонента WaypointFollower
         if (targetWaypointFollower == null)
         {
-            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            // Попытка найти на том же объекте
             targetWaypointFollower = GetComponent<WaypointFollower>();
 
-            // пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            // Если не нашли, ищем на родительском объекте
             if (targetWaypointFollower == null && transform.parent != null)
             {
                 targetWaypointFollower = transform.parent.GetComponent<WaypointFollower>();
             }
 
-            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
+            // Если все еще не нашли, ищем по тегу
             if (targetWaypointFollower == null)
             {
                 GameObject waypointObject = GameObject.FindGameObjectWithTag("WaypointFollower");
@@ -47,11 +47,11 @@ public class ActivationWaypointTrigger : MonoBehaviour
 
             if (targetWaypointFollower == null)
             {
-                Debug.LogWarning($"WaypointFollower пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ {gameObject.name}!");
+                Debug.LogWarning($"WaypointFollower не найден для {gameObject.name}!");
             }
         }
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+        // Настройка визуальной обратной связи
         if (activationHint != null)
         {
             activationHint.SetActive(false);
@@ -60,7 +60,7 @@ public class ActivationWaypointTrigger : MonoBehaviour
 
     void Update()
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Обработка активации по клавише
         if (requireKeyPress && isPlayerInTrigger && !hasBeenUsed)
         {
             if (Input.GetKeyDown(activationKey))
@@ -72,18 +72,18 @@ public class ActivationWaypointTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Проверяем тег объекта, вошедшего в триггер
         if (other.CompareTag(targetTag))
         {
             isPlayerInTrigger = true;
 
-            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+            // Показываем подсказку если нужно
             if (showActivationPrompt && activationHint != null)
             {
                 activationHint.SetActive(true);
             }
 
-            // пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+            // Если не требуется нажатие клавиши - активируем сразу
             if (activateOnEnter && !requireKeyPress && !hasBeenUsed)
             {
                 ActivateWaypointFollower();
@@ -93,18 +93,18 @@ public class ActivationWaypointTrigger : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Проверяем тег объекта, вышедшего из триггера
         if (other.CompareTag(targetTag))
         {
             isPlayerInTrigger = false;
 
-            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            // Скрываем подсказку
             if (activationHint != null)
             {
                 activationHint.SetActive(false);
             }
 
-            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+            // Деактивируем если нужно
             if (deactivateOnExit && targetWaypointFollower != null)
             {
                 targetWaypointFollower.StopMoving();
@@ -116,32 +116,32 @@ public class ActivationWaypointTrigger : MonoBehaviour
     {
         if (targetWaypointFollower == null)
         {
-            Debug.LogError($"пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ WaypointFollower - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
+            Debug.LogError($"Не могу активировать WaypointFollower - объект не назначен!");
             return;
         }
 
         if (oneTimeUse && hasBeenUsed)
         {
-            Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {gameObject.name} пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
+            Debug.Log($"Триггер {gameObject.name} уже использован!");
             return;
         }
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ WaypointFollower
+        // Активируем WaypointFollower
         targetWaypointFollower.StartMoving();
-        Debug.Log($"WaypointFollower пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ {gameObject.name}");
+        Debug.Log($"WaypointFollower активирован триггером {gameObject.name}");
 
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Помечаем как использованный если одноразовый
         if (oneTimeUse)
         {
             hasBeenUsed = true;
 
-            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            // Отключаем визуальную подсказку
             if (activationHint != null)
             {
                 activationHint.SetActive(false);
             }
 
-            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+            // Отключаем сам триггер если нужно
             if (GetComponent<Collider>() != null)
             {
                 GetComponent<Collider>().enabled = false;
@@ -151,7 +151,7 @@ public class ActivationWaypointTrigger : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // Визуализация в редакторе
         if (targetWaypointFollower != null)
         {
             Gizmos.color = Color.green;
@@ -167,10 +167,10 @@ public class ActivationWaypointTrigger : MonoBehaviour
         }
     }
 
-    // === пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ===
+    // === Публичные методы для ручного управления ===
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ WaypointFollower (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+    /// Ручная активация WaypointFollower (можно вызывать из других скриптов)
     /// </summary>
     public void ManualActivate()
     {
@@ -178,7 +178,7 @@ public class ActivationWaypointTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ WaypointFollower
+    /// Ручная деактивация WaypointFollower
     /// </summary>
     public void ManualDeactivate()
     {
@@ -189,7 +189,7 @@ public class ActivationWaypointTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+    /// Сброс состояния триггера (полезно для многоразовых триггеров)
     /// </summary>
     public void ResetTrigger()
     {
@@ -203,7 +203,7 @@ public class ActivationWaypointTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ WaypointFollower
+    /// Установить новый WaypointFollower
     /// </summary>
     public void SetTargetWaypointFollower(WaypointFollower newTarget)
     {
@@ -211,7 +211,7 @@ public class ActivationWaypointTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ WaypointFollower
+    /// Получить текущий WaypointFollower
     /// </summary>
     public WaypointFollower GetTargetWaypointFollower()
     {

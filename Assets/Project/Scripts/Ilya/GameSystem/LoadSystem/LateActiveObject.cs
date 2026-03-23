@@ -46,13 +46,13 @@ public class LateActiveObject : MonoBehaviour
 
     public bool IsActiveObject => _isActiveObject;
 
-    private void Start()
+    private IEnumerator Start()
     {
         ChangeSpeedActive(_currentSpeedType);
 
         if (_isStartActive)
         {
-            StartCoroutine(StartActivate());
+            yield return StartActivate();
         }
     }
 

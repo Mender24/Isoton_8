@@ -269,8 +269,6 @@ public class SceneLoader : MonoBehaviour
 
         IsLoad = false;
 
-        yield return new WaitForSeconds(0.2f);
-
         if (_isDebug)
             Debug.Log("Loading scene complete");
 
@@ -507,7 +505,7 @@ public class SceneLoader : MonoBehaviour
 
     public void RespawnPlayer(string player)
     {
-        Player[] players = GetComponentsInChildren<Player>(true);
+        Player[] players = GetComponentsInChildren<Player>();
         _player = players[players.Length - 1];
         GameManager.instance.Init(_player);
         _isFirstLoad = false;

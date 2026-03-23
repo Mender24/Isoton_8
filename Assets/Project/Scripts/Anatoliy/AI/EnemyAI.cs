@@ -27,7 +27,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     [Header("Hearing Settings")]
     public float hearingRange = 10f;
-    // [SerializeField] private float _soundDetectionThreshold = 0.5f;
+    [SerializeField] private float _soundDetectionThreshold = 0.5f;
     [SerializeField] private float _noiseInvestigationTime = 8f;
 
     [Header("Combat Settings")]
@@ -157,7 +157,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private float _alertSoundDelay = 30f;
     private float _alertSoundTimer = 0f;
 
-    // private bool _detectionDelayActive = false;
+    private bool _detectionDelayActive = false;
     private bool _debugIsPlayerHit = false;
     private Vector3 _debugShotTargetPosition = new();
     private Camera _mainCamera = null;
@@ -457,7 +457,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
     private System.Collections.IEnumerator DetectionDelayCoroutine()
     {
-        // _detectionDelayActive = true;
+        _detectionDelayActive = true;
 
         if (_audioSource && _detectionSound && _alertSoundTimer <= 0)
         {
@@ -475,7 +475,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         playerDetected = true;
 
-        // _detectionDelayActive = false;
+        _detectionDelayActive = false;
     }
 
     public void UpdateLastKnownPosition()
@@ -822,7 +822,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         isDead = false;
         isReload = false;
         heardNoise = false;
-        // _detectionDelayActive = false;
+        _detectionDelayActive = false;
         
         timeSinceLastSeen = 0f;
         meleeAttackTimer = 0f;

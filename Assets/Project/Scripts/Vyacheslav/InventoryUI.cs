@@ -51,6 +51,7 @@ public class InventoryUI : MonoBehaviour
 
     private void AddWeapone(InventoryItem weapone)
     {
+        Debug.Log("AddItem");
         _viewNotes.Add(new InventoryViewNote(weapone));
         UpdateWeaponeAll(_viewNotes.Count-1);
     }

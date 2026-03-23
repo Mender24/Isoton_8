@@ -66,7 +66,6 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         public const string GrenadeThrow        = "GrenadeThrow";
         public const string GrenadeThrowSpeed   = "GrenadeThrowSpeed";
         public const string GrenadeCancel       = "GrenadeCancel";
-        public const string IsCrouching        = "IsCrouching";
     }
 
     private float _cachedSpeed;
@@ -312,12 +311,6 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _animator.SetBool(P.IsDead, isDead);
     }
 
-    public void SetCrouching(bool isCrouching)
-    {
-        if (!_isInitialized) return;
-        _animator.SetBool(P.IsCrouching, isCrouching);
-    }
-
     public void ResetSearch()
     {
         _animator.ResetTrigger(P.Search);
@@ -336,7 +329,6 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _animator.SetBool(P.Reloading, false);
         _animator.SetBool(P.MeleeAttacking, false);
         _animator.SetBool(P.Shooting, false);
-        _animator.SetBool(P.IsCrouching, false);
         _animator.SetFloat(P.Speed, 0f);
         _animator.SetFloat(P.RandomIdleF, _currentIdleF);
 

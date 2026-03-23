@@ -176,6 +176,12 @@ namespace Akila.FPSFramework
                 {
                     UpdateHits(ray, hit);
                 }
+
+                if (hit.collider.gameObject.layer == 13 || hit.collider.gameObject.layer == 18)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
             }
 
             if (useAutoScaling)

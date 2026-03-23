@@ -79,7 +79,7 @@ namespace FORGE3D
         /// <returns>Ruturns is this object in scene</returns>
         bool IsInScene()
         {
-            GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+            GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
             int i;
             GameObject thisGO = constructor.gameObject;
             for (i = 0; i < allObjects.Length; i++)

@@ -173,6 +173,8 @@ public class EnemySpawner : MonoBehaviour
         return null;
     }
 
+    // ── Новая система ──────────────────────────────────────────────────────────
+
     private void SetupNewEnemy(EnemyBase enemy)
     {
         enemy.IsSpawnedBySpawner = true;
@@ -190,11 +192,16 @@ public class EnemySpawner : MonoBehaviour
 
     private IEnumerator AggroNewEnemyOnSpawn(EnemyBase enemy)
     {
+        // Ждём Start() врага
         yield return new WaitForSeconds(0.1f);
 
         if (enemy == null || enemy.State.IsDead) yield break;
 
-        enemy.AggroOnPlayer();
+        enemy.State.IsAlerted = true;
+        enemy.State.PlayerDetected = true;
+        enemy.State.LastKnownPlayerPosition = _playerTransform.position;
+        enemy.State.TimeSinceLastSeen = 0f;
+        enemy.Navigation.SetSpeed(enemy.Navigation.RunSpeed);
 
         if (_showDebug)
             Debug.Log("[EnemySpawner] New enemy aggro'd on spawn");
