@@ -179,6 +179,7 @@ namespace Akila.FPSFramework
 
                 if (hit.collider.gameObject.layer == 13 || hit.collider.gameObject.layer == 18)
                 {
+                    Debug.Log("Destroy");
                     Destroy(gameObject);
                     return;
                 }
