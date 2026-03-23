@@ -69,11 +69,11 @@ public class BasicEnemyAnimationController : MonoBehaviour
     }
     
     // State cache для оптимизации
-    private bool _cachedWalking = false;
-    private bool _cachedRunning = false;
+    // private bool _cachedWalking = false;
+    // private bool _cachedRunning = false;
     private bool _cachedAiming = false;
     private bool _cachedAlerted = false;
-    private bool _cachedPlayerDetected = false;
+    // private bool _cachedPlayerDetected = false;
     private bool _cachedReloading = false;
     private bool _cachedMeleeAttacking = false;
     private float _cachedSpeed = 0f;
@@ -479,7 +479,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
     {
         if (!_isInitialized) return;
         
-        _cachedWalking = walking;
+        // _cachedWalking = walking;
         _animator.SetBool(AnimParams.Walking, walking);
     }
     
@@ -490,7 +490,7 @@ public class BasicEnemyAnimationController : MonoBehaviour
     {
         if (!_isInitialized) return;
         
-        _cachedRunning = running;
+        // _cachedRunning = running;
         _animator.SetBool(AnimParams.Running, running);
     }
 
@@ -683,11 +683,11 @@ public class BasicEnemyAnimationController : MonoBehaviour
         _cachedAiming = false;
         _cachedAlerted = false;
         _cachedMeleeAttacking = false;
-        _cachedPlayerDetected = false;
+        // _cachedPlayerDetected = false;
         _cachedReloading = false;
-        _cachedRunning = false;
+        // _cachedRunning = false;
         _cachedSpeed = 0.0f;
-        _cachedWalking = false;
+        // _cachedWalking = false;
     }
 
     /// <summary>
