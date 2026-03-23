@@ -116,7 +116,7 @@ public class SceneLoader : MonoBehaviour
         {
             _currentSceneIndex = _nextSceneIndex;
 
-            SearchAllIndex(_currentSceneIndex);
+            _nextSceneIndex = SearchAllIndex(_currentSceneIndex);
         }
 
         IsInitPlayer = false;
@@ -139,6 +139,9 @@ public class SceneLoader : MonoBehaviour
         }
 
         _nextSceneIndex = SearchAllIndex(_currentSceneIndex);
+
+        if (_isDebug)
+            Debug.Log("NextSceneIndex: " + _nextSceneIndex);
     }
 
     private int SearchAllIndex(int startSceneIndex)
@@ -195,7 +198,7 @@ public class SceneLoader : MonoBehaviour
         _isProgressAsyncLoadingScene = true;
 
         if (_loadedScene.Count > 1)
-            yield return StartCoroutine(UnloadScenesAsync());
+            yield return StartCoroutine(UnloadScenesAsync(_loadedScene.Count - 1));
 
         if (_isDebug)
             Debug.Log("Unload scenes complete");
@@ -265,6 +268,8 @@ public class SceneLoader : MonoBehaviour
             yield return StartCoroutine(StartLateActive(isFirstSceneLoad ? SpeedType.VeryFast : SpeedType.Slowly));
 
         IsLoad = false;
+
+        yield return new WaitForSeconds(0.2f);
 
         if (_isDebug)
             Debug.Log("Loading scene complete");
@@ -352,7 +357,7 @@ public class SceneLoader : MonoBehaviour
         if (CheckTransitionScene(_currentSceneIndex))
             OpenExitDoorTransition(FindDoorControolerInScene(_currentSceneIndex));
 
-        if (CheckTransitionScene(_nextSceneIndex))
+        if (_currentSceneIndex != _nextSceneIndex && CheckTransitionScene(_nextSceneIndex))
             OpenEnterDoorTransition(FindDoorControolerInScene(_nextSceneIndex));
 
         IsInitPlayer = true;
@@ -502,7 +507,7 @@ public class SceneLoader : MonoBehaviour
 
     public void RespawnPlayer(string player)
     {
-        Player[] players = GetComponentsInChildren<Player>();
+        Player[] players = GetComponentsInChildren<Player>(true);
         _player = players[players.Length - 1];
         GameManager.instance.Init(_player);
         _isFirstLoad = false;
@@ -520,7 +525,7 @@ public class SceneLoader : MonoBehaviour
         if (_speedType == SpeedType.VeryFast)
             return;
 
-        _speedType = _speedType++;
+        _speedType++;
     }
 
     public DoorControllerSceneChanger GetDoorControllerNextTransition()
