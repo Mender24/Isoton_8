@@ -520,7 +520,7 @@ public class SceneLoader : MonoBehaviour
         if (_speedType == SpeedType.VeryFast)
             return;
 
-        _speedType = _speedType++;
+        _speedType++;
     }
 
     public DoorControllerSceneChanger GetDoorControllerNextTransition()
