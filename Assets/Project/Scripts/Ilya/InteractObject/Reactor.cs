@@ -11,7 +11,7 @@ public class Reactor : MonoBehaviour, IDamageable
     [SerializeField] private float _timeBeforeOpenShield = 1f;
     [SerializeField] private float _secondDestroy = 1f;
     [SerializeField] private float _lenPathShield = 4f;
-    [SerializeField] private float _lenPathDoorEnd = 4f;
+    // [SerializeField] private float _lenPathDoorEnd = 4f;
     [SerializeField] private float _speedMoveShield = 3f;
     [SerializeField] private float _cooldownNextBattery = 3f;
     [SerializeField] private List<Battery> _batterys = new();
