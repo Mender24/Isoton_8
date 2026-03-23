@@ -7,7 +7,7 @@ using Akila.FPSFramework;
 /// </summary>
 public class EnemyAggroTrigger : MonoBehaviour
 {
-    [Tooltip("Список врагов для агра. Если пусто — ищет EnemyBase у детей родителя.")]
+    [Tooltip("Список врагов для агра. Если пусто ищет EnemyBase у детей родителя.")]
     public EnemyBase[] enemies;
 
     [Tooltip("Сработать только один раз")]
