@@ -86,6 +86,14 @@ public class CrawlerEnemy : EnemyBase
     public override bool CanAttack()   => _meleeCombat.CanAttack;
     public override void StartAttack() => _meleeCombat.StartAttack();
 
+    public override void FullReset()
+    {
+        base.FullReset();
+        _shotTimer = 0f;
+        if (_aligner != null) _aligner.IsActive = true;
+        _meleeCombat.Initialize(PlayerTransform);
+    }
+
     public void NotifyShot() => _shotTimer = _shotMemoryTime;
 
     public bool IsVisibleToPlayer()

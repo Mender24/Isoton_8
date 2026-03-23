@@ -59,11 +59,10 @@ public class AimAndShootAtPlayerAction : Action
         }
         _lostSightTimer = 0f;
 
+        e.Navigation.Stop();
+
         if (!_hasStartedAiming)
-        {
-            e.Navigation.Stop();
             e.Animator?.SetAiming(true);
-        }
 
         RotateTowardsPlayer(e);
 
@@ -176,11 +175,10 @@ public class AlwaysAimAndShootAtPlayerAction : Action
         }
         _lostSightTimer = 0f;
 
+        e.Navigation.Stop();
+
         if (!_hasStartedAiming)
-        {
-            e.Navigation.Stop();
             e.Animator?.SetAiming(true);
-        }
 
         Vector3 dir = (e.PlayerTransform.position - e.transform.position).normalized;
         dir.y = 0;

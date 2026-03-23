@@ -18,6 +18,7 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
     private IEnemyAnimator  _animator;
     private IEnemyAudio     _audio;
     private EnemyNavigation _navigation;
+    private bool            _currentAttackInMotion;
 
     private void Awake()
     {
@@ -36,11 +37,19 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
     {
         if (isAttacking)
         {
-            _navigation.Stop();
-            _navigation.ResetPath();
+            if (!_currentAttackInMotion)
+                _navigation.Lock();
+            else
+            {
+                _navigation.Stop();
+                _navigation.ResetPath();
+            }
         }
         else
+        {
+            _navigation.Unlock();
             _navigation.Resume();
+        }
     }
 
     public void Initialize(Transform playerTransform)
@@ -58,12 +67,12 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
     {
         if (!CanAttack || !_state.PlayerDetected) return;
 
-        bool inMotion = _navigation != null && _navigation.Agent.velocity.sqrMagnitude > 0.5f;
+        _currentAttackInMotion = _navigation != null && _navigation.Agent.velocity.sqrMagnitude > 0.5f;
 
-        _state.IsMeleeAttacking = true; // fires OnIsMeleeAttackingChanged → Navigation.Stop()
+        _state.IsMeleeAttacking = true;
         _state.MeleeAttackCooldown = _config.AttackCooldown;
 
-        _animator?.SetMeleeAttacking(true, _config.AttackDuration, inMotion);
+        _animator?.SetMeleeAttacking(true, _config.AttackDuration, _currentAttackInMotion);
         _audio?.PlayAttackSound();
     }
 
@@ -94,8 +103,18 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
 
         if (_state.IsMeleeAttacking && _state.MeleeAttackCooldown <= 0f)
         {
-            _state.IsMeleeAttacking = false;
-            _animator?.SetMeleeAttacking(false, 0f, false);
+            if (IsInRange())
+            {
+                _currentAttackInMotion = false;
+                _state.MeleeAttackCooldown = _config.AttackCooldown;
+                _animator?.SetMeleeAttacking(true, _config.AttackDuration, false);
+                _audio?.PlayAttackSound();
+            }
+            else
+            {
+                _state.IsMeleeAttacking = false;
+                _animator?.SetMeleeAttacking(false, 0f, false);
+            }
         }
     }
 }

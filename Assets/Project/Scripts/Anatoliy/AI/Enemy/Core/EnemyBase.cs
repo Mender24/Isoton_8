@@ -214,6 +214,13 @@ public abstract class EnemyBase : MonoBehaviour
         return Node.Status.Failure;
     }
 
+    public void HearNearbyShot(Vector3 shooterPosition)
+    {
+        if (State.IsDead || !State.IsActivated || State.PlayerDetected) return;
+
+        Perception.HearNearbyShot(shooterPosition);
+    }
+
     public bool IsEnemyStopped() => Navigation.HasReachedDestination();
 
     public Vector3 GetNoiseInvestigationTarget() => Perception.GetNoiseTarget();
@@ -238,12 +245,21 @@ public abstract class EnemyBase : MonoBehaviour
 
         Health.ResetHealth();
 
+        ResolvePlayerTransform();
+        Perception.Reset(_playerTransform);
+        if (CoverModule != null)
+            CoverModule.Initialize(_playerTransform);
+
         transform.position = _initialPosition;
+        Navigation.Unlock();
         Navigation.EnableAgent();
         Navigation.MoveTo(_initialPosition, false);
 
         if (_behaviorAgent != null)
+        {
+            _behaviorAgent.enabled = false;
             _behaviorAgent.enabled = true;
+        }
 
         Animator?.ResetAnimator();
     }
