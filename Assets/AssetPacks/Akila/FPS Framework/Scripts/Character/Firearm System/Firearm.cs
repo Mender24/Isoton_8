@@ -27,6 +27,11 @@ namespace Akila.FPSFramework
 
         public InventoryCollectable ammoProfile { get; set; }
 
+        /// <summary>
+        /// Fired when a bullet hits something
+        /// </summary>
+        public static event Action<Vector3, Vector3> OnShotImpact;
+
         private Crosshair crosshair;
         /// <summary>
         /// Pattern for bullet spread when hip firing.
@@ -1124,6 +1129,8 @@ namespace Akila.FPSFramework
                     }
                 }
             }
+
+            OnShotImpact?.Invoke(hit.point, ray.origin);
 
             // Handle custom decals
             if (hit.transform.TryGetComponent(out CustomDecal customDecal))

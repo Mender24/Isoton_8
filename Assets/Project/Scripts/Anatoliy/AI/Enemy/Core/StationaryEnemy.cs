@@ -31,6 +31,7 @@ public class StationaryEnemy : EnemyBase
 
     private GuardState _guardState = GuardState.Idle;
     private float      _coverTimer;
+    private bool       _crouchedForReload;
 
     protected override void Awake()
     {
@@ -83,6 +84,11 @@ public class StationaryEnemy : EnemyBase
                     EnterIdle();
                     break;
                 }
+
+                if (State.IsReloading && !_crouchedForReload && !IsPlayerClose())
+                    EnterReloadCrouch();
+                else if (!State.IsReloading && _crouchedForReload)
+                    ExitReloadCrouch();
 
                 if (State.PlayerIsSeen && !_rangedCombat.IsFiring
                     && _rangedCombat.CanShoot && !State.IsReloading)
@@ -149,6 +155,25 @@ public class StationaryEnemy : EnemyBase
             EnterIdle();
     }
 
+    private void EnterReloadCrouch()
+    {
+        _crouchedForReload = true;
+        if (_basicAnimator != null) _basicAnimator.SetCrouching(true);
+        if (_animator != null)
+        {
+            _animator.SetFloat("CrouchSpeed", 1f);
+            _animator.SetTrigger("CrouchDown");
+        }
+    }
+
+    private void ExitReloadCrouch()
+    {
+        _crouchedForReload = false;
+        if (_basicAnimator != null) _basicAnimator.SetCrouching(false);
+        if (_animator != null)
+            _animator.SetTrigger("StandUp");
+    }
+
     private bool IsPlayerClose() =>
         Perception.GetDistanceToPlayer() <= _closeRangeThreshold;
 
@@ -168,6 +193,7 @@ public class StationaryEnemy : EnemyBase
 
     private void SetCrouching(bool crouch)
     {
+        if (_basicAnimator != null) _basicAnimator.SetCrouching(crouch);
         if (_animator == null) return;
 
         if (crouch)
@@ -184,4 +210,23 @@ public class StationaryEnemy : EnemyBase
 
     public override bool CanAttack()   => _rangedCombat.CanShoot;
     public override void StartAttack() => _rangedCombat.StartFire();
+
+    public override void FullReset()
+    {
+        base.FullReset();
+        _guardState = GuardState.Idle;
+        _coverTimer = 0f;
+        _rangedCombat.StopFire();
+        _rangedCombat.SetPaused(false);
+        _rangedCombat.Initialize(PlayerTransform);
+        Navigation.Stop();
+        Navigation.Agent.updateRotation = false;
+        _crouchedForReload = false;
+        if (_basicAnimator != null)
+        {
+            _basicAnimator.SetAiming(false);
+            _basicAnimator.SetCrouching(false);
+        }
+        if (_animator != null) _animator.ResetTrigger("CrouchDown");
+    }
 }

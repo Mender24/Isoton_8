@@ -38,6 +38,7 @@ public class RangedEnemy : EnemyBase
 
     private void OnHitReactionStarted()
     {
+        _rangedCombat.StopFire();
         _rangedCombat.SetPaused(true);
         _grenadeThrow?.Cancel();
         Navigation.Stop();
@@ -60,4 +61,15 @@ public class RangedEnemy : EnemyBase
     public override void StartAttack() => _rangedCombat.StartFire();
 
     public IRangedCombat RangedCombat => _rangedCombat;
+
+    public override void FullReset()
+    {
+        base.FullReset();
+
+        _rangedCombat.StopFire();
+        _rangedCombat.SetPaused(false);
+        _rangedCombat.Initialize(PlayerTransform);
+
+        _grenadeThrow?.Reset(PlayerTransform);
+    }
 }

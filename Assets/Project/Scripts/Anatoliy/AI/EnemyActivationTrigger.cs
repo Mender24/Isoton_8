@@ -1,3 +1,4 @@
+using Akila.FPSFramework;
 using UnityEngine;
 
 public class EnemyActivationTrigger : MonoBehaviour
@@ -31,10 +32,13 @@ public class EnemyActivationTrigger : MonoBehaviour
     void Start()
     {
         if (enemiesInZone.Length == 0 && enemiesInZone_legacy.Length == 0)
-        {
             Debug.LogWarning("No enemies found for trigger " + gameObject.name + ". Add enemies as children or siblings under a parent object.");
-        }
+
+        if (activateOnce && SpawnManager.Instance != null)
+            SpawnManager.Instance.onPlayerSpwanWithObjName.AddListener(OnPlayerRespawned);
     }
+
+    private void OnPlayerRespawned(string _) => _hasActivated = false;
 
     void OnTriggerEnter(Collider other)
     {

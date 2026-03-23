@@ -132,6 +132,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     private IEnumerator DeactivateSelfRoutine()
     {
         yield return new WaitForSeconds(_deactivateSelfDelay);
+
+        var enemyBase = GetComponent<EnemyBase>();
+        if (enemyBase != null && !enemyBase.IsSpawnedBySpawner)
+            yield break;
+
         gameObject.SetActive(false);
     }
 
@@ -153,6 +158,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
 
     public void ResetHealth()
     {
+        StopAllCoroutines();
+
         _health = _maxHealth;
         _lastReactionTime = -999f;
         DeadConfirmed = false;
