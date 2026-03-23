@@ -21,7 +21,7 @@ namespace FORGE3D
         // Use this for initialization
         void Awake()
         {
-            _fxControllers = new List<F3DFXController>(FindObjectsOfType<F3DFXController>());
+            _fxControllers = new List<F3DFXController>(FindObjectsByType<F3DFXController>(FindObjectsSortMode.None));
         }
 
         private void Start()
