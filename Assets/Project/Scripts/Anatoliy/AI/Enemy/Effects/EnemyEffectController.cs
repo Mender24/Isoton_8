@@ -21,7 +21,7 @@ public class EnemyEffectController : MonoBehaviour
 
     private void OnFire()
     {
-        _fireEffect.Clear();
-        _fireEffect.Play();
+        if(_fireEffect != null && !_fireEffect.isPlaying)
+            _fireEffect.Play();
     }
 }
