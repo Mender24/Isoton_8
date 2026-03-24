@@ -26,6 +26,8 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     private GrenadeThrowModule _grenadeModule;
     private bool _isPaused;
 
+    public event System.Action OnFire;
+
     private void Awake()
     {
         _state         = GetComponent<EnemyState>();
@@ -104,6 +106,8 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         SpawnBullet(target);
         TryDealDamage(target);
         _audio?.PlayAttackSound();
+
+        OnFire?.Invoke();
 
         if (_state.CurrentBullet >= _config.MagazineSize)
         {
