@@ -3,13 +3,20 @@ using UnityEngine;
 
 /// <summary>
 /// Простейшая туррель. Стоит на месте, поворачивается к цели.
-/// Цель — ближайший видимый объект с тегом <see cref="_mutantTag"/> или игрок.
+/// Режим цели задаётся через <see cref="TargetMode"/> или <see cref="SetTargetMode"/>.
 /// Когда видит цель — ждёт <see cref="_shootDelay"/> секунд, затем открывает огонь.
 /// Когда теряет все цели — немедленно прекращает стрельбу.
 /// </summary>
 [RequireComponent(typeof(RangedCombatModule))]
 public class TurretEnemy : EnemyBase
 {
+    public enum TurretTargetMode
+    {
+        PlayerOnly,
+        MutantsOnly,
+        Any
+    }
+    
     [Header("Turret")]
     [Tooltip("Задержка перед открытием огня после обнаружения цели.")]
     [SerializeField] private float _shootDelay = 0.5f;
@@ -32,6 +39,18 @@ public class TurretEnemy : EnemyBase
 
     [Tooltip("Максимальный угол (градусы) между forward туррели и направлением на цель для начала стрельбы.")]
     [SerializeField] private float _aimThreshold = 8f;
+
+    [Tooltip("Кого атакует туррель по умолчанию.")]
+    [SerializeField] private TurretTargetMode _targetMode = TurretTargetMode.Any;
+
+    public TurretTargetMode TargetMode => _targetMode;
+
+    public void SetTargetMode(TurretTargetMode mode)
+    {
+        _targetMode    = mode;
+        _currentTarget = null;
+        _scanTimer     = 0f;
+    }
 
     private RangedCombatModule _rangedCombat;
     private float _shootTimer;
@@ -104,27 +123,32 @@ public class TurretEnemy : EnemyBase
         Transform nearest  = null;
         float     bestDist = Mathf.Infinity;
 
-        if (PlayerTransform != null && CanSeeTarget(PlayerTransform))
+        // Игрок
+        if (_targetMode != TurretTargetMode.MutantsOnly
+            && PlayerTransform != null && CanSeeTarget(PlayerTransform))
         {
             float d = Vector3.Distance(transform.position, PlayerTransform.position);
             if (d < bestDist) { bestDist = d; nearest = PlayerTransform; }
         }
 
-        int count = Physics.OverlapSphereNonAlloc(transform.position, _scanRadius, _scanBuffer);
-
-        var seen = new HashSet<EnemyBase>();
-        for (int i = 0; i < count; i++)
+        // Мутанты
+        if (_targetMode != TurretTargetMode.PlayerOnly)
         {
-            var enemy = _scanBuffer[i].GetComponentInParent<EnemyBase>();
-            if (enemy == null || enemy == this) continue;
-            if (!seen.Add(enemy)) continue;
-            if (!enemy.CompareTag(_mutantTag)) continue;
-            if (enemy.State.IsDead) continue;
+            int count = Physics.OverlapSphereNonAlloc(transform.position, _scanRadius, _scanBuffer);
+            var seen  = new HashSet<EnemyBase>();
 
-            if (!CanSeeTarget(enemy.transform)) continue;
+            for (int i = 0; i < count; i++)
+            {
+                var enemy = _scanBuffer[i].GetComponentInParent<EnemyBase>();
+                if (enemy == null || enemy == this) continue;
+                if (!seen.Add(enemy)) continue;
+                if (!enemy.CompareTag(_mutantTag)) continue;
+                if (enemy.State.IsDead) continue;
+                if (!CanSeeTarget(enemy.transform)) continue;
 
-            float d = Vector3.Distance(transform.position, enemy.transform.position);
-            if (d < bestDist) { bestDist = d; nearest = enemy.transform; }
+                float d = Vector3.Distance(transform.position, enemy.transform.position);
+                if (d < bestDist) { bestDist = d; nearest = enemy.transform; }
+            }
         }
 
         _currentTarget = nearest;
