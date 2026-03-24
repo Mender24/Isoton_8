@@ -25,9 +25,10 @@ public class GrenadeThrowModule : MonoBehaviour
 
     public GrenadeThrowPhase Phase { get; private set; } = GrenadeThrowPhase.Idle;
 
-    public bool CanThrowGrenade => _config != null
+    public bool  CanThrowGrenade => _config != null
                                 && _state.GrenadeCooldown <= 0f
                                 && Phase == GrenadeThrowPhase.Idle;
+    public float TotalDuration   => _config != null ? _config.WindUpDuration + _config.ThrowDuration : 3f;
 
     private void Awake()
     {
@@ -201,15 +202,15 @@ public class GrenadeThrowModule : MonoBehaviour
 
     private bool IsLandingDangerousForAllies(Vector3 landing)
     {
-        if (_grenadeDamageZone <= 0f) return false;
+        if (_grenadeDeathZone <= 0f) return false;
 
-        if (Vector3.Distance(transform.position, landing) < _grenadeDamageZone)
+        if (Vector3.Distance(transform.position, landing) < _grenadeDeathZone)
             return true;
 
         foreach (var enemy in FindObjectsByType<EnemyBase>(FindObjectsSortMode.None))
         {
             if (enemy.gameObject == gameObject) continue;
-            if (Vector3.Distance(enemy.transform.position, landing) < _grenadeDamageZone)
+            if (Vector3.Distance(enemy.transform.position, landing) < _grenadeDeathZone)
                 return true;
         }
 
