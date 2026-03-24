@@ -98,6 +98,7 @@ MonoBehaviour:
   _obstacleLayer:
     serializedVersion: 2
     m_Bits: 274433
+  _useForwardDirection: 1
 --- !u!114 &5660688633147770537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,6 +127,7 @@ MonoBehaviour:
   IsMovingToCover: 0
   CurrentCoverPoint: {x: 0, y: 0, z: 0}
   CurrentCoverObject: {fileID: 0}
+  LastDamageTime: 0
   CurrentBullet: 0
   ShootCooldown: 0
   MeleeAttackCooldown: 0
@@ -174,7 +176,7 @@ MonoBehaviour:
     m_Bits: 256
   _obstacleLayer:
     serializedVersion: 2
-    m_Bits: 274433
+    m_Bits: 307201
   _fieldOfViewAngle: 60
   _visionRange: 15
   _visionHeight: 2.07
@@ -226,7 +228,14 @@ MonoBehaviour:
   PatrolPoints: []
   WaypointWaitTime: 1
   _shootDelay: 0.5
-  _rotationSpeed: 20
+  _rotationSpeed: 60
+  _mutantTag: Mutant
+  _scanRadius: 30
+  _scanInterval: 0.3
+  _obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 307201
+  _aimThreshold: 8
 --- !u!114 &8689980470514968085
 MonoBehaviour:
   m_ObjectHideFlags: 0
