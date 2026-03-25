@@ -25,6 +25,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     [SerializeField] private bool _enableReactionCooldown = true;
     [SerializeField] private float _reactionCooldown = 3f;
 
+
+    [Header("ExplodeWhenDead")] //Mender для турели которая взрывается при смерти, да я не умею наследовать классы
+    [SerializeField] Explosive _explosive;
+
+
     public UnityEvent OnDeathInternal = new();
     public UnityEvent<float, GameObject> OnDamaged = new(); 
 
@@ -113,6 +118,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
         _audio?.PlayDeathSound();
         _animator?.SetDead(true);
         _ragdoll?.Enable();
+
+        if (_explosive != null)
+            _explosive.Explode();
 
         StartCoroutine(DisableCollidersRoutine());
         StartCoroutine(DeactivateSelfRoutine());

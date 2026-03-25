@@ -43,7 +43,19 @@ public class TurretEnemy : EnemyBase
     [Tooltip("Кого атакует туррель по умолчанию.")]
     [SerializeField] private TurretTargetMode _targetMode = TurretTargetMode.Any;
 
+    [Header("Vertical Aim")]
+    [SerializeField] private Transform _verticalPivot;
+    [SerializeField] private float _minPitch = -30f;
+    [SerializeField] private float _maxPitch = 30f;
+    [SerializeField] private bool _upsideDown = false;
+    [Tooltip("Смещение точки прицеливания по вертикали")]
+    [SerializeField] private float _aimHeightOffset = 1f;
+
+    public bool _haveTarget;
+
+
     public TurretTargetMode TargetMode => _targetMode;
+
 
     public void SetTargetMode(TurretTargetMode mode)
     {
@@ -91,6 +103,7 @@ public class TurretEnemy : EnemyBase
         if (_currentTarget != null)
         {
             RotateTowards(_currentTarget);
+            RotateVerticalPivot(_currentTarget);
 
             if (_waitingToShoot)
             {
@@ -155,9 +168,17 @@ public class TurretEnemy : EnemyBase
         _rangedCombat.SetTarget(_currentTarget);
     }
 
-    private bool CanSeeTarget(Transform target)
+    private bool CanSeeTarget(Transform target) 
     {
-        if (target == null) return false;
+        if (target == null)
+        {
+            _haveTarget = false; //Mender Вывожу состояние цели для вращения в анимацию, так что сделал публичный bool.
+            return false;
+        }
+        else
+        {
+            _haveTarget = true;
+        }
 
         Vector3 eyePos      = transform.position + Vector3.up * 0.5f;
         Vector3 targetPoint = target.position + Vector3.up * 1f;
@@ -189,6 +210,23 @@ public class TurretEnemy : EnemyBase
         Quaternion rot = Quaternion.LookRotation(dir);
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation, rot, _rotationSpeed * Time.deltaTime);
+    }
+
+    private void RotateVerticalPivot(Transform target)
+    {
+        if (_verticalPivot == null || target == null) return;
+
+        Vector3 targetPoint = target.position + Vector3.up * _aimHeightOffset;
+        Vector3 dir = targetPoint - _verticalPivot.position;
+        float pitch = Mathf.Atan2(dir.y, new Vector2(dir.x, dir.z).magnitude) * Mathf.Rad2Deg;
+
+        if (_upsideDown) pitch = -pitch;
+
+        pitch = Mathf.Clamp(-pitch, _minPitch, _maxPitch);
+
+        Vector3 angles = _verticalPivot.localEulerAngles;
+        angles.z = pitch;
+        _verticalPivot.localEulerAngles = angles;
     }
 
     public override bool CanAttack()   => _rangedCombat.CanShoot;
