@@ -37,6 +37,9 @@ public class TurretEnemy : EnemyBase
     [Tooltip("Слой препятствий для проверки видимости цели.")]
     [SerializeField] private LayerMask _obstacleLayer;
 
+    [Tooltip("Слой(и) на которых находятся мутанты (для OverlapSphere).")]
+    [SerializeField] private LayerMask _mutantLayer = ~0;
+
     [Tooltip("Максимальный угол (градусы) между forward туррели и направлением на цель для начала стрельбы.")]
     [SerializeField] private float _aimThreshold = 8f;
 
@@ -147,7 +150,7 @@ public class TurretEnemy : EnemyBase
         // Мутанты
         if (_targetMode != TurretTargetMode.PlayerOnly)
         {
-            int count = Physics.OverlapSphereNonAlloc(transform.position, _scanRadius, _scanBuffer);
+            int count = Physics.OverlapSphereNonAlloc(transform.position, _scanRadius, _scanBuffer, _mutantLayer);
             var seen  = new HashSet<EnemyBase>();
 
             for (int i = 0; i < count; i++)
