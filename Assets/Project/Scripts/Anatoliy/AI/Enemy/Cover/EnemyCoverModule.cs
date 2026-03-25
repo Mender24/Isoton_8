@@ -50,11 +50,13 @@ public class EnemyCoverModule : MonoBehaviour
     private static readonly Dictionary<Transform, Transform> _occupiedCoverObjects = new();
 
     private readonly Collider[] _searchBuffer = new Collider[32];
+    private NavMeshPath _reusablePath;
 
     private void Awake()
     {
-        _state      = GetComponent<EnemyState>();
-        _navigation = GetComponent<EnemyNavigation>();
+        _state        = GetComponent<EnemyState>();
+        _navigation   = GetComponent<EnemyNavigation>();
+        _reusablePath = new NavMeshPath();
     }
 
     public void Initialize(Transform playerTransform)
@@ -138,11 +140,14 @@ public class EnemyCoverModule : MonoBehaviour
     public bool TryGetPeekPosition(out Vector3 peekPos)
     {
         peekPos = Vector3.zero;
-        if (_playerTransform == null) return false;
+        if (_playerTransform == null || _navigation == null || _navigation.Agent == null) return false;
 
         Vector3 coverOrigin = _state != null && _state.HasCover
             ? _state.CurrentCoverPoint
             : transform.position;
+
+        float bestPathLength = Mathf.Infinity;
+        bool  found          = false;
 
         for (int i = 0; i < 12; i++)
         {
@@ -156,14 +161,29 @@ public class EnemyCoverModule : MonoBehaviour
             if (!HasLineOfSightToPlayer(navHit.position))
                 continue;
 
-            if (!_navigation.Agent.CalculatePath(navHit.position, new NavMeshPath()))
+            if (!_navigation.Agent.CalculatePath(navHit.position, _reusablePath) ||
+                _reusablePath.status != NavMeshPathStatus.PathComplete)
                 continue;
 
-            peekPos = navHit.position;
-            return true;
+            float pathLength = GetPathLength(_reusablePath);
+            if (pathLength < bestPathLength)
+            {
+                bestPathLength = pathLength;
+                peekPos        = navHit.position;
+                found          = true;
+            }
         }
 
-        return false;
+        return found;
+    }
+
+    private static float GetPathLength(NavMeshPath path)
+    {
+        float    length  = 0f;
+        Vector3[] corners = path.corners;
+        for (int i = 1; i < corners.Length; i++)
+            length += Vector3.Distance(corners[i - 1], corners[i]);
+        return length;
     }
 
     public bool ShouldTakeCover()
@@ -257,6 +277,8 @@ public class EnemyCoverModule : MonoBehaviour
     private bool TryGetCustomPosition(CoverPoint cp, Collider col, out CoverCandidate candidate)
     {
         candidate = default;
+        if (_navigation == null || _navigation.Agent == null) return false;
+
         float bestDist = Mathf.Infinity;
         Vector3 bestPos = Vector3.zero;
         bool found = false;
@@ -271,7 +293,8 @@ public class EnemyCoverModule : MonoBehaviour
             if (HasLineOfSightToPlayer(navHit.position))
                 continue;
 
-            if (!_navigation.Agent.CalculatePath(navHit.position, new NavMeshPath()))
+            if (!_navigation.Agent.CalculatePath(navHit.position, _reusablePath) ||
+                _reusablePath.status != NavMeshPathStatus.PathComplete)
                 continue;
 
             float dist = Vector3.Distance(transform.position, navHit.position);
@@ -304,16 +327,14 @@ public class EnemyCoverModule : MonoBehaviour
                 searchOrigin = boundsCenter + away.normalized * col.bounds.extents.magnitude;
         }
 
-        if (!NavMesh.FindClosestEdge(searchOrigin, out NavMeshHit edgeHit, NavMesh.AllAreas))
-            return false;
-
-        if (!NavMesh.SamplePosition(edgeHit.position, out NavMeshHit navHit, 1f, NavMesh.AllAreas))
+        if (!NavMesh.SamplePosition(searchOrigin, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
             return false;
 
         if (HasLineOfSightToPlayer(navHit.position))
             return false;
 
-        if (!_navigation.Agent.CalculatePath(navHit.position, new NavMeshPath()))
+        if (!_navigation.Agent.CalculatePath(navHit.position, _reusablePath) ||
+            _reusablePath.status != NavMeshPathStatus.PathComplete)
             return false;
 
         float dist = Vector3.Distance(transform.position, navHit.position);
