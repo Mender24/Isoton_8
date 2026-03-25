@@ -12,6 +12,11 @@ public class AiProjectile : MonoBehaviour
     public GameObject defaultDecal;
     public float hitRadius = 0.03f;
 
+    [Header("Hit Effects")]
+    public GameObject hitEffectPrefab;        // Particle System при попадании
+    public AudioClip hitSound;                // «вук попадани€
+    [Range(0f, 1f)] public float hitVolume = 1f;
+
     [Header("Additional Settings")]
     public bool useAutoScaling = true;
     public float scaleMultipler = 45;
@@ -34,7 +39,7 @@ public class AiProjectile : MonoBehaviour
 
     public virtual void Setup(Vector3 direction, float lifeTime, float speed)
     {
-        if(_trail == null)
+        if (_trail == null)
             _trail = GetComponentInChildren<TrailRenderer>();
 
         if (_rb == null)
@@ -46,14 +51,13 @@ public class AiProjectile : MonoBehaviour
         this.speed = speed;
         _lifeTime = lifeTime;
 
-        _velocity = (direction) * (speed);
+        _velocity = direction * speed;
         _rb.isKinematic = false;
 
         if (isActive)
             _rb.AddForce(_velocity, ForceMode.VelocityChange);
 
         transform.localScale = useAutoScaling ? Vector3.zero : Vector3.one * scaleMultipler;
-
         if (_trail) _trail.widthMultiplier = useAutoScaling ? 0 : scaleMultipler;
     }
 
@@ -75,8 +79,7 @@ public class AiProjectile : MonoBehaviour
             transform.localScale = Vector3.one * scale;
             if (_trail) _trail.widthMultiplier = scale;
         }
-
-        if (!useAutoScaling)
+        else
         {
             transform.localScale = Vector3.one * scaleMultipler;
         }
@@ -88,6 +91,70 @@ public class AiProjectile : MonoBehaviour
         }
 
         _lifeTime -= Time.deltaTime;
+    }
+
+    protected virtual void OnCollisionEnter(Collision collision)
+    {
+        // ѕровер€ем слой
+        if ((hittableLayers.value & (1 << collision.gameObject.layer)) == 0)
+            return;
+
+        ContactPoint contact = collision.GetContact(0);
+
+        // ”рон
+        ApplyDamage(collision, contact);
+
+        // Ёффекты
+        SpawnHitEffect(contact);
+        SpawnDecal(collision, contact);
+        PlayHitSound(contact);
+
+        // ‘изика
+        if (collision.rigidbody != null)
+            collision.rigidbody.AddForceAtPosition(direction * force, contact.point, ForceMode.Impulse);
+
+        ReturnToPool();
+    }
+
+    protected virtual void ApplyDamage(Collision collision, ContactPoint contact)
+    {
+        // Ѕазовый класс не знает урон Ч переопредел€етс€ в наследнике
+        // либо RangedCombatModule сам считает урон через TryDealDamage
+    }
+
+    private void SpawnHitEffect(ContactPoint contact)
+    {
+        if (hitEffectPrefab == null) return;
+
+        GameObject effect = Instantiate(
+            hitEffectPrefab,
+            contact.point,
+            Quaternion.LookRotation(contact.normal)
+        );
+
+        // ≈сли это ParticleSystem Ч автоудаление после проигрывани€
+        ParticleSystem ps = effect.GetComponent<ParticleSystem>();
+        if (ps != null)
+            Destroy(effect, ps.main.duration + ps.main.startLifetime.constantMax);
+        else
+            Destroy(effect, 3f);
+    }
+
+    private void SpawnDecal(Collision collision, ContactPoint contact)
+    {
+        if (defaultDecal == null) return;
+
+        Quaternion decalRotation = Quaternion.LookRotation(-contact.normal);
+        GameObject decal = Instantiate(defaultDecal, contact.point, decalRotation);
+        decal.transform.SetParent(collision.transform);
+        Destroy(decal, 60f);
+    }
+
+    private void PlayHitSound(ContactPoint contact)
+    {
+        if (hitSound == null) return;
+
+        AudioSource.PlayClipAtPoint(hitSound, contact.point, hitVolume);
     }
 
     protected void ReturnToPool()
@@ -103,9 +170,8 @@ public class AiProjectile : MonoBehaviour
     }
 
     private void OnDrawGizmos()
-    { 
+    {
 #if UNITY_EDITOR
-        // To make only main camera and scene view draw gizmos
         if (Camera.current.tag == "MainCamera" || Camera.current == UnityEditor.SceneView.lastActiveSceneView.camera)
         {
             Gizmos.color = Color.green;
