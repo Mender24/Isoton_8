@@ -105,6 +105,13 @@ public partial class WaitInCoverAction : Action
         if (_enemy == null || _cover == null) return Status.Failure;
         if (_enemy.State.IsDead)              return Status.Failure;
 
+        if (_cover.IsCoverExhausted)
+        {
+            bool foundNew = _cover.FindAndOccupyCover();
+            _enemy.State.IsInCover = false;
+            return foundNew ? Status.Success : Status.Failure;
+        }
+
         _elapsed = 0f;
         _enemy.Navigation.Stop();
         return Status.Running;
@@ -115,7 +122,6 @@ public partial class WaitInCoverAction : Action
         if (_enemy.State.IsDead)       return Status.Failure;
         if (!_enemy.State.IsAlerted)   return Status.Failure;
 
-        // Игрок выстрелил в бота — ответный огонь
         if (Time.time - _enemy.State.LastDamageTime <= ReturnFireWindow.Value)
         {
             _enemy.State.IsInCover = false;
@@ -196,7 +202,6 @@ public partial class MoveToAttackPositionAction : Action
             _didPeek = true;
         }
 
-        // Плавно поворачиваемся к игроку пока не встали лицом
         if (!_facingDone)
         {
             _enemy.Navigation.FaceTo(_enemy.PlayerTransform.position);
