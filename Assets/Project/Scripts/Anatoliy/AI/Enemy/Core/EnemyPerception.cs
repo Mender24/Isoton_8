@@ -13,6 +13,8 @@ public class EnemyPerception : MonoBehaviour
     [SerializeField] private float _fieldOfViewAngle = 110f;
     [SerializeField] private float _visionRange = 15f;
     [SerializeField] private float _visionHeight = 0.5f;
+    [SerializeField] public Vector2 _visionOffset = new Vector2(0f, 0f); // x — горизонтальное, y — вертикальное
+
 
     [Header("Vision Meter")]
     [SerializeField] private bool  _useVisionMeter       = false;
@@ -139,7 +141,10 @@ public class EnemyPerception : MonoBehaviour
     {
         if (_playerTransform == null) return false;
 
-        Vector3 eyePos = transform.position + Vector3.up * _visionHeight;
+        // eyePos с горизонтальным и вертикальным смещением
+        Vector3 eyePos = transform.position +
+                         new Vector3(_visionOffset.x, _visionOffset.y, 0f); // или + transform.right * _visionOffset.x для локального вправо/влево
+
         Vector3 playerCenter = _playerTransform.position + Vector3.up * 1.0f;
         float dist = Vector3.Distance(eyePos, _playerTransform.position);
 

@@ -16,6 +16,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     [Header("Health")]
     [SerializeField] private float _maxHealth = 100f;
 
+
     [Header("Death")]
     [SerializeField] private Ragdoll _ragdoll;
     [SerializeField] private float _disableCollidersDelay = 3f;
@@ -43,7 +44,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
 
     [SerializeField] private CapsuleCollider _capsuleCollider;
 
-    private float _health;
+    public float _health;
     private float _lastReactionTime = -999f;
     private EnemyState _state;
     private IEnemyAnimator _animator;

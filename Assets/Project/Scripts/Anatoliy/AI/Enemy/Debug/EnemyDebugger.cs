@@ -103,19 +103,23 @@ public class EnemyDebugger : MonoBehaviour
     {
         if (!_showDebug) return;
 
-        if (_state      == null) _state      = GetComponent<EnemyState>();
+        if (_state == null) _state = GetComponent<EnemyState>();
         if (_perception == null) _perception = GetComponent<EnemyPerception>();
         if (_navigation == null) _navigation = GetComponent<EnemyNavigation>();
-        if (_meleeCombat  == null) _meleeCombat  = GetComponent<MeleeCombatModule>();
+        if (_meleeCombat == null) _meleeCombat = GetComponent<MeleeCombatModule>();
         if (_rangedCombat == null) _rangedCombat = GetComponent<RangedCombatModule>();
 
-        float visionHeight = _perception != null ? GetVisionHeight() : 0.5f;
-        Vector3 eyePos = transform.position + Vector3.up * visionHeight;
+        float visionHeight = _perception != null ? _perception.VisionHeight : 0.5f;
 
-        if (_debugHearing)   DrawHearing(eyePos);
-        if (_debugVision)    DrawVision(eyePos);
-        if (_debugMelee)     DrawMelee();
-        if (_debugShooting)  DrawShooting(eyePos);
+        // 👇 эта строка с учётом горизонтального смещения:
+        Vector3 eyePos = transform.position
+                         + Vector3.up * visionHeight
+                         + transform.right * (_perception._visionOffset.x);
+
+        if (_debugHearing) DrawHearing(eyePos);
+        if (_debugVision) DrawVision(eyePos);
+        if (_debugMelee) DrawMelee();
+        if (_debugShooting) DrawShooting(eyePos);
         if (_debugNavigation) DrawNavigation();
     }
 
