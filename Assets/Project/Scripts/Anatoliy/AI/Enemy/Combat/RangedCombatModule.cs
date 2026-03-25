@@ -24,7 +24,11 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     private IEnemyAudio        _audio;
     private EnemyDebugger      _debugger;
     private GrenadeThrowModule _grenadeModule;
+    [Tooltip("Стрелять строго по направлению ствола. Вкл как туррель. Выкл для обычных врагов.")]
+    [SerializeField] private bool _useForwardDirection = false;
+
     private bool _isPaused;
+    private bool _hasManualTarget;
 
     public event System.Action OnFire;
 
@@ -47,7 +51,14 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     public void Initialize(Transform playerTransform)
     {
-        _playerTransform = playerTransform;
+        _playerTransform  = playerTransform;
+        _hasManualTarget  = false;
+    }
+
+    public void SetTarget(Transform target)
+    {
+        _playerTransform = target;
+        _hasManualTarget = target != null;
     }
 
     public void StartFire()
@@ -76,7 +87,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             {
                 _state.IsReloading = false;
                 _animator?.SetReloading(false, 0f);
-                if (_state.PlayerIsSeen)
+                if (_state.PlayerIsSeen || _hasManualTarget)
                     _state.IsFiring = true;
             }
 
@@ -90,7 +101,13 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     private void Fire()
     {
-        if (!_state.PlayerIsSeen)
+        if (!_hasManualTarget && !_state.PlayerIsSeen)
+        {
+            StopFire();
+            return;
+        }
+
+        if (_playerTransform == null)
         {
             StopFire();
             return;
@@ -131,39 +148,54 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         AiProjectile bullet = PoolManager.Instance.GetObject<AiProjectile>();
         if (bullet == null) return;
 
+        Vector3 dir = _useForwardDirection
+            ? _shotOrigin.forward
+            : (_shotOrigin.position != target ? (target - _shotOrigin.position).normalized : _shotOrigin.forward);
+
         bullet.transform.position = _shotOrigin.position;
-        bullet.ClearTrail();          // очищаем до SetActive, иначе старый трейл виден один кадр
+        bullet.ClearTrail();
         bullet.gameObject.SetActive(true);
-        bullet.Setup(
-            _shotOrigin.position != target ? (target - _shotOrigin.position).normalized : transform.forward,
-            _config.BulletLifetime,
-            _config.BulletSpeed
-        );
+        bullet.Setup(dir, _config.BulletLifetime, _config.BulletSpeed);
     }
 
     private void TryDealDamage(Vector3 target)
     {
         if (_shotOrigin == null || _playerTransform == null) return;
 
-        Vector3 origin = _shotOrigin.position + transform.forward * 0.1f;
-        Vector3 dir = (target - origin).normalized;
+        Vector3 origin = _shotOrigin.position + _shotOrigin.forward * 0.1f;
+        Vector3 dir    = _useForwardDirection
+            ? _shotOrigin.forward
+            : (target - origin).normalized;
         bool hit = false;
+
+        LayerMask mask = _obstacleLayer | _playerLayer;
+        if (_hasManualTarget)
+            mask |= 1 << _playerTransform.gameObject.layer;
 
         if (Random.value <= _config.ChanceToHit)
         {
-            if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, _obstacleLayer | _playerLayer))
+            if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, mask))
             {
                 if (rayHit.collider.TryGetComponent(out Damageable damageable))
                 {
                     damageable.Damage(_config.Damage, gameObject);
                     hit = true;
                 }
-                _debugger?.SetLastShot(origin, rayHit.point, hit);
+                else
+                {
+                    var enemyHealth = rayHit.collider.GetComponentInParent<EnemyHealth>();
+                    if (enemyHealth != null)
+                    {
+                        enemyHealth.Damage(_config.Damage, gameObject);
+                        hit = true;
+                    }
+                }
+                if (_debugger != null) _debugger.SetLastShot(origin, rayHit.point, hit);
                 return;
             }
         }
 
-        _debugger?.SetLastShot(origin, target, hit);
+        if (_debugger != null) _debugger.SetLastShot(origin, origin + dir * _config.AttackRange, hit);
     }
 
     private void ChangeMoving(bool isMoving)
