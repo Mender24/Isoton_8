@@ -470,6 +470,8 @@ public class SceneLoader : MonoBehaviour
         InitPostLoadScene(false);
 
         StartCoroutine(StartLateUnloadScenes());
+
+        _isScenesLoaded = false;
     }
 
     private IEnumerator StartLateLoadScene()
