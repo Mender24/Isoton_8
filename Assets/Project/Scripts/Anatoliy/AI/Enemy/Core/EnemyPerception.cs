@@ -13,18 +13,17 @@ public class EnemyPerception : MonoBehaviour
     [SerializeField] private float _fieldOfViewAngle = 110f;
     [SerializeField] private float _visionRange = 15f;
     [SerializeField] private float _visionHeight = 0.5f;
-    [SerializeField] public Vector2 _visionOffset = new Vector2(0f, 0f); // x — горизонтальное, y — вертикальное
-
 
     [Header("Vision Meter")]
-    [SerializeField] private bool  _useVisionMeter       = false;
-    [SerializeField] private float _visionMeterSpeedFar  = 1.5f;
+    [SerializeField] private bool _useVisionMeter = false;
+    [SerializeField] private float _visionMeterSpeedFar = 1.5f;
     [SerializeField] private float _visionMeterSpeedNear = 3.0f;
-    [SerializeField] private float _visionMeterDecay     = 2.0f;
+    [SerializeField] private float _visionMeterDecay = 2.0f;
 
     [Header("Multi-Ray Detection")]
-    [SerializeField] private bool     _useMultiRay = false;
-    [SerializeField] private Vector3[] _bodyCheckOffsets = new Vector3[]
+    [SerializeField] private bool _useMultiRay = false;
+    [SerializeField]
+    private Vector3[] _bodyCheckOffsets = new Vector3[]
     {
         new Vector3(0, 0.1f, 0),
         new Vector3(0, 1.0f, 0),
@@ -48,13 +47,13 @@ public class EnemyPerception : MonoBehaviour
     private bool _pendingNearbyShot;
     private Vector3 _pendingNearbyShooterPos;
 
-    public float VisionRange    => _visionRange;
-    public float VisionHeight   => _visionHeight;
-    public float FieldOfView    => _fieldOfViewAngle;
-    public float HearingRange   => _hearingRange;
-    public float ForgetTime     => _forgetTime;
-    public float VisionMeter    => _visionMeter;
-    public bool  UseMultiRay    => _useMultiRay;
+    public float VisionRange => _visionRange;
+    public float VisionHeight => _visionHeight;
+    public float FieldOfView => _fieldOfViewAngle;
+    public float HearingRange => _hearingRange;
+    public float ForgetTime => _forgetTime;
+    public float VisionMeter => _visionMeter;
+    public bool UseMultiRay => _useMultiRay;
     public Vector3[] BodyCheckOffsets => _bodyCheckOffsets;
 
     public void MultiplyForgetTime(float multiplier) => _forgetTime *= multiplier;
@@ -72,11 +71,11 @@ public class EnemyPerception : MonoBehaviour
     public void Reset(Transform playerTransform)
     {
         StopAllCoroutines();
-        _playerTransform    = playerTransform;
-        _noiseTimer         = 0f;
-        _detectionPending   = false;
-        _visionMeter        = 0f;
-        _pendingNearbyShot  = false;
+        _playerTransform = playerTransform;
+        _noiseTimer = 0f;
+        _detectionPending = false;
+        _visionMeter = 0f;
+        _pendingNearbyShot = false;
     }
 
     private void Update()
@@ -141,10 +140,7 @@ public class EnemyPerception : MonoBehaviour
     {
         if (_playerTransform == null) return false;
 
-        // eyePos с горизонтальным и вертикальным смещением
-        Vector3 eyePos = transform.position +
-                         new Vector3(_visionOffset.x, _visionOffset.y, 0f); // или + transform.right * _visionOffset.x для локального вправо/влево
-
+        Vector3 eyePos = transform.position + Vector3.up * _visionHeight;
         Vector3 playerCenter = _playerTransform.position + Vector3.up * 1.0f;
         float dist = Vector3.Distance(eyePos, _playerTransform.position);
 

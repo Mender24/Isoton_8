@@ -113,8 +113,8 @@ public class EnemyDebugger : MonoBehaviour
 
         // 👇 эта строка с учётом горизонтального смещения:
         Vector3 eyePos = transform.position
-                         + Vector3.up * visionHeight
-                         + transform.right * (_perception._visionOffset.x);
+                         + Vector3.up * visionHeight;
+                         //+ transform.right * (_perception._visionOffset.x);
 
         if (_debugHearing) DrawHearing(eyePos);
         if (_debugVision) DrawVision(eyePos);
