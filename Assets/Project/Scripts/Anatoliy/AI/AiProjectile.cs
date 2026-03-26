@@ -13,8 +13,8 @@ public class AiProjectile : MonoBehaviour
     public float hitRadius = 0.03f;
 
     [Header("Hit Effects")]
-    public GameObject hitEffectPrefab;        // Particle System при попадании
-    public AudioClip hitSound;                // Звук попадания
+    public GameObject hitEffectPrefab;        // Particle System пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public AudioClip hitSound;                // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     [Range(0f, 1f)] public float hitVolume = 1f;
 
     [Header("Additional Settings")]
@@ -95,21 +95,21 @@ public class AiProjectile : MonoBehaviour
 
     protected virtual void OnCollisionEnter(Collision collision)
     {
-        // Проверяем слой
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         if ((hittableLayers.value & (1 << collision.gameObject.layer)) == 0)
             return;
 
         ContactPoint contact = collision.GetContact(0);
 
-        // Урон
+        // пїЅпїЅпїЅпїЅ
         ApplyDamage(collision, contact);
 
-        // Эффекты
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         SpawnHitEffect(contact);
         SpawnDecal(collision, contact);
         PlayHitSound(contact);
 
-        // Физика
+        // пїЅпїЅпїЅпїЅпїЅпїЅ
         if (collision.rigidbody != null)
             collision.rigidbody.AddForceAtPosition(direction * force, contact.point, ForceMode.Impulse);
 
@@ -118,8 +118,8 @@ public class AiProjectile : MonoBehaviour
 
     protected virtual void ApplyDamage(Collision collision, ContactPoint contact)
     {
-        // Базовый класс не знает урон — переопределяется в наследнике
-        // либо RangedCombatModule сам считает урон через TryDealDamage
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // пїЅпїЅпїЅпїЅ RangedCombatModule пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ TryDealDamage
     }
 
     private void SpawnHitEffect(ContactPoint contact)
@@ -132,7 +132,7 @@ public class AiProjectile : MonoBehaviour
             Quaternion.LookRotation(contact.normal)
         );
 
-        // Если это ParticleSystem — автоудаление после проигрывания
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ ParticleSystem пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         ParticleSystem ps = effect.GetComponent<ParticleSystem>();
         if (ps != null)
             Destroy(effect, ps.main.duration + ps.main.startLifetime.constantMax);
@@ -153,7 +153,6 @@ public class AiProjectile : MonoBehaviour
     private void PlayHitSound(ContactPoint contact)
     {
         if (hitSound == null) return;
-
         AudioSource.PlayClipAtPoint(hitSound, contact.point, hitVolume);
     }
 
@@ -161,6 +160,7 @@ public class AiProjectile : MonoBehaviour
     {
         _lifeTime = int.MaxValue;
         _rb.isKinematic = true;
+        if (_trail != null) _trail.Clear();
         PoolManager.Instance.SetObject(this);
     }
 

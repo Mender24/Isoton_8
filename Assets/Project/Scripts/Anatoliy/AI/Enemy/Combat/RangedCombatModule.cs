@@ -179,7 +179,11 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
         if (currentShotOrigin == null) return;
 
-        AiProjectile bullet = PoolManager.Instance.GetObject<AiProjectile>();
+        AiProjectile bullet;
+        if (_config.BulletPrefab.GetComponent<EffectedProjectile>() != null)
+            bullet = PoolManager.Instance.GetObject<EffectedProjectile>();
+        else
+            bullet = PoolManager.Instance.GetObject<AiProjectile>();
         if (bullet == null) return;
 
         Vector3 dir = _useForwardDirection
