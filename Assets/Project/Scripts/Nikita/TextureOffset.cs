@@ -3,19 +3,19 @@ using UnityEngine;
 public class TextureOffset : MonoBehaviour
 {
     [Header("Main Settings")]
-    [SerializeField] private Material _targetMaterial; // Если null, использует материал из Renderer
-    [SerializeField] private int _materialIndex = 0; // Индекс материала (для объектов с несколькими материалами)
+    [SerializeField] private Material _targetMaterial; // пїЅпїЅпїЅпїЅ null, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Renderer
+    [SerializeField] private int _materialIndex = 0; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 
     [Header("Movement Settings")]
-    [SerializeField] private Vector2 _scrollSpeed = new Vector2(0.1f, 0.1f); // Скорость движения по X и Y
-    [SerializeField] private bool _useSmoothPingPong = false; // Включить плавное движение влево-вправо
-    [SerializeField] private Vector2 _pingPongRange = new Vector2(0f, 1f); // Диапазон движения (мин, макс)
-    [SerializeField] private Vector2 _pingPongSpeed = new Vector2(0.5f, 0.5f); // Скорость колебаний
+    [SerializeField] private Vector2 _scrollSpeed = new Vector2(0.1f, 0.1f); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ X пїЅ Y
+    [SerializeField] private bool _useSmoothPingPong = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private Vector2 _pingPongRange = new Vector2(0f, 1f); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ)
+    [SerializeField] private Vector2 _pingPongSpeed = new Vector2(0.5f, 0.5f); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     [Header("Advanced Settings")]
-    [SerializeField] private bool _applyToAllMaterials = false; // Применять ко всем материалам объекта
-    [SerializeField] private bool _useGlobalTime = true; // Использовать Time.time вместо накопленного времени
-    [SerializeField] private bool _resetOnDisable = false; // Сбрасывать offset при отключении
+    [SerializeField] private bool _applyToAllMaterials = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private bool _useGlobalTime = true; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Time.time пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private bool _resetOnDisable = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ offset пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     private Renderer _renderer;
     private Material _material;
@@ -23,7 +23,7 @@ public class TextureOffset : MonoBehaviour
     private float _timeX;
     private float _timeY;
 
-    // Свойства для доступа извне
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     public Vector2 ScrollSpeed
     {
         get => _scrollSpeed;
@@ -37,18 +37,26 @@ public class TextureOffset : MonoBehaviour
         Initialize();
     }
 
+    /// <summary>
+    /// РџРѕРІС‚РѕСЂРЅР°СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ вЂ” РІС‹Р·С‹РІР°С‚СЊ РїРѕСЃР»Рµ СЃРјРµРЅС‹ РјР°С‚РµСЂРёР°Р»Р° РЅР° СЂРµРЅРґРµСЂРµСЂРµ
+    /// </summary>
+    public void Reinitialize()
+    {
+        Initialize();
+    }
+
     private void Initialize()
     {
         _renderer = GetComponent<Renderer>();
 
         if (_renderer == null)
         {
-            Debug.LogError($"TextureOffset: На объекте {gameObject.name} нет компонента Renderer!");
+            Debug.LogError($"TextureOffset: пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {gameObject.name} пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Renderer!");
             enabled = false;
             return;
         }
 
-        // Если материал не назначен, берем из рендерера
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (_targetMaterial == null && _renderer != null)
         {
             if (_materialIndex < _renderer.materials.Length)
@@ -57,7 +65,7 @@ public class TextureOffset : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"TextureOffset: Индекс материала {_materialIndex} выходит за пределы массива материалов на {gameObject.name}");
+                Debug.LogError($"TextureOffset: пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ {_materialIndex} пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ {gameObject.name}");
                 enabled = false;
                 return;
             }
@@ -65,7 +73,7 @@ public class TextureOffset : MonoBehaviour
 
         _material = _targetMaterial;
 
-        // Получаем текущий offset
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ offset
         if (_material != null)
         {
             _currentOffset = _material.mainTextureOffset;
@@ -89,7 +97,7 @@ public class TextureOffset : MonoBehaviour
     }
 
     /// <summary>
-    /// Линейное движение текстуры
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     private void UpdateLinearOffset()
     {
@@ -104,17 +112,17 @@ public class TextureOffset : MonoBehaviour
             _currentOffset.y += _scrollSpeed.y * Time.deltaTime;
         }
 
-        // Опционально: зацикливаем значения (для предотвращения переполнения float)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ float)
         if (Mathf.Abs(_currentOffset.x) > 1000f) _currentOffset.x -= Mathf.Sign(_currentOffset.x) * 1000f;
         if (Mathf.Abs(_currentOffset.y) > 1000f) _currentOffset.y -= Mathf.Sign(_currentOffset.y) * 1000f;
     }
 
     /// <summary>
-    /// Плавное колебание текстуры (влево-вправо, вверх-вниз)
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅ)
     /// </summary>
     private void UpdatePingPongOffset()
     {
-        // Обновляем время для каждой оси
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
         if (_useGlobalTime)
         {
             _timeX = Time.time * _pingPongSpeed.x;
@@ -126,23 +134,23 @@ public class TextureOffset : MonoBehaviour
             _timeY += _pingPongSpeed.y * Time.deltaTime;
         }
 
-        // Рассчитываем offset с помощью PingPong
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ offset пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ PingPong
         float pingPongX = Mathf.PingPong(_timeX, _pingPongRange.y - _pingPongRange.x) + _pingPongRange.x;
         float pingPongY = Mathf.PingPong(_timeY, _pingPongRange.y - _pingPongRange.x) + _pingPongRange.x;
 
-        // Если есть базовая скорость движения, добавляем её к колебанию
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         _currentOffset.x = pingPongX + (_useGlobalTime ? Time.time * _scrollSpeed.x : _currentOffset.x + _scrollSpeed.x * Time.deltaTime);
         _currentOffset.y = pingPongY + (_useGlobalTime ? Time.time * _scrollSpeed.y : _currentOffset.y + _scrollSpeed.y * Time.deltaTime);
     }
 
     /// <summary>
-    /// Применяет текущий offset к материалу(ам)
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ offset пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ(пїЅпїЅ)
     /// </summary>
     private void ApplyOffset()
     {
         if (_applyToAllMaterials && _renderer != null)
         {
-            // Применяем ко всем материалам
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             foreach (Material mat in _renderer.materials)
             {
                 if (mat != null)
@@ -151,14 +159,14 @@ public class TextureOffset : MonoBehaviour
         }
         else
         {
-            // Применяем только к целевому материалу
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (_material != null)
                 _material.mainTextureOffset = _currentOffset;
         }
     }
 
     /// <summary>
-    /// Установить offset вручную
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ offset пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public void SetOffset(Vector2 offset)
     {
@@ -167,7 +175,7 @@ public class TextureOffset : MonoBehaviour
     }
 
     /// <summary>
-    /// Установить offset по X
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ offset пїЅпїЅ X
     /// </summary>
     public void SetOffsetX(float x)
     {
@@ -176,7 +184,7 @@ public class TextureOffset : MonoBehaviour
     }
 
     /// <summary>
-    /// Установить offset по Y
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ offset пїЅпїЅ Y
     /// </summary>
     public void SetOffsetY(float y)
     {
@@ -185,7 +193,7 @@ public class TextureOffset : MonoBehaviour
     }
 
     /// <summary>
-    /// Сбросить offset в ноль
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ offset пїЅ пїЅпїЅпїЅпїЅ
     /// </summary>
     public void ResetOffset()
     {
@@ -194,7 +202,7 @@ public class TextureOffset : MonoBehaviour
     }
 
     /// <summary>
-    /// Временно остановить движение (обнуляет скорость)
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
     /// </summary>
     public void PauseMovement()
     {
@@ -203,7 +211,7 @@ public class TextureOffset : MonoBehaviour
     }
 
     /// <summary>
-    /// Возобновить движение с новыми параметрами
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public void ResumeMovement(Vector2 scrollSpeed, Vector2? pingPongSpeed = null)
     {
@@ -222,7 +230,7 @@ public class TextureOffset : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Необязательно: возвращаем материал в исходное состояние при уничтожении
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (_resetOnDisable && _material != null)
         {
             ResetOffset();
