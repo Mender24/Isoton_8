@@ -15,6 +15,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     [SerializeField] private LayerMask _obstacleLayer;
     [SerializeField] private ParticleSystem _muzzleFlashPrimary = null;
     [SerializeField] private ParticleSystem _muzzleFlashSecondary = null;
+    [SerializeField] private float _visionHeightForNonTurret = 1.75f;
 
     public bool  CanShoot    => !IsReloading && _config != null;
     internal bool GetUseDoubleBarrelTurret() => _useDoubleBarrelTurret;
@@ -191,16 +192,39 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     private void TryDealDamage(Vector3 target)
     {
-        if (_shotOrigin == null || _playerTransform == null) return;
+        if (_playerTransform == null) return;
 
-        Transform currentShotOrigin = _usePrimaryBarrel || !_useDoubleBarrelTurret 
-    ? _shotOrigin
-    : _shotOriginSecondary;
+        Transform originSource;
+        float forwardOffset = 0.1f;
 
-        Vector3 origin = currentShotOrigin.position + currentShotOrigin.forward * 0.1f;
+        if (_useDoubleBarrelTurret)
+        {
+            // Турель: луч идёт из ствола
+            originSource = _usePrimaryBarrel ? _shotOrigin : _shotOriginSecondary;
+        }
+        else
+        {
+            // НЕ‑турель: луч идёт из "глаз" врага
+            originSource = transform;
+            forwardOffset = 0.1f;
+        }
+
+        Vector3 origin;
+        if (_useDoubleBarrelTurret)
+        {
+            // Турель: из ствола
+            origin = originSource.position + originSource.forward * forwardOffset;
+        }
+        else
+        {
+            // НЕ‑турель: как в EnemyPerception — глаза на _visionHeight
+            origin = originSource.position + Vector3.up * _visionHeightForNonTurret;
+        }
+
         Vector3 dir = _useForwardDirection
-            ? currentShotOrigin.forward
+            ? originSource.forward
             : (target - origin).normalized;
+
         bool hit = false;
 
         LayerMask mask = _obstacleLayer | _playerLayer;
