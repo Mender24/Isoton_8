@@ -28,13 +28,13 @@ public partial class CrawlerStalkAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Agent;
     [SerializeReference] public BlackboardVariable<float> SafeSpotRadius    = new(12f);
     [SerializeReference] public BlackboardVariable<bool>  PreferCeiling     = new(true);
-    /// <summary>Сколько точек посетить при PreferCeiling=true прежде чем сдаться.</summary>
     [SerializeReference] public BlackboardVariable<int>   MaxWaypoints      = new(6);
-    /// <summary>Сколько точек посетить при PreferCeiling=false прежде чем атаковать с пола.</summary>
-    [SerializeReference] public BlackboardVariable<int>   FloorHideWaypoints = new(2);
+    [SerializeReference] public BlackboardVariable<int>   FloorHideWaypoints  = new(2);
+    [SerializeReference] public BlackboardVariable<float> StuckTimeout        = new(10f);
 
     private CrawlerEnemy _crawler;
     private int          _waypointsVisited;
+    private float        _waypointTimer;
 
     protected override Status OnStart()
     {
@@ -44,6 +44,7 @@ public partial class CrawlerStalkAction : Action
         if (_crawler == null || _crawler.State.IsDead) return Status.Failure;
 
         _waypointsVisited = 0;
+        ResetStuckTimer();
         MoveToNextTarget();
         return Status.Running;
     }
@@ -52,7 +53,16 @@ public partial class CrawlerStalkAction : Action
     {
         if (_crawler == null || _crawler.State.IsDead) return Status.Failure;
         if (_crawler.WasRecentlyShot && _crawler.IsVisibleToPlayer()) return Status.Failure;
-        if (!_crawler.IsEnemyStopped()) return Status.Running;
+
+        bool reached = _crawler.IsEnemyStopped();
+
+        if (!reached)
+        {
+            _waypointTimer += Time.deltaTime;
+            reached = _waypointTimer >= StuckTimeout.Value;
+        }
+
+        if (!reached) return Status.Running;
 
         _waypointsVisited++;
 
@@ -70,6 +80,7 @@ public partial class CrawlerStalkAction : Action
                 return Status.Success;
         }
 
+        ResetStuckTimer();
         MoveToNextTarget();
         return Status.Running;
     }
@@ -77,6 +88,11 @@ public partial class CrawlerStalkAction : Action
     protected override void OnEnd()
     {
         _crawler?.Navigation.Stop();
+    }
+
+    private void ResetStuckTimer()
+    {
+        _waypointTimer = 0f;
     }
 
     private void MoveToNextTarget()
