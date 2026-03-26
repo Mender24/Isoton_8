@@ -350,6 +350,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _config: {fileID: 11400000, guid: 067bf3f239fbc5c48bc5105a8b7a6c31, type: 2}
+  _useDoubleBarrelTurret: 0
+  _shotOriginSecondary: {fileID: 0}
   _shotOrigin: {fileID: 6695914349694875996}
   _playerTransform: {fileID: 0}
   _playerLayer:
@@ -358,7 +360,11 @@ MonoBehaviour:
   _obstacleLayer:
     serializedVersion: 2
     m_Bits: 307201
+  _muzzleFlashPrimary: {fileID: 0}
+  _muzzleFlashSecondary: {fileID: 0}
+  _visionHeightForNonTurret: 1.75
   _useForwardDirection: 1
+  _usePrimaryBarrel: 1
 --- !u!114 &5660688633147770537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -419,6 +425,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _capsuleCollider: {fileID: 0}
+  _health: 0
 --- !u!114 &4913589192460107127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -505,7 +512,8 @@ MonoBehaviour:
   _minPitch: -30
   _maxPitch: 30
   _upsideDown: 0
-  _aimHeightOffset: 1
+  _aimHeightOffset: 1.5
+  _muzzle: {fileID: 0}
   _haveTarget: 0
 --- !u!114 &8689980470514968085
 MonoBehaviour:

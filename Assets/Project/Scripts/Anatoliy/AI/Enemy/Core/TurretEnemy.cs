@@ -177,7 +177,8 @@ public class TurretEnemy : EnemyBase
         }
 
         _currentTarget = nearest;
-        _rangedCombat.SetTarget(_currentTarget);
+        bool targetIsEnemy = nearest != null && nearest != PlayerTransform;
+        _rangedCombat.SetTarget(_currentTarget, targetIsEnemy);
     }
 
     private bool CanSeeTarget(Transform target) 

@@ -37,6 +37,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     public bool _usePrimaryBarrel = true; // какой ствол в данный момент используется
     private bool _isPaused;
     private bool _hasManualTarget;
+    private bool _targetIsEnemy;
 
     public event System.Action OnFire;
 
@@ -63,10 +64,11 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         _hasManualTarget  = false;
     }
 
-    public void SetTarget(Transform target)
+    public void SetTarget(Transform target, bool isEnemy = false)
     {
         _playerTransform = target;
         _hasManualTarget = target != null;
+        _targetIsEnemy   = target != null && isEnemy;
     }
 
     public void StartFire()
@@ -231,7 +233,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         if (_hasManualTarget)
             mask |= 1 << _playerTransform.gameObject.layer;
 
-        float chanceToHit = _hasManualTarget ? _config.ChanceToHitEnemy : _config.ChanceToHit;
+        float chanceToHit = _targetIsEnemy ? _config.ChanceToHitEnemy : _config.ChanceToHit;
         if (Random.value <= chanceToHit)
         {
             if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, mask))
