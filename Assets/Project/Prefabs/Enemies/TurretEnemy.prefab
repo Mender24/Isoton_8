@@ -357,7 +357,7 @@ MonoBehaviour:
     m_Bits: 256
   _obstacleLayer:
     serializedVersion: 2
-    m_Bits: 274433
+    m_Bits: 307201
   _useForwardDirection: 1
 --- !u!114 &5660688633147770537
 MonoBehaviour:
@@ -411,6 +411,7 @@ MonoBehaviour:
   _deactivateSelfDelay: 20
   _enableReactionCooldown: 1
   _reactionCooldown: 3
+  _explosive: {fileID: 0}
   OnDeathInternal:
     m_PersistentCalls:
       m_Calls: []
@@ -495,8 +496,17 @@ MonoBehaviour:
   _obstacleLayer:
     serializedVersion: 2
     m_Bits: 307201
+  _mutantLayer:
+    serializedVersion: 2
+    m_Bits: 1048576
   _aimThreshold: 8
   _targetMode: 2
+  _verticalPivot: {fileID: 0}
+  _minPitch: -30
+  _maxPitch: 30
+  _upsideDown: 0
+  _aimHeightOffset: 1
+  _haveTarget: 0
 --- !u!114 &8689980470514968085
 MonoBehaviour:
   m_ObjectHideFlags: 0

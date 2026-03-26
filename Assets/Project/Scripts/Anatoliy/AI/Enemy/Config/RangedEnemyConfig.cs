@@ -15,6 +15,9 @@ public class RangedEnemyConfig : ScriptableObject
     public float FireRate = 0.5f;
     [Range(0f, 1f)]
     public float ChanceToHit = 0.9f;
+    [Tooltip("Шанс попадания по врагу. 1 = всегда попадает.")]
+    [Range(0f, 1f)]
+    public float ChanceToHitEnemy = 1f;
 
     [Header("Reload")]
     public float ReloadTime = 3f;

@@ -11,7 +11,7 @@ public class EnemyGrenadeConfig : ScriptableObject
     [Header("Throw Decision")]
     [Range(0f, 1f)]
     public float ThrowChance = 0.5f;
-    public int BulletsBeforeCheck = 20;
+    [Min(1)] public int BulletsBeforeCheck = 20;
 
     [Header("Cooldown")]
     public float ThrowCooldown = 15f;

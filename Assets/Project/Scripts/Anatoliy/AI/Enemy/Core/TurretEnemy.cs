@@ -16,7 +16,8 @@ public class TurretEnemy : EnemyBase
         MutantsOnly,
         Any
     }
-    
+    public event System.Action OnTargetModeChanged;
+
     [Header("Turret")]
     [Tooltip("Задержка перед открытием огня после обнаружения цели.")]
     [SerializeField] private float _shootDelay = 0.5f;
@@ -37,6 +38,9 @@ public class TurretEnemy : EnemyBase
     [Tooltip("Слой препятствий для проверки видимости цели.")]
     [SerializeField] private LayerMask _obstacleLayer;
 
+    [Tooltip("Слой(и) на которых находятся мутанты (для OverlapSphere).")]
+    [SerializeField] private LayerMask _mutantLayer = ~0;
+
     [Tooltip("Максимальный угол (градусы) между forward туррели и направлением на цель для начала стрельбы.")]
     [SerializeField] private float _aimThreshold = 8f;
 
@@ -51,17 +55,25 @@ public class TurretEnemy : EnemyBase
     [Tooltip("Смещение точки прицеливания по вертикали")]
     [SerializeField] private float _aimHeightOffset = 1f;
 
+    [SerializeField] private Transform _muzzle; // ← добавить в инспектор, в конец ствола
+
+
     public bool _haveTarget;
 
 
     public TurretTargetMode TargetMode => _targetMode;
 
 
-    public void SetTargetMode(TurretTargetMode mode)
+    public void SetTargetModeByIndex(int index)
     {
-        _targetMode    = mode;
-        _currentTarget = null;
-        _scanTimer     = 0f;
+        if (index >= 0 && index < System.Enum.GetValues(typeof(TurretTargetMode)).Length)
+        {
+            _targetMode = (TurretTargetMode)index;
+            _currentTarget = null;
+            _scanTimer = 0f;
+
+            OnTargetModeChanged?.Invoke();
+        }
     }
 
     private RangedCombatModule _rangedCombat;
@@ -147,7 +159,7 @@ public class TurretEnemy : EnemyBase
         // Мутанты
         if (_targetMode != TurretTargetMode.PlayerOnly)
         {
-            int count = Physics.OverlapSphereNonAlloc(transform.position, _scanRadius, _scanBuffer);
+            int count = Physics.OverlapSphereNonAlloc(transform.position, _scanRadius, _scanBuffer, _mutantLayer);
             var seen  = new HashSet<EnemyBase>();
 
             for (int i = 0; i < count; i++)
@@ -192,22 +204,32 @@ public class TurretEnemy : EnemyBase
 
     private bool IsAimedAt(Transform target)
     {
-        if (target == null) return false;
-        Vector3 toTarget = target.position - transform.position;
+        if (target == null || _muzzle == null) return false;
+
+        Vector3 toTarget = target.position - _muzzle.position;
         toTarget.y = 0f;
         if (toTarget.sqrMagnitude < 0.01f) return true;
-        return Vector3.Angle(transform.forward, toTarget) <= _aimThreshold;
+
+        float angle = Vector3.Angle(_muzzle.forward, toTarget);
+        return angle <= (_aimThreshold + 2f); // например 10f вместо 8f
     }
+
+
 
     private void RotateTowards(Transform target)
     {
-        if (target == null) return;
+        if (target == null || _muzzle == null) return;
 
-        Vector3 dir = target.position - transform.position;
-        dir.y = 0f;
-        if (dir.sqrMagnitude < 0.01f) return;
+        Vector3 from = _muzzle.position;
+        Vector3 to = target.position;
 
-        Quaternion rot = Quaternion.LookRotation(dir);
+        // y в 0 только для горизонтального поворота
+        Vector3 flatDir = to - from;
+        flatDir.y = 0f;
+
+        if (flatDir.sqrMagnitude < 0.01f) return;
+
+        Quaternion rot = Quaternion.LookRotation(flatDir);
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation, rot, _rotationSpeed * Time.deltaTime);
     }

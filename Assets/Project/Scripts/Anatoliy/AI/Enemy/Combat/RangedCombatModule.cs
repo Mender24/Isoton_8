@@ -7,12 +7,19 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     [SerializeField] private RangedEnemyConfig _config;
 
     [Header("References")]
+    [SerializeField] public bool _useDoubleBarrelTurret = false;
+    [SerializeField] private Transform _shotOriginSecondary = null;
     [SerializeField] private Transform _shotOrigin;
     [SerializeField] private Transform _playerTransform;
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private LayerMask _obstacleLayer;
+    [SerializeField] private ParticleSystem _muzzleFlashPrimary = null;
+    [SerializeField] private ParticleSystem _muzzleFlashSecondary = null;
+    [SerializeField] private float _visionHeightForNonTurret = 1.75f;
 
     public bool  CanShoot    => !IsReloading && _config != null;
+    internal bool GetUseDoubleBarrelTurret() => _useDoubleBarrelTurret;
+    internal bool GetIsPrimaryBarrelFiring() => _usePrimaryBarrel;
     public bool  IsFiring    => _state != null && _state.IsFiring;
     public bool  IsReloading => _state != null && _state.IsReloading;
     public float AttackRange => _config != null ? _config.AttackRange : 0f;
@@ -27,6 +34,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     [Tooltip("Стрелять строго по направлению ствола. Вкл как туррель. Выкл для обычных врагов.")]
     [SerializeField] private bool _useForwardDirection = false;
 
+    public bool _usePrimaryBarrel = true; // какой ствол в данный момент используется
     private bool _isPaused;
     private bool _hasManualTarget;
 
@@ -121,8 +129,25 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         target.x += Random.Range(-_config.WidthSprayOffset,  _config.WidthSprayOffset)  + _config.XOffset;
 
         SpawnBullet(target);
+        if (_useDoubleBarrelTurret)
+            _usePrimaryBarrel = !_usePrimaryBarrel;
         TryDealDamage(target);
         _audio?.PlayAttackSound();
+
+        // Включаем нужный muzzle flash
+        ParticleSystem currentMuzzleFlash = null;
+
+        if (_useDoubleBarrelTurret)
+        {
+            currentMuzzleFlash = _usePrimaryBarrel ? _muzzleFlashPrimary : _muzzleFlashSecondary;
+        }
+        else
+        {
+            currentMuzzleFlash = _muzzleFlashPrimary;
+        }
+
+        if (currentMuzzleFlash != null)
+            currentMuzzleFlash.Play();
 
         OnFire?.Invoke();
 
@@ -143,16 +168,23 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     private void SpawnBullet(Vector3 target)
     {
-        if (_config.BulletPrefab == null || _shotOrigin == null) return;
+        if (_config.BulletPrefab == null) return;
+
+        // Определяем текущий ствол
+        Transform currentShotOrigin = _usePrimaryBarrel || !_useDoubleBarrelTurret
+            ? _shotOrigin
+            : _shotOriginSecondary;
+
+        if (currentShotOrigin == null) return;
 
         AiProjectile bullet = PoolManager.Instance.GetObject<AiProjectile>();
         if (bullet == null) return;
 
         Vector3 dir = _useForwardDirection
-            ? _shotOrigin.forward
-            : (_shotOrigin.position != target ? (target - _shotOrigin.position).normalized : _shotOrigin.forward);
+            ? currentShotOrigin.forward
+            : (currentShotOrigin.position != target ? (target - currentShotOrigin.position).normalized : currentShotOrigin.forward);
 
-        bullet.transform.position = _shotOrigin.position;
+        bullet.transform.position = currentShotOrigin.position;
         bullet.ClearTrail();
         bullet.gameObject.SetActive(true);
         bullet.Setup(dir, _config.BulletLifetime, _config.BulletSpeed);
@@ -160,19 +192,47 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     private void TryDealDamage(Vector3 target)
     {
-        if (_shotOrigin == null || _playerTransform == null) return;
+        if (_playerTransform == null) return;
 
-        Vector3 origin = _shotOrigin.position + _shotOrigin.forward * 0.1f;
-        Vector3 dir    = _useForwardDirection
-            ? _shotOrigin.forward
+        Transform originSource;
+        float forwardOffset = 0.1f;
+
+        if (_useDoubleBarrelTurret)
+        {
+            // Турель: луч идёт из ствола
+            originSource = _usePrimaryBarrel ? _shotOrigin : _shotOriginSecondary;
+        }
+        else
+        {
+            // НЕ‑турель: луч идёт из "глаз" врага
+            originSource = transform;
+            forwardOffset = 0.1f;
+        }
+
+        Vector3 origin;
+        if (_useDoubleBarrelTurret)
+        {
+            // Турель: из ствола
+            origin = originSource.position + originSource.forward * forwardOffset;
+        }
+        else
+        {
+            // НЕ‑турель: как в EnemyPerception — глаза на _visionHeight
+            origin = originSource.position + Vector3.up * _visionHeightForNonTurret;
+        }
+
+        Vector3 dir = _useForwardDirection
+            ? originSource.forward
             : (target - origin).normalized;
+
         bool hit = false;
 
         LayerMask mask = _obstacleLayer | _playerLayer;
         if (_hasManualTarget)
             mask |= 1 << _playerTransform.gameObject.layer;
 
-        if (Random.value <= _config.ChanceToHit)
+        float chanceToHit = _hasManualTarget ? _config.ChanceToHitEnemy : _config.ChanceToHit;
+        if (Random.value <= chanceToHit)
         {
             if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, mask))
             {
