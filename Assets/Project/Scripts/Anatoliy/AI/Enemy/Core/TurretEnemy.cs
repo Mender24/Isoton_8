@@ -16,7 +16,8 @@ public class TurretEnemy : EnemyBase
         MutantsOnly,
         Any
     }
-    
+    public event System.Action OnTargetModeChanged;
+
     [Header("Turret")]
     [Tooltip("Задержка перед открытием огня после обнаружения цели.")]
     [SerializeField] private float _shootDelay = 0.5f;
@@ -63,11 +64,16 @@ public class TurretEnemy : EnemyBase
     public TurretTargetMode TargetMode => _targetMode;
 
 
-    public void SetTargetMode(TurretTargetMode mode)
+    public void SetTargetModeByIndex(int index)
     {
-        _targetMode    = mode;
-        _currentTarget = null;
-        _scanTimer     = 0f;
+        if (index >= 0 && index < System.Enum.GetValues(typeof(TurretTargetMode)).Length)
+        {
+            _targetMode = (TurretTargetMode)index;
+            _currentTarget = null;
+            _scanTimer = 0f;
+
+            OnTargetModeChanged?.Invoke();
+        }
     }
 
     private RangedCombatModule _rangedCombat;
