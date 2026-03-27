@@ -1,4 +1,5 @@
 using Akila.FPSFramework;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,6 +14,10 @@ public class Battery : MonoBehaviour, IDamageable
     [SerializeField] private float _speedCloseShield = 3f;
     [SerializeField] private float _timeShieldOpen = 10f;
     [SerializeField] private float _cooldownTime = 5f;
+    [SerializeField] private Explosive _explosive;
+
+
+    [SerializeField] private AnimationClip _animationClip;
 
     private bool _untargetable = false;
     private bool _isDead = false;
@@ -29,6 +34,16 @@ public class Battery : MonoBehaviour, IDamageable
 
     public UnityEvent OnDeath => onDeath;
     public UnityEvent OnEndCooldown => onEndCooldown;
+    public event Action OnStartUpShield;
+    public event Action OnStartDownShield;
+
+    private void Start()
+    {
+        if(_explosive != null)
+        {
+            _explosive.enabled = false;
+        }
+    }
 
     public void Damage(float amount, GameObject damageSource)
     {
@@ -42,6 +57,13 @@ public class Battery : MonoBehaviour, IDamageable
         if (_health <= 0)
         {
             _isDead = true;
+
+            if(_explosive != null)
+            {
+                _explosive.enabled = true;
+                _explosive.Explode();
+            }
+
             Death();
         }
         else
@@ -81,22 +103,22 @@ public class Battery : MonoBehaviour, IDamageable
 
     private IEnumerator OpenShieldInteraction()
     {
-        yield return StartCoroutine(OpenShieldObject());
+        OnStartUpShield?.Invoke();
 
-        Debug.Log("FullOpen");
+        yield return StartCoroutine(OpenShieldObject());
 
         yield return new WaitForSeconds(_timeShieldOpen);
 
-        yield return StartCoroutine(CloseShieldObject());
+        OnStartDownShield?.Invoke();
 
-        Debug.Log("FullClose");
+        yield return StartCoroutine(CloseShieldObject());
     }
 
     private IEnumerator OpenShieldObject()
     {
         _untargetable = true;
 
-        if(_shieldObject != null)
+        if (_shieldObject != null)
         {
             Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
 
