@@ -184,9 +184,18 @@ public class SceneLoader : MonoBehaviour
         int startSceneIndex = _currentSceneIndex;
 
         if (isFirstSceneLoad)
+        {
             HardLoadScene(startSceneIndex++);
+
+            if(Player.Instance.gameObject.activeSelf)
+            {
+                Player.Instance.gameObject.SetActive(false);
+            }
+        }
         else
+        {
             startSceneIndex++;
+        }
 
         StartCoroutine(ProcessLoadScenes(startSceneIndex, isFirstSceneLoad));
     }
@@ -258,7 +267,7 @@ public class SceneLoader : MonoBehaviour
             while (!operation.isDone)
                 yield return null;
 
-            if (isLateLoadScene || isFirstSceneLoad)
+            if (isLateLoadScene)
                 AddLateActiveObject(i);
         }
 
@@ -284,6 +293,9 @@ public class SceneLoader : MonoBehaviour
     {
         Scene scene = SceneManager.GetSceneByBuildIndex(index);
         LateActiveObject late = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LateActiveObject>()).FirstOrDefault();
+        
+        if (_isDebug)
+            Debug.Log("StartLateActive: " + late.name);
 
         if (late != null && !_sceneNames[index].Contains(_transitionName))
             _lateActives.Push(late);
@@ -470,6 +482,8 @@ public class SceneLoader : MonoBehaviour
         InitPostLoadScene(false);
 
         StartCoroutine(StartLateUnloadScenes());
+
+        _isScenesLoaded = false;
     }
 
     private IEnumerator StartLateLoadScene()

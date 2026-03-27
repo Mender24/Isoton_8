@@ -81,36 +81,46 @@ public class Battery : MonoBehaviour, IDamageable
 
     private IEnumerator OpenShieldInteraction()
     {
-        StartCoroutine(OpenShieldObject());
+        yield return StartCoroutine(OpenShieldObject());
+
+        Debug.Log("FullOpen");
 
         yield return new WaitForSeconds(_timeShieldOpen);
 
-        StartCoroutine(CloseShieldObject());
+        yield return StartCoroutine(CloseShieldObject());
+
+        Debug.Log("FullClose");
     }
 
     private IEnumerator OpenShieldObject()
     {
-        Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
-
         _untargetable = true;
 
-        while (_shieldObject.transform.position != target)
+        if(_shieldObject != null)
         {
-            _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedOpenShield * Time.deltaTime);
+            Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
 
-            yield return null;
+            while (Mathf.Abs((_shieldObject.transform.position - target).magnitude) >= 0.1f)
+            {
+                _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedOpenShield * Time.deltaTime);
+
+                yield return null;
+            }
         }
     }
 
     private IEnumerator CloseShieldObject()
     {
-        Vector3 target = _shieldObject.transform.position + new Vector3(0, _lenPathShield, 0);
-
-        while (_shieldObject.transform.position != target)
+        if(_shieldObject != null)
         {
-            _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedCloseShield * Time.deltaTime);
+            Vector3 target = _shieldObject.transform.position + new Vector3(0, _lenPathShield, 0);
 
-            yield return null;
+            while (Mathf.Abs((_shieldObject.transform.position - target).magnitude) >= 0.1f)
+            {
+                _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedCloseShield * Time.deltaTime);
+
+                yield return null;
+            }
         }
 
         _untargetable = false;
