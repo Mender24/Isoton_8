@@ -267,7 +267,7 @@ public class SceneLoader : MonoBehaviour
             while (!operation.isDone)
                 yield return null;
 
-            if (isLateLoadScene || isFirstSceneLoad)
+            if (isLateLoadScene)
                 AddLateActiveObject(i);
         }
 
@@ -293,6 +293,9 @@ public class SceneLoader : MonoBehaviour
     {
         Scene scene = SceneManager.GetSceneByBuildIndex(index);
         LateActiveObject late = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LateActiveObject>()).FirstOrDefault();
+        
+        if (_isDebug)
+            Debug.Log("StartLateActive: " + late.name);
 
         if (late != null && !_sceneNames[index].Contains(_transitionName))
             _lateActives.Push(late);
