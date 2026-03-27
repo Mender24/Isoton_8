@@ -1,7 +1,10 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ReactorAnim : MonoBehaviour
 {
+    [SerializeField] private List<WireStateSwitcher> _wires = new();
     [SerializeField] private string _nameOpen;
 
     private Reactor _reactor;
