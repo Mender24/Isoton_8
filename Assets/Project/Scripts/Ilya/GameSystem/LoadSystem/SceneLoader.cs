@@ -186,7 +186,6 @@ public class SceneLoader : MonoBehaviour
         if (isFirstSceneLoad)
         {
             HardLoadScene(startSceneIndex++);
-            _isMovePostLoadScene = false;
 
             if (Player.Instance.gameObject.activeSelf)
             {
