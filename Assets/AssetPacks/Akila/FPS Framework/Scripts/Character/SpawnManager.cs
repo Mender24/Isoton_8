@@ -59,6 +59,7 @@ namespace Akila.FPSFramework
 
         public void UpdateSpawnPoint(int indexNewScene)
         {
+            Debug.Log("Update");
             Scene scene = SceneManager.GetSceneByBuildIndex(indexNewScene);
 
             GameObject SpawnPoints = scene.GetRootGameObjects()
