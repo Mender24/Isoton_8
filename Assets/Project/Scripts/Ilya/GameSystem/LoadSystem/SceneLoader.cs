@@ -267,7 +267,7 @@ public class SceneLoader : MonoBehaviour
             while (!operation.isDone)
                 yield return null;
 
-            if (isLateLoadScene)
+            if (isLateLoadScene || isFirstSceneLoad)
                 AddLateActiveObject(i);
         }
 
