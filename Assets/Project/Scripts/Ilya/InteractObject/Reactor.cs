@@ -1,4 +1,5 @@
 using Akila.FPSFramework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -37,6 +38,8 @@ public class Reactor : MonoBehaviour, IDamageable
     public TextMeshPro showingText;
     public UnityEvent OnDeath => onDeath;
 
+    public event Action OnBatteryDestroy;
+
     public void Register()
     {
 
@@ -58,6 +61,9 @@ public class Reactor : MonoBehaviour, IDamageable
 
     private IEnumerator Start()
     {
+        if (SceneLoader.instance == null)
+            yield break;
+
         _health = _healthReactor;
         _batteryHealth = _batterys.Count;
 
@@ -90,10 +96,9 @@ public class Reactor : MonoBehaviour, IDamageable
     {
         _batteryHealth -= 1;
 
-        Debug.Log("DeathBattery");
-
         if (_batteryHealth <= 0)
         {
+            OnBatteryDestroy?.Invoke();
             StartCoroutine(OpenShield());
             return;
         }
@@ -124,7 +129,6 @@ public class Reactor : MonoBehaviour, IDamageable
                 _currentIndexLiveBattery = 0;
         }
 
-        Debug.Log("OpenBattery");
         _batterys[_currentIndexLiveBattery++].OpenShield();
 
         if(_currentIndexLiveBattery >= _batterys.Count)

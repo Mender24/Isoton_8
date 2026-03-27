@@ -14,6 +14,10 @@ public class Battery : MonoBehaviour, IDamageable
     [SerializeField] private float _speedCloseShield = 3f;
     [SerializeField] private float _timeShieldOpen = 10f;
     [SerializeField] private float _cooldownTime = 5f;
+    [SerializeField] private Explosive _explosive;
+
+
+    [SerializeField] private AnimationClip _animationClip;
 
     private bool _untargetable = false;
     private bool _isDead = false;
@@ -33,6 +37,14 @@ public class Battery : MonoBehaviour, IDamageable
     public event Action OnStartUpShield;
     public event Action OnStartDownShield;
 
+    private void Start()
+    {
+        if(_explosive != null)
+        {
+            _explosive.enabled = false;
+        }
+    }
+
     public void Damage(float amount, GameObject damageSource)
     {
         if (!_untargetable)
@@ -45,6 +57,13 @@ public class Battery : MonoBehaviour, IDamageable
         if (_health <= 0)
         {
             _isDead = true;
+
+            if(_explosive != null)
+            {
+                _explosive.enabled = true;
+                _explosive.Explode();
+            }
+
             Death();
         }
         else
@@ -99,7 +118,7 @@ public class Battery : MonoBehaviour, IDamageable
     {
         _untargetable = true;
 
-        if(_shieldObject != null)
+        if (_shieldObject != null)
         {
             Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
 
