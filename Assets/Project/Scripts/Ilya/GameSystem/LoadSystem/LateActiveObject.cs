@@ -58,7 +58,7 @@ public class LateActiveObject : MonoBehaviour
 
     private void Update()
     {
-        if(_isMain && _currentSpeedType != SceneLoader.instance.SpeedType)
+        if(_isMain && SceneLoader.instance != null && _currentSpeedType != SceneLoader.instance.SpeedType)
         {
             ChangeSpeedActive(SceneLoader.instance.SpeedType);
         }

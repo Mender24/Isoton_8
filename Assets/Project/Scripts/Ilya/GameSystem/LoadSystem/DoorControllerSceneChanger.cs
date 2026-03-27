@@ -5,6 +5,7 @@ namespace Akila.FPSFramework
 {
     public class DoorControllerSceneChanger : MonoBehaviour
     {
+        [SerializeField] private bool _isUseLoad = true;
         [SerializeField] private bool _isUseForceDontOpenDoor = false;
         [SerializeField] private bool _isUseLateLoadedSystem = false;
         [Space]
