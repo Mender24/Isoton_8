@@ -1,4 +1,5 @@
 using Akila.FPSFramework;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -29,6 +30,8 @@ public class Battery : MonoBehaviour, IDamageable
 
     public UnityEvent OnDeath => onDeath;
     public UnityEvent OnEndCooldown => onEndCooldown;
+    public event Action OnStartUpShield;
+    public event Action OnStartDownShield;
 
     public void Damage(float amount, GameObject damageSource)
     {
@@ -81,15 +84,15 @@ public class Battery : MonoBehaviour, IDamageable
 
     private IEnumerator OpenShieldInteraction()
     {
-        yield return StartCoroutine(OpenShieldObject());
+        OnStartUpShield?.Invoke();
 
-        Debug.Log("FullOpen");
+        yield return StartCoroutine(OpenShieldObject());
 
         yield return new WaitForSeconds(_timeShieldOpen);
 
-        yield return StartCoroutine(CloseShieldObject());
+        OnStartDownShield?.Invoke();
 
-        Debug.Log("FullClose");
+        yield return StartCoroutine(CloseShieldObject());
     }
 
     private IEnumerator OpenShieldObject()
