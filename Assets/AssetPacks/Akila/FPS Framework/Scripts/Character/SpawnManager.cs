@@ -78,15 +78,15 @@ namespace Akila.FPSFramework
         {
             player.transform.position = sides[0].points[0].position;
             Debug.Log(sides[0].points[0].rotation);
-            foreach (Transform root in player.transform)
-            {
-                Debug.Log(root.rotation);
-                root.rotation = sides[0].points[0].rotation;
-                Debug.Log(root.name);
-                break;
-            }
+            //foreach (Transform root in player.transform)
+            //{
+            //    Debug.Log(root.rotation);
+            //    root.rotation = sides[0].points[0].rotation;
+            //    Debug.Log(root.name);
+            //    break;
+            //}
 
-            //player.transform.rotation = sides[0].points[0].rotation;
+            player.transform.rotation = sides[0].points[0].rotation;
         }
 
         public async void SpawnActor(IActor actorSelf, string actorObjName, float delay)
