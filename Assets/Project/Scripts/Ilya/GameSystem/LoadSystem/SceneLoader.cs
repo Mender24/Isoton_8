@@ -186,8 +186,9 @@ public class SceneLoader : MonoBehaviour
         if (isFirstSceneLoad)
         {
             HardLoadScene(startSceneIndex++);
+            _isMovePostLoadScene = false;
 
-            if(Player.Instance.gameObject.activeSelf)
+            if (Player.Instance.gameObject.activeSelf)
             {
                 Player.Instance.gameObject.SetActive(false);
             }
