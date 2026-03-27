@@ -184,9 +184,18 @@ public class SceneLoader : MonoBehaviour
         int startSceneIndex = _currentSceneIndex;
 
         if (isFirstSceneLoad)
+        {
             HardLoadScene(startSceneIndex++);
+
+            if(Player.Instance.gameObject.activeSelf)
+            {
+                Player.Instance.gameObject.SetActive(false);
+            }
+        }
         else
+        {
             startSceneIndex++;
+        }
 
         StartCoroutine(ProcessLoadScenes(startSceneIndex, isFirstSceneLoad));
     }
