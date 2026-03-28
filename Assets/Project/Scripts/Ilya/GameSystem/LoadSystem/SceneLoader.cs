@@ -187,7 +187,7 @@ public class SceneLoader : MonoBehaviour
         {
             HardLoadScene(startSceneIndex++);
 
-            if(Player.Instance.gameObject.activeSelf)
+            if (Player.Instance.gameObject.activeSelf)
             {
                 Player.Instance.gameObject.SetActive(false);
             }
@@ -267,7 +267,7 @@ public class SceneLoader : MonoBehaviour
             while (!operation.isDone)
                 yield return null;
 
-            if (isLateLoadScene)
+            if (isLateLoadScene || isFirstSceneLoad)
                 AddLateActiveObject(i);
         }
 

@@ -267,10 +267,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -902729914
   m_Radius: 0.54
-  m_Speed: 7
+  m_Speed: 4
   m_Acceleration: 20
   avoidancePriority: 50
-  m_AngularSpeed: 200
+  m_AngularSpeed: 600
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -454,12 +454,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8204342cd6ed1fb4aa798200d6dae1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
+  _maxHealth: 250
   _ragdoll: {fileID: 5595360108150590718}
   _disableCollidersDelay: 3
   _deactivateSelfDelay: 20
   _enableReactionCooldown: 1
-  _reactionCooldown: 3
+  _reactionCooldown: 100000
   _explosive: {fileID: 0}
   OnDeathInternal:
     m_PersistentCalls:
@@ -468,6 +468,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _capsuleCollider: {fileID: 0}
+  _health: 0
 --- !u!114 &1192999304806339965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -501,8 +502,8 @@ MonoBehaviour:
   - {x: 0, y: 1.8, z: 0}
   _hearingRange: 10
   _noiseInvestigationTime: 5
-  _detectionDelay: 0.9
-  _forgetTime: 10
+  _detectionDelay: 0.5
+  _forgetTime: 60
   _minDistanceToForget: 4
 --- !u!114 &5595360108150590718
 MonoBehaviour:
@@ -677,8 +678,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81da6f4d415e2a04e9018f4ed57e734e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 10
-  _runSpeed: 15
+  _walkSpeed: 3
+  _runSpeed: 5
   _stoppingDistance: 0.5
   _rotationSpeed: 10
 --- !u!114 &5316163538622447582

@@ -1,9 +1,11 @@
 using Akila.FPSFramework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityStandardAssets.ImageEffects;
 
 public class Reactor : MonoBehaviour, IDamageable
 {
@@ -14,6 +16,7 @@ public class Reactor : MonoBehaviour, IDamageable
     // [SerializeField] private float _lenPathDoorEnd = 4f;
     [SerializeField] private float _speedMoveShield = 3f;
     [SerializeField] private float _cooldownNextBattery = 3f;
+    [SerializeField] private float _timeWaitFirstStart = 2f;
     [SerializeField] private List<Battery> _batterys = new();
 
     [SerializeField] private GameObject _shieldObject;
@@ -37,6 +40,8 @@ public class Reactor : MonoBehaviour, IDamageable
     public TextMeshPro showingText;
     public UnityEvent OnDeath => onDeath;
 
+    public event Action OnBatteryDestroy;
+
     public void Register()
     {
 
@@ -58,6 +63,9 @@ public class Reactor : MonoBehaviour, IDamageable
 
     private IEnumerator Start()
     {
+        if (SceneLoader.instance == null)
+            yield break;
+
         _health = _healthReactor;
         _batteryHealth = _batterys.Count;
 
@@ -71,6 +79,8 @@ public class Reactor : MonoBehaviour, IDamageable
             yield return null;
 
         _doorControllerSceneChanger = SceneLoader.instance.GetDoorControllerNextTransition();
+
+        yield return new WaitForSeconds(_timeWaitFirstStart);
 
         StartReactor();
     }
@@ -90,10 +100,9 @@ public class Reactor : MonoBehaviour, IDamageable
     {
         _batteryHealth -= 1;
 
-        Debug.Log("DeathBattery");
-
         if (_batteryHealth <= 0)
         {
+            OnBatteryDestroy?.Invoke();
             StartCoroutine(OpenShield());
             return;
         }
@@ -116,7 +125,7 @@ public class Reactor : MonoBehaviour, IDamageable
         if (_batteryHealth <= 0)
             return;
 
-        while(_batterys[_currentIndexLiveBattery].IsDead)
+        while (_batterys[_currentIndexLiveBattery].IsDead)
         {
             _currentIndexLiveBattery++;
 
@@ -124,7 +133,6 @@ public class Reactor : MonoBehaviour, IDamageable
                 _currentIndexLiveBattery = 0;
         }
 
-        Debug.Log("OpenBattery");
         _batterys[_currentIndexLiveBattery++].OpenShield();
 
         if(_currentIndexLiveBattery >= _batterys.Count)

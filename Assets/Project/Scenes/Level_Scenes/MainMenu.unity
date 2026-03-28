@@ -901,37 +901,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0faf57a747a486e4d8587403d7b988ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isDebug: 0
   _isPlayAwake: 1
   _ambiemtSource: {fileID: 2121254962}
   _audioClipInTransition: {fileID: 0}
   _maxVolumeTransition: 0.2
   _audioAmbientInIdLocation:
   - AudioClip: {fileID: 8300000, guid: 2ef02d15c8f42f04a8b4f532a3bb7bb7, type: 3}
-    MaxVolume: 0.35
+    MaxVolume: 0.15
     IdLocation: 0
   - AudioClip: {fileID: 8300000, guid: 18a227b471fb90947a9d001dde72ace2, type: 3}
-    MaxVolume: 0.3
+    MaxVolume: 0.15
     IdLocation: 1
   - AudioClip: {fileID: 8300000, guid: c4ecc277e272b5d4d9354911dd9c4c85, type: 3}
-    MaxVolume: 0.3
+    MaxVolume: 0.15
     IdLocation: 3
   - AudioClip: {fileID: 8300000, guid: c4ecc277e272b5d4d9354911dd9c4c85, type: 3}
-    MaxVolume: 0.3
+    MaxVolume: 0.15
     IdLocation: 5
   - AudioClip: {fileID: 8300000, guid: c4ecc277e272b5d4d9354911dd9c4c85, type: 3}
-    MaxVolume: 0.3
+    MaxVolume: 0.15
     IdLocation: 6
   - AudioClip: {fileID: 8300000, guid: c4ecc277e272b5d4d9354911dd9c4c85, type: 3}
-    MaxVolume: 0.3
+    MaxVolume: 0.15
     IdLocation: 8
   - AudioClip: {fileID: 8300000, guid: c4ecc277e272b5d4d9354911dd9c4c85, type: 3}
-    MaxVolume: 0.3
+    MaxVolume: 0.15
     IdLocation: 10
   _speedDown: 0.15
   _speedUp: 0.34
   _randomSoundSource: {fileID: 1334220526}
   _isChangePositionAudioSource: 1
-  _radiusInCircle: 8
+  _radiusInCircle: 4
   _percentageOccurence: 0.2
   _timeBetweenRandomAudio: 5
   _randomAudioClip:
@@ -1527,9 +1528,9 @@ MonoBehaviour:
   - Transition_2-BOSS
   - Lvl3_End_BossColieum
   - Lvl4
-  - Transition_3-4
-  - Lvl5_Reactor_End
   - Transition_4-5
+  - Lvl5_Reactor
+  - Transition_5-6
   - End_RunawayLvl
   _transitionName: Transition
   _endSceneName: End
@@ -2224,7 +2225,7 @@ MonoBehaviour:
   - {fileID: -7770503669698727024, guid: 3c2018e4f3b93744f959842a544e01a5, type: 3}
   - {fileID: 1069960484613499420, guid: 41f62019eb2817448b4c6a2982ef8365, type: 3}
   - {fileID: -7770503669698727024, guid: a1b294068599afe4c9d9d13c8be84363, type: 3}
-  _maxWeaponCount: 2
+  _maxWeaponCount: 3
   spawnableObjects:
   - name: Player
     obj: {fileID: 3917014405222904205, guid: 365989104bab89047b810e46a38f7798, type: 3}
