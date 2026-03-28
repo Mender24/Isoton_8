@@ -293,8 +293,7 @@ public class EnemyCoverModule : MonoBehaviour
             if (HasLineOfSightToPlayer(navHit.position))
                 continue;
 
-            if (!_navigation.Agent.CalculatePath(navHit.position, _reusablePath) ||
-                _reusablePath.status != NavMeshPathStatus.PathComplete)
+            if (!_navigation.CanReach(navHit.position))
                 continue;
 
             float dist = Vector3.Distance(transform.position, navHit.position);
@@ -333,8 +332,7 @@ public class EnemyCoverModule : MonoBehaviour
         if (HasLineOfSightToPlayer(navHit.position))
             return false;
 
-        if (!_navigation.Agent.CalculatePath(navHit.position, _reusablePath) ||
-            _reusablePath.status != NavMeshPathStatus.PathComplete)
+        if (!_navigation.CanReach(navHit.position))
             return false;
 
         float dist = Vector3.Distance(transform.position, navHit.position);

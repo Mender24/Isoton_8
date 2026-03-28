@@ -94,17 +94,9 @@ public partial class MoveToNoiseAction : Action
         if (Physics.Raycast(target + Vector3.up, Vector3.down, out RaycastHit hit, 100f))
             target.y = hit.point.y;
 
-        if (NavMesh.SamplePosition(target, out NavMeshHit navHit, 3f, NavMesh.AllAreas))
-        {
-            var path = new NavMeshPath();
-            if (!_enemy.Navigation.Agent.CalculatePath(navHit.position, path) ||
-                path.status == NavMeshPathStatus.PathInvalid)
-                return Status.Failure;
-        }
-        else
-        {
+        if (!NavMesh.SamplePosition(target, out NavMeshHit navHit, 3f, NavMesh.AllAreas)
+            || !_enemy.Navigation.CanReach(navHit.position))
             return Status.Failure;
-        }
 
         _enemy.Navigation.MoveTo(target, true);
         return Status.Running;
@@ -143,12 +135,8 @@ public partial class MoveToLastKnownPositionAction : Action
         Vector3 dest = e.State.LastKnownPlayerPosition;
         dest.y = e.transform.position.y;
 
-        var path = new NavMeshPath();
-        if (!e.Navigation.Agent.CalculatePath(dest, path) ||
-            path.status == NavMeshPathStatus.PathInvalid)
-        {
+        if (!e.Navigation.CanReach(dest))
             return Status.Failure;
-        }
 
         e.Navigation.ResetPath();
         e.Navigation.MoveTo(dest, run: true);
