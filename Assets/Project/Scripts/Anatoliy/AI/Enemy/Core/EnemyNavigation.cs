@@ -83,7 +83,12 @@ public class EnemyNavigation : MonoBehaviour
         if (_agent == null) return false;
         if (_agent.pathPending) return false;
         if (_agent.remainingDistance > _agent.stoppingDistance) return false;
-        return !_agent.hasPath || _agent.velocity.sqrMagnitude == 0f;
+        if (_agent.hasPath && _agent.isOnNavMesh)
+        {
+            _agent.isStopped = true;
+            _agent.velocity  = Vector3.zero;
+        }
+        return true;
     }
 
     public void FaceTo(Vector3 worldPosition)
