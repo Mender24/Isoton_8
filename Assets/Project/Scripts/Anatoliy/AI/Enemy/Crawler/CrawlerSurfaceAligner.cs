@@ -4,7 +4,8 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class CrawlerSurfaceAligner : MonoBehaviour
 {
-    [SerializeField] private float _faceSpeed = 10f;
+    [SerializeField] private float _rotationSpeedMultiplier = 1f;
+    [SerializeField] private float _linkSpeedMultiplier     = 1f;
 
     private NavMeshAgent _agent;
 
@@ -12,6 +13,7 @@ public class CrawlerSurfaceAligner : MonoBehaviour
     private Vector3    _linkStart;
     private Vector3    _linkEnd;
     private float      _linkProgress;
+    private float      _rotationProgress;
     private float      _linkLength;
     private Quaternion _linkStartRot;
     private Quaternion _linkEndRot;
@@ -47,12 +49,13 @@ public class CrawlerSurfaceAligner : MonoBehaviour
     private void BeginLinkTraversal()
     {
         OffMeshLinkData link = _agent.currentOffMeshLinkData;
-        _linkStart    = transform.position;
-        _linkEnd      = link.endPos;
-        _linkLength   = Vector3.Distance(_linkStart, _linkEnd);
-        _linkProgress = 0f;
-        _traversingLink  = true;
-        _agent.isStopped = true;
+        _linkStart        = transform.position;
+        _linkEnd          = link.endPos;
+        _linkLength       = Vector3.Distance(_linkStart, _linkEnd);
+        _linkProgress     = 0f;
+        _rotationProgress = 0f;
+        _traversingLink   = true;
+        _agent.isStopped  = true;
 
         SetAgentRotation(false);
 
@@ -67,12 +70,14 @@ public class CrawlerSurfaceAligner : MonoBehaviour
     {
         if (_linkLength < 0.001f) { FinishLinkTraversal(); return; }
 
-        float step = _agent.speed * Time.deltaTime / _linkLength;
-        _linkProgress = Mathf.MoveTowards(_linkProgress, 1f, step);
+        float baseStep = _agent.speed * Time.deltaTime / _linkLength;
+
+        _linkProgress     = Mathf.MoveTowards(_linkProgress,     1f, baseStep * _linkSpeedMultiplier);
+        _rotationProgress = Mathf.MoveTowards(_rotationProgress, 1f, baseStep * _rotationSpeedMultiplier);
 
         transform.SetPositionAndRotation(
             Vector3.Lerp(_linkStart, _linkEnd, _linkProgress),
-            Quaternion.Slerp(_linkStartRot, _linkEndRot, _linkProgress));
+            Quaternion.Slerp(_linkStartRot, _linkEndRot, _rotationProgress));
 
         if (_linkProgress >= 1f)
             FinishLinkTraversal();
