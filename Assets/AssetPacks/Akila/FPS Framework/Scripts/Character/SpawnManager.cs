@@ -78,6 +78,14 @@ namespace Akila.FPSFramework
         public void MovePlayerStartPositionAndOn(Player player)
         {
             player.transform.position = sides[0].points[0].position;
+            //foreach (Transform root in player.transform)
+            //{
+            //    Debug.Log(root.rotation);
+            //    root.rotation = sides[0].points[0].rotation;
+            //    Debug.Log(root.name);
+            //    break;
+            //}
+
             player.transform.rotation = sides[0].points[0].rotation;
         }
 
@@ -148,7 +156,7 @@ namespace Akila.FPSFramework
                 .OfType<Inventory>()
                 .FirstOrDefault();
 
-            LoadPlayerWeapon(inventory);
+            //LoadPlayerWeapon(inventory);
             //SaveManager.LoadPlayer(inventory, _itemsPrefab);
             //LoadPlayerWeapon(inventory);
             //----
@@ -205,7 +213,7 @@ namespace Akila.FPSFramework
             {
                 if (PlayerPrefs.HasKey("Weapon" + i))
                 {
-                    Debug.Log("Load weapon: " + PlayerPrefs.GetString("Weapon" + i));
+                    //Debug.Log("Load weapon: " + PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
                 }
