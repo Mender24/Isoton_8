@@ -148,4 +148,6 @@ public class CrawlerAnimator : MonoBehaviour, IEnemyAnimator
     public void OnMeleeAttackComplete() { }
     public void OnFootstepLeft()        { }
     public void OnFootstepRight()       { }
+    public void OnHitReactionStart()    { }
+    public void OnHitReactionComplete() { }
 }
