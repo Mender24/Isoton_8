@@ -15,6 +15,7 @@ public class Reactor : MonoBehaviour, IDamageable
     // [SerializeField] private float _lenPathDoorEnd = 4f;
     [SerializeField] private float _speedMoveShield = 3f;
     [SerializeField] private float _cooldownNextBattery = 3f;
+    [SerializeField] private float _timeWaitFirstStart = 2f;
     [SerializeField] private List<Battery> _batterys = new();
 
     [SerializeField] private GameObject _shieldObject;
@@ -77,6 +78,8 @@ public class Reactor : MonoBehaviour, IDamageable
             yield return null;
 
         _doorControllerSceneChanger = SceneLoader.instance.GetDoorControllerNextTransition();
+
+        yield return new WaitForSeconds(_timeWaitFirstStart);
 
         StartReactor();
     }

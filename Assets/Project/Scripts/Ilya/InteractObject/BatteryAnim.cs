@@ -18,7 +18,7 @@ public class BatteryAnim : MonoBehaviour
         _battery.OnStartDownShield -= OnStartDownShield;
     }
 
-    private void Start()
+    private void Awake()
     {
         _animator = GetComponent<Animator>();
         _battery = transform.parent.GetComponent<Battery>();
