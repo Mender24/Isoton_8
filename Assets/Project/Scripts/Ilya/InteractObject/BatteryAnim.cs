@@ -5,6 +5,7 @@ public class BatteryAnim : MonoBehaviour
     [SerializeField] private string _nameOpen;
     [SerializeField] private string _nameClose;
     [SerializeField] private WireStateSwitcher _wire;
+    [SerializeField] private WireStateSwitcher _podium;
 
     private Battery _battery;
     private Animator _animator;
@@ -46,12 +47,18 @@ public class BatteryAnim : MonoBehaviour
     private void ActivateWire()
     {
         if(_wire != null)
+        {
             _wire.ActivateIsoton();
+            _podium.ActivateIsoton();
+        }
     }
 
     private void DeactivateWire()
     {
         if (_wire != null)
+        {
             _wire.ActivateRubber();
+            _podium.ActivateRubber();
+        }
     }
 }
