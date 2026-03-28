@@ -143,6 +143,7 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * radius + origin;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, radius, NavMesh.AllAreas)
+                && Navigation.CanReach(hit.position)
                 && !IsPositionVisibleToPlayer(hit.position)
                 && !IsNearLinkPoint(hit.position))
             {
@@ -170,6 +171,7 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * _ambushRadius + PlayerTransform.position;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _ambushRadius, NavMesh.AllAreas)
+                && Navigation.CanReach(hit.position)
                 && !IsPositionVisibleToPlayer(hit.position))
             {
                 result = hit.position;
@@ -190,6 +192,7 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * _ambushRadius + PlayerTransform.position;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _ambushRadius, NavMesh.AllAreas)
+                && Navigation.CanReach(hit.position)
                 && hit.position.y > playerY + _ceilingMinHeight
                 && !IsPositionVisibleToPlayer(hit.position)
                 && !IsNearLinkPoint(hit.position))
@@ -203,6 +206,7 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * _ambushRadius + PlayerTransform.position;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _ambushRadius, NavMesh.AllAreas)
+                && Navigation.CanReach(hit.position)
                 && hit.position.y > playerY + _ceilingMinHeight
                 && !IsNearLinkPoint(hit.position))
             {
@@ -215,6 +219,7 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * _safeSpotRadius + transform.position;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _safeSpotRadius, NavMesh.AllAreas)
+                && Navigation.CanReach(hit.position)
                 && hit.position.y > playerY + _ceilingMinHeight
                 && !IsNearLinkPoint(hit.position))
             {
