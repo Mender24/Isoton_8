@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityStandardAssets.ImageEffects;
 
 public class Reactor : MonoBehaviour, IDamageable
 {
@@ -124,7 +125,7 @@ public class Reactor : MonoBehaviour, IDamageable
         if (_batteryHealth <= 0)
             return;
 
-        while(_batterys[_currentIndexLiveBattery].IsDead)
+        while (_batterys[_currentIndexLiveBattery].IsDead)
         {
             _currentIndexLiveBattery++;
 

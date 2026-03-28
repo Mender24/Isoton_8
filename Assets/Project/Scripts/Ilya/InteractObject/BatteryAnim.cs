@@ -28,6 +28,9 @@ public class BatteryAnim : MonoBehaviour
         _battery.OnStartDownShield += OnStartDownShield;
         _battery.OnStartDownShield += DeactivateWire;
         _battery.OnDeath.AddListener(DeactivateWire);
+
+        ActivateWire();
+        DeactivateWire();
     }
 
     private void OnStartUpShield()
