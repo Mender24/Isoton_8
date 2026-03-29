@@ -521,8 +521,17 @@ namespace Akila.FPSFramework
         {
             yRotation = targetRotation.eulerAngles.y;
             xRotation = targetRotation.eulerAngles.x;
+
+            if (float.IsNaN(xRotation) || float.IsInfinity(xRotation))
+                xRotation = 0;
+
+            if (float.IsNaN(yRotation) || float.IsInfinity(yRotation))
+                yRotation = 0;
+
             playerRotation = Quaternion.Euler(xRotation, yRotation, 0f);
-            Orientation.SetRotation(playerRotation, !globalOrientation);
+
+            if(Orientation != null)
+                Orientation.SetRotation(playerRotation, !globalOrientation);
         }
 
         protected virtual void UpdateCameraRotation()
