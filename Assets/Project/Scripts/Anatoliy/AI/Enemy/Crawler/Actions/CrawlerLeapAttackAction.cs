@@ -128,8 +128,6 @@ public partial class CrawlerLeapAttackAction : Action
             _phase         = Phase.Attacking;
             _elapsed       = 0f;
             _attackStarted = false;
-
-            if (_crawler != null) _crawler.SurfaceAlignmentActive = true;
         }
 
         return Status.Running;
