@@ -24,4 +24,13 @@ public class ButtonLoadGame : MonoBehaviour
             SceneLoader.instance.LoadMainMenu();
         }
     }
+
+    public void ExitGame()
+    {
+        if (_isActive)
+        {
+            _isActive = false;
+            SceneLoader.instance.ExitGame();
+        }
+    }
 }

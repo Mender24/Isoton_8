@@ -87,6 +87,11 @@ public class SceneLoader : MonoBehaviour
 
     public event UnityAction SceneLoadingComplete;
 
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
     public void LoadMainMenu()
     {
         Player.Instance.gameObject.SetActive(false);
