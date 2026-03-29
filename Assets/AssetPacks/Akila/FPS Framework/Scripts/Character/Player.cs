@@ -10,6 +10,7 @@ namespace Akila.FPSFramework
         private Inventory _inventory;
         private Actor _actor;
         private InteractionsManager _interactionsManager;
+        private FirstPersonController _firstPersonController;
 
         public Inventory Inventory => _inventory;
         public Actor Actor => _actor;
@@ -22,12 +23,18 @@ namespace Akila.FPSFramework
             _inventory = GetComponentInChildren<Inventory>();
             _interactionsManager = GetComponentInChildren<InteractionsManager>();
             _actor = GetComponent<Actor>();
+            _firstPersonController = GetComponent<FirstPersonController>();
         }
 
         private void Start()
         {
             if (_isStartOff)
                 gameObject.SetActive(false);
+        }
+
+        public void SetRotation(Quaternion rotation)
+        {
+            _firstPersonController.SetPlayerRotation(rotation);
         }
     }
 }
