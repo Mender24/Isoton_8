@@ -299,7 +299,7 @@ public class SceneLoader : MonoBehaviour
         Scene scene = SceneManager.GetSceneByBuildIndex(index);
         LateActiveObject late = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LateActiveObject>()).FirstOrDefault();
         
-        if (_isDebug)
+        if (_isDebug && late != null)
             Debug.Log("StartLateActive: " + late.name);
 
         if (late != null && !_sceneNames[index].Contains(_transitionName))
