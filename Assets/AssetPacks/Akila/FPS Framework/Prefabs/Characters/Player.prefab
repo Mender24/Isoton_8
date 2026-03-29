@@ -341,7 +341,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.035
+  near clip plane: 0.1
   far clip plane: 100000
   field of view: 75
   orthographic: 0
@@ -415,8 +415,8 @@ MonoBehaviour:
   m_RenderPostProcessing: 1
   m_Antialiasing: 1
   m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
+  m_StopNaN: 1
+  m_Dithering: 1
   m_ClearDepth: 1
   m_AllowXRRendering: 1
   m_AllowHDROutput: 1
@@ -1448,7 +1448,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 374009933901206597}
-        m_TargetAssemblyTypeName: Akila.FPSFramework.Inventory, Assembly-CSharp
+        m_TargetAssemblyTypeName: Akila.FPSFramework.Inventory, Akila.FPSFramework
         m_MethodName: DropAllItems
         m_Mode: 1
         m_Arguments:
@@ -1530,7 +1530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51d88bfc62e9e5c43898a4dd9ef2310e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isStartOff: 0
+  _isStartOff: 1
 --- !u!136 &3237082288344609968
 CapsuleCollider:
   m_ObjectHideFlags: 0
