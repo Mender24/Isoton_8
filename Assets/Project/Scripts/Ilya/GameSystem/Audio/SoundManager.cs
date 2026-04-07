@@ -11,6 +11,8 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager Instance => _instance;
 
+    [SerializeField] private bool _isDebug = false;
+    [Space]
     [SerializeField] private bool _isPlayAwake = true;
     [SerializeField] private AudioSource _ambiemtSource;
     [Header("AmbientInLocation")]
@@ -202,6 +204,9 @@ public class SoundManager : MonoBehaviour
 
         if (_isChangePositionAudioSource)
             ChangePositionSource(_randomSoundSource);
+
+        if (_isDebug)
+            Debug.Log("AudioProfile: " + currentIdLocation + " AudioClipId: " + randomValue);
 
         audioClips[randomValue].PlayAudioClipOneShot(_randomSoundSource);
 

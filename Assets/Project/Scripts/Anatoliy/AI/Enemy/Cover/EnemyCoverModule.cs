@@ -12,7 +12,7 @@ public class EnemyCoverModule : MonoBehaviour
     [SerializeField] private LayerMask _coverLayers;
     [SerializeField] private float _searchRadius = 20f;
     [SerializeField] private float _minCoverHeight = 0.8f;
-    [Tooltip("Чувствительность укрытия. -1=только идеальные, 0=хорошие, 0.5=любые.")]
+    [Tooltip("[Устарел] Использовался для NavMesh edge-метода. Больше не применяется.")]
     [SerializeField, Range(-1f, 1f)] private float _hideSensitivity = -0.25f;
     [Tooltip("Минимальная дистанция от укрытия до позиции игрока.")]
     [SerializeField] private float _minDistanceFromPlayer = 3f;
@@ -33,23 +33,30 @@ public class EnemyCoverModule : MonoBehaviour
     public event Action OnCoverReleased;
     public event Action OnCoverBlown;
 
-    public bool HasCover       => _state != null && _state.HasCover;
-    public bool IsInCover      => _state != null && _state.IsInCover;
-    public float AttackCooldown => _attackFromCoverCooldown;
+    public bool HasCover         => _state != null && _state.HasCover;
+    public bool IsInCover        => _state != null && _state.IsInCover;
+    public float AttackCooldown  => _attackFromCoverCooldown;
+    public bool IsCoverExhausted => _maxCoverIterations > 0 && _coverIterations >= _maxCoverIterations;
 
     private EnemyState      _state;
     private EnemyNavigation _navigation;
     private Transform       _playerTransform;
     private CoverPoint      _currentCoverPoint;
+    private Transform       _currentRawCoverObject;
+    private Transform       _previousCoverObject;
     private bool?           _cachedCoverDecision;
     private int             _coverIterations;
 
+    private static readonly Dictionary<Transform, Transform> _occupiedCoverObjects = new();
+
     private readonly Collider[] _searchBuffer = new Collider[32];
+    private NavMeshPath _reusablePath;
 
     private void Awake()
     {
-        _state      = GetComponent<EnemyState>();
-        _navigation = GetComponent<EnemyNavigation>();
+        _state        = GetComponent<EnemyState>();
+        _navigation   = GetComponent<EnemyNavigation>();
+        _reusablePath = new NavMeshPath();
     }
 
     public void Initialize(Transform playerTransform)
@@ -62,13 +69,20 @@ public class EnemyCoverModule : MonoBehaviour
         bool iterationsExceeded = _maxCoverIterations > 0 && _coverIterations >= _maxCoverIterations;
         if (_state.HasCover && !IsCoverBlown() && !iterationsExceeded) return true;
 
+        _previousCoverObject = _state != null ? _state.CurrentCoverObject : null;
+
         ReleaseCover();
 
         List<CoverCandidate> candidates = CollectCandidates();
-        if (candidates.Count == 0) return false;
+        if (candidates.Count == 0)
+        {
+            _previousCoverObject = null;
+            return false;
+        }
 
         candidates.Sort((a, b) => a.Distance.CompareTo(b.Distance));
         OccupyCover(candidates[0]);
+        _previousCoverObject = null;
         return true;
     }
 
@@ -77,14 +91,20 @@ public class EnemyCoverModule : MonoBehaviour
         if (_currentCoverPoint != null)
             _currentCoverPoint.Release();
 
+        if (_currentRawCoverObject != null)
+        {
+            _occupiedCoverObjects.Remove(_currentRawCoverObject);
+            _currentRawCoverObject = null;
+        }
+
         _currentCoverPoint = null;
 
         if (_state != null)
         {
-            _state.HasCover            = false;
-            _state.IsInCover           = false;
-            _state.CurrentCoverPoint   = Vector3.zero;
-            _state.CurrentCoverObject  = null;
+            _state.HasCover           = false;
+            _state.IsInCover          = false;
+            _state.CurrentCoverPoint  = Vector3.zero;
+            _state.CurrentCoverObject = null;
         }
 
         _cachedCoverDecision = null;
@@ -92,10 +112,6 @@ public class EnemyCoverModule : MonoBehaviour
         OnCoverReleased?.Invoke();
     }
 
-    /// <summary>
-    /// Проверяет, видит ли игрок AI из текущей позиции.
-    /// Если да укрытие не подходит.
-    /// </summary>
     public bool IsCoverBlown()
     {
         if (_playerTransform == null) return false;
@@ -115,25 +131,23 @@ public class EnemyCoverModule : MonoBehaviour
         return true;
     }
 
-    /// <summary>Стоит ли AI достаточно близко к своей cover point.</summary>
     public bool IsAtCoverPoint()
     {
         if (_state == null || !_state.HasCover) return false;
         return Vector3.Distance(transform.position, _state.CurrentCoverPoint) < 0.8f;
     }
 
-    /// <summary>
-    /// Ищет навигационную точку поблизости, из которой виден игрок.
-    /// Используется для peek перед атакой.
-    /// </summary>
     public bool TryGetPeekPosition(out Vector3 peekPos)
     {
         peekPos = Vector3.zero;
-        if (_playerTransform == null) return false;
+        if (_playerTransform == null || _navigation == null || _navigation.Agent == null) return false;
 
         Vector3 coverOrigin = _state != null && _state.HasCover
             ? _state.CurrentCoverPoint
             : transform.position;
+
+        float bestPathLength = Mathf.Infinity;
+        bool  found          = false;
 
         for (int i = 0; i < 12; i++)
         {
@@ -147,20 +161,31 @@ public class EnemyCoverModule : MonoBehaviour
             if (!HasLineOfSightToPlayer(navHit.position))
                 continue;
 
-            if (!_navigation.Agent.CalculatePath(navHit.position, new NavMeshPath()))
+            if (!_navigation.Agent.CalculatePath(navHit.position, _reusablePath) ||
+                _reusablePath.status != NavMeshPathStatus.PathComplete)
                 continue;
 
-            peekPos = navHit.position;
-            return true;
+            float pathLength = GetPathLength(_reusablePath);
+            if (pathLength < bestPathLength)
+            {
+                bestPathLength = pathLength;
+                peekPos        = navHit.position;
+                found          = true;
+            }
         }
 
-        return false;
+        return found;
     }
 
-    /// <summary>
-    /// Решение нужно ли идти в укрытие.
-    /// Bravery=0 всегда. Bravery=10 никогда.
-    /// </summary>
+    private static float GetPathLength(NavMeshPath path)
+    {
+        float    length  = 0f;
+        Vector3[] corners = path.corners;
+        for (int i = 1; i < corners.Length; i++)
+            length += Vector3.Distance(corners[i - 1], corners[i]);
+        return length;
+    }
+
     public bool ShouldTakeCover()
     {
         if (_cachedCoverDecision.HasValue)
@@ -181,10 +206,8 @@ public class EnemyCoverModule : MonoBehaviour
 
     public void ResetCoverDecision() => _cachedCoverDecision = null;
 
-    /// <summary>Вызывается после каждой атаки из укрытия. При достижении лимита — сменит укрытие.</summary>
     public void IncrementCoverIterations() => _coverIterations++;
 
-    /// <summary>Commander назначает конкретное укрытие.</summary>
     public void ForceSetCover(Vector3 coverPoint, Transform coverObject)
     {
         ReleaseCover();
@@ -199,7 +222,6 @@ public class EnemyCoverModule : MonoBehaviour
         OnCoverOccupied?.Invoke();
     }
 
-    /// <summary>Commander выгоняет из укрытия в атаку.</summary>
     public void ForceReleaseCover() => ReleaseCover();
 
     private List<CoverCandidate> CollectCandidates()
@@ -215,7 +237,21 @@ public class EnemyCoverModule : MonoBehaviour
             if (col == null) continue;
 
             CoverPoint cp = col.GetComponent<CoverPoint>();
+
+            if (_previousCoverObject != null && col.transform == _previousCoverObject) continue;
+
             if (cp != null && cp.IsOccupied && cp.OccupiedBy != transform) continue;
+
+            if (cp == null)
+            {
+                if (_occupiedCoverObjects.TryGetValue(col.transform, out Transform occ))
+                {
+                    if (occ == null)
+                        _occupiedCoverObjects.Remove(col.transform);
+                    else if (occ != transform)
+                        continue;
+                }
+            }
 
             float height = cp != null ? cp.GetHeight() : col.bounds.size.y;
             if (height < _minCoverHeight) continue;
@@ -231,7 +267,7 @@ public class EnemyCoverModule : MonoBehaviour
                 continue;
             }
 
-            if (TryGetNavMeshEdgePosition(col, out CoverCandidate navCand))
+            if (TryGetNavMeshPosition(col, out CoverCandidate navCand))
                 candidates.Add(navCand);
         }
 
@@ -241,6 +277,8 @@ public class EnemyCoverModule : MonoBehaviour
     private bool TryGetCustomPosition(CoverPoint cp, Collider col, out CoverCandidate candidate)
     {
         candidate = default;
+        if (_navigation == null || _navigation.Agent == null) return false;
+
         float bestDist = Mathf.Infinity;
         Vector3 bestPos = Vector3.zero;
         bool found = false;
@@ -255,7 +293,7 @@ public class EnemyCoverModule : MonoBehaviour
             if (HasLineOfSightToPlayer(navHit.position))
                 continue;
 
-            if (!_navigation.Agent.CalculatePath(navHit.position, new NavMeshPath()))
+            if (!_navigation.CanReach(navHit.position))
                 continue;
 
             float dist = Vector3.Distance(transform.position, navHit.position);
@@ -273,30 +311,28 @@ public class EnemyCoverModule : MonoBehaviour
         return true;
     }
 
-    private bool TryGetNavMeshEdgePosition(Collider col, out CoverCandidate candidate)
+    private bool TryGetNavMeshPosition(Collider col, out CoverCandidate candidate)
     {
         candidate = default;
 
-        if (!NavMesh.FindClosestEdge(col.transform.position, out NavMeshHit edgeHit, NavMesh.AllAreas))
-            return false;
+        Vector3 boundsCenter = col.bounds.center;
 
-        Vector3 edgePos    = edgeHit.position;
-        Vector3 edgeNormal = edgeHit.normal;
-
+        Vector3 searchOrigin = boundsCenter;
         if (_playerTransform != null)
         {
-            Vector3 dirToPlayer = (_playerTransform.position - edgePos).normalized;
-            float dot = Vector3.Dot(edgeNormal, dirToPlayer);
-            if (dot > _hideSensitivity) return false;
+            Vector3 away = boundsCenter - _playerTransform.position;
+            away.y = 0f;
+            if (away.sqrMagnitude > 0.001f)
+                searchOrigin = boundsCenter + away.normalized * col.bounds.extents.magnitude;
         }
 
-        if (!NavMesh.SamplePosition(edgePos, out NavMeshHit navHit, 1f, NavMesh.AllAreas))
+        if (!NavMesh.SamplePosition(searchOrigin, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
             return false;
 
         if (HasLineOfSightToPlayer(navHit.position))
             return false;
 
-        if (!_navigation.Agent.CalculatePath(navHit.position, new NavMeshPath()))
+        if (!_navigation.CanReach(navHit.position))
             return false;
 
         float dist = Vector3.Distance(transform.position, navHit.position);
@@ -308,6 +344,12 @@ public class EnemyCoverModule : MonoBehaviour
     {
         _currentCoverPoint = best.CoverPoint;
         _currentCoverPoint?.Occupy(transform);
+
+        if (best.CoverPoint == null && best.CoverObject != null)
+        {
+            _occupiedCoverObjects[best.CoverObject] = transform;
+            _currentRawCoverObject = best.CoverObject;
+        }
 
         if (_state != null)
         {
@@ -345,7 +387,7 @@ public class EnemyCoverModule : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         if (!_showDebug) return;
-        
+
         UnityEditor.Handles.color = new Color(0f, 1f, 0.5f, 0.1f);
         UnityEditor.Handles.DrawSolidDisc(transform.position, Vector3.up, _searchRadius);
         Gizmos.color = new Color(0f, 1f, 0.5f, 0.5f);

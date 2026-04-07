@@ -11,11 +11,14 @@ using Unity.Properties;
 public class AimAndShootAtPlayerAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Agent;
+    [Tooltip("Максимальное время стрельбы до отхода в укрытие. 0 = без ограничений.")]
+    [SerializeReference] public BlackboardVariable<float> MaxShootTime = new(0f);
 
     private EnemyBase          _enemy;
     private GrenadeThrowModule _grenadeModule;
     private bool               _hasStartedAiming;
     private float              _lostSightTimer;
+    private float              _shootTimer;
 
     private const float LostSightGracePeriod = 1.5f;
 
@@ -32,6 +35,7 @@ public class AimAndShootAtPlayerAction : Action
 
         _hasStartedAiming = false;
         _lostSightTimer   = 0f;
+        _shootTimer       = 0f;
 
         return Status.Running;
     }
@@ -59,11 +63,10 @@ public class AimAndShootAtPlayerAction : Action
         }
         _lostSightTimer = 0f;
 
+        e.Navigation.Stop();
+
         if (!_hasStartedAiming)
-        {
-            e.Navigation.Stop();
             e.Animator?.SetAiming(true);
-        }
 
         RotateTowardsPlayer(e);
 
@@ -85,6 +88,13 @@ public class AimAndShootAtPlayerAction : Action
                 ranged.RangedCombat.StopFire();
             e.Animator?.SetAiming(false);
             return Status.Success;
+        }
+
+        if (_hasStartedAiming && MaxShootTime.Value > 0f)
+        {
+            _shootTimer += Time.deltaTime;
+            if (_shootTimer >= MaxShootTime.Value)
+                return Status.Success;
         }
 
         return Status.Running;
@@ -176,11 +186,10 @@ public class AlwaysAimAndShootAtPlayerAction : Action
         }
         _lostSightTimer = 0f;
 
+        e.Navigation.Stop();
+
         if (!_hasStartedAiming)
-        {
-            e.Navigation.Stop();
             e.Animator?.SetAiming(true);
-        }
 
         Vector3 dir = (e.PlayerTransform.position - e.transform.position).normalized;
         dir.y = 0;

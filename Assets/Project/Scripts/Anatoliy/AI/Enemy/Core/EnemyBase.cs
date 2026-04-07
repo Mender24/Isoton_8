@@ -189,6 +189,44 @@ public abstract class EnemyBase : MonoBehaviour
         State.PlayerDetected = true;
     }
 
+    /// <summary>
+    /// Немедленно агрит врага на игрока, минуя задержку обнаружения и визомер.
+    /// Работает даже если враг ещё не активирован.
+    /// </summary>
+    public void AggroOnPlayer()
+    {
+        if (State.IsDead) return;
+
+        if (!State.IsActivated)
+            ActivateWithBehavior();
+
+        if (_playerTransform != null)
+            State.LastKnownPlayerPosition = _playerTransform.position;
+
+        State.TimeSinceLastSeen = 0f;
+        State.PlayerDetected    = true;
+        State.PlayerIsSeen      = true;
+
+        if (!State.IsAlerted)
+            TriggerAlert();
+
+        StartCoroutine(TrackPlayerUntilSeen());
+    }
+
+    /// <summary>
+    /// Обновляет LastKnownPlayerPosition каждый кадр пока враг не видит игрока.
+    /// Это нужно чтобы враг бежал к актуальной позиции игрока, а не к снимку момента агра.
+    /// </summary>
+    private System.Collections.IEnumerator TrackPlayerUntilSeen()
+    {
+        while (!State.IsDead && State.IsAlerted && !State.PlayerIsSeen)
+        {
+            if (_playerTransform != null)
+                State.LastKnownPlayerPosition = _playerTransform.position;
+            yield return null;
+        }
+    }
+
     public void AlertStarted()  => Navigation.Stop();
     public void AlertCompleted()
     {
@@ -212,6 +250,13 @@ public abstract class EnemyBase : MonoBehaviour
         }
 
         return Node.Status.Failure;
+    }
+
+    public void HearNearbyShot(Vector3 shooterPosition)
+    {
+        if (State.IsDead || !State.IsActivated || State.PlayerDetected) return;
+
+        Perception.HearNearbyShot(shooterPosition);
     }
 
     public bool IsEnemyStopped() => Navigation.HasReachedDestination();
@@ -238,12 +283,21 @@ public abstract class EnemyBase : MonoBehaviour
 
         Health.ResetHealth();
 
+        ResolvePlayerTransform();
+        Perception.Reset(_playerTransform);
+        if (CoverModule != null)
+            CoverModule.Initialize(_playerTransform);
+
         transform.position = _initialPosition;
+        Navigation.Unlock();
         Navigation.EnableAgent();
         Navigation.MoveTo(_initialPosition, false);
 
         if (_behaviorAgent != null)
+        {
+            _behaviorAgent.enabled = false;
             _behaviorAgent.enabled = true;
+        }
 
         Animator?.ResetAnimator();
     }

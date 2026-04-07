@@ -25,6 +25,12 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     [Header("Win animations")]
     [SerializeField] private int _amountWinAnimations = 3;
 
+    [Header("Search animations")]
+    [SerializeField] private int _amountSearchAnimations = 1;
+
+    [Header("Hit animations")]
+    [SerializeField] private int _amountHitAnimations = 1;
+
     [Header("Clip names (for speed sync)")]
     [SerializeField] private string _reloadClipName         = "ReloadAssaultRifle";
     [SerializeField] private string _meleeClipName          = "AttackRightClaws1Creature_RM";
@@ -48,6 +54,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         public const string IsDead              = "IsDead";
         public const string RandomIdleF         = "RandomIdleF";
         public const string WinNumber           = "WinNumber";
+        public const string SearchNumber        = "SearchNumber";
+        public const string HitNumber           = "HitNumber";
         public const string Alert               = "Alert";
         public const string Hit                 = "Hit";
         public const string Reload              = "Reload";
@@ -58,6 +66,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         public const string GrenadeThrow        = "GrenadeThrow";
         public const string GrenadeThrowSpeed   = "GrenadeThrowSpeed";
         public const string GrenadeCancel       = "GrenadeCancel";
+        public const string IsCrouching        = "IsCrouching";
     }
 
     private float _cachedSpeed;
@@ -210,6 +219,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void PlaySearch()
     {
         if (!_isInitialized) return;
+        _animator.SetInteger(P.SearchNumber, Random.Range(0, _amountSearchAnimations));
         _animator.SetTrigger(P.Search);
     }
 
@@ -223,6 +233,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void PlayHit()
     {
         if (!_isInitialized) return;
+        _animator.SetInteger(P.HitNumber, Random.Range(0, _amountHitAnimations));
         _animator.SetTrigger(P.Hit);
     }
 
@@ -301,6 +312,12 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _animator.SetBool(P.IsDead, isDead);
     }
 
+    public void SetCrouching(bool isCrouching)
+    {
+        if (!_isInitialized) return;
+        _animator.SetBool(P.IsCrouching, isCrouching);
+    }
+
     public void ResetSearch()
     {
         _animator.ResetTrigger(P.Search);
@@ -310,6 +327,8 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     {
         if (!_isInitialized) return;
 
+        _animator.Rebind();
+
         _animator.SetBool(P.IsDead, false);
         _animator.SetBool(P.IsAlerted, false);
         _animator.SetBool(P.HasAlerted, false);
@@ -317,16 +336,11 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
         _animator.SetBool(P.Reloading, false);
         _animator.SetBool(P.MeleeAttacking, false);
         _animator.SetBool(P.Shooting, false);
+        _animator.SetBool(P.IsCrouching, false);
         _animator.SetFloat(P.Speed, 0f);
+        _animator.SetFloat(P.RandomIdleF, _currentIdleF);
 
-        _animator.ResetTrigger(P.Alert);
-        _animator.ResetTrigger(P.Hit);
-        _animator.ResetTrigger(P.Reload);
-        _animator.ResetTrigger(P.Search);
-        _animator.ResetTrigger(P.Winning);
-        _animator.ResetTrigger(P.GrenadeWindUp);
-        _animator.ResetTrigger(P.GrenadeThrow);
-        _animator.ResetTrigger(P.GrenadeCancel);
+        _animator.Update(0f);
 
         _cachedSpeed        = 0f;
         _idleTimer          = 0f;

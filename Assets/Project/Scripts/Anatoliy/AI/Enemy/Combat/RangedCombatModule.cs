@@ -7,12 +7,19 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     [SerializeField] private RangedEnemyConfig _config;
 
     [Header("References")]
+    [SerializeField] public bool _useDoubleBarrelTurret = false;
+    [SerializeField] private Transform _shotOriginSecondary = null;
     [SerializeField] private Transform _shotOrigin;
     [SerializeField] private Transform _playerTransform;
     [SerializeField] private LayerMask _playerLayer;
     [SerializeField] private LayerMask _obstacleLayer;
+    [SerializeField] private ParticleSystem _muzzleFlashPrimary = null;
+    [SerializeField] private ParticleSystem _muzzleFlashSecondary = null;
+    [SerializeField] private float _visionHeightForNonTurret = 1.75f;
 
     public bool  CanShoot    => !IsReloading && _config != null;
+    internal bool GetUseDoubleBarrelTurret() => _useDoubleBarrelTurret;
+    internal bool GetIsPrimaryBarrelFiring() => _usePrimaryBarrel;
     public bool  IsFiring    => _state != null && _state.IsFiring;
     public bool  IsReloading => _state != null && _state.IsReloading;
     public float AttackRange => _config != null ? _config.AttackRange : 0f;
@@ -24,7 +31,15 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     private IEnemyAudio        _audio;
     private EnemyDebugger      _debugger;
     private GrenadeThrowModule _grenadeModule;
+    [Tooltip("Стрелять строго по направлению ствола. Вкл как туррель. Выкл для обычных врагов.")]
+    [SerializeField] private bool _useForwardDirection = false;
+
+    public bool _usePrimaryBarrel = true; // какой ствол в данный момент используется
     private bool _isPaused;
+    private bool _hasManualTarget;
+    private bool _targetIsEnemy;
+
+    public event System.Action OnFire;
 
     private void Awake()
     {
@@ -45,7 +60,15 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     public void Initialize(Transform playerTransform)
     {
-        _playerTransform = playerTransform;
+        _playerTransform  = playerTransform;
+        _hasManualTarget  = false;
+    }
+
+    public void SetTarget(Transform target, bool isEnemy = false)
+    {
+        _playerTransform = target;
+        _hasManualTarget = target != null;
+        _targetIsEnemy   = target != null && isEnemy;
     }
 
     public void StartFire()
@@ -74,7 +97,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             {
                 _state.IsReloading = false;
                 _animator?.SetReloading(false, 0f);
-                if (_state.PlayerIsSeen)
+                if (_state.PlayerIsSeen || _hasManualTarget)
                     _state.IsFiring = true;
             }
 
@@ -88,7 +111,13 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     private void Fire()
     {
-        if (!_state.PlayerIsSeen)
+        if (!_hasManualTarget && !_state.PlayerIsSeen)
+        {
+            StopFire();
+            return;
+        }
+
+        if (_playerTransform == null)
         {
             StopFire();
             return;
@@ -102,8 +131,27 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         target.x += Random.Range(-_config.WidthSprayOffset,  _config.WidthSprayOffset)  + _config.XOffset;
 
         SpawnBullet(target);
+        if (_useDoubleBarrelTurret)
+            _usePrimaryBarrel = !_usePrimaryBarrel;
         TryDealDamage(target);
         _audio?.PlayAttackSound();
+
+        // Включаем нужный muzzle flash
+        ParticleSystem currentMuzzleFlash = null;
+
+        if (_useDoubleBarrelTurret)
+        {
+            currentMuzzleFlash = _usePrimaryBarrel ? _muzzleFlashPrimary : _muzzleFlashSecondary;
+        }
+        else
+        {
+            currentMuzzleFlash = _muzzleFlashPrimary;
+        }
+
+        if (currentMuzzleFlash != null)
+            currentMuzzleFlash.Play();
+
+        OnFire?.Invoke();
 
         if (_state.CurrentBullet >= _config.MagazineSize)
         {
@@ -122,43 +170,99 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     private void SpawnBullet(Vector3 target)
     {
-        if (_config.BulletPrefab == null || _shotOrigin == null) return;
+        if (_config.BulletPrefab == null) return;
 
-        AiProjectile bullet = PoolManager.Instance.GetObject<AiProjectile>();
+        // Определяем текущий ствол
+        Transform currentShotOrigin = _usePrimaryBarrel || !_useDoubleBarrelTurret
+            ? _shotOrigin
+            : _shotOriginSecondary;
+
+        if (currentShotOrigin == null) return;
+
+        AiProjectile bullet;
+        if (_config.BulletPrefab.GetComponent<EffectedProjectile>() != null)
+            bullet = PoolManager.Instance.GetObject<EffectedProjectile>();
+        else
+            bullet = PoolManager.Instance.GetObject<AiProjectile>();
         if (bullet == null) return;
 
-        bullet.transform.position = _shotOrigin.position;
+        Vector3 dir = _useForwardDirection
+            ? currentShotOrigin.forward
+            : (currentShotOrigin.position != target ? (target - currentShotOrigin.position).normalized : currentShotOrigin.forward);
+
+        bullet.transform.position = currentShotOrigin.position;
+        bullet.ClearTrail();
         bullet.gameObject.SetActive(true);
-        bullet.Setup(
-            _shotOrigin.position != target ? (target - _shotOrigin.position).normalized : transform.forward,
-            _config.BulletLifetime,
-            _config.BulletSpeed
-        );
+        bullet.Setup(dir, _config.BulletLifetime, _config.BulletSpeed);
     }
 
     private void TryDealDamage(Vector3 target)
     {
-        if (_shotOrigin == null || _playerTransform == null) return;
+        if (_playerTransform == null) return;
 
-        Vector3 origin = _shotOrigin.position + transform.forward * 0.1f;
-        Vector3 dir = (target - origin).normalized;
+        Transform originSource;
+        float forwardOffset = 0.1f;
+
+        if (_useDoubleBarrelTurret)
+        {
+            // Турель: луч идёт из ствола
+            originSource = _usePrimaryBarrel ? _shotOrigin : _shotOriginSecondary;
+        }
+        else
+        {
+            // НЕ‑турель: луч идёт из "глаз" врага
+            originSource = transform;
+            forwardOffset = 0.1f;
+        }
+
+        Vector3 origin;
+        if (_useDoubleBarrelTurret)
+        {
+            // Турель: из ствола
+            origin = originSource.position + originSource.forward * forwardOffset;
+        }
+        else
+        {
+            // НЕ‑турель: как в EnemyPerception — глаза на _visionHeight
+            origin = originSource.position + Vector3.up * _visionHeightForNonTurret;
+        }
+
+        Vector3 dir = _useForwardDirection
+            ? originSource.forward
+            : (target - origin).normalized;
+
         bool hit = false;
 
-        if (Random.value <= _config.ChanceToHit)
+        LayerMask mask = _obstacleLayer | _playerLayer;
+        if (_hasManualTarget)
+            mask |= 1 << _playerTransform.gameObject.layer;
+
+        float chanceToHit = _targetIsEnemy ? _config.ChanceToHitEnemy : _config.ChanceToHit;
+        if (Random.value <= chanceToHit)
         {
-            if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, _obstacleLayer | _playerLayer))
+            if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, mask))
             {
                 if (rayHit.collider.TryGetComponent(out Damageable damageable))
                 {
                     damageable.Damage(_config.Damage, gameObject);
                     hit = true;
                 }
-                _debugger?.SetLastShot(origin, rayHit.point, hit);
+                else
+                {
+                    var enemyHealth = rayHit.collider.GetComponentInParent<EnemyHealth>();
+                    if (enemyHealth != null)
+                    {
+                        enemyHealth.Damage(_config.Damage, gameObject);
+                        enemyHealth.OnHitInChildren(new HitInfo(gameObject, rayHit, origin, dir));
+                        hit = true;
+                    }
+                }
+                if (_debugger != null) _debugger.SetLastShot(origin, rayHit.point, hit);
                 return;
             }
         }
 
-        _debugger?.SetLastShot(origin, target, hit);
+        if (_debugger != null) _debugger.SetLastShot(origin, origin + dir * _config.AttackRange, hit);
     }
 
     private void ChangeMoving(bool isMoving)

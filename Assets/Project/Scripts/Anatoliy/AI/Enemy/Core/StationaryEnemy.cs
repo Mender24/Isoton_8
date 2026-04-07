@@ -10,7 +10,7 @@ using UnityEngine;
 [RequireComponent(typeof(RangedCombatModule))]
 public class StationaryEnemy : EnemyBase
 {
-    private enum GuardState { Idle, Shooting, Crouching }
+    private enum GuardState { Idle, Shooting, Crouching, ThrowingGrenade }
 
     [Header("Stationary Guard")]
     [Tooltip("Время в приседании после попадания, прежде чем снова встать.")]
@@ -26,16 +26,20 @@ public class StationaryEnemy : EnemyBase
     private float _crouchClipLength = 1f;
 
     private RangedCombatModule _rangedCombat;
+    private GrenadeThrowModule _grenadeThrow;
     private BasicEnemyAnimator _basicAnimator;
     private Animator           _animator;
 
     private GuardState _guardState = GuardState.Idle;
     private float      _coverTimer;
+    private float      _grenadeThrowTimer;
+    private bool       _crouchedForReload;
 
     protected override void Awake()
     {
         base.Awake();
         _rangedCombat  = GetComponent<RangedCombatModule>();
+        _grenadeThrow  = GetComponent<GrenadeThrowModule>();
         _basicAnimator = GetComponent<BasicEnemyAnimator>();
         _animator      = GetComponent<Animator>();
     }
@@ -43,6 +47,7 @@ public class StationaryEnemy : EnemyBase
     protected override void OnInitialized()
     {
         _rangedCombat.Initialize(PlayerTransform);
+        if (_grenadeThrow != null) _grenadeThrow.Initialize(PlayerTransform);
         Navigation.Stop();
         Navigation.Agent.updateRotation = false;
         TryReadClipLengths();
@@ -63,6 +68,7 @@ public class StationaryEnemy : EnemyBase
         if (!State.IsActivated || State.IsDead) return;
 
         _rangedCombat.Tick(Time.deltaTime);
+        if (_grenadeThrow != null) _grenadeThrow.Tick(Time.deltaTime);
 
         if (State.PlayerIsSeen && !State.IsAlerted)
             OnPlayerDetected();
@@ -84,10 +90,37 @@ public class StationaryEnemy : EnemyBase
                     break;
                 }
 
+                if (State.ShouldThrowGrenade && _grenadeThrow != null && _grenadeThrow.CanThrowGrenade)
+                {
+                    EnterGrenadeThrow();
+                    break;
+                }
+
+                if (State.IsReloading && !_crouchedForReload && !IsPlayerClose())
+                    EnterReloadCrouch();
+                else if (!State.IsReloading && _crouchedForReload)
+                    ExitReloadCrouch();
+
                 if (State.PlayerIsSeen && !_rangedCombat.IsFiring
                     && _rangedCombat.CanShoot && !State.IsReloading)
                 {
                     _rangedCombat.StartFire();
+                }
+                break;
+
+            case GuardState.ThrowingGrenade:
+                _grenadeThrowTimer -= Time.deltaTime;
+                if (_grenadeThrow == null
+                    || _grenadeThrow.Phase == GrenadeThrowPhase.Idle
+                    || _grenadeThrowTimer <= 0f)
+                {
+                    if (_grenadeThrowTimer <= 0f && _grenadeThrow != null)
+                        _grenadeThrow.Cancel();
+                    State.ShouldThrowGrenade = false;
+                    if (State.PlayerDetected && State.PlayerIsSeen)
+                        EnterShooting();
+                    else
+                        EnterIdle();
                 }
                 break;
 
@@ -111,9 +144,22 @@ public class StationaryEnemy : EnemyBase
 
         if (_guardState == GuardState.Crouching) return;
 
+        if (_guardState == GuardState.ThrowingGrenade && _grenadeThrow != null)
+            _grenadeThrow.Cancel();
+
         if (IsPlayerClose()) return;
 
         EnterCrouch();
+    }
+
+    private void EnterGrenadeThrow()
+    {
+        _guardState = GuardState.ThrowingGrenade;
+        _grenadeThrowTimer = _grenadeThrow.TotalDuration + 1f;
+        _rangedCombat.StopFire();
+        _basicAnimator?.SetAiming(false);
+        State.ShouldThrowGrenade = false;
+        _grenadeThrow.StartWindUp();
     }
 
     private void EnterIdle()
@@ -149,6 +195,25 @@ public class StationaryEnemy : EnemyBase
             EnterIdle();
     }
 
+    private void EnterReloadCrouch()
+    {
+        _crouchedForReload = true;
+        if (_basicAnimator != null) _basicAnimator.SetCrouching(true);
+        if (_animator != null)
+        {
+            _animator.SetFloat("CrouchSpeed", 1f);
+            _animator.SetTrigger("CrouchDown");
+        }
+    }
+
+    private void ExitReloadCrouch()
+    {
+        _crouchedForReload = false;
+        if (_basicAnimator != null) _basicAnimator.SetCrouching(false);
+        if (_animator != null)
+            _animator.SetTrigger("StandUp");
+    }
+
     private bool IsPlayerClose() =>
         Perception.GetDistanceToPlayer() <= _closeRangeThreshold;
 
@@ -168,6 +233,7 @@ public class StationaryEnemy : EnemyBase
 
     private void SetCrouching(bool crouch)
     {
+        if (_basicAnimator != null) _basicAnimator.SetCrouching(crouch);
         if (_animator == null) return;
 
         if (crouch)
@@ -184,4 +250,24 @@ public class StationaryEnemy : EnemyBase
 
     public override bool CanAttack()   => _rangedCombat.CanShoot;
     public override void StartAttack() => _rangedCombat.StartFire();
+
+    public override void FullReset()
+    {
+        base.FullReset();
+        _guardState = GuardState.Idle;
+        _coverTimer = 0f;
+        _rangedCombat.StopFire();
+        _rangedCombat.SetPaused(false);
+        _rangedCombat.Initialize(PlayerTransform);
+        if (_grenadeThrow != null) _grenadeThrow.Reset(PlayerTransform);
+        Navigation.Stop();
+        Navigation.Agent.updateRotation = false;
+        _crouchedForReload = false;
+        if (_basicAnimator != null)
+        {
+            _basicAnimator.SetAiming(false);
+            _basicAnimator.SetCrouching(false);
+        }
+        if (_animator != null) _animator.ResetTrigger("CrouchDown");
+    }
 }

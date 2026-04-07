@@ -23,7 +23,8 @@ public partial class ThrowGrenadeAtPlayerAction : Action
         if (_enemy == null || _enemy.PlayerTransform == null) return Status.Failure;
 
         _grenadeModule = _enemy.GetComponent<GrenadeThrowModule>();
-        if (_grenadeModule == null || !_grenadeModule.CanThrowGrenade) return Status.Failure;
+        if (_grenadeModule == null || !_grenadeModule.CanThrowGrenade || !_enemy.State.ShouldThrowGrenade)
+            return Status.Failure;
 
         _enemy.State.ShouldThrowGrenade = false;
         _enemy.Navigation.Stop();

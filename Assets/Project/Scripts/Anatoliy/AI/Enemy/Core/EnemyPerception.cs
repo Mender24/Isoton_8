@@ -15,14 +15,15 @@ public class EnemyPerception : MonoBehaviour
     [SerializeField] private float _visionHeight = 0.5f;
 
     [Header("Vision Meter")]
-    [SerializeField] private bool  _useVisionMeter       = false;
-    [SerializeField] private float _visionMeterSpeedFar  = 1.5f;
+    [SerializeField] private bool _useVisionMeter = false;
+    [SerializeField] private float _visionMeterSpeedFar = 1.5f;
     [SerializeField] private float _visionMeterSpeedNear = 3.0f;
-    [SerializeField] private float _visionMeterDecay     = 2.0f;
+    [SerializeField] private float _visionMeterDecay = 2.0f;
 
     [Header("Multi-Ray Detection")]
-    [SerializeField] private bool     _useMultiRay = false;
-    [SerializeField] private Vector3[] _bodyCheckOffsets = new Vector3[]
+    [SerializeField] private bool _useMultiRay = false;
+    [SerializeField]
+    private Vector3[] _bodyCheckOffsets = new Vector3[]
     {
         new Vector3(0, 0.1f, 0),
         new Vector3(0, 1.0f, 0),
@@ -43,13 +44,16 @@ public class EnemyPerception : MonoBehaviour
     private bool _detectionPending;
     private float _visionMeter;
 
-    public float VisionRange    => _visionRange;
-    public float VisionHeight   => _visionHeight;
-    public float FieldOfView    => _fieldOfViewAngle;
-    public float HearingRange   => _hearingRange;
-    public float ForgetTime     => _forgetTime;
-    public float VisionMeter    => _visionMeter;
-    public bool  UseMultiRay    => _useMultiRay;
+    private bool _pendingNearbyShot;
+    private Vector3 _pendingNearbyShooterPos;
+
+    public float VisionRange => _visionRange;
+    public float VisionHeight => _visionHeight;
+    public float FieldOfView => _fieldOfViewAngle;
+    public float HearingRange => _hearingRange;
+    public float ForgetTime => _forgetTime;
+    public float VisionMeter => _visionMeter;
+    public bool UseMultiRay => _useMultiRay;
     public Vector3[] BodyCheckOffsets => _bodyCheckOffsets;
 
     public void MultiplyForgetTime(float multiplier) => _forgetTime *= multiplier;
@@ -62,6 +66,16 @@ public class EnemyPerception : MonoBehaviour
     public void Initialize(Transform playerTransform)
     {
         _playerTransform = playerTransform;
+    }
+
+    public void Reset(Transform playerTransform)
+    {
+        StopAllCoroutines();
+        _playerTransform = playerTransform;
+        _noiseTimer = 0f;
+        _detectionPending = false;
+        _visionMeter = 0f;
+        _pendingNearbyShot = false;
     }
 
     private void Update()
@@ -77,7 +91,7 @@ public class EnemyPerception : MonoBehaviour
     {
         if (!_state.IsAlerted || IsPlayerInSightRaw()) return;
 
-        if (_state.HasCover && !_state.IsInCover) return;
+        if (_state.IsMovingToCover) return;
 
         _state.TimeSinceLastSeen += Time.deltaTime;
 
@@ -187,6 +201,15 @@ public class EnemyPerception : MonoBehaviour
     {
         if (_state.PlayerDetected || _playerTransform == null) return false;
 
+        if (_pendingNearbyShot)
+        {
+            _pendingNearbyShot = false;
+            _state.LastHeardNoisePosition = _pendingNearbyShooterPos;
+            _state.HeardNoise = true;
+            _noiseTimer = _noiseInvestigationTime;
+            return true;
+        }
+
         if (Vector3.Distance(transform.position, _playerTransform.position) > _hearingRange) return false;
 
         foreach (var src in _playerTransform.GetComponentsInChildren<AudioSource>())
@@ -240,6 +263,14 @@ public class EnemyPerception : MonoBehaviour
         _state.HeardNoise = true;
         _state.LastHeardNoisePosition = suspiciousPos;
         _noiseTimer = _noiseInvestigationTime;
+    }
+
+    public void HearNearbyShot(Vector3 shooterPosition)
+    {
+        if (_state.IsDead || !_state.IsActivated || _state.PlayerDetected) return;
+
+        _pendingNearbyShooterPos = shooterPosition;
+        _pendingNearbyShot = true;
     }
 
     public float GetDistanceToPlayer()

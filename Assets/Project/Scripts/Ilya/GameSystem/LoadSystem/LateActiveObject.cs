@@ -46,19 +46,19 @@ public class LateActiveObject : MonoBehaviour
 
     public bool IsActiveObject => _isActiveObject;
 
-    private IEnumerator Start()
+    private void Start()
     {
         ChangeSpeedActive(_currentSpeedType);
 
         if (_isStartActive)
         {
-            yield return StartActivate();
+            StartCoroutine(StartActivate());
         }
     }
 
     private void Update()
     {
-        if(_isMain && _currentSpeedType != SceneLoader.instance.SpeedType)
+        if(_isMain && SceneLoader.instance != null && _currentSpeedType != SceneLoader.instance.SpeedType)
         {
             ChangeSpeedActive(SceneLoader.instance.SpeedType);
         }

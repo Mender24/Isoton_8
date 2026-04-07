@@ -61,8 +61,6 @@ namespace Akila.FPSFramework
         {
             Scene scene = SceneManager.GetSceneByBuildIndex(indexNewScene);
 
-            Debug.Log("Scene Point: " + scene.name);
-
             GameObject SpawnPoints = scene.GetRootGameObjects()
                 .SelectMany(t => t.GetComponentsInChildren<Transform>(true))
                 .FirstOrDefault(x => x.gameObject.transform.name == NameSearchObjectToNewScene)?.gameObject;
@@ -78,8 +76,7 @@ namespace Akila.FPSFramework
         public void MovePlayerStartPositionAndOn(Player player)
         {
             player.transform.position = sides[0].points[0].position;
-            player.transform.rotation = sides[0].points[0].rotation;
-            player.gameObject.SetActive(true);
+            player.SetRotation(sides[0].points[0].rotation);
         }
 
         public async void SpawnActor(IActor actorSelf, string actorObjName, float delay)
@@ -149,7 +146,7 @@ namespace Akila.FPSFramework
                 .OfType<Inventory>()
                 .FirstOrDefault();
 
-            LoadPlayerWeapon(inventory);
+            //LoadPlayerWeapon(inventory);
             //SaveManager.LoadPlayer(inventory, _itemsPrefab);
             //LoadPlayerWeapon(inventory);
             //----
@@ -165,7 +162,7 @@ namespace Akila.FPSFramework
 
             //newActorObject.transform.SetPositionAndRotation(position, rotation);
             newActorObject.transform.parent = transform.parent;
-            newActorObject.SetActive(true);
+            newActorObject.SetActive(false);
 
             return newActorObject;
         }
@@ -206,7 +203,7 @@ namespace Akila.FPSFramework
             {
                 if (PlayerPrefs.HasKey("Weapon" + i))
                 {
-                    Debug.Log("Load weapon: " + PlayerPrefs.GetString("Weapon" + i));
+                    //Debug.Log("Load weapon: " + PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
                 }

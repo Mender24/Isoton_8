@@ -40,10 +40,13 @@ public class CrawlerEnemy : EnemyBase
         set { if (_aligner != null) _aligner.IsActive = value; }
     }
 
-    private MeleeCombatModule    _meleeCombat;
-    private CrawlerAnimator      _crawlerAnimator;
+    private MeleeCombatModule     _meleeCombat;
+    private CrawlerAnimator       _crawlerAnimator;
     private CrawlerSurfaceAligner _aligner;
-    private float                _shotTimer;
+    private float                 _shotTimer;
+    private Vector3[]             _linkPoints;
+
+    private const float LinkExclusionRadius = 1.2f;
 
     protected override void Awake()
     {
@@ -51,6 +54,14 @@ public class CrawlerEnemy : EnemyBase
         _meleeCombat     = GetComponent<MeleeCombatModule>();
         _crawlerAnimator = GetComponent<CrawlerAnimator>();
         _aligner         = GetComponent<CrawlerSurfaceAligner>();
+
+        OffMeshLink[] links = FindObjectsByType<OffMeshLink>(FindObjectsSortMode.None);
+        _linkPoints = new Vector3[links.Length * 2];
+        for (int i = 0; i < links.Length; i++)
+        {
+            _linkPoints[i * 2]     = links[i].startTransform.position;
+            _linkPoints[i * 2 + 1] = links[i].endTransform.position;
+        }
     }
 
     protected override void OnInitialized()
@@ -85,6 +96,14 @@ public class CrawlerEnemy : EnemyBase
 
     public override bool CanAttack()   => _meleeCombat.CanAttack;
     public override void StartAttack() => _meleeCombat.StartAttack();
+
+    public override void FullReset()
+    {
+        base.FullReset();
+        _shotTimer = 0f;
+        if (_aligner != null) _aligner.IsActive = true;
+        _meleeCombat.Initialize(PlayerTransform);
+    }
 
     public void NotifyShot() => _shotTimer = _shotMemoryTime;
 
@@ -124,12 +143,22 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * radius + origin;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, radius, NavMesh.AllAreas)
-                && !IsPositionVisibleToPlayer(hit.position))
+                && Navigation.CanReach(hit.position)
+                && !IsPositionVisibleToPlayer(hit.position)
+                && !IsNearLinkPoint(hit.position))
             {
                 result = hit.position;
                 return true;
             }
         }
+        return false;
+    }
+
+    private bool IsNearLinkPoint(Vector3 pos)
+    {
+        float sqr = LinkExclusionRadius * LinkExclusionRadius;
+        foreach (Vector3 lp in _linkPoints)
+            if ((lp - pos).sqrMagnitude < sqr) return true;
         return false;
     }
 
@@ -142,6 +171,7 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * _ambushRadius + PlayerTransform.position;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _ambushRadius, NavMesh.AllAreas)
+                && Navigation.CanReach(hit.position)
                 && !IsPositionVisibleToPlayer(hit.position))
             {
                 result = hit.position;
@@ -162,8 +192,10 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * _ambushRadius + PlayerTransform.position;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _ambushRadius, NavMesh.AllAreas)
+                && Navigation.CanReach(hit.position)
                 && hit.position.y > playerY + _ceilingMinHeight
-                && !IsPositionVisibleToPlayer(hit.position))
+                && !IsPositionVisibleToPlayer(hit.position)
+                && !IsNearLinkPoint(hit.position))
             {
                 result = hit.position;
                 return true;
@@ -174,7 +206,9 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * _ambushRadius + PlayerTransform.position;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _ambushRadius, NavMesh.AllAreas)
-                && hit.position.y > playerY + _ceilingMinHeight)
+                && Navigation.CanReach(hit.position)
+                && hit.position.y > playerY + _ceilingMinHeight
+                && !IsNearLinkPoint(hit.position))
             {
                 result = hit.position;
                 return true;
@@ -185,7 +219,9 @@ public class CrawlerEnemy : EnemyBase
         {
             Vector3 candidate = Random.insideUnitSphere * _safeSpotRadius + transform.position;
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _safeSpotRadius, NavMesh.AllAreas)
-                && hit.position.y > playerY + _ceilingMinHeight)
+                && Navigation.CanReach(hit.position)
+                && hit.position.y > playerY + _ceilingMinHeight
+                && !IsNearLinkPoint(hit.position))
             {
                 result = hit.position;
                 return true;

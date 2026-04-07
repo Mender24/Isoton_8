@@ -1,9 +1,11 @@
 using Akila.FPSFramework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityStandardAssets.ImageEffects;
 
 public class Reactor : MonoBehaviour, IDamageable
 {
@@ -11,14 +13,14 @@ public class Reactor : MonoBehaviour, IDamageable
     [SerializeField] private float _timeBeforeOpenShield = 1f;
     [SerializeField] private float _secondDestroy = 1f;
     [SerializeField] private float _lenPathShield = 4f;
-    [SerializeField] private float _lenPathDoorEnd = 4f;
+    // [SerializeField] private float _lenPathDoorEnd = 4f;
     [SerializeField] private float _speedMoveShield = 3f;
     [SerializeField] private float _cooldownNextBattery = 3f;
+    [SerializeField] private float _timeWaitFirstStart = 2f;
     [SerializeField] private List<Battery> _batterys = new();
 
     [SerializeField] private GameObject _shieldObject;
     [SerializeField] private GameObject _reactorObject;
-    [SerializeField] private GameObject _doorEndLocation;
 
     private int _batteryHealth;
     private float _health;
@@ -38,6 +40,8 @@ public class Reactor : MonoBehaviour, IDamageable
     public TextMeshPro showingText;
     public UnityEvent OnDeath => onDeath;
 
+    public event Action OnBatteryDestroy;
+
     public void Register()
     {
 
@@ -53,11 +57,15 @@ public class Reactor : MonoBehaviour, IDamageable
     }
     private void Update()
     {
-        showingText.text = _currentIndexLiveBattery.ToString();
+        if(showingText != null)
+            showingText.text = _currentIndexLiveBattery.ToString();
     }
 
     private IEnumerator Start()
     {
+        if (SceneLoader.instance == null)
+            yield break;
+
         _health = _healthReactor;
         _batteryHealth = _batterys.Count;
 
@@ -71,6 +79,8 @@ public class Reactor : MonoBehaviour, IDamageable
             yield return null;
 
         _doorControllerSceneChanger = SceneLoader.instance.GetDoorControllerNextTransition();
+
+        yield return new WaitForSeconds(_timeWaitFirstStart);
 
         StartReactor();
     }
@@ -92,6 +102,7 @@ public class Reactor : MonoBehaviour, IDamageable
 
         if (_batteryHealth <= 0)
         {
+            OnBatteryDestroy?.Invoke();
             StartCoroutine(OpenShield());
             return;
         }
@@ -114,10 +125,9 @@ public class Reactor : MonoBehaviour, IDamageable
         if (_batteryHealth <= 0)
             return;
 
-        while(_batterys[_currentIndexLiveBattery].IsDead)
+        while (_batterys[_currentIndexLiveBattery].IsDead)
         {
             _currentIndexLiveBattery++;
-            
 
             if (_currentIndexLiveBattery >= _batterys.Count)
                 _currentIndexLiveBattery = 0;
@@ -140,13 +150,16 @@ public class Reactor : MonoBehaviour, IDamageable
     {
         yield return new WaitForSeconds(_timeBeforeOpenShield);
 
-        Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
-
-        while (_shieldObject.transform.position != target)
+        if(_shieldObject != null)
         {
-            _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedMoveShield * Time.deltaTime);
+            Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
 
-            yield return null;
+            while (_shieldObject.transform.position != target)
+            {
+                _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedMoveShield * Time.deltaTime);
+
+                yield return null;
+            }
         }
     }
 

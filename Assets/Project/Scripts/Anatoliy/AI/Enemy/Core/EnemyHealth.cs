@@ -16,6 +16,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     [Header("Health")]
     [SerializeField] private float _maxHealth = 100f;
 
+
     [Header("Death")]
     [SerializeField] private Ragdoll _ragdoll;
     [SerializeField] private float _disableCollidersDelay = 3f;
@@ -24,6 +25,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     [Header("Damage Reaction")]
     [SerializeField] private bool _enableReactionCooldown = true;
     [SerializeField] private float _reactionCooldown = 3f;
+
+
+    [Header("ExplodeWhenDead")] //Mender для турели которая взрывается при смерти, да я не умею наследовать классы
+    [SerializeField] Explosive _explosive;
+
 
     public UnityEvent OnDeathInternal = new();
     public UnityEvent<float, GameObject> OnDamaged = new(); 
@@ -38,7 +44,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
 
     [SerializeField] private CapsuleCollider _capsuleCollider;
 
-    private float _health;
+    public float _health;
     private float _lastReactionTime = -999f;
     private EnemyState _state;
     private IEnemyAnimator _animator;
@@ -114,6 +120,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
         _animator?.SetDead(true);
         _ragdoll?.Enable();
 
+        if (_explosive != null)
+            _explosive.Explode();
+
         StartCoroutine(DisableCollidersRoutine());
         StartCoroutine(DeactivateSelfRoutine());
     }
@@ -132,6 +141,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     private IEnumerator DeactivateSelfRoutine()
     {
         yield return new WaitForSeconds(_deactivateSelfDelay);
+
+        var enemyBase = GetComponent<EnemyBase>();
+        if (enemyBase != null && !enemyBase.IsSpawnedBySpawner)
+            yield break;
+
         gameObject.SetActive(false);
     }
 
@@ -153,6 +167,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
 
     public void ResetHealth()
     {
+        StopAllCoroutines();
+
         _health = _maxHealth;
         _lastReactionTime = -999f;
         DeadConfirmed = false;
