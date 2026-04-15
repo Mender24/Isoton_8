@@ -51,6 +51,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     private IEnemyAudio _audio;
     private ImpactEffect _impactEffect;
     private BloodProjector _bloodProjector;
+    private DropOnDeathEffect _dropOnDeath;
 
     private void Awake()
     {
@@ -59,6 +60,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
         _audio         = GetComponent<IEnemyAudio>();
         _impactEffect   = GetComponent<ImpactEffect>();
         _bloodProjector = GetComponent<BloodProjector>();
+        TryGetComponent(out _dropOnDeath);
         _health        = _maxHealth;
     }
 
@@ -123,6 +125,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
         if (_explosive != null)
             _explosive.Explode();
 
+        if (_dropOnDeath != null)
+            _dropOnDeath.DropAmmoBox();
+        
         StartCoroutine(DisableCollidersRoutine());
         StartCoroutine(DeactivateSelfRoutine());
     }
