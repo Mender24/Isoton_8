@@ -244,7 +244,8 @@ MonoBehaviour:
   _disableCollidersDelay: 3
   _deactivateSelfDelay: 20
   _enableReactionCooldown: 1
-  _reactionCooldown: 3
+  _reactionCooldown: 10000
+  _explosive: {fileID: 0}
   OnDeathInternal:
     m_PersistentCalls:
       m_Calls: []
@@ -252,6 +253,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _capsuleCollider: {fileID: 0}
+  _health: 0
 --- !u!114 &4965828049144178862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -448,14 +450,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 189d6c524adcccb41868bbfb834c3215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _alignSpeed: 8
-  _surfaceCheckDist: 0.4
-  _sphereRadius: 0.1
-  _surfaceLayer:
-    serializedVersion: 2
-    m_Bits: 270337
-  _faceSpeed: 12
-  _velocityThreshold: 0.2
+  _rotationSpeedMultiplier: 1
+  _linkSpeedMultiplier: 1
 --- !u!114 &7360628979022855765
 MonoBehaviour:
   m_ObjectHideFlags: 0
