@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public interface IEnemyAudio
 {
     void PlayDetectionSound();
@@ -9,4 +11,5 @@ public interface IEnemyAudio
     void PlayFootstep(int foot);
     void PlayNamedSound(string soundName);
     void PlayRandomNamedSound();
+    List<CellAudioClip> GetGrenadeBounceClips();
 }

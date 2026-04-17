@@ -11,22 +11,23 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     [SerializeField] private AudioSource _talkAudioSource;
 
     [Header("Clips")]
-    [SerializeField] private AudioClip _detectionClip;
-    [SerializeField] private AudioClip _alertClip;
-    [SerializeField] private AudioClip _deathClip;
-    [SerializeField] private AudioClip _reloadClip;
-    [SerializeField] private List<AudioClip>     _attackClips   = new();
-    [SerializeField] private List<AudioClip>     _hitClips      = new();
+    [SerializeField] private List<CellAudioClip> _detectionClips = new();
+    [SerializeField] private List<CellAudioClip> _alertClips = new();
+    [SerializeField] private List<CellAudioClip> _deathClips = new();
+    [SerializeField] private List<CellAudioClip> _reloadClips = new();
+    [SerializeField] private List<CellAudioClip> _grenadeBounceClips = new();
+    [SerializeField] private List<CellAudioClip> _attackClips = new();
+    [SerializeField] private List<CellAudioClip> _hitClips = new();
     [SerializeField] private List<CellAudioClip> _footstepClips = new();
 
+    [Header("Talk / Named Sounds")]
+    [SerializeField] private List<CellAudioClip> _namedClips = new();
+    
     [Header("Footstep Settings")]
     [SerializeField] private float _stepVolume = -1f; // -1 = use per-clip volume from CellAudioClip
 
     [Header("Attack Settings")]
     [SerializeField] private float _maxAttackPitchVariation = 0.2f;
-
-    [Header("Talk / Named Sounds")]
-    [SerializeField] private List<CellAudioClip> _namedClips = new();
 
     [Header("Cooldowns")]
     [SerializeField] private float _detectionCooldown = 30f;
@@ -62,19 +63,19 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     {
         if (_detectionTimer > 0f) return;
         _detectionTimer = _detectionCooldown;
-        Play(_audioSource, _detectionClip);
+        PlayRandom(_audioSource, _detectionClips);
     }
 
-    public void PlayAlertSound()  => Play(_audioSource, _alertClip);
-    public void PlayDeathSound()  => Play(_audioSource, _deathClip);
-    public void PlayReloadSound() => Play(_audioSource, _reloadClip);
+    public void PlayAlertSound()  => PlayRandom(_audioSource, _alertClips);
+    public void PlayDeathSound()  => PlayRandom(_audioSource, _deathClips);
+    public void PlayReloadSound() => PlayRandom(_audioSource, _reloadClips);
     public void PlayHitSound()    => PlayRandom(_audioSource, _hitClips);
 
     public void PlayAttackSound()
     {
         if (_attackClips == null || _attackClips.Count == 0) return;
         _attackAudioSource.pitch = _baseAttackPitch + Random.value * _maxAttackPitchVariation;
-        _attackAudioSource.PlayOneShot(_attackClips[Random.Range(0, _attackClips.Count)]);
+        _attackClips[Random.Range(0, _attackClips.Count)].PlayAudioClipOneShot(_attackAudioSource);
     }
 
     public void PlayFootstep(int foot)
@@ -89,6 +90,8 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
         cell.PlayAudioClip(_talkAudioSource);
     }
 
+    public List<CellAudioClip> GetGrenadeBounceClips() => _grenadeBounceClips;
+
     public void PlayRandomNamedSound()
     {
         if (_namedClips == null || _namedClips.Count == 0) return;
@@ -101,9 +104,9 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
         source.PlayOneShot(clip);
     }
 
-    private void PlayRandom(AudioSource source, List<AudioClip> clips)
+    private void PlayRandom(AudioSource source, List<CellAudioClip> clips)
     {
         if (clips == null || clips.Count == 0) return;
-        Play(source, clips[Random.Range(0, clips.Count)]);
+        clips[Random.Range(0, clips.Count)].PlayAudioClipOneShot(source);
     }
 }

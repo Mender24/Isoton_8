@@ -16,6 +16,7 @@ public class GrenadeThrowModule : MonoBehaviour
     private IEnemyAnimator     _animator;
     private BasicEnemyAnimator _basicAnimator;
     private Transform          _playerTransform;
+    private IEnemyAudio _audio;
 
     private int _bulletsFiredSinceCheck;
     private GameObject _heldGrenade;
@@ -35,6 +36,7 @@ public class GrenadeThrowModule : MonoBehaviour
         _state         = GetComponent<EnemyState>();
         _animator      = GetComponent<IEnemyAnimator>();
         _basicAnimator = GetComponent<BasicEnemyAnimator>();
+        _audio         = GetComponent<IEnemyAudio>();
     }
 
     private void Start()
@@ -195,6 +197,13 @@ public class GrenadeThrowModule : MonoBehaviour
         Vector3 landing = _playerTransform.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
 
         GameObject grenade = Instantiate(_config.GrenadePrefab, origin, Quaternion.identity);
+
+        var bounceClips = _audio?.GetGrenadeBounceClips();
+        if (bounceClips != null && bounceClips.Count > 0 && !GetComponent<GrenadeAudio>())
+        {
+            var grenadeAudio = grenade.AddComponent<GrenadeAudio>();
+            grenadeAudio.Setup(bounceClips);
+       }
 
         if (grenade.TryGetComponent(out Rigidbody rb))
             rb.linearVelocity = CalculateThrowVelocity(origin, landing, _config.ThrowTime);
