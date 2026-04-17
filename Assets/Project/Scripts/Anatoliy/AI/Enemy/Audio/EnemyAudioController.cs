@@ -15,6 +15,7 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     [SerializeField] private List<CellAudioClip> _alertClips = new();
     [SerializeField] private List<CellAudioClip> _deathClips = new();
     [SerializeField] private List<CellAudioClip> _reloadClips = new();
+    [SerializeField] private List<CellAudioClip> _grenadeOpenClips = new();
     [SerializeField] private List<CellAudioClip> _grenadeBounceClips = new();
     [SerializeField] private List<CellAudioClip> _attackClips = new();
     [SerializeField] private List<CellAudioClip> _hitClips = new();
@@ -70,6 +71,7 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     public void PlayDeathSound()  => PlayRandom(_audioSource, _deathClips);
     public void PlayReloadSound() => PlayRandom(_audioSource, _reloadClips);
     public void PlayHitSound()    => PlayRandom(_audioSource, _hitClips);
+    public void PlayGrenadeOpenSound() => PlayRandom(_audioSource, _grenadeOpenClips);
 
     public void PlayAttackSound()
     {

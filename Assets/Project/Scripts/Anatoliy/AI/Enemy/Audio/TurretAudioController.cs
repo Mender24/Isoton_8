@@ -93,6 +93,7 @@ public class TurretAudioController : MonoBehaviour, IEnemyAudio
     public void PlayDetectionSound()    { }
     public void PlayAlertSound()        { }
     public void PlayHitSound()          { }
+    public void PlayGrenadeOpenSound()  { }
     public void PlayFootstep(int foot)  { }
     public void PlayNamedSound(string soundName)  { }
     public void PlayRandomNamedSound()  { }
