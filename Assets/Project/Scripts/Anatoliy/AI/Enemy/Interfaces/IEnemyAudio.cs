@@ -7,6 +7,7 @@ public interface IEnemyAudio
     void PlayAttackSound();
     void PlayReloadSound();
     void PlayHitSound();
+    void PlayGrenadeOpenSound();
     void PlayDeathSound();
     void PlayFootstep(int foot);
     void PlayNamedSound(string soundName);

@@ -43,6 +43,7 @@ public class GrenadeThrowModule : MonoBehaviour
     {
         if (_basicAnimator != null)
         {
+            _basicAnimator.OnGrenadeOpen += HandleGrenadeOpen;
             _basicAnimator.OnGrenadeWindUpComplete += HandleWindUpComplete;
             _basicAnimator.OnGrenadeReleasePoint   += HandleReleasePoint;
             _basicAnimator.OnGrenadeThrowComplete  += HandleThrowComplete;
@@ -66,6 +67,7 @@ public class GrenadeThrowModule : MonoBehaviour
     {
         if (_basicAnimator != null)
         {
+            _basicAnimator.OnGrenadeOpen -= HandleGrenadeOpen;
             _basicAnimator.OnGrenadeWindUpComplete -= HandleWindUpComplete;
             _basicAnimator.OnGrenadeReleasePoint   -= HandleReleasePoint;
             _basicAnimator.OnGrenadeThrowComplete  -= HandleThrowComplete;
@@ -102,6 +104,13 @@ public class GrenadeThrowModule : MonoBehaviour
         _state.IsThrowingGrenade = true;
         SpawnHeldGrenade();
         _animator?.TriggerGrenadeWindUp(_config.WindUpDuration);
+    }
+
+    private void HandleGrenadeOpen()
+    {
+        if (Phase != GrenadeThrowPhase.WindingUp) return;
+
+        _audio.PlayGrenadeOpenSound();
     }
 
     private void HandleWindUpComplete()
