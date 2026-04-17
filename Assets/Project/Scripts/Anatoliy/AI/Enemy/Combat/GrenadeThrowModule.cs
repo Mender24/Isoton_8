@@ -1,4 +1,5 @@
 using Akila.FPSFramework;
+using System.Collections;
 using UnityEngine;
 
 public enum GrenadeThrowPhase { Idle, WindingUp, Throwing }
@@ -212,10 +213,34 @@ public class GrenadeThrowModule : MonoBehaviour
         {
             var grenadeAudio = grenade.AddComponent<GrenadeAudio>();
             grenadeAudio.Setup(bounceClips);
-       }
+        }
 
         if (grenade.TryGetComponent(out Rigidbody rb))
+        {
+            StartCoroutine(EnableCollisionAfterDelay(grenade, 0.1f));
+            
             rb.linearVelocity = CalculateThrowVelocity(origin, landing, _config.ThrowTime);
+        }
+    }
+
+    private IEnumerator EnableCollisionAfterDelay(GameObject grenade, float delay)
+    {
+        Collider[] colliders = grenade.GetComponentsInChildren<Collider>();
+        
+        foreach (var col in colliders)
+        {
+            col.enabled = false;
+        }
+        
+        yield return new WaitForSeconds(delay);
+        
+        if (grenade != null)
+        {
+            foreach (var col in colliders)
+            {
+                col.enabled = true;
+            }
+        }
     }
 
     private bool IsLandingDangerousForAllies(Vector3 landing)
