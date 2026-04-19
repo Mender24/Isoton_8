@@ -335,14 +335,18 @@ MonoBehaviour:
   _stepAudioSource: {fileID: 4664163466873242426}
   _attackAudioSource: {fileID: 0}
   _talkAudioSource: {fileID: 0}
-  _detectionClip: {fileID: 8300000, guid: 95cbe9fed8a0bed40883e7213f3a10f3, type: 3}
-  _alertClip: {fileID: 8300000, guid: 95cbe9fed8a0bed40883e7213f3a10f3, type: 3}
-  _deathClip: {fileID: 8300000, guid: 95cbe9fed8a0bed40883e7213f3a10f3, type: 3}
-  _reloadClip: {fileID: 0}
+  _detectionClips: []
+  _alertClips: []
+  _deathClips: []
+  _reloadClips: []
+  _grenadeOpenClips: []
+  _grenadeBounceClips: []
   _attackClips:
-  - {fileID: 8300000, guid: 9d8dda217f9277a4190a9e722542bd4a, type: 3}
+  - AudioClip: {fileID: 0}
+    Volume: 1
   _hitClips:
-  - {fileID: 8300000, guid: ee945bf47a1d77342b0e71d7e4421695, type: 3}
+  - AudioClip: {fileID: 0}
+    Volume: 1
   _footstepClips:
   - AudioClip: {fileID: 8300000, guid: fbba893f83463ac4992a350af45979db, type: 3}
     Volume: 1
@@ -350,11 +354,11 @@ MonoBehaviour:
     Volume: 1
   - AudioClip: {fileID: 8300000, guid: e274db83990a5654a83aad107782ad37, type: 3}
     Volume: 1
-  _stepVolume: -1
-  _maxAttackPitchVariation: 0.2
   _namedClips:
   - AudioClip: {fileID: 0}
     Volume: 0
+  _stepVolume: -1
+  _maxAttackPitchVariation: 0.2
   _detectionCooldown: 30
 --- !u!114 &1720635764721451876
 MonoBehaviour:
@@ -450,8 +454,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 189d6c524adcccb41868bbfb834c3215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rotationSpeedMultiplier: 1
-  _linkSpeedMultiplier: 1
+  _rotationSpeedMultiplier: 3
+  _linkSpeedMultiplier: 2
+  _showDebug: 0
+  _surfaceLayers:
+    serializedVersion: 2
+    m_Bits: 270337
 --- !u!114 &7360628979022855765
 MonoBehaviour:
   m_ObjectHideFlags: 0

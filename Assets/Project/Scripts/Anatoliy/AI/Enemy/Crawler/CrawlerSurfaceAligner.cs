@@ -5,9 +5,11 @@ using System.Collections;
 [RequireComponent(typeof(NavMeshAgent))]
 public class CrawlerSurfaceAligner : MonoBehaviour
 {
+    [Header("Settings")]
+    [SerializeField] private LayerMask _surfaceLayers;
     [SerializeField] private float _rotationSpeedMultiplier = 3f;
-    [SerializeField] private float _linkSpeedMultiplier     = 1f;
-    [SerializeField] private bool _showDebug = true;
+    [SerializeField] private float _linkSpeedMultiplier     = 2f;
+    [SerializeField] private bool _showDebug = false;
 
     private NavMeshAgent _agent;
     private bool       _traversingLink;
@@ -75,7 +77,7 @@ public class CrawlerSurfaceAligner : MonoBehaviour
 
         foreach (Vector3 offset in searchOffsets)
         {
-            if (Physics.Raycast(endPos + offset * 0.5f, -offset, out RaycastHit hit, 1f))
+            if (Physics.Raycast(endPos + offset * 0.5f, -offset, out RaycastHit hit, 1f, _surfaceLayers))
             {
                 if (Vector3.Distance(hit.point, endPos) < 0.3f)
                 {
@@ -129,15 +131,5 @@ public class CrawlerSurfaceAligner : MonoBehaviour
     {
         _agent.updateRotation = enabled;
         _agent.updateUpAxis = enabled; 
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (!_traversingLink || !_showDebug) return;
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(_linkStart, 0.1f);
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(_linkEnd, 0.1f);
-        Gizmos.DrawLine(_linkStart, _linkEnd);
     }
 }
