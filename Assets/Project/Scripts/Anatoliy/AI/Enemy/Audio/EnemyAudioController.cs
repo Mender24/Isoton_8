@@ -16,6 +16,7 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     [SerializeField] private List<CellAudioClip> _deathClips = new();
     [SerializeField] private List<CellAudioClip> _reloadClips = new();
     [SerializeField] private List<CellAudioClip> _grenadeOpenClips = new();
+    [SerializeField] private List<CellAudioClip> _grenadeVoicelineClips = new();
     [SerializeField] private List<CellAudioClip> _grenadeBounceClips = new();
     [SerializeField] private List<CellAudioClip> _attackClips = new();
     [SerializeField] private List<CellAudioClip> _hitClips = new();
@@ -36,6 +37,7 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     private float _detectionTimer;
     private float _baseAttackPitch;
     private Dictionary<string, CellAudioClip> _namedClipsDict;
+    private int _cacheLastClipIndex = -1;
 
     private void Awake()
     {
@@ -71,7 +73,12 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     public void PlayDeathSound()  => PlayRandom(_audioSource, _deathClips);
     public void PlayReloadSound() => PlayRandom(_audioSource, _reloadClips);
     public void PlayHitSound()    => PlayRandom(_audioSource, _hitClips);
-    public void PlayGrenadeOpenSound() => PlayRandom(_audioSource, _grenadeOpenClips);
+    public void PlayGrenadeOpenSound()
+    {
+        PlayRandom(_audioSource, _grenadeOpenClips);
+        PlayGrenadeVoiceLine();
+    }
+    public void PlayGrenadeVoiceLine() => PlayRandom(_audioSource, _grenadeVoicelineClips);
 
     public void PlayAttackSound()
     {
@@ -109,6 +116,13 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     private void PlayRandom(AudioSource source, List<CellAudioClip> clips)
     {
         if (clips == null || clips.Count == 0) return;
-        clips[Random.Range(0, clips.Count)].PlayAudioClipOneShot(source);
+        int randInd = Random.Range(0, clips.Count);
+        while (_cacheLastClipIndex == randInd && clips.Count > 1)
+        {
+            randInd = Random.Range(0, clips.Count);
+        }
+
+        clips[randInd].PlayAudioClipOneShot(source);
+        _cacheLastClipIndex = randInd;
     }
 }
