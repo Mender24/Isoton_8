@@ -38,7 +38,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Graph
       value: 
-      objectReference: {fileID: -2565059558768620788, guid: 63304d247fc98ba4ba420c9c52c728d9,
+      objectReference: {fileID: -2565059558768620788, guid: 2c33c62a90e79724dac984a32f7ee182,
         type: 2}
     - target: {fileID: 1587176545918077865, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
@@ -49,7 +49,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OriginalGraph
       value: 
-      objectReference: {fileID: -2565059558768620788, guid: 63304d247fc98ba4ba420c9c52c728d9,
+      objectReference: {fileID: -2565059558768620788, guid: 2c33c62a90e79724dac984a32f7ee182,
         type: 2}
     - target: {fileID: 1654311357780479219, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
@@ -181,6 +181,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GrenadeBossEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 3840900353502569684, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3979077512509273280, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_IsActive
@@ -194,37 +199,37 @@ PrefabInstance:
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 31.105
+      value: 52.869995
       objectReference: {fileID: 0}
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.715
+      value: -4.939992
       objectReference: {fileID: 0}
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.685
+      value: 15.640007
       objectReference: {fileID: 0}
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.3686787
       objectReference: {fileID: 0}
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.92955697
       objectReference: {fileID: 0}
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
@@ -234,7 +239,7 @@ PrefabInstance:
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 4342654663670968668, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
@@ -254,12 +259,17 @@ PrefabInstance:
     - target: {fileID: 4402837156870243874, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: _fieldOfViewAngle
-      value: 130
+      value: 359
       objectReference: {fileID: 0}
     - target: {fileID: 4402837156870243874, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: _visionMeterSpeedFar
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4566525460049544436, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: TimeBeforeDeactivate
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 5677714126934959170, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
@@ -269,13 +279,103 @@ PrefabInstance:
     - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: _hitClips.Array.size
-      value: 0
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _alertClips.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: _attackClips.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _alertClips.Array.data[0].Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _grenadeVoicelineClips.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _hitClips.Array.data[0].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: a905acc1cf1c2334e98a8fa80b486650, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _hitClips.Array.data[1].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: dbd2d7b9207255d438bc709fc60a8554, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _hitClips.Array.data[2].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 37493fdf7e4ea41418dc133361e4c5ec, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _hitClips.Array.data[3].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 5d557a8f97cb6624c9b2e1355ae9b797, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _hitClips.Array.data[4].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 8b4f3eb4911b1904e981b353f9529239, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _hitClips.Array.data[5].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: a9f0541df58d1dc4fa9d18d38cf4f2b5, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _hitClips.Array.data[6].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: ead09bac82bec964dbe14ad245634c78, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _hitClips.Array.data[7].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 25f4bfe350855e541adc4a4d4a4f0c9d, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _alertClips.Array.data[0].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: a167092e87c5d024292acc404fa0ebff, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _grenadeVoicelineClips.Array.data[0].Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _grenadeVoicelineClips.Array.data[1].Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _grenadeVoicelineClips.Array.data[2].Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _grenadeVoicelineClips.Array.data[0].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: f061712f5f0c3bd47889d26d658c76f9, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _grenadeVoicelineClips.Array.data[1].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 2c81344cbaba4e94191a8890a5715aa3, type: 3}
+    - target: {fileID: 5870818699915581356, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _grenadeVoicelineClips.Array.data[2].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 2a730450695fec24490b2cd9f0e3080a, type: 3}
     - target: {fileID: 6113419508095061575, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: _explosive
@@ -294,7 +394,12 @@ PrefabInstance:
     - target: {fileID: 6113419508095061575, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
       propertyPath: _deactivateSelfDelay
-      value: 6
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: 6113419508095061575, guid: 47d4ed8b706bae14c870c00dde617b15,
+        type: 3}
+      propertyPath: _disableCollidersDelay
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 6148607616517466315, guid: 47d4ed8b706bae14c870c00dde617b15,
         type: 3}
@@ -418,12 +523,12 @@ MonoBehaviour:
   damageZone: 3.74
   maxDamage: 150
   force: 4
-  delay: 5
+  delay: 10
   ignoreGlobalScale: 0
   damageable: 0
   health: 3
   exlopeAfterDelay: 0
-  destroyOnExplode: 1
+  destroyOnExplode: 0
   clearDelay: 60
   explosion: {fileID: 3423798242356165502, guid: 9efa635e0a33d344aa68a8198890b1da,
     type: 3}
@@ -441,7 +546,7 @@ MonoBehaviour:
   lowPassCutoffFrequency: 4500
   lowPassTime: 2
   lowPassSmoothness: 0.1
-  debug: 1
+  debug: 0
   ranges: 1
   rays: 1
   onExplode:

@@ -138,7 +138,9 @@ public abstract class EnemyBase : MonoBehaviour
             TriggerAlert();
 
         if (!State.PlayerDetected)
-            Perception.StartDetection(() => { });
+            Perception.StartDetection(() => { 
+                DetectionCompleted();
+            });
 
         return Node.Status.Success;
     }
@@ -150,12 +152,13 @@ public abstract class EnemyBase : MonoBehaviour
         State.TimeSinceLastSeen = 0f;
         Navigation.SetSpeed(Navigation.RunSpeed);
 
-        Audio?.PlayDetectionSound();
         Animator?.SetAlerted(State.IsAlerted);
 
-        Perception.StartDetection(() => {
-            // Вызывается когда задержка обнаружения прошла
-        });
+        AlertCompleted();
+        // Perception.StartDetection(() => { // конфликтует с корутиной в OnPlayerDetected
+        //     AlertCompleted();
+        //     // Вызывается когда задержка обнаружения прошла
+        // });
     }
 
     public void Activate()
@@ -231,7 +234,12 @@ public abstract class EnemyBase : MonoBehaviour
     public void AlertCompleted()
     {
         Navigation.Resume();
-        Audio?.PlayAlertSound();
+        // Audio?.PlayAlertSound();
+    }
+
+    public void DetectionCompleted()
+    {
+        Audio?.PlayDetectionSound();
     }
 
     public Node.Status OnNoiseDetected()
