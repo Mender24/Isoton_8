@@ -109,6 +109,29 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         Fire();
     }
 
+    private bool HasWeaponClearLineOfSight()
+    {
+        Transform currentShotOrigin = _usePrimaryBarrel || !_useDoubleBarrelTurret
+            ? _shotOrigin
+            : _shotOriginSecondary;
+
+        if (currentShotOrigin == null || _playerTransform == null) return true;
+
+        Vector3 origin = currentShotOrigin.position;
+        Vector3 target = _playerTransform.position + Vector3.up * 1f;
+        Vector3 dir    = (target - origin).normalized;
+        float   dist   = Vector3.Distance(origin, target) + 1f;
+
+        LayerMask mask = _obstacleLayer | _playerLayer;
+        if (_hasManualTarget)
+            mask |= 1 << _playerTransform.gameObject.layer;
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, dist, mask))
+            return hit.transform == _playerTransform || hit.transform.IsChildOf(_playerTransform);
+
+        return true;
+    }
+
     private void Fire()
     {
         if (!_hasManualTarget && !_state.PlayerIsSeen)
@@ -118,6 +141,12 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         }
 
         if (_playerTransform == null)
+        {
+            StopFire();
+            return;
+        }
+
+        if (!HasWeaponClearLineOfSight())
         {
             StopFire();
             return;
