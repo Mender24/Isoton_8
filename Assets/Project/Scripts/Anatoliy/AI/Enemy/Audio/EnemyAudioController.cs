@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyAudioController : MonoBehaviour, IEnemyAudio
 {
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource _audioSource; // Main audio source used as fallback if other is empty
+    [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioSource _stepAudioSource;
     [SerializeField] private AudioSource _attackAudioSource;
     [SerializeField] private AudioSource _talkAudioSource;
@@ -22,11 +22,15 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     [SerializeField] private List<CellAudioClip> _hitClips = new();
     [SerializeField] private List<CellAudioClip> _footstepClips = new();
 
-    [Header("Talk / Named Sounds")]
-    [SerializeField] private List<CellAudioClip> _namedClips = new();
-    
+    [Header("Named Sounds")]
+    [SerializeField] private List<NamedAudioClip> _namedClips = new();
+
+    [Header("Combat Yapping")]
+    [SerializeField] private List<YapGroup> _yapGroups = new();
+    [SerializeField] private float _globalYapCooldown = 5f;
+
     [Header("Footstep Settings")]
-    [SerializeField] private float _stepVolume = -1f; // -1 = use per-clip volume from CellAudioClip
+    [SerializeField] private float _stepVolume = -1f;
 
     [Header("Attack Settings")]
     [SerializeField] private float _maxAttackPitchVariation = 0.2f;
@@ -35,9 +39,10 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     [SerializeField] private float _detectionCooldown = 30f;
 
     private float _detectionTimer;
+    private float _globalYapTimer;
     private float _baseAttackPitch;
     private Dictionary<string, CellAudioClip> _namedClipsDict;
-    private int _cacheLastClipIndex = -1;
+    private Dictionary<List<CellAudioClip>, int> _lastPlayedIndices = new();
 
     private void Awake()
     {
@@ -51,15 +56,19 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
         _baseAttackPitch = _attackAudioSource.pitch;
 
         _namedClipsDict = new Dictionary<string, CellAudioClip>();
-        foreach (var cell in _namedClips)
-            if (cell.AudioClip != null)
-                _namedClipsDict[cell.AudioClip.name] = cell;
+        foreach (var entry in _namedClips)
+            if (entry.Clip?.AudioClip != null)
+                _namedClipsDict[entry.Name] = entry.Clip;
     }
 
     private void Update()
     {
-        if (_detectionTimer > 0f)
-            _detectionTimer -= Time.deltaTime;
+        if (_detectionTimer > 0f) _detectionTimer -= Time.deltaTime;
+        if (_globalYapTimer  > 0f) _globalYapTimer  -= Time.deltaTime;
+
+        foreach (var group in _yapGroups)
+            if (group.CooldownTimer > 0f)
+                group.CooldownTimer -= Time.deltaTime;
     }
 
     public void PlayDetectionSound()
@@ -73,12 +82,9 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     public void PlayDeathSound()  => PlayRandom(_audioSource, _deathClips);
     public void PlayReloadSound() => PlayRandom(_audioSource, _reloadClips);
     public void PlayHitSound()    => PlayRandom(_audioSource, _hitClips);
-    public void PlayGrenadeOpenSound()
-    {
-        PlayRandom(_audioSource, _grenadeOpenClips);
-        PlayGrenadeVoiceLine();
-    }
-    public void PlayGrenadeVoiceLine() => PlayRandom(_audioSource, _grenadeVoicelineClips);
+
+    public void PlayGrenadeOpenSound()  => PlayRandom(_audioSource, _grenadeOpenClips);
+    public void PlayGrenadeVoiceLine()  => PlayRandom(_audioSource, _grenadeVoicelineClips);
 
     public void PlayAttackSound()
     {
@@ -95,17 +101,45 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
 
     public void PlayNamedSound(string soundName)
     {
-        if (!_namedClipsDict.TryGetValue(soundName, out var cell)) return;
-        cell.PlayAudioClip(_talkAudioSource);
+        if (!_namedClipsDict.TryGetValue(soundName, out var clip)) return;
+        clip.PlayAudioClip(_talkAudioSource);
     }
-
-    public List<CellAudioClip> GetGrenadeBounceClips() => _grenadeBounceClips;
 
     public void PlayRandomNamedSound()
     {
         if (_namedClips == null || _namedClips.Count == 0) return;
-        _namedClips[Random.Range(0, _namedClips.Count)].PlayAudioClip(_talkAudioSource);
+        _namedClips[Random.Range(0, _namedClips.Count)].Clip?.PlayAudioClip(_talkAudioSource);
     }
+
+    public void PlayRandomYap()
+    {
+        if (_globalYapTimer > 0f || _yapGroups == null || _yapGroups.Count == 0) return;
+
+        float totalWeight = 0f;
+        foreach (var group in _yapGroups)
+            if (group.CooldownTimer <= 0f && group.Clips != null && group.Clips.Count > 0)
+                totalWeight += group.Weight;
+
+        if (totalWeight <= 0f) return;
+
+        float roll = Random.Range(0f, totalWeight);
+        float accumulated = 0f;
+        YapGroup picked = null;
+        foreach (var group in _yapGroups)
+        {
+            if (group.CooldownTimer > 0f || group.Clips == null || group.Clips.Count == 0) continue;
+            accumulated += group.Weight;
+            if (roll <= accumulated) { picked = group; break; }
+        }
+
+        if (picked == null) return;
+
+        picked.Clips[Random.Range(0, picked.Clips.Count)].PlayAudioClip(_talkAudioSource);
+        picked.CooldownTimer = picked.GroupCooldown;
+        _globalYapTimer = _globalYapCooldown;
+    }
+
+    public List<CellAudioClip> GetGrenadeBounceClips() => _grenadeBounceClips;
 
     private void Play(AudioSource source, AudioClip clip)
     {
@@ -116,13 +150,13 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     private void PlayRandom(AudioSource source, List<CellAudioClip> clips)
     {
         if (clips == null || clips.Count == 0) return;
-        int randInd = Random.Range(0, clips.Count);
-        while (_cacheLastClipIndex == randInd && clips.Count > 1)
-        {
-            randInd = Random.Range(0, clips.Count);
-        }
+
+        int lastIndex = _lastPlayedIndices.TryGetValue(clips, out int cached) ? cached : -1;
+        int randInd;
+        do { randInd = Random.Range(0, clips.Count); }
+        while (clips.Count > 1 && randInd == lastIndex);
 
         clips[randInd].PlayAudioClipOneShot(source);
-        _cacheLastClipIndex = randInd;
+        _lastPlayedIndices[clips] = randInd;
     }
 }

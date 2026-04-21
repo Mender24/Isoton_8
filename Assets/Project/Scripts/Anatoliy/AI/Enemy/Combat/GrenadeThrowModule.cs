@@ -112,6 +112,7 @@ public class GrenadeThrowModule : MonoBehaviour
         if (Phase != GrenadeThrowPhase.WindingUp) return;
 
         _audio.PlayGrenadeOpenSound();
+        _audio.PlayGrenadeVoiceLine();
     }
 
     private void HandleWindUpComplete()

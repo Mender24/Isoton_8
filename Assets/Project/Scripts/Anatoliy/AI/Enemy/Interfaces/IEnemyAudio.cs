@@ -8,9 +8,11 @@ public interface IEnemyAudio
     void PlayReloadSound();
     void PlayHitSound();
     void PlayGrenadeOpenSound();
+    void PlayGrenadeVoiceLine();
     void PlayDeathSound();
     void PlayFootstep(int foot);
     void PlayNamedSound(string soundName);
     void PlayRandomNamedSound();
+    void PlayRandomYap();
     List<CellAudioClip> GetGrenadeBounceClips();
 }
