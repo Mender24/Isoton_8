@@ -273,7 +273,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             {
                 if (rayHit.collider.TryGetComponent(out Damageable damageable))
                 {
-                    damageable.Damage(_config.Damage, gameObject);
+                    damageable.Damage(_config.Damage * DifficultyManager.EnemyDamageMult, gameObject);
                     hit = true;
                 }
                 else

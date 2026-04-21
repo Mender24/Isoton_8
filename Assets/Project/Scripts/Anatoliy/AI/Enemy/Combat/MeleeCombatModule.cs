@@ -90,7 +90,7 @@ public class MeleeCombatModule : MonoBehaviour, IMeleeCombat
             if (col.transform == _playerTransform)
             {
                 if (col.TryGetComponent(out Damageable d))
-                    d.Damage(_config.Damage, gameObject);
+                    d.Damage(_config.Damage * DifficultyManager.EnemyDamageMult, gameObject);
                 break;
             }
         }

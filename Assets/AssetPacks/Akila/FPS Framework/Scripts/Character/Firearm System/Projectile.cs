@@ -135,7 +135,9 @@ namespace Akila.FPSFramework
                 Destroy(gameObject, lifeTime);
         }
 
-        public float CalculateDamage()
+        public static System.Func<float, float> DamageModifier;
+
+        public virtual float CalculateDamage()
         {
             float distanceFromStartPos = Vector3.Distance(transform.position, startPosition);
 
@@ -153,7 +155,7 @@ namespace Akila.FPSFramework
 
                 float finalDamage = damageToRange * source.preset.damage / countFactor;
 
-                return finalDamage;
+                return DamageModifier != null ? DamageModifier(finalDamage) : finalDamage;
             }
 
             Debug.LogError("Couldn't calculate damage due to null source firearm field. Damage will be default to 30.", gameObject);

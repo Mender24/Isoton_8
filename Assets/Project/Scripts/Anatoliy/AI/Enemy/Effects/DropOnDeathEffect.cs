@@ -7,6 +7,7 @@ public class DropOnDeathEffect : MonoBehaviour
     [SerializeField] private GameObject _ammoBoxPrefab;
     [SerializeField] private Transform _dropTransform;
     [SerializeField] private float _dropDelay = 1f;
+    [SerializeField, Range(0f, 1f)] private float _dropChance = 1f;
 
     void Start()
     {
@@ -21,6 +22,9 @@ public class DropOnDeathEffect : MonoBehaviour
     
     private IEnumerator DropAmmoRoutine()
     {
+        if (Random.value > Mathf.Clamp01(_dropChance * DifficultyManager.AmmoDropChanceMult))
+            yield break;
+
         yield return new WaitForSeconds(_dropDelay);
 
         if (_dropTransform)

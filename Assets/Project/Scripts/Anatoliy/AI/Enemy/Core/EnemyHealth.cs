@@ -71,6 +71,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
         _impactEffect   = GetComponent<ImpactEffect>();
         _bloodProjector = GetComponent<BloodProjector>();
         TryGetComponent(out _dropOnDeath);
+        _maxHealth    *= DifficultyManager.EnemyHealthMult;
         _health        = _maxHealth;
     }
 
