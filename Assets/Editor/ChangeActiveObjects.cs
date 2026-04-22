@@ -43,7 +43,7 @@ public class ChangeActiveObjects : MonoBehaviour
         Undo.CollapseUndoOperations(undoGroup);
     }
 
-    [MenuItem("Tools/Scene/OffLateActiveObject")]
+    [MenuItem("Tools/LateActiveSystem/OffLateActiveObject")]
     static void OffLateActiveObject()
     {
         Undo.SetCurrentGroupName("OffLateActiveObject");
@@ -70,7 +70,7 @@ public class ChangeActiveObjects : MonoBehaviour
         Undo.CollapseUndoOperations(undoGroup);
     }
 
-    [MenuItem("Tools/Scene/OnLateActiveObject")]
+    [MenuItem("Tools/LateActiveSystem/OnLateActiveObject")]
     static void OnLateActiveObject()
     {
         Undo.SetCurrentGroupName("OnLateActiveObject");
