@@ -52,6 +52,16 @@ public class DifficultyManager : MonoBehaviour
         }
     }
 
+    public void SetEasyDifficulty()
+    {
+        SetDifficulty(GameDifficulty.Easy);
+    }
+
+    public void SetHardDifficulty()
+    {
+        SetDifficulty(GameDifficulty.Hard);
+    }
+
     private static void ApplyWeaponDamageModifier()
     {
         Projectile.DamageModifier = dmg => dmg * WeaponDamageMult;
