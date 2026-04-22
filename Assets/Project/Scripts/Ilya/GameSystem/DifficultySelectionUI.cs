@@ -5,9 +5,14 @@ public class DifficultySelectionUI : MonoBehaviour
     [SerializeField] private GameObject _difficultyPanel;
     [SerializeField] private GameObject _mainMenuPanel;
 
+    private const string DifficultyPrefsKey = "GameDifficulty";
+
     void Start()
     {
-        OpenDifficultyPanel();
+        if (PlayerPrefs.HasKey(DifficultyPrefsKey))
+            OpenMainMenu();
+        else
+            OpenDifficultyPanel();
     }
 
     public void SelectEasy()
@@ -31,6 +36,14 @@ public class DifficultySelectionUI : MonoBehaviour
     private void OpenDifficultyPanel()
     {
         _mainMenuPanel.SetActive(false);
-        _difficultyPanel.SetActive(true);   
+        _difficultyPanel.SetActive(true);
+    }
+
+    [ContextMenu("Debug/Reset Difficulty Choice")]
+    private void ResetDifficultyChoice()
+    {
+        PlayerPrefs.DeleteKey(DifficultyPrefsKey);
+        PlayerPrefs.Save();
+        Debug.Log("Difficulty choice reset. Screen will show on next launch.");
     }
 }
