@@ -146,6 +146,7 @@ namespace Akila.FPSFramework
         private void Awake()
         {
             maxHealth = health;
+            Debug.Log(maxHealth);
         }
 
         private void Start()
@@ -238,6 +239,13 @@ namespace Akila.FPSFramework
         public void Register()
         {
 
+        }
+
+        public void SetHealthSettings(float health, float regenerationRate)
+        {
+            this.health = health;
+            maxHealth = this.health;
+            this.regenerationRate = regenerationRate;
         }
 
         private bool initialized = false;

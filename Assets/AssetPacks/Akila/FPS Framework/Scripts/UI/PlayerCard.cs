@@ -18,21 +18,23 @@ namespace Akila.FPSFramework
 
         private float maxHealth;
 
+        private IDamageable _damageable;
+
         public void Setup(IActor actor)
         {
             if (CheckIfIsPlayer(actor) == false)
                 return;
 
-            IDamageable damageable = actor.gameObject.GetComponent<IDamageable>();
+            _damageable = actor.gameObject.GetComponent<IDamageable>();
 
-            if (damageable == null)
+            if (_damageable == null)
             {
                 Debug.LogError("Couldn't find 'IDamagale' on Actor. HealthBar update aborted.");
 
                 return;
             }
 
-            maxHealth = damageable.Health;
+            maxHealth = _damageable.Health;
         }
 
         public void UpdateCard(IActor actor)
@@ -57,7 +59,7 @@ namespace Akila.FPSFramework
                 playerNameText.SetText(actorName);
             }
 
-            IDamageable damageable = actor.gameObject.GetComponent<IDamageable>();
+            Damageable damageable = actor.gameObject.GetComponent<Damageable>();
 
             if (damageable == null)
             {
@@ -75,7 +77,7 @@ namespace Akila.FPSFramework
             else
             {
                 playerHealthBar.maxValue = maxHealth;
-                playerHealthBar.value = damageable.Health;
+                playerHealthBar.value = damageable.maxHealth;
             }
         }
 

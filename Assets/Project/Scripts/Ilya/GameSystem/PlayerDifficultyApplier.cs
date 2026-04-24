@@ -10,8 +10,8 @@ public class PlayerDifficultyApplier : MonoBehaviour
         var damageable = GetComponent<Damageable>();
         if (damageable == null) return;
 
-        damageable.health    *= DifficultyManager.PlayerHealthMult;
-        damageable.maxHealth  = damageable.health;
-        damageable.regenerationRate *= DifficultyManager.PlayerRegenMult;
+        float newHealth = damageable.health * DifficultyManager.PlayerHealthMult;
+        float newRegenrationRate = damageable.regenerationRate * DifficultyManager.PlayerRegenMult;
+        damageable.SetHealthSettings(newHealth, newRegenrationRate);
     }
 }
