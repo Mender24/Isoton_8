@@ -76,8 +76,8 @@ namespace Akila.FPSFramework
             }
             else
             {
-                playerHealthBar.maxValue = maxHealth;
-                playerHealthBar.value = damageable.maxHealth;
+                playerHealthBar.maxValue = damageable.maxHealth;
+                playerHealthBar.value = damageable.health;
             }
         }
 
