@@ -130,12 +130,9 @@ public partial class SmartSearchPlayerAction : Action
             Vector3 dir = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
             Vector3 candidate = origin + dir * r;
 
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 3f, NavMesh.AllAreas))
-            {
-                NavMeshPath path = new NavMeshPath();
-                if (_enemy.Navigation.Agent.CalculatePath(hit.position, path))
-                    result.Add(hit.position);
-            }
+            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 3f, NavMesh.AllAreas)
+                && _enemy.Navigation.CanReach(hit.position))
+                result.Add(hit.position);
         }
 
         return result;

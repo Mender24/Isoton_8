@@ -88,6 +88,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public System.Action OnHitReactionCompleted;
     public System.Action OnDeathCompleted;
     public System.Action OnMeleeHit;
+    public System.Action OnGrenadeOpen;
     public System.Action OnGrenadeWindUpComplete;
     public System.Action OnGrenadeReleasePoint;
     public System.Action OnGrenadeThrowComplete;
@@ -370,6 +371,7 @@ public class BasicEnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void OnMeleeAttackComplete() { /* опционально */ }
 
     // Animation events — вызываются из clips в Animator Controller
+    public void OnGrenadeOpenEvent() => OnGrenadeOpen?.Invoke();
     public void OnGrenadeWindUpCompleteEvent() => OnGrenadeWindUpComplete?.Invoke();
     public void OnGrenadeReleasePointEvent()   => OnGrenadeReleasePoint?.Invoke();
     public void OnGrenadeThrowCompleteEvent()  => OnGrenadeThrowComplete?.Invoke();

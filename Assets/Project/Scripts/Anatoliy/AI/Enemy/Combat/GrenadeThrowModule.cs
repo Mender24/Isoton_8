@@ -1,4 +1,5 @@
 using Akila.FPSFramework;
+using System.Collections;
 using UnityEngine;
 
 public enum GrenadeThrowPhase { Idle, WindingUp, Throwing }
@@ -16,6 +17,7 @@ public class GrenadeThrowModule : MonoBehaviour
     private IEnemyAnimator     _animator;
     private BasicEnemyAnimator _basicAnimator;
     private Transform          _playerTransform;
+    private IEnemyAudio _audio;
 
     private int _bulletsFiredSinceCheck;
     private GameObject _heldGrenade;
@@ -35,12 +37,14 @@ public class GrenadeThrowModule : MonoBehaviour
         _state         = GetComponent<EnemyState>();
         _animator      = GetComponent<IEnemyAnimator>();
         _basicAnimator = GetComponent<BasicEnemyAnimator>();
+        _audio         = GetComponent<IEnemyAudio>();
     }
 
     private void Start()
     {
         if (_basicAnimator != null)
         {
+            _basicAnimator.OnGrenadeOpen += HandleGrenadeOpen;
             _basicAnimator.OnGrenadeWindUpComplete += HandleWindUpComplete;
             _basicAnimator.OnGrenadeReleasePoint   += HandleReleasePoint;
             _basicAnimator.OnGrenadeThrowComplete  += HandleThrowComplete;
@@ -64,6 +68,7 @@ public class GrenadeThrowModule : MonoBehaviour
     {
         if (_basicAnimator != null)
         {
+            _basicAnimator.OnGrenadeOpen -= HandleGrenadeOpen;
             _basicAnimator.OnGrenadeWindUpComplete -= HandleWindUpComplete;
             _basicAnimator.OnGrenadeReleasePoint   -= HandleReleasePoint;
             _basicAnimator.OnGrenadeThrowComplete  -= HandleThrowComplete;
@@ -100,6 +105,14 @@ public class GrenadeThrowModule : MonoBehaviour
         _state.IsThrowingGrenade = true;
         SpawnHeldGrenade();
         _animator?.TriggerGrenadeWindUp(_config.WindUpDuration);
+    }
+
+    private void HandleGrenadeOpen()
+    {
+        if (Phase != GrenadeThrowPhase.WindingUp) return;
+
+        _audio.PlayGrenadeOpenSound();
+        _audio.PlayGrenadeVoiceLine();
     }
 
     private void HandleWindUpComplete()
@@ -196,8 +209,39 @@ public class GrenadeThrowModule : MonoBehaviour
 
         GameObject grenade = Instantiate(_config.GrenadePrefab, origin, Quaternion.identity);
 
+        var bounceClips = _audio?.GetGrenadeBounceClips();
+        if (bounceClips != null && bounceClips.Count > 0 && !GetComponent<GrenadeAudio>())
+        {
+            var grenadeAudio = grenade.AddComponent<GrenadeAudio>();
+            grenadeAudio.Setup(bounceClips);
+        }
+
         if (grenade.TryGetComponent(out Rigidbody rb))
+        {
+            StartCoroutine(EnableCollisionAfterDelay(grenade, 0.1f));
+            
             rb.linearVelocity = CalculateThrowVelocity(origin, landing, _config.ThrowTime);
+        }
+    }
+
+    private IEnumerator EnableCollisionAfterDelay(GameObject grenade, float delay)
+    {
+        Collider[] colliders = grenade.GetComponentsInChildren<Collider>();
+        
+        foreach (var col in colliders)
+        {
+            col.enabled = false;
+        }
+        
+        yield return new WaitForSeconds(delay);
+        
+        if (grenade != null)
+        {
+            foreach (var col in colliders)
+            {
+                col.enabled = true;
+            }
+        }
     }
 
     private bool IsLandingDangerousForAllies(Vector3 landing)

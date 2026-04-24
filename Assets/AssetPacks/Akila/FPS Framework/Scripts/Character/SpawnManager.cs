@@ -78,15 +78,7 @@ namespace Akila.FPSFramework
         public void MovePlayerStartPositionAndOn(Player player)
         {
             player.transform.position = sides[0].points[0].position;
-            //foreach (Transform root in player.transform)
-            //{
-            //    Debug.Log(root.rotation);
-            //    root.rotation = sides[0].points[0].rotation;
-            //    Debug.Log(root.name);
-            //    break;
-            //}
-
-            player.transform.rotation = sides[0].points[0].rotation;
+            player.SetRotation(sides[0].points[0].rotation);
         }
 
         public async void SpawnActor(IActor actorSelf, string actorObjName, float delay)

@@ -30,6 +30,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     [Header("ExplodeWhenDead")] //Mender для турели которая взрывается при смерти, да я не умею наследовать классы
     [SerializeField] Explosive _explosive;
 
+    [Header("Ally Alert")]
+    [SerializeField] private bool _alertNearbyOnDeath = false;
+    [SerializeField] private float _deathAlertRadius = 15f;
+    [SerializeField] private bool _alertNearbyOnDamage = false;
+    [SerializeField] private float _damageAlertRadius = 12f;
+    [SerializeField] private float _damageAlertCooldown = 5f;
+    [SerializeField] private LayerMask _enemyLayer;
+
+    private float _lastDamageAlertTime = -999f;
+
 
     public UnityEvent OnDeathInternal = new();
     public UnityEvent<float, GameObject> OnDamaged = new(); 
@@ -51,6 +61,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
     private IEnemyAudio _audio;
     private ImpactEffect _impactEffect;
     private BloodProjector _bloodProjector;
+    private DropOnDeathEffect _dropOnDeath;
 
     private void Awake()
     {
@@ -59,6 +70,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
         _audio         = GetComponent<IEnemyAudio>();
         _impactEffect   = GetComponent<ImpactEffect>();
         _bloodProjector = GetComponent<BloodProjector>();
+        TryGetComponent(out _dropOnDeath);
+        _maxHealth    *= DifficultyManager.EnemyHealthMult;
         _health        = _maxHealth;
     }
 
@@ -70,6 +83,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
         OnDamaged?.Invoke(amount, damageSource);
 
         TryPlayHitReaction();
+
+        if (_alertNearbyOnDamage && Time.time - _lastDamageAlertTime >= _damageAlertCooldown)
+        {
+            _lastDamageAlertTime = Time.time;
+            AlertNearbyAllies(_damageAlertRadius);
+        }
 
         if (_health <= 0f)
             Die();
@@ -123,8 +142,28 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IOnHitInChildren
         if (_explosive != null)
             _explosive.Explode();
 
+        if (_dropOnDeath != null)
+            _dropOnDeath.DropAmmoBox();
+
+        if (_alertNearbyOnDeath)
+            AlertNearbyAllies(_deathAlertRadius);
+
         StartCoroutine(DisableCollidersRoutine());
         StartCoroutine(DeactivateSelfRoutine());
+    }
+
+    private void AlertNearbyAllies(float radius)
+    {
+        var hits = Physics.OverlapSphere(transform.position, radius, _enemyLayer);
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject == gameObject) continue;
+
+            var ally = hit.GetComponentInParent<EnemyBase>();
+            if (ally == null || ally.State.IsDead) continue;
+
+            ally.AggroOnPlayer();
+        }
     }
 
     private IEnumerator DisableCollidersRoutine()

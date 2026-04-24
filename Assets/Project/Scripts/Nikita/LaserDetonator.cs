@@ -65,6 +65,13 @@ namespace Akila.FPSFramework
                     explosive.Explode();
                     exploded = true;
                 }
+                else if (layerName == "Mutant") //реакт на мутанта
+                {
+                    SetLaserColor(Color.red);
+                    // Взрываемся
+                    explosive.Explode();
+                    exploded = true;
+                }
                 else
                 {
                     SetLaserColor(Color.white);

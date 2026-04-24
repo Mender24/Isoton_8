@@ -83,7 +83,12 @@ public class EnemyNavigation : MonoBehaviour
         if (_agent == null) return false;
         if (_agent.pathPending) return false;
         if (_agent.remainingDistance > _agent.stoppingDistance) return false;
-        return !_agent.hasPath || _agent.velocity.sqrMagnitude == 0f;
+        if (_agent.hasPath && _agent.isOnNavMesh)
+        {
+            _agent.isStopped = true;
+            _agent.velocity  = Vector3.zero;
+        }
+        return true;
     }
 
     public void FaceTo(Vector3 worldPosition)
@@ -104,6 +109,14 @@ public class EnemyNavigation : MonoBehaviour
         return Vector3.Angle(_agent.transform.forward, dir) <= thresholdDeg;
     }
 
+    public bool CanReach(Vector3 destination)
+    {
+        if (!_agent.isOnNavMesh) return false;
+        NavMeshPath path = new NavMeshPath();
+        return _agent.CalculatePath(destination, path)
+            && path.status == NavMeshPathStatus.PathComplete;
+    }
+
     public bool TryGetRandomNavPoint(Vector3 origin, float radius, out Vector3 result)
     {
         result = Vector3.zero;
@@ -112,14 +125,11 @@ public class EnemyNavigation : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomDir, out hit, radius, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomDir, out hit, radius, NavMesh.AllAreas)
+                && CanReach(hit.position))
             {
-                NavMeshPath path = new NavMeshPath();
-                if (_agent.CalculatePath(hit.position, path))
-                {
-                    result = hit.position;
-                    return true;
-                }
+                result = hit.position;
+                return true;
             }
             randomDir = Random.insideUnitSphere * radius + origin;
         }

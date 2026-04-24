@@ -1,10 +1,7 @@
 using Akila.FPSFramework.Animation;
-using Akila.FPSFramework.Internal;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
 using UnityEngine.Serialization;
 
 namespace Akila.FPSFramework
@@ -189,7 +186,7 @@ namespace Akila.FPSFramework
 
             characterManager.onJump.AddListener(() =>
             {
-                if(attemptedToJump == false)
+                if (attemptedToJump == false)
                 {
                     currentGravityForce = -leaveGroundForce;
                 }
@@ -206,7 +203,7 @@ namespace Akila.FPSFramework
 
             controller.center = Vector3.up * controller.height * 0.5f;
 
-            if(proceduralAnimator)
+            if (proceduralAnimator)
             {
                 leanRightAnimation = proceduralAnimator.GetAnimation("Lean Right");
                 leanLeftAnimation = proceduralAnimator.GetAnimation("Lean Left");
@@ -303,10 +300,10 @@ namespace Akila.FPSFramework
         private bool attemptedToJump;
 
         protected virtual void Update()
-        {            
+        {
             if (!isActive) return;
 
-            if(leanRightAnimation)
+            if (leanRightAnimation)
             {
                 leanRightAnimation.IsPlaying = CharacterInput.LeanRightInput;
                 leanLeftAnimation.IsPlaying = CharacterInput.LeanLeftInput;
@@ -375,7 +372,7 @@ namespace Akila.FPSFramework
                     if (jumpSFX)
                         jumpAudio.Play(true);
                 }
-                
+
                 velocity.y = currentGravityForce;
             }
             else if (velocity.magnitude * 3.5f < maxFallSpeed)
@@ -406,7 +403,7 @@ namespace Akila.FPSFramework
             }
 
             velocityF.x = velocity.x;
-                velocityF.z = velocity.z;
+            velocityF.z = velocity.z;
 
             if (preserveMomentum)
             {
@@ -422,14 +419,14 @@ namespace Akila.FPSFramework
 
             if (preserveMomentum == false)
                 jumpVel = Vector3.zero;
-            
+
             Vector3 totalVel = velocityF + jumpVel;
 
             Vector3 clampedVel = Vector3.ClampMagnitude(new Vector3(totalVel.x, 0, totalVel.z), tacticalSprintSpeed);
 
             totalVel.x = clampedVel.x;
             totalVel.z = clampedVel.z;
-            
+
             //move and update CollisionFlags in order to check if collition is coming from above ot center or bottom
             CollisionFlags = controller.Move(totalVel * Time.deltaTime);
 
@@ -507,7 +504,7 @@ namespace Akila.FPSFramework
 
             //update
             nextStep = stepCycle + stepInterval;
-           
+
             int currentFootStepIndex = Random.Range(0, footStepsAudio.GetLength());
 
             onStep?.Invoke(currentFootStepIndex);
@@ -518,6 +515,23 @@ namespace Akila.FPSFramework
 
                 currentFootStepAudio.Play(true);
             }
+        }
+
+        public void SetPlayerRotation(Quaternion targetRotation)
+        {
+            yRotation = targetRotation.eulerAngles.y;
+            xRotation = targetRotation.eulerAngles.x;
+
+            if (float.IsNaN(xRotation) || float.IsInfinity(xRotation))
+                xRotation = 0;
+
+            if (float.IsNaN(yRotation) || float.IsInfinity(yRotation))
+                yRotation = 0;
+
+            playerRotation = Quaternion.Euler(xRotation, yRotation, 0f);
+
+            if(Orientation != null)
+                Orientation.SetRotation(playerRotation, !globalOrientation);
         }
 
         protected virtual void UpdateCameraRotation()
@@ -531,7 +545,7 @@ namespace Akila.FPSFramework
             xRotation = Mathf.Clamp(xRotation, minimumX, maximumX);
 
             //Avoid Nan for x rot
-            if(float.IsNaN(xRotation))
+            if (float.IsNaN(xRotation))
             {
                 xRotation = 0;
             }
@@ -654,12 +668,12 @@ namespace Akila.FPSFramework
                 AudioLowPassFilter lowPassFilter = audioListener.GetComponent<AudioLowPassFilter>();
                 AudioDistortionFilter distortionFilter = audioListener.GetComponent<AudioDistortionFilter>();
 
-                if(echoFilter) echoFilter.enabled = value;
-                if(reverbFilter)reverbFilter.enabled = value;
-                if(highPassFilter) highPassFilter.enabled = value;
-                if(lowPassFilter) lowPassFilter.enabled = value;
-                if(distortionFilter) distortionFilter.enabled = value;
-                
+                if (echoFilter) echoFilter.enabled = value;
+                if (reverbFilter) reverbFilter.enabled = value;
+                if (highPassFilter) highPassFilter.enabled = value;
+                if (lowPassFilter) lowPassFilter.enabled = value;
+                if (distortionFilter) distortionFilter.enabled = value;
+
                 audioListener.enabled = value;
             }
         }
@@ -700,7 +714,7 @@ namespace Akila.FPSFramework
                 }
             }
 
-            if(!controller.isGrounded)
+            if (!controller.isGrounded)
             {
                 //totalVelocity += Physics.gravity * gravity * Time.deltaTime;
             }
