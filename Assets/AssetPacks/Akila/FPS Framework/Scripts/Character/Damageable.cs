@@ -146,7 +146,6 @@ namespace Akila.FPSFramework
         private void Awake()
         {
             maxHealth = health;
-            Debug.Log(maxHealth);
         }
 
         private void Start()
