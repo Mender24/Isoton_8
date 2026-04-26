@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,9 +21,24 @@ public class EarthquakeEffect : MonoBehaviour
                 _effects.Add(particleSystem);
     }
 
-    private void StartEffect()
+    private void StartEffect(float duration)
+    {
+        StopAllCoroutines();
+
+        foreach (var effect in _effects)
+            effect.Stop();
+
+        StartCoroutine(EffectPlay(duration));
+    }
+
+    private IEnumerator EffectPlay(float timeDuration)
     {
         foreach (var effect in _effects)
             effect.Play();
+
+        yield return new WaitForSeconds(timeDuration);
+
+        foreach (var effect in _effects)
+            effect.Stop();
     }
 }

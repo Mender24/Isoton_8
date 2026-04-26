@@ -17,7 +17,7 @@ public class Earthquake : MonoBehaviour
     [Space]
     [SerializeField] private bool _isTest = false;
 
-    public event Action StartEarthquake;
+    public event Action<float> StartEarthquake;
 
     public static Earthquake Instance => _instance;
 
@@ -39,11 +39,11 @@ public class Earthquake : MonoBehaviour
         if(_isTest)
         {
             _isTest = false;
-            ShakeCamera(_baseSoundEarthquakeName);
+            ShakeCamera(new DataCameraShake());
         }
     }
 
-    public void ShakeCamera(string nameSound)
+    public void ShakeCamera(DataCameraShake dataCameraShake)
     {
         if(Player.Instance == null)
         {
@@ -51,8 +51,8 @@ public class Earthquake : MonoBehaviour
             return;
         }
 
-        StartEarthquake?.Invoke();
-        Player.Instance.ShakeCamera(_cameraShakeMultiplier, _roughness, _fadeInTime, _fadeOutTime);
-        SoundManager.Instance.PlayScriptedSoundName(nameSound);
+        StartEarthquake?.Invoke(dataCameraShake.Duration);
+        Player.Instance.ShakeCamera(dataCameraShake.CameraShakeMultiplier, dataCameraShake.Roughness, dataCameraShake.FadeInTime, dataCameraShake.FadeOutTime);
+        SoundManager.Instance.PlayScriptedSoundName(dataCameraShake.SoundName);
     }
 }
