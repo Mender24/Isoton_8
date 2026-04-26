@@ -13,7 +13,7 @@ public class Earthquake : MonoBehaviour
     [Range(0, 10)]
     [SerializeField] private float _fadeOutTime = 2f;
     [Space]
-    [SerializeField] private string _soundEarthquakeName = "";
+    [SerializeField] private string _baseSoundEarthquakeName = "";
     [Space]
     [SerializeField] private bool _isTest = false;
 
@@ -39,11 +39,11 @@ public class Earthquake : MonoBehaviour
         if(_isTest)
         {
             _isTest = false;
-            ShakeCamera();
+            ShakeCamera(_baseSoundEarthquakeName);
         }
     }
 
-    public void ShakeCamera()
+    public void ShakeCamera(string nameSound)
     {
         if(Player.Instance == null)
         {
@@ -53,6 +53,6 @@ public class Earthquake : MonoBehaviour
 
         StartEarthquake?.Invoke();
         Player.Instance.ShakeCamera(_cameraShakeMultiplier, _roughness, _fadeInTime, _fadeOutTime);
-        SoundManager.Instance.PlayScriptedSoundName(_soundEarthquakeName);
+        SoundManager.Instance.PlayScriptedSoundName(nameSound);
     }
 }
