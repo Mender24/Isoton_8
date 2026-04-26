@@ -280,7 +280,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayScriptedSoundName(string name)
     {
-        if (_scriptedAudioSourse == null)
+        if (_scriptedAudioSourse == null || name == "")
             return;
 
         _scriptedAudioClipInName[name].Clip.PlayAudioClip(_scriptedAudioSourse);
