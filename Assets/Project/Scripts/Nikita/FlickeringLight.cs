@@ -4,33 +4,33 @@ using UnityEngine;
 public class FlickeringLight : MonoBehaviour
 {
     [Header("Light Components")]
-    [SerializeField] private Light targetLight; // Сама лампочка
-    [SerializeField] private bool findLightOnStart = true; // Искать свет автоматически
+    [SerializeField] private Light targetLight;
+    [SerializeField] private bool findLightOnStart = true;
 
     [Header("Flicker Settings")]
-    [SerializeField] private float minFlickerInterval = 0.05f; // Минимальный интервал мерцания
-    [SerializeField] private float maxFlickerInterval = 0.3f; // Максимальный интервал мерцания
-    [SerializeField] private float minIntensity = 0f; // Минимальная яркость при мерцании
-    [SerializeField] private float maxIntensity = 1f; // Максимальная яркость при мерцании
-    [SerializeField] private bool randomIntensity = true; // Случайная яркость или вкл/выкл
+    [SerializeField] private float minFlickerInterval = 0.02f; // Минимальный интервал (уменьшен)
+    [SerializeField] private float maxFlickerInterval = 0.15f; // Максимальный интервал (уменьшен)
+    [SerializeField] private float minIntensity = 0f;
+    [SerializeField] private float maxIntensity = 0.8f; // Уменьшена максимальная яркость
+    [SerializeField] private bool randomIntensity = true;
+    
+    [Header("Flicker Behavior")]
+    [SerializeField] [Range(0f, 1f)] private float offChance = 0.4f; // Шанс полного выключения (40%)
+    [SerializeField] private float offDuration = 0.1f; // Длительность полного выключения
 
     [Header("Stable On Settings")]
-    [SerializeField] private float stableOnDelay = 5f; // Задержка перед стабильным включением
-    [SerializeField] private float stableIntensity = 1f; // Яркость в стабильном режиме
+    [SerializeField] private float stableOnDelay = 5f;
+    [SerializeField] private float stableIntensity = 1f;
 
-    // Состояния лампочки
     private bool isFlickering = false;
     private bool isStableOn = false;
     private float originalIntensity;
 
     void Start()
     {
-        // Автоматически ищем компонент Light, если не назначен
         if (targetLight == null && findLightOnStart)
         {
             targetLight = GetComponent<Light>();
-
-            // Если на текущем объекте нет, ищем в дочерних
             if (targetLight == null)
                 targetLight = GetComponentInChildren<Light>();
         }
@@ -38,12 +38,9 @@ public class FlickeringLight : MonoBehaviour
         if (targetLight != null)
         {
             originalIntensity = targetLight.intensity;
-
-            // Изначально свет выключен
             targetLight.enabled = false;
             targetLight.intensity = 0f;
-
-            Debug.Log("Light is OFF. Call TurnOnWithFlicker() to start.");
+            Debug.Log("Light is OFF. Waiting for trigger...");
         }
         else
         {
@@ -51,12 +48,7 @@ public class FlickeringLight : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Публичный метод для включения света с мерцанием
-    /// Вызовите этот метод из другого скрипта, чтобы начать процесс
-    /// </summary>
-    /// <param name="customDelay">Можно указать свою задержку (опционально)</param>
-    public void TurnOnWithFlicker(float customDelay = -1f)
+    public void ActivateLight()
     {
         if (isStableOn)
         {
@@ -70,81 +62,65 @@ public class FlickeringLight : MonoBehaviour
             return;
         }
 
-        // Используем кастомную задержку, если указана
-        float delay = customDelay >= 0 ? customDelay : stableOnDelay;
-
-        StartCoroutine(FlickerThenStable(delay));
+        StartCoroutine(FlickerThenStable());
     }
 
-    /// <summary>
-    /// Альтернативный метод с отдельными параметрами
-    /// </summary>
-    /// <param name="flickerDuration">Длительность мерцания</param>
-    /// <param name="targetIntensity">Итоговая яркость</param>
-    public void TurnOnWithFlicker(float flickerDuration, float targetIntensity)
-    {
-        if (isStableOn)
-        {
-            Debug.Log("Light is already stable ON");
-            return;
-        }
-
-        if (isFlickering)
-        {
-            Debug.Log("Light is already flickering");
-            return;
-        }
-
-        StartCoroutine(FlickerThenStable(flickerDuration, targetIntensity));
-    }
-
-    /// <summary>
-    /// Основная корутина: мерцание -> стабильное включение
-    /// </summary>
-    private IEnumerator FlickerThenStable(float flickerDuration, float? targetIntensity = null)
+    private IEnumerator FlickerThenStable()
     {
         isFlickering = true;
-
-        // Включаем свет (он может быть выключен)
         targetLight.enabled = true;
 
-        Debug.Log($"Light started flickering for {flickerDuration} seconds");
+        Debug.Log($"Light started flickering for {stableOnDelay} seconds");
 
         float startTime = Time.time;
 
-        // Мерцаем пока не пройдет flickerDuration
-        while (Time.time - startTime < flickerDuration)
+        while (Time.time - startTime < stableOnDelay)
         {
-            if (randomIntensity)
+            // Проверяем, нужно ли полностью выключить свет
+            if (Random.value < offChance)
             {
-                // Случайная яркость от 0 до максимальной
-                targetLight.intensity = Random.Range(minIntensity, maxIntensity);
+                // Полное выключение
+                targetLight.intensity = 0f;
+                targetLight.enabled = false;
+                yield return new WaitForSeconds(offDuration);
+                
+                // Включаем обратно с низкой яркостью
+                targetLight.enabled = true;
+                targetLight.intensity = Random.Range(0.1f, 0.4f);
+            }
+            else if (randomIntensity)
+            {
+                // Случайная яркость, но с большим шансом низких значений
+                float intensityBias = Random.value; // 0-1
+                if (intensityBias < 0.6f) // 60% шанс низкой яркости
+                {
+                    targetLight.intensity = Random.Range(minIntensity, 0.3f);
+                }
+                else // 40% шанс средней яркости
+                {
+                    targetLight.intensity = Random.Range(0.3f, maxIntensity);
+                }
             }
             else
             {
-                // Просто вкл/выкл
+                // Просто вкл/выкл (если randomIntensity = false)
                 targetLight.enabled = !targetLight.enabled;
             }
 
-            // Ждем случайный интервал
+            // Случайная задержка между изменениями
             float flickerTime = Random.Range(minFlickerInterval, maxFlickerInterval);
             yield return new WaitForSeconds(flickerTime);
         }
 
-        // Завершаем мерцание и включаем стабильно
+        // Стабильное включение
         isFlickering = false;
         isStableOn = true;
-
-        // Устанавливаем итоговую яркость
-        targetLight.intensity = targetIntensity ?? stableIntensity;
+        targetLight.intensity = stableIntensity;
         targetLight.enabled = true;
 
-        Debug.Log($"Light is now stable ON with intensity {targetLight.intensity}");
+        Debug.Log($"Light is now stable ON with intensity {stableIntensity}");
     }
 
-    /// <summary>
-    /// Немедленно выключить свет
-    /// </summary>
     public void TurnOff()
     {
         StopAllCoroutines();
@@ -160,33 +136,6 @@ public class FlickeringLight : MonoBehaviour
         Debug.Log("Light turned OFF");
     }
 
-    /// <summary>
-    /// Проверить состояние лампочки
-    /// </summary>
-    public bool IsStableOn()
-    {
-        return isStableOn;
-    }
-
-    /// <summary>
-    /// Проверить, мерцает ли лампочка
-    /// </summary>
-    public bool IsFlickering()
-    {
-        return isFlickering;
-    }
-
-    /// <summary>
-    /// Получить текущую яркость
-    /// </summary>
-    public float GetCurrentIntensity()
-    {
-        return targetLight != null ? targetLight.intensity : 0f;
-    }
-
-    /// <summary>
-    /// Визуализация в редакторе
-    /// </summary>
     private void OnValidate()
     {
         if (minFlickerInterval > maxFlickerInterval)
