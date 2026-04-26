@@ -240,6 +240,13 @@ namespace Akila.FPSFramework
 
         }
 
+        public void SetHealthSettings(float health, float regenerationRate)
+        {
+            this.health = health;
+            maxHealth = this.health;
+            this.regenerationRate = regenerationRate;
+        }
+
         private bool initialized = false;
 
         private void LateUpdate()

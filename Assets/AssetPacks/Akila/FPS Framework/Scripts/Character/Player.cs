@@ -1,3 +1,5 @@
+using System;
+using System.Globalization;
 using UnityEngine;
 
 namespace Akila.FPSFramework
@@ -11,6 +13,7 @@ namespace Akila.FPSFramework
         private Actor _actor;
         private InteractionsManager _interactionsManager;
         private FirstPersonController _firstPersonController;
+        private CharacterManager _characterManager;
 
         public Inventory Inventory => _inventory;
         public Actor Actor => _actor;
@@ -24,6 +27,7 @@ namespace Akila.FPSFramework
             _interactionsManager = GetComponentInChildren<InteractionsManager>();
             _actor = GetComponent<Actor>();
             _firstPersonController = GetComponent<FirstPersonController>();
+            _characterManager = GetComponent<CharacterManager>();
         }
 
         private void Start()
@@ -35,6 +39,17 @@ namespace Akila.FPSFramework
         public void SetRotation(Quaternion rotation)
         {
             _firstPersonController.SetPlayerRotation(rotation);
+        }
+
+        public void ShakeCamera(float multiplier, float roughness, float fadeInTime, float fadeOutTime)
+        {
+            if(_characterManager == null)
+            {
+                Debug.LogWarning("_characterManager is null");
+                return;
+            }
+
+            _characterManager.cameraManager.ShakeCameras(multiplier, roughness, fadeInTime, fadeOutTime);
         }
     }
 }
