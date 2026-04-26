@@ -31,6 +31,7 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
 
     [Header("Footstep Settings")]
     [SerializeField] private float _stepVolume = -1f;
+    [SerializeField] private float _minStepInterval = 0.2f;
 
     [Header("Attack Settings")]
     [SerializeField] private float _maxAttackPitchVariation = 0.2f;
@@ -40,9 +41,20 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
 
     private float _detectionTimer;
     private float _globalYapTimer;
+    private float _stepTimer;
     private float _baseAttackPitch;
     private Dictionary<string, CellAudioClip> _namedClipsDict;
     private Dictionary<List<CellAudioClip>, int> _lastPlayedIndices = new();
+
+    private void Start()
+    {
+        FootstepManager.Instance?.Register(transform);
+    }
+
+    private void OnDestroy()
+    {
+        FootstepManager.Instance?.Unregister(transform);
+    }
 
     private void Awake()
     {
@@ -65,6 +77,7 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     {
         if (_detectionTimer > 0f) _detectionTimer -= Time.deltaTime;
         if (_globalYapTimer  > 0f) _globalYapTimer  -= Time.deltaTime;
+        if (_stepTimer       > 0f) _stepTimer       -= Time.deltaTime;
 
         foreach (var group in _yapGroups)
             if (group.CooldownTimer > 0f)
@@ -96,6 +109,9 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     public void PlayFootstep(int foot)
     {
         if (_footstepClips == null || _footstepClips.Count == 0) return;
+        if (FootstepManager.Instance != null && !FootstepManager.Instance.CanPlayFootstep(transform)) return;
+        if (_stepTimer > 0f) return;
+        _stepTimer = _minStepInterval;
         _footstepClips[Random.Range(0, _footstepClips.Count)].PlayAudioClipOneShot(_stepAudioSource, _stepVolume);
     }
 
