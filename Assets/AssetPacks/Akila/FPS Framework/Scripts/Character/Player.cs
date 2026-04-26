@@ -41,7 +41,7 @@ namespace Akila.FPSFramework
             _firstPersonController.SetPlayerRotation(rotation);
         }
 
-        public void ShakeCamera(float cameraShake)
+        public void ShakeCamera(float multiplier, float roughness, float fadeInTime, float fadeOutTime)
         {
             if(_characterManager == null)
             {
@@ -49,7 +49,7 @@ namespace Akila.FPSFramework
                 return;
             }
 
-            _characterManager.cameraManager.ShakeCameras(cameraShake);
+            _characterManager.cameraManager.ShakeCameras(multiplier, roughness, fadeInTime, fadeOutTime);
         }
     }
 }

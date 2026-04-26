@@ -67,7 +67,9 @@ namespace Akila.FPSFramework
             }
 
             if (!sustain)
+            {
                 fadeTime -= Time.deltaTime / fadeOutDuration;
+            }
 
             if (sustain)
                 tick += Time.deltaTime * Roughness * 5;

@@ -1169,6 +1169,10 @@ MonoBehaviour:
     Clip:
       AudioClip: {fileID: 8300000, guid: c33f5527c5ed3824c8bdcff4fcee9309, type: 3}
       Volume: 1
+  - NameAudioClip: Tryaska
+    Clip:
+      AudioClip: {fileID: 8300000, guid: 62d92d04e2516924b977ad5510298db3, type: 3}
+      Volume: 0.467
 --- !u!114 &591814434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1181,8 +1185,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c355b19bb7dfeb468bdbedf2a7fc724, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraShake: 0.5
-  _soundEarthquakeName: Tryska
+  _cameraShakeMultiplier: 0.5
+  _roughness: 1
+  _fadeInTime: 20
+  _fadeOutTime: 5
+  _soundEarthquakeName: Tryaska
+  _isTest: 0
 --- !u!1 &761269905
 GameObject:
   m_ObjectHideFlags: 0
