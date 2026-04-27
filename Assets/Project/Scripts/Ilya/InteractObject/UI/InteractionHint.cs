@@ -7,6 +7,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(BoxCollider))]
 public class InteractionHint : MonoBehaviour
 {
+    [SerializeField] private bool _isUpdateSystem = false;
+    [Space]
     [SerializeField] private Canvas _canvas;
     [SerializeField] private float _radiusHint = 4f;
     [SerializeField] private Image _circleImage;
@@ -32,25 +34,40 @@ public class InteractionHint : MonoBehaviour
     {
         _boxCollider = GetComponent<BoxCollider>();
 
+        _interactable = transform.parent.GetComponent<IInteractable>();
+
+        if (_isUpdateSystem)
+        {
+            _boxCollider.enabled = false;
+            return;
+        }
+
         _boxCollider.size = new Vector3(_radiusHint, _radiusHint, _radiusHint);
         _boxCollider.isTrigger = true;
-        _interactable = transform.parent.GetComponent<IInteractable>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Player _))
+        if (!_isUpdateSystem && other.TryGetComponent(out Player _))
             _isRange = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent(out Player _))
+        if (!_isUpdateSystem && other.TryGetComponent(out Player _))
             _isRange = false;
     }
 
     public void LateUpdate()
     {
+        if(_isUpdateSystem)
+        {
+            if((Player.Instance.transform.position - transform.position).sqrMagnitude <= _radiusHint * _radiusHint)
+                _isRange = true;
+            else
+                _isRange = false;
+        }
+
         if (!_isRange && _circleImage.color.a == 0)
         {
             _addCircleImage.color = OddAlpha(_addCircleImage.color, _speedDown);

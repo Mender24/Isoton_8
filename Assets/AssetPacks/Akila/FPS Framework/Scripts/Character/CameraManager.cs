@@ -110,6 +110,14 @@ namespace Akila.FPSFramework
             cameraShaker.Shake(multiplier);
         }
 
+        public void ShakeCameras(float multiplier, float roughness, float fadeInTime, float fadeOutTime)
+        {
+            if (cameraShaker == null)
+                return;
+
+            cameraShaker.Shake(multiplier, roughness, fadeInTime, fadeOutTime);
+        }
+
         public void ShakeCameras(float multiplier, float roughness, float fadeOutTime)
         {
             if (cameraShaker == null)

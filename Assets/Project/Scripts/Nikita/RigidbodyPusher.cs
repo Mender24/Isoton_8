@@ -57,6 +57,7 @@ public class RigidbodyPusherWithDelay : MonoBehaviour
     // Метод для вызова из других скриптов или событий
     public void Push()
     {
+        rb.isKinematic = false; // Убедимся, что Rigidbody не кинематический
         if (rb == null || hasPushed) return;
 
         hasPushed = true;
