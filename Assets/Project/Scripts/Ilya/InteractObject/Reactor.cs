@@ -21,7 +21,6 @@ public class Reactor : MonoBehaviour, IDamageable
 
     [SerializeField] private GameObject _shieldObject;
     [SerializeField] private GameObject _reactorObject;
-    [SerializeField] private GameObject _doorEndLocation;
 
     private int _batteryHealth;
     private float _health;
@@ -58,7 +57,8 @@ public class Reactor : MonoBehaviour, IDamageable
     }
     private void Update()
     {
-        showingText.text = _currentIndexLiveBattery.ToString();
+        if(showingText != null)
+            showingText.text = _currentIndexLiveBattery.ToString();
     }
 
     private IEnumerator Start()
@@ -128,7 +128,6 @@ public class Reactor : MonoBehaviour, IDamageable
         while (_batterys[_currentIndexLiveBattery].IsDead)
         {
             _currentIndexLiveBattery++;
-            
 
             if (_currentIndexLiveBattery >= _batterys.Count)
                 _currentIndexLiveBattery = 0;
@@ -151,13 +150,16 @@ public class Reactor : MonoBehaviour, IDamageable
     {
         yield return new WaitForSeconds(_timeBeforeOpenShield);
 
-        Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
-
-        while (_shieldObject.transform.position != target)
+        if(_shieldObject != null)
         {
-            _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedMoveShield * Time.deltaTime);
+            Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
 
-            yield return null;
+            while (_shieldObject.transform.position != target)
+            {
+                _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedMoveShield * Time.deltaTime);
+
+                yield return null;
+            }
         }
     }
 

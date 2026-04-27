@@ -52,7 +52,6 @@ namespace Akila.FPSFramework
                 _interactable.OffInteraction();
 
             enterDoor.CloseDoor();
-            Debug.Log("EnterExitDoor " + exitDoor.name);
             exitDoor.OpenDoor();
         }
 
@@ -61,26 +60,22 @@ namespace Akila.FPSFramework
             if (_isUseForceDontOpenDoor)
                 return;
 
-            Debug.Log("EnterOpenDoor " + exitDoor.name);
             enterDoor.OpenDoor();
             exitDoor.CloseDoor();
         }
 
         public void ForceOpenEnterDoor()
         {
-            Debug.Log("ForceOpenEnterDoor " + exitDoor.name);
             enterDoor.OpenDoor();
         }
 
         public void ForceCloseEnterDoor()
         {
-            Debug.Log("ForceCloseEnterDoor " + exitDoor.name);
             enterDoor.CloseDoor();
         }
 
         public void ForceOpenExitDoor()
         {
-            Debug.Log("ForceOpenExitDoor " + exitDoor.name);
             exitDoor.OpenDoor();
         }
 
