@@ -16,6 +16,10 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     [SerializeField] private ParticleSystem _muzzleFlashPrimary = null;
     [SerializeField] private ParticleSystem _muzzleFlashSecondary = null;
     [SerializeField] private float _visionHeightForNonTurret = 1.75f;
+    [Tooltip("Куда метится LOS-луч по вертикали от центра капсулы игрока. 0.2 = чуть выше центра, чтобы перепрыгнуть укрытие по пояс")]
+    [SerializeField] private float _losTargetHeightOffset = 1.5f;
+    [Tooltip("Куда летит пуля по вертикали от центра капсулы игрока. 0 = центр (грудь/живот)")]
+    [SerializeField] private float _playerAimHeight = 0f;
 
     public bool  CanShoot    => !IsReloading && _config != null;
     internal bool GetUseDoubleBarrelTurret() => _useDoubleBarrelTurret;
@@ -111,14 +115,23 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
     private bool HasWeaponClearLineOfSight()
     {
-        Transform currentShotOrigin = _usePrimaryBarrel || !_useDoubleBarrelTurret
-            ? _shotOrigin
-            : _shotOriginSecondary;
+        if (_playerTransform == null) return true;
 
-        if (currentShotOrigin == null || _playerTransform == null) return true;
+        // Для не-турелей — луч из глаз бота (как в TryDealDamage и восприятии).
+        // Для турелей — из дула.
+        Vector3 origin;
+        if (_useDoubleBarrelTurret)
+        {
+            Transform barrel = _usePrimaryBarrel ? _shotOrigin : _shotOriginSecondary;
+            if (barrel == null) return true;
+            origin = barrel.position;
+        }
+        else
+        {
+            origin = transform.position + Vector3.up * _visionHeightForNonTurret;
+        }
 
-        Vector3 origin = currentShotOrigin.position;
-        Vector3 target = _playerTransform.position + Vector3.up * 1f;
+        Vector3 target = _playerTransform.position + Vector3.up * _losTargetHeightOffset;
         Vector3 dir    = (target - origin).normalized;
         float   dist   = Vector3.Distance(origin, target) + 1f;
 
@@ -156,7 +169,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         _grenadeModule?.OnBulletFired();
 
         Vector3 target = _playerTransform.position;
-        target.y += Random.Range(-_config.HeightSprayOffset, _config.HeightSprayOffset) + _config.YOffset;
+        target.y += _playerAimHeight + Random.Range(-_config.HeightSprayOffset, _config.HeightSprayOffset) + _config.YOffset;
         target.x += Random.Range(-_config.WidthSprayOffset,  _config.WidthSprayOffset)  + _config.XOffset;
 
         SpawnBullet(target);
