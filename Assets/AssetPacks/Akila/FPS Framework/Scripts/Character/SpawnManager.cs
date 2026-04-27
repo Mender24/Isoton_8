@@ -61,6 +61,8 @@ namespace Akila.FPSFramework
         {
             Scene scene = SceneManager.GetSceneByBuildIndex(indexNewScene);
 
+            Debug.Log("Scene Point: " + scene.name);
+
             GameObject SpawnPoints = scene.GetRootGameObjects()
                 .SelectMany(t => t.GetComponentsInChildren<Transform>(true))
                 .FirstOrDefault(x => x.gameObject.transform.name == NameSearchObjectToNewScene)?.gameObject;

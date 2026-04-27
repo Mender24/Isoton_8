@@ -282,7 +282,6 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
                     if (enemyHealth != null)
                     {
                         enemyHealth.Damage(_config.Damage, gameObject);
-                        enemyHealth.OnHitInChildren(new HitInfo(gameObject, rayHit, origin, dir));
                         hit = true;
                     }
                 }
