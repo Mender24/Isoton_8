@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyYapper : MonoBehaviour
@@ -8,23 +9,24 @@ public class EnemyYapper : MonoBehaviour
 
     private EnemyState _state;
     private float _timer;
+    private bool _start = false;
 
     private void Awake()
     {
         if (_audio == null)
             _audio = GetComponent<EnemyAudioController>();
-
-        var enemyBase = GetComponent<EnemyBase>();
-        if (enemyBase != null)
-            _state = enemyBase.State;
     }
 
     private void Start()
     {
+        var enemyBase = GetComponent<EnemyBase>();
+        if (enemyBase != null)
+            _state = enemyBase.State;
+
         if (_state != null)
             _state.OnAlertedChanged += OnAlertedChanged;
 
-        enabled = false;
+        _start = false;
     }
 
     private void OnDestroy()
@@ -35,12 +37,16 @@ public class EnemyYapper : MonoBehaviour
 
     private void Update()
     {
-        _timer -= Time.deltaTime;
-        if (_timer <= 0f)
+        if (_start)
         {
-            _audio.PlayRandomYap();
-            ResetTimer();
+            _timer -= Time.deltaTime;
+            if (_timer <= 0f)
+            {
+                _audio.PlayRandomYap();
+                ResetTimer();
+            }
         }
+
     }
 
     private void OnAlertedChanged(bool isAlerted)
@@ -48,11 +54,11 @@ public class EnemyYapper : MonoBehaviour
         if (isAlerted)
         {
             ResetTimer();
-            enabled = true;
+            _start = true;
         }
         else
         {
-            enabled = false;
+            _start = false;
         }
     }
 
