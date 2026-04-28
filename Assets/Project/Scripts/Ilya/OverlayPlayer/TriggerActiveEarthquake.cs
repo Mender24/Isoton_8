@@ -1,6 +1,5 @@
 using Akila.FPSFramework;
 using System;
-using System.Globalization;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
@@ -10,13 +9,19 @@ public class TriggerActiveEarthquake : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.TryGetComponent(out Player _))
-        {
-            BoxCollider boxCollider = GetComponent<BoxCollider>();
-            boxCollider.enabled = false;
+        if (other.TryGetComponent(out Player _))
+            ActivateEffect();
+    }
 
-            Earthquake.Instance.ShakeCamera(_dataCameraShake);
-        }
+    public void ActivateEffect()
+    {
+        BoxCollider boxCollider = GetComponent<BoxCollider>();
+        boxCollider.enabled = false;
+
+        if (Earthquake.Instance == null)
+            return;
+
+        Earthquake.Instance.ShakeCamera(_dataCameraShake);
     }
 }
 
