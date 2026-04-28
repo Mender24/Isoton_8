@@ -30,6 +30,11 @@ public class BunkerDoor : MonoBehaviour
     private void Start()
     {
         _targetPosition = pivot_hinge.position;
+
+        if(isOpenInitially)
+        {
+            OpenDoor();
+        }
     }
 
     private void Update()
