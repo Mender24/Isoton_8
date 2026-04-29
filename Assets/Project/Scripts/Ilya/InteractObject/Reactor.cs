@@ -35,10 +35,11 @@ public class Reactor : MonoBehaviour, IDamageable
     public bool DeadConfirmed { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public GameObject DamageSource { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
-    private UnityEvent onDeath = new UnityEvent();
+    private UnityEvent onDeath = new();
 
     public TextMeshPro showingText;
     public UnityEvent OnDeath => onDeath;
+    public UnityEvent ReactorDestroyed;
 
     public event Action OnBatteryDestroy;
 
@@ -170,8 +171,9 @@ public class Reactor : MonoBehaviour, IDamageable
         _reactorObject.SetActive(false);
 
         OnDeath?.Invoke();
+        ReactorDestroyed?.Invoke();
 
-        if(_doorControllerSceneChanger != null)
+        if (_doorControllerSceneChanger != null)
             _doorControllerSceneChanger.ForceOpenEnterDoor();
     }
 }

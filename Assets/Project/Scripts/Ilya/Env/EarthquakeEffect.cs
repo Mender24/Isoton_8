@@ -21,6 +21,11 @@ public class EarthquakeEffect : MonoBehaviour
                 _effects.Add(particleSystem);
     }
 
+    public void ActivateEffect()
+    {
+        StartEffect(_timeDuration);
+    }
+
     private void StartEffect(float duration)
     {
         StopAllCoroutines();

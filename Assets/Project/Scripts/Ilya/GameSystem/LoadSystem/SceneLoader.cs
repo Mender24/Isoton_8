@@ -403,12 +403,14 @@ public class SceneLoader : MonoBehaviour
 
     private void OpenEnterDoorTransition(DoorControllerSceneChanger doorController)
     {
-        doorController.EnterOpenDoor();
+        if(doorController != null)
+            doorController.EnterOpenDoor();
     }
 
     private void OpenExitDoorTransition(DoorControllerSceneChanger doorController)
     {
-        doorController.EnterExitDoor();
+        if (doorController != null)
+            doorController.EnterExitDoor();
     }
 
     private DoorControllerSceneChanger FindDoorControolerInScene(int sceneIndex)
@@ -428,12 +430,14 @@ public class SceneLoader : MonoBehaviour
     private int _nextEndScene = -1;
     private int _currentCountLoadedScene;
 
+    private bool _isLateLoadingSystem = false;
     private bool _isProgressLoadingScenes = false;
     private bool _isProgressAsyncLoadingScene = false;
     private bool _isProgressUnloadingScenes = false;
     private bool _isScenesLoaded = false;
     private SpeedType _speedType = SpeedType.Slowly;
 
+    public bool IsLateLoadingSystem => _isLateLoadingSystem;
     public bool IsProgressLoadingScenes => _isProgressLoadingScenes;
     public bool IsProgressAsyncLoadingScene => _isProgressAsyncLoadingScene;
     public bool IsProgressUnloadingScenes => _isProgressUnloadingScenes;
@@ -442,6 +446,7 @@ public class SceneLoader : MonoBehaviour
 
     public void LateLoadScene()
     {
+        _isLateLoadingSystem = true;
         _currentCountLoadedScene = _loadedScene.Count;
         _currentEndTransition = _nextSceneIndex;
 
@@ -464,7 +469,7 @@ public class SceneLoader : MonoBehaviour
         if (_isDebug)
         {
             Debug.Log("Start LateLoadScene");
-            Debug.Log("_currentEndTransition: " + _currentEndTransition + " _nextEndScene: " + _nextEndScene);
+            Debug.Log("CurrentEndTransition: " + _currentEndTransition + " _nextEndScene: " + _nextEndScene);
             Debug.Log("Count loaded scene: " + _currentCountLoadedScene);
         }
 
@@ -489,6 +494,7 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(StartLateUnloadScenes());
 
         _isScenesLoaded = false;
+        _isLateLoadingSystem = false;
     }
 
     private IEnumerator StartLateLoadScene()
