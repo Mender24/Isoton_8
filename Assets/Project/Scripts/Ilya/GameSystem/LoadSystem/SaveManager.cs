@@ -8,7 +8,9 @@ public class SaveManager : MonoBehaviour
 
     public static SaveManager Instance => _instance;
 
-    [SerializeField] private static string _sceneNameSave = "LastScene";
+    [SerializeField] private static string _sceneNameKey = "LastScene";
+    [Space]
+    [SerializeField] private static string _difficultyKey = "GameDifficulty";
 
     private void Awake()
     {
@@ -28,12 +30,12 @@ public class SaveManager : MonoBehaviour
         if (isDebug)
             Debug.Log("Save scene: " + name);
 
-        PlayerPrefs.SetString(_sceneNameSave, name);
+        PlayerPrefs.SetString(_sceneNameKey, name);
     }
 
     public static string GetLastSceneName()
     {
-        return PlayerPrefs.GetString(_sceneNameSave);
+        return PlayerPrefs.GetString(_sceneNameKey);
     }
 
     public static void SaveWeaponPlayer(Actor player, bool isDebug = false)
@@ -55,6 +57,16 @@ public class SaveManager : MonoBehaviour
             if (isDebug)
                 Debug.Log("Weapon not found");
         }
+    }
+
+    public static void SetDifficulty(GameDifficulty difficulty)
+    {
+        PlayerPrefs.SetInt(_difficultyKey, (int)difficulty);
+    }
+
+    public static GameDifficulty GetDifficulty()
+    {
+        return (GameDifficulty)PlayerPrefs.GetInt(_difficultyKey);
     }
 
     public static void Save()

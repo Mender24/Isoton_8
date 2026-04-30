@@ -1,4 +1,3 @@
-using Akila.FPSFramework;
 using UnityEngine;
 
 public class DifficultyManager : MonoBehaviour
@@ -13,13 +12,13 @@ public class DifficultyManager : MonoBehaviour
 
     public static GameDifficulty CurrentDifficulty { get; private set; }
 
-    public static float PlayerHealthMult   => Instance != null ? Instance._currentLevel.playerHealthMult   : 1f;
-    public static float PlayerRegenMult    => Instance != null ? Instance._currentLevel.playerRegenMult    : 1f;
-    public static float EnemyHealthMult    => Instance != null ? Instance._currentLevel.enemyHealthMult    : 1f;
-    public static float EnemyDamageMult    => Instance != null ? Instance._currentLevel.enemyDamageMult    : 1f;
-    public static float WeaponDamageMult   => Instance != null ? Instance._currentLevel.weaponDamageMult   : 1f;
+    public static float PlayerHealthMult => Instance != null ? Instance._currentLevel.playerHealthMult : 1f;
+    public static float PlayerRegenMult => Instance != null ? Instance._currentLevel.playerRegenMult : 1f;
+    public static float EnemyHealthMult => Instance != null ? Instance._currentLevel.enemyHealthMult : 1f;
+    public static float EnemyDamageMult => Instance != null ? Instance._currentLevel.enemyDamageMult : 1f;
+    public static float WeaponDamageMult => Instance != null ? Instance._currentLevel.weaponDamageMult : 1f;
     public static float AmmoDropChanceMult => Instance != null ? Instance._currentLevel.ammoDropChanceMult : 1f;
-    public static float AmmoBoxCountMult   => Instance != null ? Instance._currentLevel.ammoBoxCountMult   : 1f;
+    public static float AmmoBoxCountMult => Instance != null ? Instance._currentLevel.ammoBoxCountMult : 1f;
 
     private void Awake()
     {
@@ -42,14 +41,20 @@ public class DifficultyManager : MonoBehaviour
     public static void SetDifficulty(GameDifficulty difficulty)
     {
         CurrentDifficulty = difficulty;
-        PlayerPrefs.SetInt(PrefsKey, (int)difficulty);
-        PlayerPrefs.Save();
+
+        SaveManager.SetDifficulty(difficulty);
 
         if (Instance != null)
         {
             Instance._currentLevel = Instance._settings.GetLevel(difficulty);
             ApplyWeaponDamageModifier();
         }
+    }
+
+    public static void LoadDifficulty()
+    {
+        Debug.Log(SaveManager.GetDifficulty());
+        SetDifficulty(SaveManager.GetDifficulty());
     }
 
     public void SetEasyDifficulty()

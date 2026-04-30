@@ -12,6 +12,10 @@ public class ButtonLoadGame : MonoBehaviour
         if(_isActive)
         {
             _isActive = false;
+
+            if (!_isNewGame)
+                DifficultyManager.LoadDifficulty();
+
             SceneLoader.instance.LoadScenes(true, _forceSceneLoad, !_isNewGame);
         }
     }

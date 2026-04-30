@@ -62,7 +62,7 @@ public class InteractionHint : MonoBehaviour
     {
         if(_isUpdateSystem)
         {
-            if((Player.Instance.transform.position - transform.position).sqrMagnitude <= _radiusHint * _radiusHint)
+            if(Player.Instance != null && (Player.Instance.transform.position - transform.position).sqrMagnitude <= _radiusHint * _radiusHint)
                 _isRange = true;
             else
                 _isRange = false;
