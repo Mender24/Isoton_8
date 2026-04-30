@@ -358,12 +358,6 @@ public class SceneLoader : MonoBehaviour
 
     private void InitPostLoadScene(bool isFirstSceneLoad)
     {
-        if (!_isFirstLoad) //Use save and create weapons player
-        {
-            _isFirstLoad = true;
-            SpawnManager.Instance.LoadPlayerWeapon(_player.Inventory);
-        }
-
         SpawnManager.Instance.UpdateSpawnPoint(_currentSceneIndex);
 
         SoundManager.Instance.ChangeStateSystemRandomSound(_isUseRandomSystemSound);
@@ -381,6 +375,12 @@ public class SceneLoader : MonoBehaviour
         _isMovePostLoadScene = true;
 
         Player.Instance.gameObject.SetActive(true);
+
+        if (!_isFirstLoad) //Use save and create weapons player
+        {
+            _isFirstLoad = true;
+            SpawnManager.Instance.LoadPlayerWeapon(_player.Inventory);
+        }
 
         LockCursor();
 

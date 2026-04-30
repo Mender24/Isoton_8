@@ -8,15 +8,13 @@ public class InGameUI : MonoBehaviour
     [SerializeField] private InventoryUI _inventoryUI;
     [SerializeField] private Inventory _inventory;
 
-
-    private void Start()
+    private void Awake()
     {
         Init();
     }
+
     private void Init()
     {
         _inventoryUI.Init(_inventory);
     }
-
-   
 }

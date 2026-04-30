@@ -206,8 +206,13 @@ namespace Akila.FPSFramework
                     //Debug.Log("Load weapon: " + PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
+                    inventory.AddItem(newWeapon);
+                    //newWeapon.transform.parent = inventory.transform;
                 }
             }
+
+            if(inventory.items.Count - 1 > 0)
+                inventory.Switch(inventory.items.Count - 1);
         }
 
         public Transform GetPlayerSpawnPoint(int sideId)

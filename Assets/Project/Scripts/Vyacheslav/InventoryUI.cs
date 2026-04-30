@@ -42,6 +42,12 @@ public class InventoryUI : MonoBehaviour
 
     private void UpdateWeaponeCurrent(int index)
     {
+        if (Player.Instance.Actor.Damageable.Health <= 0)
+        {
+            SetActive(false);
+            return;
+        }
+
         if (index >= _viewNotes.Count)
         {
             index = _viewNotes.Count - 1;

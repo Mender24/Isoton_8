@@ -72,7 +72,7 @@ namespace Akila.FPSFramework
                 }
             }
 
-            Switch(0);
+            //Switch(0);
         }
 
 
@@ -224,6 +224,9 @@ namespace Akila.FPSFramework
             RefreshItemsList();
 
             // Store the current index for reference
+            if(currentItemIndex != index)
+                OnChangeWeapone?.Invoke(index);
+
             currentItemIndex = index;
 
             // Determine if we should activate the default item
