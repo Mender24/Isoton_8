@@ -114,8 +114,10 @@ public class LateActiveObject : MonoBehaviour
     {
         if (_postLoadActive != null)
         {
-            while (SceneLoader.instance.IsProgressUnloadingScenes)
+            while (SceneLoader.instance.IsScenesLoading)
                 yield return null;
+
+            Debug.Log("ActivePostLoad");
 
             _postLoadActive.gameObject.SetActive(true);
             yield return null;

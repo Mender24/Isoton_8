@@ -436,6 +436,7 @@ public class SceneLoader : MonoBehaviour
     private bool _isProgressAsyncLoadingScene = false;
     private bool _isProgressUnloadingScenes = false;
     private bool _isScenesLoaded = false;
+    private bool _isScenesLoading = false;
     private SpeedType _speedType = SpeedType.Slowly;
 
     public bool IsLateLoadingSystem => _isLateLoadingSystem;
@@ -443,6 +444,7 @@ public class SceneLoader : MonoBehaviour
     public bool IsProgressAsyncLoadingScene => _isProgressAsyncLoadingScene;
     public bool IsProgressUnloadingScenes => _isProgressUnloadingScenes;
     public bool IsScenesLoaded => _isScenesLoaded;
+    public bool IsScenesLoading => _isScenesLoading;
     public SpeedType SpeedType => _speedType;
 
     public void LateLoadScene()
@@ -491,6 +493,7 @@ public class SceneLoader : MonoBehaviour
 
         StartCoroutine(StartLateUnloadScenes());
 
+        _isScenesLoading = false;
         _isScenesLoaded = false;
         _isLateLoadingSystem = false;
     }
@@ -499,6 +502,7 @@ public class SceneLoader : MonoBehaviour
     {
         _isProgressLoadingScenes = true;
         _isProgressAsyncLoadingScene = true;
+        _isScenesLoading = true;
 
         _speedType = SpeedType.Slowly;
 
