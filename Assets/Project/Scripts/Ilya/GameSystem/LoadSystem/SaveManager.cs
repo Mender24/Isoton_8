@@ -42,20 +42,35 @@ public class SaveManager : MonoBehaviour
     {
         try
         {
+            Inventory inventory = player.GetComponentInChildren<Inventory>();
+
+            foreach (var col in inventory.collectables)
+            {
+                PlayerPrefs.SetInt(col.identifier.displayName, col.count);
+
+                if (isDebug)
+                    Debug.Log("Save Ammo: " + col.identifier.displayName + "Count - " + col.count);
+            }
+
             Firearm[] weapons = player.GetComponentsInChildren<Firearm>(true);
 
             for (int i = 0; i < weapons.Length; i++)
             {
                 PlayerPrefs.SetString("Weapon" + i, weapons[i].Name);
+                int countAmmo = PlayerPrefs.GetInt(weapons[i].ammoProfile.identifier.displayName) + weapons[i].remainingAmmoCount;
+                PlayerPrefs.SetInt(weapons[i].ammoProfile.identifier.displayName, countAmmo);
 
                 if (isDebug)
+                {
+                    Debug.Log("Save Ammo: " + weapons[i].ammoProfile.identifier.displayName + " - " + countAmmo);
                     Debug.Log("Save Weapon" + i.ToString() + " " + weapons[i].Name);
+                }
             }
         }
         catch (NullReferenceException)
         {
             if (isDebug)
-                Debug.Log("Weapon not found");
+                Debug.Log("Weapon not found || Inventory not found");
         }
     }
 

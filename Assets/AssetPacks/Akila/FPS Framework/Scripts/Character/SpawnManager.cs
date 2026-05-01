@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 
 namespace Akila.FPSFramework
 {
@@ -15,6 +17,7 @@ namespace Akila.FPSFramework
         public InventoryItem _prefab;
         [SerializeField] private List<InventoryItem> _itemsPrefab = new();
         [SerializeField] private int _maxWeaponCount = 3;
+        [SerializeField] private float _delayToLoadAmmo = 0.2f;
 
         [FormerlySerializedAs("spwanableObjects")]
         public List<SpwanableObject> spawnableObjects = new List<SpwanableObject>();
@@ -203,16 +206,43 @@ namespace Akila.FPSFramework
             {
                 if (PlayerPrefs.HasKey("Weapon" + i))
                 {
-                    //Debug.Log("Load weapon: " + PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem prefab = _itemsPrefab.FirstOrDefault(x => x.Name == PlayerPrefs.GetString("Weapon" + i));
                     InventoryItem newWeapon = Instantiate(prefab, inventory.transform);
                     inventory.AddItem(newWeapon);
-                    //newWeapon.transform.parent = inventory.transform;
                 }
             }
 
             if(inventory.items.Count - 1 > 0)
                 inventory.Switch(inventory.items.Count - 1);
+
+            StartCoroutine(LoadAmmo());
+        }
+
+        private IEnumerator LoadAmmo()
+        {
+            yield return new WaitForSeconds(_delayToLoadAmmo);
+
+            Firearm[] weapons = Player.Instance.GetComponentsInChildren<Firearm>(true);
+
+            foreach(Firearm weapon in weapons)
+            {
+                int ammoCount = PlayerPrefs.GetInt(weapon.ammoProfile.identifier.displayName);
+
+                weapon.remainingAmmoCount = ammoCount >= weapon.magazineCapacity ? weapon.magazineCapacity : ammoCount;
+
+                if (ammoCount >= weapon.magazineCapacity)
+                {
+                    weapon.remainingAmmoCount = weapon.magazineCapacity;
+                    ammoCount -= weapon.magazineCapacity;
+                }
+                else
+                {
+                    weapon.remainingAmmoCount = ammoCount;
+                    ammoCount = 0;
+                }
+
+                weapon.ammoProfile.count = ammoCount;
+            }
         }
 
         public Transform GetPlayerSpawnPoint(int sideId)

@@ -19,6 +19,8 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private float _timeWaitNextLoad = 2f;
     [SerializeField] private float _timeWaitUnloadScene = 2f;
     [Space]
+    [SerializeField] private float _timeWaitToSaveDataPlayer = 0.5f;
+    [Space]
     [SerializeField] private bool _isDebug = false;
     [SerializeField] private List<string> _sceneNames = new();
     [SerializeField] private string _transitionName = "Transition";
@@ -125,9 +127,6 @@ public class SceneLoader : MonoBehaviour
         }
 
         IsInitPlayer = false;
-
-        if (isUseSave) // use save
-            StartCoroutine(SaveDataPlayer());
 
         StartLoadScenes(isFirstSceneLoad); // main load system
     }
@@ -382,6 +381,9 @@ public class SceneLoader : MonoBehaviour
             SpawnManager.Instance.LoadPlayerWeapon(_player.Inventory);
         }
 
+        if(_isUseSave)
+            StartCoroutine(SaveDataPlayer());
+
         LockCursor();
 
         if (_isDebug)
@@ -390,8 +392,7 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator SaveDataPlayer()
     {
-        while (!IsInitPlayer)
-            yield return null;
+        yield return new WaitForSeconds(_timeWaitToSaveDataPlayer);
 
         SaveManager.SetLastSceneName(_sceneNames[_currentSceneIndex], _isDebug);
         SaveManager.SaveWeaponPlayer(_player.Actor, _isDebug);
@@ -482,9 +483,6 @@ public class SceneLoader : MonoBehaviour
 
         _currentSceneIndex = _currentEndTransition;
         _nextSceneIndex = _nextEndScene;
-
-        if(_isUseSave)
-            StartCoroutine(SaveDataPlayer());
 
         while (_isProgressLoadingScenes)
             yield return null;
