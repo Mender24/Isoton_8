@@ -21,6 +21,8 @@ namespace Akila.FPSFramework
 
         [Tooltip("Particle system effects that play when chambering a bullet.")]
         public ParticleSystem chamberingEffects;
+        [Space]
+        public bool _isInfinityAmmo = false;
 
         [Tooltip("Events related to this firearm."), Space]
         public FirearmEvents events;
@@ -1413,7 +1415,7 @@ namespace Akila.FPSFramework
                 int ammoNeeded = magazineCapacity - remainingAmmoCount;
                 int ammoToReload = Mathf.Min(ammoProfile.count, ammoNeeded);
 
-                if (ammoProfile.identifier.displayName != "No Ammo Data")
+                if (!_isInfinityAmmo && ammoProfile.identifier.displayName != "No Ammo Data")
                 {
                     ammoProfile.count -= ammoToReload;
                 }
@@ -1439,7 +1441,9 @@ namespace Akila.FPSFramework
             }
 
             // Apply reload incrementally
-            ammoProfile.count -= amount;
+            if(!_isInfinityAmmo)
+                ammoProfile.count -= amount;
+
             remainingAmmoCount += amount;
 
             ammoProfile.count = Mathf.Clamp(ammoProfile.count, 0, int.MaxValue);
