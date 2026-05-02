@@ -474,6 +474,14 @@ MonoBehaviour:
   _enableReactionCooldown: 1
   _reactionCooldown: 2
   _explosive: {fileID: 0}
+  _alertNearbyOnDeath: 0
+  _deathAlertRadius: 15
+  _alertNearbyOnDamage: 0
+  _damageAlertRadius: 12
+  _damageAlertCooldown: 5
+  _enemyLayer:
+    serializedVersion: 2
+    m_Bits: 1048576
   OnDeathInternal:
     m_PersistentCalls:
       m_Calls: []
@@ -626,14 +634,19 @@ MonoBehaviour:
   _stepAudioSource: {fileID: 5764008810033203866}
   _attackAudioSource: {fileID: 0}
   _talkAudioSource: {fileID: 0}
-  _detectionClip: {fileID: 8300000, guid: 95cbe9fed8a0bed40883e7213f3a10f3, type: 3}
-  _alertClip: {fileID: 8300000, guid: 95cbe9fed8a0bed40883e7213f3a10f3, type: 3}
-  _deathClip: {fileID: 8300000, guid: 95cbe9fed8a0bed40883e7213f3a10f3, type: 3}
-  _reloadClip: {fileID: 0}
+  _detectionClips: []
+  _alertClips: []
+  _deathClips: []
+  _reloadClips: []
+  _grenadeOpenClips: []
+  _grenadeVoicelineClips: []
+  _grenadeBounceClips: []
   _attackClips:
-  - {fileID: 8300000, guid: 9d8dda217f9277a4190a9e722542bd4a, type: 3}
+  - AudioClip: {fileID: 0}
+    Volume: 1
   _hitClips:
-  - {fileID: 8300000, guid: ee945bf47a1d77342b0e71d7e4421695, type: 3}
+  - AudioClip: {fileID: 0}
+    Volume: 1
   _footstepClips:
   - AudioClip: {fileID: 8300000, guid: fbba893f83463ac4992a350af45979db, type: 3}
     Volume: 1
@@ -641,11 +654,16 @@ MonoBehaviour:
     Volume: 1
   - AudioClip: {fileID: 8300000, guid: e274db83990a5654a83aad107782ad37, type: 3}
     Volume: 1
-  _stepVolume: -1
-  _maxAttackPitchVariation: 0.2
   _namedClips:
-  - AudioClip: {fileID: 0}
-    Volume: 0
+  - Name: 
+    Clip:
+      AudioClip: {fileID: 0}
+      Volume: 1
+  _yapGroups: []
+  _globalYapCooldown: 5
+  _stepVolume: -1
+  _minStepInterval: 0.2
+  _maxAttackPitchVariation: 0.2
   _detectionCooldown: 30
 --- !u!114 &8728438565631679526
 MonoBehaviour:
