@@ -13,8 +13,8 @@ using UnityEngine.AI;
 ///   SeekingDropPoint — ползёт по потолку к позиции с прямой видимостью до пола
 ///   Panicking        — мечется по случайным точкам NavMesh при получении урона
 ///
-/// Не использует BehaviorGraphAgent — поведение полностью скриптованное.
-/// Активируется самостоятельно (Start). Сброс с потолка вызывается через TriggerDrop().
+/// Не использует BehaviorGraphAgent поведение полностью скриптованное.
+/// Активируется самостоятельно. Сброс с потолка вызывается через TriggerDrop().
 /// </summary>
 [RequireComponent(typeof(MeleeCombatModule))]
 [RequireComponent(typeof(CrawlerSurfaceAligner))]
@@ -176,7 +176,7 @@ public class ScriptedCeilingCrawler : EnemyBase
 
             case Phase.SeekingDropPoint:
                 _seekTimer      = 0f;
-                _seekCheckTimer = _seekCheckInterval; // check immediately on first tick
+                _seekCheckTimer = _seekCheckInterval;
                 BeginSeekDropPoint();
                 break;
 
@@ -244,7 +244,6 @@ public class ScriptedCeilingCrawler : EnemyBase
             return;
         }
 
-        // Fallback: directly below, still with LoS check
         Vector3 below = transform.position + Vector3.down * 6f;
         if (NavMesh.SamplePosition(below, out NavMeshHit hit, 6f, NavMesh.AllAreas)
             && !Physics.Linecast(transform.position, hit.position, _obstacleLayer))
@@ -255,7 +254,6 @@ public class ScriptedCeilingCrawler : EnemyBase
             return;
         }
 
-        // No clear drop path from here — navigate on ceiling toward player
         Navigation.Agent.updatePosition = true;
         Navigation.Agent.isStopped      = false;
         _aligner.IsActive               = true;
@@ -447,7 +445,6 @@ public class ScriptedCeilingCrawler : EnemyBase
     {
         if (PlayerTransform == null) { EnterPhase(Phase.CeilingPatrol); return; }
 
-        // Move along the ceiling surface toward the position directly above the player
         Vector3 abovePlayer = new Vector3(
             PlayerTransform.position.x,
             transform.position.y,
@@ -484,7 +481,6 @@ public class ScriptedCeilingCrawler : EnemyBase
             return;
         }
 
-        // Player may have moved — refresh navigation target on ceiling
         Vector3 abovePlayer = new Vector3(
             PlayerTransform.position.x,
             transform.position.y,
@@ -546,7 +542,7 @@ public class ScriptedCeilingCrawler : EnemyBase
                 EnterPhase(Phase.Panicking);
                 break;
             case Phase.Panicking:
-                _panicTimer = _panicDuration; // reset timer if hit again
+                _panicTimer = _panicDuration;
                 break;
         }
     }
