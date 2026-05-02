@@ -1311,7 +1311,7 @@ MonoBehaviour:
     MaxVolume: 0.15
     IdLocation: 6
   - AudioClip: {fileID: 8300000, guid: c4ecc277e272b5d4d9354911dd9c4c85, type: 3}
-    MaxVolume: 0.15
+    MaxVolume: 0.063
     IdLocation: 8
   - AudioClip: {fileID: 8300000, guid: c4ecc277e272b5d4d9354911dd9c4c85, type: 3}
     MaxVolume: 0.15
@@ -1373,6 +1373,10 @@ MonoBehaviour:
   - NameAudioClip: Tryaska
     Clip:
       AudioClip: {fileID: 8300000, guid: 62d92d04e2516924b977ad5510298db3, type: 3}
+      Volume: 0.467
+  - NameAudioClip: Alarm_8
+    Clip:
+      AudioClip: {fileID: 8300000, guid: 099362c93323bf04cb02bdedbee739dd, type: 3}
       Volume: 0.467
 --- !u!114 &591814434
 MonoBehaviour:
@@ -1925,6 +1929,11 @@ PrefabInstance:
         type: 3}
       propertyPath: collectables.Array.data[1].m_limit
       value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 374009933901206597, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: collectables.Array.data[2].m_count
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1320913092677034065, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
@@ -4206,7 +4215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isNewGame: 1
-  _forceSceneLoad: 
+  _forceSceneLoad: Lvl5
 --- !u!1 &2121254960
 GameObject:
   m_ObjectHideFlags: 0
