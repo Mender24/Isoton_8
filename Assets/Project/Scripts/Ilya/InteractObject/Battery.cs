@@ -116,11 +116,14 @@ public class Battery : MonoBehaviour, IDamageable
 
         yield return StartCoroutine(OpenShieldObject());
 
-        yield return new WaitForSeconds(_timeShieldOpen);
+        if (!_isOpenShieldStart)
+        {
+            yield return new WaitForSeconds(_timeShieldOpen);
 
-        OnStartDownShield?.Invoke();
+            OnStartDownShield?.Invoke();
 
-        yield return StartCoroutine(CloseShieldObject());
+            yield return StartCoroutine(CloseShieldObject());
+        }
     }
 
     private IEnumerator OpenShieldObject()
