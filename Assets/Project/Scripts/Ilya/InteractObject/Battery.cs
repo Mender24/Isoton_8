@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class Battery : MonoBehaviour, IDamageable
 {
+    [SerializeField] private bool _isOpenShieldStart = false;
+    [Space]
     [SerializeField] private float _health = 100f;
     [SerializeField] private GameObject _modelBattery;
     [SerializeField] private GameObject _shieldObject;
@@ -32,6 +34,7 @@ public class Battery : MonoBehaviour, IDamageable
     public GameObject DamageSource { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public bool IsDead => _isDead;
 
+    public UnityEvent EndInteraction;
     public UnityEvent OnDeath => onDeath;
     public UnityEvent OnEndCooldown => onEndCooldown;
     public event Action OnStartUpShield;
@@ -42,6 +45,11 @@ public class Battery : MonoBehaviour, IDamageable
         if(_explosive != null)
         {
             _explosive.enabled = false;
+        }
+
+        if(_isOpenShieldStart)
+        {
+            OpenShield();
         }
     }
 
@@ -65,6 +73,7 @@ public class Battery : MonoBehaviour, IDamageable
             }
 
             Death();
+            EndInteraction?.Invoke();
         }
         else
         {

@@ -44,6 +44,11 @@ public class DrillController : MonoBehaviour
         }
     }
 
+    public void TakeDamage()
+    {
+        _currentHealth -= 1;
+    }
+
     private IEnumerator StartEventDeath()
     {
         Stopped?.Invoke();

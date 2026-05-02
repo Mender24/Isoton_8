@@ -47,18 +47,18 @@ public class BatteryAnim : MonoBehaviour
     private void ActivateWire()
     {
         if(_wire != null)
-        {
             _wire.ActivateIsoton();
+
+        if (_podium != null)
             _podium.ActivateIsoton();
-        }
     }
 
     private void DeactivateWire()
     {
         if (_wire != null)
-        {
             _wire.ActivateRubber();
+
+        if (_podium != null)
             _podium.ActivateRubber();
-        }
     }
 }
