@@ -45,7 +45,9 @@ public partial class CrawlerLeapAttackAction : Action
         _elapsed       = 0f;
         _attackStarted = false;
         _leapStart     = _crawler.transform.position;
-        _leapEnd       = _crawler.FindLandingPoint();
+
+        if (!_crawler.TryFindLandingPoint(out _leapEnd))
+            return Status.Failure;
 
         _crawler.Navigation.Agent.isStopped      = true;
         _crawler.Navigation.Agent.updatePosition = false;

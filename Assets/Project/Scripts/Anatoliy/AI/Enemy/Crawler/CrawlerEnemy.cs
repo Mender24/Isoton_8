@@ -242,6 +242,54 @@ public class CrawlerEnemy : EnemyBase
         return toPlayer.magnitude <= _ceilingAttackDist;
     }
 
+    public bool TryFindWallCeilingSafeSpot(out Vector3 result)
+    {
+        result = Vector3.zero;
+        float playerY = PlayerTransform != null ? PlayerTransform.position.y : 0f;
+
+        for (int i = 0; i < _navSearchAttempts; i++)
+        {
+            Vector3 candidate = Random.insideUnitSphere * _safeSpotRadius + transform.position;
+            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _safeSpotRadius, NavMesh.AllAreas)
+                && hit.position.y > playerY + _ceilingMinHeight
+                && !IsPositionVisibleToPlayer(hit.position))
+            {
+                result = hit.position;
+                return true;
+            }
+        }
+        return TryFindSafeNavPoint(out result);
+    }
+
+    // Returns true if there are no obstacles between from and to (direct line check).
+    public bool CanLeapTo(Vector3 from, Vector3 to)
+    {
+        Vector3 dir  = to - from;
+        float   dist = dir.magnitude;
+        if (dist < 0.01f) return true;
+        return !Physics.Raycast(from, dir / dist, dist, _obstacleLayer);
+    }
+
+    public bool TryFindLandingPoint(out Vector3 result)
+    {
+        result = transform.position;
+        if (PlayerTransform == null) return false;
+
+        for (int i = 0; i < _navSearchAttempts; i++)
+        {
+            Vector2 rand2D = Random.insideUnitCircle * _leapLandRadius;
+            Vector3 target = PlayerTransform.position + new Vector3(rand2D.x, 0f, rand2D.y);
+
+            if (NavMesh.SamplePosition(target, out NavMeshHit hit, 2f, NavMesh.AllAreas)
+                && CanLeapTo(transform.position, hit.position))
+            {
+                result = hit.position;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public bool TryFindDropZoneBeforePlayer(out Vector3 result)
     {
         result = transform.position;
@@ -262,44 +310,13 @@ public class CrawlerEnemy : EnemyBase
             Vector3 cand  = PlayerTransform.position + dir * dist;
 
             if (NavMesh.SamplePosition(cand, out NavMeshHit hit, 2f, NavMesh.AllAreas)
-                && Mathf.Abs(hit.position.y - playerY) < 0.5f)
+                && Mathf.Abs(hit.position.y - playerY) < 0.5f
+                && CanLeapTo(transform.position, hit.position))
             {
                 result = hit.position;
                 return true;
             }
         }
         return false;
-    }
-
-    public bool TryFindWallCeilingSafeSpot(out Vector3 result)
-    {
-        result = Vector3.zero;
-        float playerY = PlayerTransform != null ? PlayerTransform.position.y : 0f;
-
-        for (int i = 0; i < _navSearchAttempts; i++)
-        {
-            Vector3 candidate = Random.insideUnitSphere * _safeSpotRadius + transform.position;
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _safeSpotRadius, NavMesh.AllAreas)
-                && hit.position.y > playerY + _ceilingMinHeight
-                && !IsPositionVisibleToPlayer(hit.position))
-            {
-                result = hit.position;
-                return true;
-            }
-        }
-        return TryFindSafeNavPoint(out result);
-    }
-
-    public Vector3 FindLandingPoint()
-    {
-        if (PlayerTransform == null) return transform.position;
-
-        Vector2 rand2D = Random.insideUnitCircle.normalized * _leapLandRadius;
-        Vector3 target = PlayerTransform.position + new Vector3(rand2D.x, 0f, rand2D.y);
-
-        if (NavMesh.SamplePosition(target, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-            return hit.position;
-
-        return target;
     }
 }
