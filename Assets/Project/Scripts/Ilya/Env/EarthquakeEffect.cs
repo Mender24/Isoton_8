@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class EarthquakeEffect : MonoBehaviour
 {
+    [SerializeField] private bool _isIzolation = false;
     [SerializeField] private List<ParticleSystem> _effects;
     [SerializeField] private float _timeDuration = 11f;
 
     private void OnDestroy()
     {
-        Earthquake.Instance.StartEarthquake -= StartEffect;
+        if (!_isIzolation && Earthquake.Instance != null)
+            Earthquake.Instance.StartEarthquake -= StartEffect;
     }
 
     private void Start()
     {
-        Earthquake.Instance.StartEarthquake += StartEffect;
+        if(!_isIzolation && Earthquake.Instance != null)
+            Earthquake.Instance.StartEarthquake += StartEffect;
 
         foreach (Transform child in transform)
             if (child.TryGetComponent(out ParticleSystem particleSystem))
@@ -24,6 +27,18 @@ public class EarthquakeEffect : MonoBehaviour
     public void ActivateEffect()
     {
         StartEffect(_timeDuration);
+    }
+
+    public void InactiveEffect()
+    {
+        foreach (var effect in _effects)
+            effect.Stop();
+    }
+
+    public void PlayInfinityEffect()
+    {
+        foreach (var effect in _effects)
+            effect.Play();
     }
 
     private void StartEffect(float duration)

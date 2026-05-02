@@ -286,6 +286,14 @@ public class SoundManager : MonoBehaviour
         _scriptedAudioClipInName[name].Clip.PlayAudioClip(_scriptedAudioSourse);
     }
 
+    public void PlayScriptedOneShotSoundName(string name)
+    {
+        if (_scriptedAudioSourse == null || name == "")
+            return;
+
+        _scriptedAudioClipInName[name].Clip.PlayAudioClipOneShot(_scriptedAudioSourse);
+    }
+
     private void InitScriptedAudioClip()
     {
         _scriptedAudioClipInName = new();
