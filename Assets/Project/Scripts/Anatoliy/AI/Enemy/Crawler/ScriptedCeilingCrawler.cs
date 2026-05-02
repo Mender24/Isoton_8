@@ -5,20 +5,22 @@ using UnityEngine.AI;
 /// <summary>
 /// Скриптованный враг, ползающий по потолку.
 /// Логика:
-///   CeilingPatrol  — ходит по точкам патруля на потолке
-///   Dropping       — прыгает по дуге вниз рядом с игроком (триггер извне)
-///   Attacking      — преследует и атакует игрока ближнего боя
-///   Fleeing        — убегает от игрока в случайное безопасное место
-///   Returning      — ждёт, затем возвращается на потолок и возобновляет патруль
+///   CeilingPatrol    — ходит по точкам патруля на потолке
+///   Dropping         — прыгает по дуге вниз рядом с игроком (триггер извне)
+///   Attacking        — преследует и атакует игрока ближнего боя
+///   Fleeing          — убегает от игрока в случайное безопасное место
+///   Returning        — ждёт, затем возвращается на потолок и возобновляет патруль
+///   SeekingDropPoint — ползёт по потолку к позиции с прямой видимостью до пола
+///   Panicking        — мечется по случайным точкам NavMesh при получении урона
 ///
-/// Не использует BehaviorGraphAgent — поведение полностью скриптованное.
-/// Активируется самостоятельно (Start). Сброс с потолка вызывается через TriggerDrop().
+/// Не использует BehaviorGraphAgent поведение полностью скриптованное.
+/// Активируется самостоятельно. Сброс с потолка вызывается через TriggerDrop().
 /// </summary>
 [RequireComponent(typeof(MeleeCombatModule))]
 [RequireComponent(typeof(CrawlerSurfaceAligner))]
 public class ScriptedCeilingCrawler : EnemyBase
 {
-    private enum Phase { CeilingPatrol, Dropping, Attacking, Fleeing, Returning }
+    private enum Phase { CeilingPatrol, Dropping, Attacking, Fleeing, Returning, SeekingDropPoint, Panicking }
 
     [Header("Attack")]
     [SerializeField] private float _attackDuration  = 5f;
@@ -31,11 +33,23 @@ public class ScriptedCeilingCrawler : EnemyBase
     [SerializeField] private float _returnDelay     = 6f;
 
     [Header("Drop Arc")]
-    [SerializeField] private float _dropDuration    = 0.45f;
-    [SerializeField] private float _dropArcHeight   = 1.5f;
-    [SerializeField] private float _dropZoneMinDist = 1.5f;
-    [SerializeField] private float _dropZoneMaxDist = 3.0f;
-    [SerializeField] private int   _dropAttempts    = 20;
+    [SerializeField] private float     _dropDuration    = 0.45f;
+    [SerializeField] private float     _dropArcHeight   = 1.5f;
+    [SerializeField] private float     _dropZoneMinDist = 1.5f;
+    [SerializeField] private float     _dropZoneMaxDist = 3.0f;
+    [SerializeField] private int       _dropAttempts    = 20;
+
+    [Header("Obstacle Check")]
+    [SerializeField] private LayerMask _obstacleLayer;
+
+    [Header("Seek Drop Point")]
+    [SerializeField] private float _seekTimeout       = 8f;
+    [SerializeField] private float _seekCheckInterval = 0.5f;
+
+    [Header("Panic (on damage)")]
+    [SerializeField] private float _panicDuration   = 6f;
+    [SerializeField] private float _panicMoveRadius = 8f;
+    [SerializeField] private int   _panicAttempts   = 12;
 
     private Phase                _phase = Phase.CeilingPatrol;
     private MeleeCombatModule    _meleeCombat;
@@ -53,6 +67,11 @@ public class ScriptedCeilingCrawler : EnemyBase
 
     private float _returnTimer;
     private bool  _isNavigatingBack;
+
+    private float _seekTimer;
+    private float _seekCheckTimer;
+
+    private float _panicTimer;
 
     protected override void Awake()
     {
@@ -88,11 +107,13 @@ public class ScriptedCeilingCrawler : EnemyBase
 
         switch (_phase)
         {
-            case Phase.CeilingPatrol: TickPatrol();    break;
-            case Phase.Dropping:      TickDropping();  break;
-            case Phase.Attacking:     TickAttacking(); break;
-            case Phase.Fleeing:       TickFleeing();   break;
-            case Phase.Returning:     TickReturning(); break;
+            case Phase.CeilingPatrol:    TickPatrol();            break;
+            case Phase.Dropping:         TickDropping();          break;
+            case Phase.Attacking:        TickAttacking();         break;
+            case Phase.Fleeing:          TickFleeing();           break;
+            case Phase.Returning:        TickReturning();         break;
+            case Phase.SeekingDropPoint: TickSeekingDropPoint();  break;
+            case Phase.Panicking:        TickPanicking();         break;
         }
     }
 
@@ -152,6 +173,21 @@ public class ScriptedCeilingCrawler : EnemyBase
                 _isNavigatingBack = false;
                 Navigation.Stop();
                 break;
+
+            case Phase.SeekingDropPoint:
+                _seekTimer      = 0f;
+                _seekCheckTimer = _seekCheckInterval;
+                BeginSeekDropPoint();
+                break;
+
+            case Phase.Panicking:
+                _panicTimer = _panicDuration;
+                _aligner.IsActive = true;
+                Navigation.Agent.updatePosition = true;
+                Navigation.Agent.isStopped      = false;
+                Navigation.SetSpeed(Navigation.RunSpeed);
+                MoveToPanicTarget();
+                break;
         }
     }
 
@@ -197,26 +233,31 @@ public class ScriptedCeilingCrawler : EnemyBase
 
     private void BeginDrop()
     {
-        Navigation.Agent.isStopped       = true;
-        Navigation.Agent.updatePosition  = false;
-        _aligner.IsActive                = false;
+        Navigation.Agent.isStopped      = true;
+        Navigation.Agent.updatePosition = false;
+        _aligner.IsActive               = false;
 
-        if (!TryFindDropZone(out _dropEnd))
+        if (TryFindDropZone(out _dropEnd))
         {
-            Vector3 below = transform.position + Vector3.down * 6f;
-            if (!NavMesh.SamplePosition(below, out NavMeshHit hit, 6f, NavMesh.AllAreas))
-            {
-                Navigation.Agent.updatePosition = true;
-                Navigation.Agent.isStopped      = false;
-                _aligner.IsActive               = true;
-                EnterPhase(Phase.CeilingPatrol);
-                return;
-            }
-            _dropEnd = hit.position;
+            _dropStart   = transform.position;
+            _dropElapsed = 0f;
+            return;
         }
 
-        _dropStart   = transform.position;
-        _dropElapsed = 0f;
+        Vector3 below = transform.position + Vector3.down * 6f;
+        if (NavMesh.SamplePosition(below, out NavMeshHit hit, 6f, NavMesh.AllAreas)
+            && !Physics.Linecast(transform.position, hit.position, _obstacleLayer))
+        {
+            _dropEnd     = hit.position;
+            _dropStart   = transform.position;
+            _dropElapsed = 0f;
+            return;
+        }
+
+        Navigation.Agent.updatePosition = true;
+        Navigation.Agent.isStopped      = false;
+        _aligner.IsActive               = true;
+        EnterPhase(Phase.SeekingDropPoint);
     }
 
     private void TickDropping()
@@ -279,7 +320,8 @@ public class ScriptedCeilingCrawler : EnemyBase
             Vector3 cand  = PlayerTransform.position + d * dist;
 
             if (NavMesh.SamplePosition(cand, out NavMeshHit hit, 2f, NavMesh.AllAreas)
-                && Mathf.Abs(hit.position.y - playerY) < 0.5f)
+                && Mathf.Abs(hit.position.y - playerY) < 0.5f
+                && !Physics.Linecast(transform.position, hit.position, _obstacleLayer))
             {
                 result = hit.position;
                 return true;
@@ -372,6 +414,81 @@ public class ScriptedCeilingCrawler : EnemyBase
         }
     }
 
+    private void TickPanicking()
+    {
+        _panicTimer -= Time.deltaTime;
+
+        if (_panicTimer <= 0f)
+        {
+            EnterPhase(Phase.CeilingPatrol);
+            return;
+        }
+
+        if (Navigation.HasReachedDestination())
+            MoveToPanicTarget();
+    }
+
+    private void MoveToPanicTarget()
+    {
+        for (int i = 0; i < _panicAttempts; i++)
+        {
+            Vector3 cand = Random.insideUnitSphere * _panicMoveRadius + transform.position;
+            if (NavMesh.SamplePosition(cand, out NavMeshHit hit, _panicMoveRadius, NavMesh.AllAreas))
+            {
+                Navigation.MoveTo(hit.position, run: true);
+                return;
+            }
+        }
+    }
+
+    private void BeginSeekDropPoint()
+    {
+        if (PlayerTransform == null) { EnterPhase(Phase.CeilingPatrol); return; }
+
+        Vector3 abovePlayer = new Vector3(
+            PlayerTransform.position.x,
+            transform.position.y,
+            PlayerTransform.position.z);
+
+        if (NavMesh.SamplePosition(abovePlayer, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+            Navigation.MoveTo(hit.position, run: false);
+    }
+
+    private void TickSeekingDropPoint()
+    {
+        if (PlayerTransform == null) { EnterPhase(Phase.CeilingPatrol); return; }
+
+        _seekTimer      += Time.deltaTime;
+        _seekCheckTimer += Time.deltaTime;
+
+        if (_seekTimer >= _seekTimeout)
+        {
+            EnterPhase(Phase.CeilingPatrol);
+            return;
+        }
+
+        if (_seekCheckTimer < _seekCheckInterval) return;
+        _seekCheckTimer = 0f;
+
+        if (TryFindDropZone(out _dropEnd))
+        {
+            Navigation.Agent.isStopped      = true;
+            Navigation.Agent.updatePosition = false;
+            _aligner.IsActive               = false;
+            _dropStart   = transform.position;
+            _dropElapsed = 0f;
+            _phase       = Phase.Dropping;
+            return;
+        }
+
+        Vector3 abovePlayer = new Vector3(
+            PlayerTransform.position.x,
+            transform.position.y,
+            PlayerTransform.position.z);
+        if (NavMesh.SamplePosition(abovePlayer, out NavMeshHit navHit, 3f, NavMesh.AllAreas))
+            Navigation.MoveTo(navHit.position, run: false);
+    }
+
     private void NavigateBackToCeiling()
     {
         if (PatrolPoints == null || PatrolPoints.Count == 0)
@@ -398,6 +515,9 @@ public class ScriptedCeilingCrawler : EnemyBase
         _returnTimer      = 0f;
         _dropElapsed      = 0f;
         _attackTimer      = 0f;
+        _seekTimer        = 0f;
+        _seekCheckTimer   = 0f;
+        _panicTimer       = 0f;
 
         Navigation.Agent.updatePosition = true;
 
@@ -412,6 +532,19 @@ public class ScriptedCeilingCrawler : EnemyBase
     protected override void OnDamaged(float amount, GameObject source)
     {
         base.OnDamaged(amount, source);
+
+        switch (_phase)
+        {
+            case Phase.CeilingPatrol:
+            case Phase.Returning:
+            case Phase.Fleeing:
+            case Phase.SeekingDropPoint:
+                EnterPhase(Phase.Panicking);
+                break;
+            case Phase.Panicking:
+                _panicTimer = _panicDuration;
+                break;
+        }
     }
 
     protected override void OnDeath()

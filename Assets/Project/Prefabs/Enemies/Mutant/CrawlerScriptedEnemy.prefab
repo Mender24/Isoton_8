@@ -246,6 +246,14 @@ MonoBehaviour:
   _enableReactionCooldown: 1
   _reactionCooldown: 10000
   _explosive: {fileID: 0}
+  _alertNearbyOnDeath: 0
+  _deathAlertRadius: 15
+  _alertNearbyOnDamage: 0
+  _damageAlertRadius: 12
+  _damageAlertCooldown: 5
+  _enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
   OnDeathInternal:
     m_PersistentCalls:
       m_Calls: []
@@ -340,6 +348,7 @@ MonoBehaviour:
   _deathClips: []
   _reloadClips: []
   _grenadeOpenClips: []
+  _grenadeVoicelineClips: []
   _grenadeBounceClips: []
   _attackClips:
   - AudioClip: {fileID: 0}
@@ -355,9 +364,14 @@ MonoBehaviour:
   - AudioClip: {fileID: 8300000, guid: e274db83990a5654a83aad107782ad37, type: 3}
     Volume: 1
   _namedClips:
-  - AudioClip: {fileID: 0}
-    Volume: 0
+  - Name: 
+    Clip:
+      AudioClip: {fileID: 0}
+      Volume: 1
+  _yapGroups: []
+  _globalYapCooldown: 5
   _stepVolume: -1
+  _minStepInterval: 0.2
   _maxAttackPitchVariation: 0.2
   _detectionCooldown: 30
 --- !u!114 &1720635764721451876
@@ -454,12 +468,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 189d6c524adcccb41868bbfb834c3215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rotationSpeedMultiplier: 3
-  _linkSpeedMultiplier: 2
-  _showDebug: 0
   _surfaceLayers:
     serializedVersion: 2
     m_Bits: 270337
+  _rotationSpeedMultiplier: 3
+  _linkSpeedMultiplier: 2
+  _showDebug: 0
 --- !u!114 &7360628979022855765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,6 +518,14 @@ MonoBehaviour:
   _dropZoneMinDist: 1.5
   _dropZoneMaxDist: 3
   _dropAttempts: 20
+  _obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 270337
+  _seekTimeout: 8
+  _seekCheckInterval: 0.5
+  _panicDuration: 6
+  _panicMoveRadius: 8
+  _panicAttempts: 12
 --- !u!114 &2131816946872532695
 MonoBehaviour:
   m_ObjectHideFlags: 0
