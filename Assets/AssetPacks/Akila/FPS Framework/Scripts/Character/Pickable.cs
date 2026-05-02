@@ -239,7 +239,7 @@ namespace Akila.FPSFramework
                     }
                 }
             }
-
+            _isInstant = false;
             Destroy(gameObject);
         }
 

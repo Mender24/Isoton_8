@@ -75,6 +75,7 @@ public class InteractionHint : MonoBehaviour
         }
 
         if (!Player.Instance.InteractionsManager.IsDestroy 
+            && transform != null
             && transform.parent != null 
             && Player.Instance.InteractionsManager.CurrentInteractable != null
             && Player.Instance.InteractionsManager.CurrentInteractable.isInstant
