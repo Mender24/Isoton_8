@@ -13,6 +13,6 @@ public interface IEnemyAudio
     void PlayFootstep(int foot);
     void PlayNamedSound(string soundName);
     void PlayRandomNamedSound();
-    void PlayRandomYap();
+    bool PlayRandomYap();
     List<CellAudioClip> GetGrenadeBounceClips();
 }

@@ -42,8 +42,10 @@ public class EnemyYapper : MonoBehaviour
             _timer -= Time.deltaTime;
             if (_timer <= 0f)
             {
-                _audio.PlayRandomYap();
-                ResetTimer();
+                if (_audio.PlayRandomYap())
+                    ResetTimer();
+                else
+                    _timer = 1f;
             }
         }
 
