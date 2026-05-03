@@ -209,6 +209,7 @@ public class SceneLoader : MonoBehaviour
         _isProgressLoadingScenes = true;
         _isProgressUnloadingScenes = true;
         _isProgressAsyncLoadingScene = true;
+        _isScenesLoading = true;
 
         if (_loadedScene.Count > 1)
             yield return StartCoroutine(UnloadScenesAsync(_loadedScene.Count - 1));
@@ -239,6 +240,8 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator LoadScenesAsync(int startIndex, int count, bool isFirstSceneLoad, bool isLateLoadScene = false)
     {
+        _isScenesLoading = true;
+
         if (count <= 0)
             count = 1;
 
@@ -288,7 +291,10 @@ public class SceneLoader : MonoBehaviour
             Debug.Log("Loading scene complete");
 
         if (!isLateLoadScene)
+        {
             InitPostLoadScene(isFirstSceneLoad);
+            _isScenesLoading = false;
+        }
 
         SceneLoadingComplete?.Invoke();
     }
@@ -481,10 +487,10 @@ public class SceneLoader : MonoBehaviour
 
     public IEnumerator FinishLateLoadScene()
     {
-        _isProgressUnloadingScenes = true;
-
         _currentSceneIndex = _currentEndTransition;
         _nextSceneIndex = _nextEndScene;
+
+        _isProgressUnloadingScenes = true;
 
         while (_isProgressLoadingScenes)
             yield return null;
