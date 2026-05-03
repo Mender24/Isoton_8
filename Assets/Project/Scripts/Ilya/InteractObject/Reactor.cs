@@ -76,12 +76,12 @@ public class Reactor : MonoBehaviour, IDamageable
             _batterys[i].OnEndCooldown.AddListener(StartReactor);
         }
 
-        while(SceneLoader.instance.IsLoad)
+        while(SceneLoader.instance.IsScenesLoading)
             yield return null;
 
-        _doorControllerSceneChanger = SceneLoader.instance.GetDoorControllerNextTransition();
-
         yield return new WaitForSeconds(_timeWaitFirstStart);
+
+        _doorControllerSceneChanger = SceneLoader.instance.GetDoorControllerNextTransition();
 
         StartReactor();
     }
