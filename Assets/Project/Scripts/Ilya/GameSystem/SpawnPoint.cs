@@ -13,7 +13,7 @@ public class SpawnPoint : MonoBehaviour
         {
             BoxCollider bc = GetComponent<BoxCollider>();
             bc.enabled = false;
-            SpawnManager.Instance.WritePlayerWeapon(actor);
+            //SpawnManager.Instance.WritePlayerWeapon(actor);
             SpawnManager.Instance.SetNewSpawnPoint();
         }
     }
