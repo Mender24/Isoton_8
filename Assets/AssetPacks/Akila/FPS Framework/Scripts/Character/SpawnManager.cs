@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
-using UnityEngine.UIElements;
 
 namespace Akila.FPSFramework
 {
@@ -57,7 +56,8 @@ namespace Akila.FPSFramework
 
         public void SetNewSpawnPoint()
         {
-            _currentSpawnPointId++;
+            if (sides[0].points.Length > _currentSpawnPointId + 1)
+                _currentSpawnPointId++;
         }
 
         public void UpdateSpawnPoint(int indexNewScene)
@@ -72,14 +72,16 @@ namespace Akila.FPSFramework
             {
                 Transform[] newArray = SpawnPoints.GetComponentsInChildren<Transform>().Skip(1).ToArray();
                 sides[0].points = newArray;
-                _currentSpawnPointId = 0;
+
+                if (newArray.Length >= _currentSpawnPointId)
+                    _currentSpawnPointId = 0;
             }
         }
 
         public void MovePlayerStartPositionAndOn(Player player)
         {
-            player.transform.position = sides[0].points[0].position;
-            player.SetRotation(sides[0].points[0].rotation);
+            player.transform.position = sides[0].points[_currentSpawnPointId].position;
+            player.SetRotation(sides[0].points[_currentSpawnPointId].rotation);
         }
 
         public async void SpawnActor(IActor actorSelf, string actorObjName, float delay)
@@ -212,7 +214,7 @@ namespace Akila.FPSFramework
                 }
             }
 
-            if(inventory.items.Count - 1 > 0)
+            if (inventory.items.Count - 1 > 0)
                 inventory.Switch(inventory.items.Count - 1);
 
             StartCoroutine(LoadAmmo());
@@ -224,7 +226,7 @@ namespace Akila.FPSFramework
 
             Firearm[] weapons = Player.Instance.GetComponentsInChildren<Firearm>(true);
 
-            foreach(Firearm weapon in weapons)
+            foreach (Firearm weapon in weapons)
             {
                 int ammoCount = PlayerPrefs.GetInt(weapon.ammoProfile.identifier.displayName);
 
