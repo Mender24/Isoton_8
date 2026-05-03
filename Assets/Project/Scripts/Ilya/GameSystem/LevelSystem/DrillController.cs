@@ -23,6 +23,8 @@ public class DrillController : MonoBehaviour
     [SerializeField] private float _timeWaitBeforeStarting = 1f;
     [Space]
     [SerializeField] private float _timeWaitBeforeStartEffect = 1f;
+    [Space]
+    [SerializeField] private float _timeWaitBeforeEndInteraction = 2f;
 
     [SerializeField] private int _currentHealth = 3;
 
@@ -78,12 +80,14 @@ public class DrillController : MonoBehaviour
         
         StartCoroutine(LerpPith(startPitch));
 
-        InteractionEnded?.Invoke();
-
         yield return new WaitForSeconds(_timeWaitBeforeStartEffect);
 
         foreach (var particle in _particles)
             particle.Play();
+
+        yield return new WaitForSeconds(_timeWaitBeforeEndInteraction);
+
+        InteractionEnded?.Invoke();
     }
 
     private IEnumerator LerpPith(float target)
