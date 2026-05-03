@@ -19,19 +19,22 @@ public class DrillController : MonoBehaviour
     [SerializeField] private int _countRepeat = 5;
     [SerializeField] private float _timeWaitBeforeNextRepeat = 0.5f;
     [Space]
+    [SerializeField] private float _timeWaitBeforeStartNotificationAudio = 1.5f;
     [SerializeField] private string _notificationSoundName = "";
+    [Space]
     [SerializeField] private float _timeWaitBeforeStarting = 1f;
     [Space]
     [SerializeField] private float _timeWaitBeforeStartEffect = 1f;
     [Space]
     [SerializeField] private float _timeWaitBeforeEndInteraction = 2f;
-
+    [Space]
     [SerializeField] private int _currentHealth = 3;
 
     private bool _isDied = false;
 
     public UnityEvent InteractionStarted;
     public UnityEvent AlertStarted;
+    public UnityEvent AfterAlert;
     public UnityEvent InteractionEnded;
 
     public event Action Started;
@@ -55,6 +58,7 @@ public class DrillController : MonoBehaviour
     {
         Stopped?.Invoke();
         InteractionStarted?.Invoke();
+
         float startPitch = _drillAudio.pitch;
         Coroutine action = StartCoroutine(LerpPith(0));
 
@@ -64,12 +68,18 @@ public class DrillController : MonoBehaviour
         yield return new WaitForSeconds(_timeWaitBeforeAlert);
 
         AlertStarted?.Invoke();
+
         StartCoroutine(AudioRepeater(_alarmSoundName, _countRepeat, _timeWaitBeforeNextRepeat));
+
+        yield return new WaitForSeconds(_timeWaitBeforeStartNotificationAudio);
 
         if (SoundManager.Instance != null)
             SoundManager.Instance.PlayScriptedSoundName(_notificationSoundName);
 
+        AfterAlert?.Invoke();
+
         yield return new WaitForSeconds(_timeWaitBeforeStarting);
+
         Started?.Invoke();
 
         if (Earthquake.Instance != null)

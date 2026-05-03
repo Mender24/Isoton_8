@@ -16,6 +16,8 @@ public class LampsController : MonoBehaviour
 
     private float _baseIntensityColor = 0;
 
+    private bool _isOnLamps;
+
     private void Start()
     {
         foreach (Transform t in transform)
@@ -24,12 +26,19 @@ public class LampsController : MonoBehaviour
 
         _lights = transform.GetComponentsInChildren<Light>(true).ToList();
 
+        if (_lights[0].enabled == false || _lights[0].intensity < 0.01)
+            _isOnLamps = false;
+        else
+            _isOnLamps = true;
+
         _baseIntensityColor = _lights[0].intensity;
     }
 
     public void OffLamps()
     {
-        if(_isUseLerpColor)
+        _isOnLamps = false;
+
+        if (_isUseLerpColor)
         {
             StopAllCoroutines();
             StartCoroutine(LerpItensity(false));
@@ -45,6 +54,8 @@ public class LampsController : MonoBehaviour
 
     public void OnLamps()
     {
+        _isOnLamps = true;
+
         if (_isUseLerpColor)
         {
             StopAllCoroutines();
@@ -71,6 +82,15 @@ public class LampsController : MonoBehaviour
             light.color = _newColorLight;
     }
 
+    public void SetNewIntensity(float value)
+    {
+        _baseIntensityColor = value;
+
+        if(_isOnLamps)
+            foreach (Light light in _lights)
+                light.intensity = _baseIntensityColor;
+    }
+
     private IEnumerator LerpItensity(bool isUp)
     {
         float target;
@@ -85,7 +105,6 @@ public class LampsController : MonoBehaviour
         while (Mathf.Abs(_lights[0].intensity - target) > 0.001)
         {
             float newIntensity = Mathf.Lerp(_lights[0].intensity, target, (isUp ? _speedUpColor : _speedDownColor) * Time.deltaTime);
-            Debug.Log(newIntensity);
             foreach (Light light in _lights)
                 light.intensity = newIntensity;
 
@@ -102,7 +121,5 @@ public class LampsController : MonoBehaviour
                 
             yield return null;
         }
-
-        Debug.Log("end");
     }
 }
