@@ -95,7 +95,7 @@ public class TurretAudioController : MonoBehaviour, IEnemyAudio
     public void PlayHitSound()          { }
     public void PlayGrenadeOpenSound()  { }
     public void PlayGrenadeVoiceLine()  { }
-    public void PlayRandomYap()         { }
+    public bool PlayRandomYap()         { return false; }
     public void PlayFootstep(int foot)  { }
     public void PlayNamedSound(string soundName)  { }
     public void PlayRandomNamedSound()  { }

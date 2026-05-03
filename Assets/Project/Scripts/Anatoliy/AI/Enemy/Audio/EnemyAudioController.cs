@@ -39,6 +39,8 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     [Header("Cooldowns")]
     [SerializeField] private float _detectionCooldown = 30f;
 
+    private static float _sharedYapTimer;
+
     private float _detectionTimer;
     private float _globalYapTimer;
     private float _stepTimer;
@@ -77,6 +79,7 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
     {
         if (_detectionTimer > 0f) _detectionTimer -= Time.deltaTime;
         if (_globalYapTimer  > 0f) _globalYapTimer  -= Time.deltaTime;
+        if (_sharedYapTimer  > 0f) _sharedYapTimer  -= Time.deltaTime;
         if (_stepTimer       > 0f) _stepTimer       -= Time.deltaTime;
 
         foreach (var group in _yapGroups)
@@ -127,16 +130,16 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
         _namedClips[Random.Range(0, _namedClips.Count)].Clip?.PlayAudioClip(_talkAudioSource);
     }
 
-    public void PlayRandomYap()
+    public bool PlayRandomYap()
     {
-        if (_globalYapTimer > 0f || _yapGroups == null || _yapGroups.Count == 0) return;
+        if (_globalYapTimer > 0f || _sharedYapTimer > 0f || _yapGroups == null || _yapGroups.Count == 0) return false;
 
         float totalWeight = 0f;
         foreach (var group in _yapGroups)
             if (group.CooldownTimer <= 0f && group.Clips != null && group.Clips.Count > 0)
                 totalWeight += group.Weight;
 
-        if (totalWeight <= 0f) return;
+        if (totalWeight <= 0f) return false;
 
         float roll = Random.Range(0f, totalWeight);
         float accumulated = 0f;
@@ -148,11 +151,13 @@ public class EnemyAudioController : MonoBehaviour, IEnemyAudio
             if (roll <= accumulated) { picked = group; break; }
         }
 
-        if (picked == null) return;
+        if (picked == null) return false;
 
         picked.Clips[Random.Range(0, picked.Clips.Count)].PlayAudioClip(_talkAudioSource);
         picked.CooldownTimer = picked.GroupCooldown;
         _globalYapTimer = _globalYapCooldown;
+        _sharedYapTimer = _globalYapCooldown;
+        return true;
     }
 
     public List<CellAudioClip> GetGrenadeBounceClips() => _grenadeBounceClips;
