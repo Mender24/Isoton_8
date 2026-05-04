@@ -26,7 +26,8 @@ GameObject:
   - component: {fileID: 6551807137948163267}
   - component: {fileID: 2131816946872532695}
   - component: {fileID: 6103055296649925271}
-  m_Layer: 8
+  - component: {fileID: 442599738249575841}
+  m_Layer: 20
   m_Name: CrawlerScriptedEnemy
   m_TagString: Mutant
   m_Icon: {fileID: 0}
@@ -241,7 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxHealth: 100
   _ragdoll: {fileID: 8340635542236303388}
-  _disableCollidersDelay: 3
+  _disableCollidersDelay: 1
   _deactivateSelfDelay: 20
   _enableReactionCooldown: 1
   _reactionCooldown: 10000
@@ -339,22 +340,100 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98a19c42da298a04e9c9f61071346b83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioSource: {fileID: 3091757477924726191}
-  _stepAudioSource: {fileID: 4664163466873242426}
+  _audioSource: {fileID: 3338297853285613348, guid: 9968efd0673d4cc40b23787336733e21,
+    type: 3}
+  _stepAudioSource: {fileID: 5764008810033203866, guid: 9968efd0673d4cc40b23787336733e21,
+    type: 3}
   _attackAudioSource: {fileID: 0}
   _talkAudioSource: {fileID: 0}
-  _detectionClips: []
-  _alertClips: []
-  _deathClips: []
+  _detectionClips:
+  - AudioClip: {fileID: 8300000, guid: fda78e9fa896e1c4391ec21c947e6c29, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 5c07b7a8b39509848ace15fcd103a2ba, type: 3}
+    Volume: 0
+  _alertClips:
+  - AudioClip: {fileID: 8300000, guid: db3a0f16a8fe6424b9f0cebec921bcca, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 14b891308d1f0df449e62c8a05f49466, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: f4874b24084684e4c86f6daac1a2da98, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 8fc39b8ef219d5b45b2a3c947161ad1f, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 685437e0d7a910a44a5137af99ae570b, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: c5c3a0026a60d914f877edd4e73ff69e, type: 3}
+    Volume: 1
+  _deathClips:
+  - AudioClip: {fileID: 8300000, guid: 842e3ef44b8fe604881e9ed98d4a041f, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 7ae00db8c205eda458287f69b9a5bbd7, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 8914bf5c3b39eb64db795bb866fec162, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 6233888cc2701274b99a8684597c0ad1, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 90ccb6968a58ff942bcd18390db7b615, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: eebb9a1a68740924c9c50525241c0afc, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 0562489f9f9423b4ba515f2da847ef67, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: fce57fba2302159409f9feafd84a2a5c, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: a7ccb5c3d22707b4199bdb0b2bd7f894, type: 3}
+    Volume: 1
   _reloadClips: []
   _grenadeOpenClips: []
   _grenadeVoicelineClips: []
   _grenadeBounceClips: []
   _attackClips:
-  - AudioClip: {fileID: 0}
+  - AudioClip: {fileID: 8300000, guid: fee1f103a7050fa4cb8fb95d796a2a15, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: f71a6294dcd4c3749abbf072c6d7808c, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 72faff9bf902f4b48a921bf6ebe1e177, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: aadc0d4b261fd9d43b448df0c54449f5, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 01aa11f94b283ea4496b1d335263b62d, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 7b6875c68d0f9604fa4e4aaf3400ba26, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: fa5a723105c8a82478bc5ff44e140189, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 9ce71c012e9d55a428d371f00a7765ec, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 381d10c98069f594cb4ccc2eff84a2c4, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: ab6967a86e7d6e444a3e7ff28ae11f15, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 59caf2642e9ac8b43b9701bd62158d69, type: 3}
     Volume: 1
   _hitClips:
-  - AudioClip: {fileID: 0}
+  - AudioClip: {fileID: 8300000, guid: 6006a188e57773046b83f6f9bc4c211e, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 7185660c6fcb6bb4687c84869207e6a1, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 226ef7a2b0fbf674c8d05ff450f1d0d4, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 30cbb3e3dd200bd4ea804091387b220d, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 80b83d09965e721478fa23f1934d265c, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 0a34b72d58c6eec40af796a499b35a34, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: 1e5c902fa193c434292ec31851f36498, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: e2eca330ffc2ec34a9af67d5767cdcd2, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: d0c3f795a1f051e45abe0ae754bd8ff1, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: ac241e7080a6d854cb2fb51d3daeed13, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: e9fdf63e758ce4d45a199405251f31ec, type: 3}
+    Volume: 1
+  - AudioClip: {fileID: 8300000, guid: c95d3fd7898bb74458b05c9a25208151, type: 3}
     Volume: 1
   _footstepClips:
   - AudioClip: {fileID: 8300000, guid: fbba893f83463ac4992a350af45979db, type: 3}
@@ -368,7 +447,41 @@ MonoBehaviour:
     Clip:
       AudioClip: {fileID: 0}
       Volume: 1
-  _yapGroups: []
+  _yapGroups:
+  - Name: Default
+    Weight: 1
+    GroupCooldown: 3
+    Clips:
+    - AudioClip: {fileID: 8300000, guid: dc5a55fcb255ded4682c9cafa7e394fd, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 111cab53b35a6cf4cb6718346f973081, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 23dee8f8e4b68d34bad9e3176bc7a633, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: effb108b15e47e24d826710ef6f501ad, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 2b7f9b12f05674942a3c78a0fe54a8ed, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: d2f120b9853d55f4e89255f9ecb55fe2, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 08525bacacfa6b54d95b51652cedbcbb, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: ba595e06d0ecafb45a468fd0a34911b1, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 0a847e8d033c5d842bca0f990812c105, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 61e0b2a43a85f4242b3160269a762d89, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: ca8f752f96b77184097df390c7664bc8, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 0c8c96a2ccdb21d408b44c21fe071e45, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: f045447176ed79b4da5b8f0c47cdabec, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 6696b8721fb69b140adab114010d6602, type: 3}
+      Volume: 1
+    - AudioClip: {fileID: 8300000, guid: 89862327be430444b82d1d241a698df0, type: 3}
+      Volume: 1
   _globalYapCooldown: 5
   _stepVolume: -1
   _minStepInterval: 0.2
@@ -561,6 +674,21 @@ MonoBehaviour:
     type: 3}
   zOffset: 0.1
   destroyTime: 20
+--- !u!114 &442599738249575841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666818101253455073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5aa871988621c047bea04b44c219a34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audio: {fileID: 7881355624220041326}
+  _minInterval: 5
+  _maxInterval: 7
 --- !u!1 &6776858310548868598
 GameObject:
   m_ObjectHideFlags: 0

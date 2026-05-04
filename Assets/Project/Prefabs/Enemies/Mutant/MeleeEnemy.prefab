@@ -208,6 +208,7 @@ GameObject:
   - component: {fileID: 8728438565631679526}
   - component: {fileID: 5179190947981133274}
   - component: {fileID: -558298029783060973}
+  - component: {fileID: 4464495209203722805}
   m_Layer: 20
   m_Name: MeleeEnemy
   m_TagString: Mutant
@@ -285,7 +286,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7082755279810198532}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
   m_Name: 
@@ -469,12 +470,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxHealth: 170
   _ragdoll: {fileID: 5595360108150590718}
-  _disableCollidersDelay: 3
+  _disableCollidersDelay: 1
   _deactivateSelfDelay: 20
   _enableReactionCooldown: 1
   _reactionCooldown: 2
   _explosive: {fileID: 0}
-  _alertNearbyOnDeath: 0
+  _alertNearbyOnDeath: 1
   _deathAlertRadius: 15
   _alertNearbyOnDamage: 0
   _damageAlertRadius: 12
@@ -736,8 +737,8 @@ MonoBehaviour:
       AudioClip: {fileID: 0}
       Volume: 1
   _yapGroups:
-  - Name: 
-    Weight: 0
+  - Name: Default
+    Weight: 1
     GroupCooldown: 3
     Clips:
     - AudioClip: {fileID: 8300000, guid: dc5a55fcb255ded4682c9cafa7e394fd, type: 3}
@@ -859,6 +860,21 @@ MonoBehaviour:
     type: 3}
   zOffset: 0.1
   destroyTime: 20
+--- !u!114 &4464495209203722805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7082755279810198532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5aa871988621c047bea04b44c219a34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audio: {fileID: 4518943266319902803}
+  _minInterval: 5
+  _maxInterval: 7
 --- !u!1001 &832731323262603169
 PrefabInstance:
   m_ObjectHideFlags: 0
