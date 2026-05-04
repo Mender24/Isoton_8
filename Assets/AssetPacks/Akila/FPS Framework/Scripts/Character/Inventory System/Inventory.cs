@@ -103,9 +103,13 @@ namespace Akila.FPSFramework
             if (items.Count == 0) currentItemIndex = -1;
 
             //Ensure the item index wraps around correctly, staying within the bounds of the list
-            if (currentItemIndex > items.ToArray().Length - 1) currentItemIndex = 0;
+            if (currentItemIndex > items.ToArray().Length - 1)
+            {
+                currentItemIndex = 0;
+                OnChangeWeapone?.Invoke(currentItemIndex);
+            }
 
-            if (!_defaultItem)
+                if (!_defaultItem)
             {
                 if (currentItemIndex < 0) currentItemIndex = items.ToArray().Length - 1;
             }
@@ -225,7 +229,9 @@ namespace Akila.FPSFramework
 
             // Store the current index for reference
             if(currentItemIndex != index)
+            {
                 OnChangeWeapone?.Invoke(index);
+            }
 
             currentItemIndex = index;
 
