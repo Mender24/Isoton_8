@@ -35,6 +35,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     private IEnemyAudio        _audio;
     private EnemyDebugger      _debugger;
     private GrenadeThrowModule _grenadeModule;
+    private EnemyPerception    _perception;
     [Tooltip("Стрелять строго по направлению ствола. Вкл как туррель. Выкл для обычных врагов.")]
     [SerializeField] private bool _useForwardDirection = false;
 
@@ -53,6 +54,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         _audio         = GetComponent<IEnemyAudio>();
         _debugger      = GetComponent<EnemyDebugger>();
         _grenadeModule = GetComponent<GrenadeThrowModule>();
+        _perception    = GetComponent<EnemyPerception>();
     }
 
     private void Start()
@@ -131,7 +133,9 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             origin = transform.position + Vector3.up * _visionHeightForNonTurret;
         }
 
-        Vector3 target = _playerTransform.position + Vector3.up * _losTargetHeightOffset;
+        Vector3 target = (_perception != null && _perception.UseMultiRay)
+            ? _perception.LastVisibleAimPoint
+            : _playerTransform.position + Vector3.up * _losTargetHeightOffset;
         Vector3 dir    = (target - origin).normalized;
         float   dist   = Vector3.Distance(origin, target) + 1f;
 
@@ -168,8 +172,11 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         _state.CurrentBullet++;
         _grenadeModule?.OnBulletFired();
 
-        Vector3 target = _playerTransform.position;
-        target.y += _playerAimHeight + Random.Range(-_config.HeightSprayOffset, _config.HeightSprayOffset) + _config.YOffset;
+        bool usingVisiblePoint = _perception != null && _perception.UseMultiRay;
+        Vector3 target = usingVisiblePoint
+            ? _perception.LastVisibleAimPoint
+            : _playerTransform.position + Vector3.up * _playerAimHeight;
+        target.y += Random.Range(-_config.HeightSprayOffset, _config.HeightSprayOffset) + (usingVisiblePoint ? 0f : _config.YOffset);
         target.x += Random.Range(-_config.WidthSprayOffset,  _config.WidthSprayOffset)  + _config.XOffset;
 
         SpawnBullet(target);

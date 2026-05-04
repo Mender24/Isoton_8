@@ -27,7 +27,7 @@ public class EnemyPerception : MonoBehaviour
     {
         new Vector3(0, 0.1f, 0),
         new Vector3(0, 1.0f, 0),
-        new Vector3(0, 1.8f, 0),
+        new Vector3(0, 1.7f, 0),
     };
 
     [Header("Hearing")]
@@ -43,6 +43,7 @@ public class EnemyPerception : MonoBehaviour
     private float _noiseTimer;
     private bool _detectionPending;
     private float _visionMeter;
+    private Vector3 _lastVisibleAimPoint;
 
     private bool _pendingNearbyShot;
     private Vector3 _pendingNearbyShooterPos;
@@ -55,6 +56,7 @@ public class EnemyPerception : MonoBehaviour
     public float VisionMeter => _visionMeter;
     public bool UseMultiRay => _useMultiRay;
     public Vector3[] BodyCheckOffsets => _bodyCheckOffsets;
+    public Vector3 LastVisibleAimPoint => _lastVisibleAimPoint;
 
     public void MultiplyForgetTime(float multiplier) => _forgetTime *= multiplier;
 
@@ -168,16 +170,19 @@ public class EnemyPerception : MonoBehaviour
 
     private bool MultiRayCheck(Vector3 eyePos)
     {
-        foreach (var offset in _bodyCheckOffsets)
+        for (int i = _bodyCheckOffsets.Length - 1; i >= 0; i--)
         {
-            Vector3 target = _playerTransform.position + offset;
+            Vector3 target = _playerTransform.position + _bodyCheckOffsets[i];
             Vector3 dir = (target - eyePos).normalized;
             float dist = Vector3.Distance(eyePos, target) + 1f;
 
             if (Physics.Raycast(eyePos, dir, out RaycastHit hit, dist, _obstacleLayer | _playerLayer))
             {
                 if (hit.transform == _playerTransform || hit.transform.IsChildOf(_playerTransform))
+                {
+                    _lastVisibleAimPoint = target;
                     return true;
+                }
             }
         }
         return false;
