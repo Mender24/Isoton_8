@@ -21700,6 +21700,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 47064749}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &189429997 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 843217130918608597, guid: 365989104bab89047b810e46a38f7798,
+    type: 3}
+  m_PrefabInstance: {fileID: 159342702}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &189530957
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -76524,7 +76530,7 @@ PrefabInstance:
     - target: {fileID: 6746512339373615580, guid: b947db7da5dd7374da045640ea4011a0,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -95340,6 +95346,43 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 855130387}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &857469878
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 256
+  m_Height: 256
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &857589433
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -118868,7 +118911,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c47ea1fc2b1db4059aa6e41febfaa9de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trackingCenter: {fileID: 0}
+  trackingCenter: {fileID: 189429997}
   distanceSortTimeInterval: 3
 --- !u!4 &1062067671 stripped
 Transform:
@@ -138770,6 +138813,27 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1227566377}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1228639149 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5029728230213846155, guid: d7a5b8d4553edcd4da20f4d838568d8a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4154371363344306770}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1228639153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228639149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 481493c188622a54f8649f409bf17d8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audioController: {fileID: 2543397613640116936}
+  _grenadeBossEnterPhraseName: GrenadeBossPhrase
+  activateOnce: 1
 --- !u!1001 &1229694928
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -171444,7 +171508,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc58c00b7f7924fe8a2a9d5b5d592111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trackingCenter: {fileID: 0}
+  trackingCenter: {fileID: 189429997}
   distanceSortTimeInterval: 3
   excludeLightsBehind: 1
   inscattering: 1
@@ -222566,7 +222630,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 2046526085}
+        m_Texture: {fileID: 857469878}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -222590,7 +222654,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DetailColor: {r: 0.51186275, g: 0.51186275, b: 0.51186275, a: 0}
     - _DetailData: {r: 0.5, g: 4, b: -0.5, a: 0}
-    - _DetailWindDirection: {r: -0.2621551, g: 0, b: 0, a: 0}
+    - _DetailWindDirection: {r: -0.073133975, g: 0, b: 0, a: 0}
     - _DistanceData: {r: 0, g: 5, b: 1, a: 1}
     - _FogOfWarCenter: {r: 0, g: 0, b: 0, a: 1}
     - _FogOfWarCenterAdjusted: {r: 0, g: 0, b: 0, a: 1}
@@ -222602,7 +222666,7 @@ Material:
     - _ShadowData: {r: 0.5, g: 0, b: 250, a: 0}
     - _SpecularColor: {r: 0.5, g: 0.5, b: 0.5, a: 0}
     - _SunDir: {r: 0, g: 1, b: 0, a: 0}
-    - _WindDirection: {r: -0.2621551, g: 0, b: 0, a: 0}
+    - _WindDirection: {r: -0.073133975, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!4 &2005611151 stripped
@@ -226919,43 +226983,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2045395307}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &2046526085
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 256
-  m_Height: 256
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &2047716550
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -253851,6 +253878,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GrenadeBossEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 8985562357561670435, guid: b40547e384dce7749a780eadaa439e9e,
+        type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -253862,6 +253894,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2543397613640116928}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2543397613640116936 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1991853444624268363, guid: b40547e384dce7749a780eadaa439e9e,
+    type: 3}
+  m_PrefabInstance: {fileID: 2543397613640116928}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98a19c42da298a04e9c9f61071346b83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2554509460124653144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -293528,7 +293572,11 @@ PrefabInstance:
         type: 3}
       insertIndex: 15
       addedObject: {fileID: 2543397613640116929}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5029728230213846155, guid: d7a5b8d4553edcd4da20f4d838568d8a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1228639153}
   m_SourcePrefab: {fileID: 100100000, guid: d7a5b8d4553edcd4da20f4d838568d8a, type: 3}
 --- !u!4 &4154371363344306771 stripped
 Transform:
