@@ -33,6 +33,7 @@ public class SceneLoader : MonoBehaviour
     private string _currentScene;
     private bool _isFirstLoad = false;
     private bool _isMovePostLoadScene = true;
+    private AsyncOperation _preloadedSceneOp;
 
     private DoorControllerSceneChanger _nextLocationDC;
 
@@ -101,8 +102,34 @@ public class SceneLoader : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
+    public void PreloadFirstScene(string forceLoad = "", bool isUseSave = false)
+    {
+        string sceneName = forceLoad != "" ? forceLoad : (isUseSave ? SaveManager.GetLastSceneName() : _startScene);
+
+        if (!isUseSave)
+            SaveManager.DeleteSave(_isDebug);
+
+        _currentScene = (sceneName == "" || sceneName == _sceneNames[0]) ? _startScene : sceneName;
+        SearchAllIndex(_currentScene);
+
+        IsLoad = true;
+        _preloadedSceneOp = SceneManager.LoadSceneAsync(_currentSceneIndex);
+        _preloadedSceneOp.allowSceneActivation = false;
+
+        if (_isDebug)
+            Debug.Log($"PreloadFirstScene: {_currentScene} index: {_currentSceneIndex}");
+    }
+
     public void LoadScenes(bool isFirstSceneLoad = false, string forceLoad = "", bool isUseSave = false)
     {
+        // Если сцена уже предзагружена — сразу активируем её
+        if (isFirstSceneLoad && _preloadedSceneOp != null)
+        {
+            IsInitPlayer = false;
+            StartCoroutine(ActivatePreloadedScene());
+            return;
+        }
+
         if (isFirstSceneLoad)
             _currentScene = forceLoad != "" ? forceLoad : (isUseSave ? SaveManager.GetLastSceneName() : _startScene);
 
@@ -173,6 +200,40 @@ public class SceneLoader : MonoBehaviour
             return false;
 
         return _sceneNames[sceneIndex].Contains(_transitionName);
+    }
+
+    private IEnumerator ActivatePreloadedScene()
+    {
+        _isProgressLoadingScenes = true;
+        _isProgressUnloadingScenes = true;
+        _isProgressAsyncLoadingScene = true;
+        _isScenesLoading = true;
+
+        while (_preloadedSceneOp.progress < 0.9f)
+            yield return null;
+
+        _loadedScene.Clear();
+        _loadedScene.Enqueue(_currentSceneIndex);
+
+        _preloadedSceneOp.allowSceneActivation = true;
+
+        while (!_preloadedSceneOp.isDone)
+            yield return null;
+
+        _preloadedSceneOp = null;
+
+        if (Player.Instance.gameObject.activeSelf)
+            Player.Instance.gameObject.SetActive(false);
+
+        _isProgressUnloadingScenes = false;
+
+        int startSceneIndex = _currentSceneIndex + 1;
+        int count = _nextSceneIndex - startSceneIndex + 1;
+
+        yield return StartCoroutine(LoadScenesAsync(startSceneIndex, count, true));
+
+        _isProgressLoadingScenes = false;
+        LevelLoaded?.Invoke();
     }
 
     private void StartLoadScenes(bool isFirstSceneLoad)

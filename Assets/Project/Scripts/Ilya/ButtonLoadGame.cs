@@ -1,23 +1,37 @@
 using UnityEngine;
+using UnityEngine.Video;
 
 public class ButtonLoadGame : MonoBehaviour
 {
     [SerializeField] private bool _isNewGame = false;
     [SerializeField] private string _forceSceneLoad;
 
+    [Header("Intro Cutscene")]
+    [SerializeField] private CutscenePlayer _introCutscenePlayer;
+    [SerializeField] private VideoClip _introClip;
+
     private bool _isActive = true;
 
     public void LoadGame()
     {
-        if(_isActive)
+        if (!_isActive) return;
+        _isActive = false;
+
+        if (!_isNewGame)
+            DifficultyManager.LoadDifficulty();
+
+        if (_isNewGame && _introCutscenePlayer != null && _introClip != null)
         {
-            _isActive = false;
-
-            if (!_isNewGame)
-                DifficultyManager.LoadDifficulty();
-
-            SceneLoader.instance.LoadScenes(true, _forceSceneLoad, !_isNewGame);
+            SceneLoader.instance.PreloadFirstScene(_forceSceneLoad, !_isNewGame);
+            _introCutscenePlayer.PlayCutscene(_introClip, StartLoadGame);
         }
+        else
+            StartLoadGame();
+    }
+
+    private void StartLoadGame()
+    {
+        SceneLoader.instance.LoadScenes(true, _forceSceneLoad, !_isNewGame);
     }
 
     public void LoadMeinMenu()
