@@ -32,7 +32,7 @@ public class FootstepManager : MonoBehaviour
 
         if (_listener == null)
         {
-            var al = FindObjectOfType<AudioListener>();
+            var al = FindFirstObjectByType<AudioListener>();
             if (al != null) _listener = al.transform;
         }
         if (_listener == null) return;
