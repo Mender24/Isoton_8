@@ -15,6 +15,8 @@ namespace Akila.FPSFramework
         private FirstPersonController _firstPersonController;
         private CharacterManager _characterManager;
 
+        public event Action ResettingPosition;
+
         public Inventory Inventory => _inventory;
         public Actor Actor => _actor;
         public InteractionsManager InteractionsManager => _interactionsManager;
@@ -50,6 +52,11 @@ namespace Akila.FPSFramework
             }
 
             _characterManager.cameraManager.ShakeCameras(multiplier, roughness, fadeInTime, fadeOutTime);
+        }
+
+        public void ActivateEventResetPosition()
+        {
+            ResettingPosition?.Invoke();
         }
     }
 }
