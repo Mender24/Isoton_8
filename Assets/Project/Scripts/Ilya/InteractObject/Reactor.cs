@@ -21,6 +21,8 @@ public class Reactor : MonoBehaviour, IDamageable
 
     [SerializeField] private GameObject _shieldObject;
     [SerializeField] private GameObject _reactorObject;
+    [SerializeField] private GameObject _exploredReactor;
+    [SerializeField] private Explosive _explosive;
 
     private int _batteryHealth;
     private float _health;
@@ -76,7 +78,10 @@ public class Reactor : MonoBehaviour, IDamageable
             _batterys[i].OnEndCooldown.AddListener(StartReactor);
         }
 
-        while(SceneLoader.instance.IsScenesLoading)
+        if (_explosive != null)
+            _explosive.enabled = false;
+
+        while (SceneLoader.instance.IsScenesLoading)
             yield return null;
 
         yield return new WaitForSeconds(_timeWaitFirstStart);
@@ -169,6 +174,13 @@ public class Reactor : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(_secondDestroy);
 
         _reactorObject.SetActive(false);
+        _exploredReactor.SetActive(true);
+
+        if (_explosive != null)
+        {
+            _explosive.enabled = true;
+            _explosive.Explode();
+        }
 
         OnDeath?.Invoke();
         ReactorDestroyed?.Invoke();
