@@ -20,13 +20,13 @@ public class ButtonLoadGame : MonoBehaviour
         if (!_isNewGame)
             DifficultyManager.LoadDifficulty();
 
-        StartLoadGame();
+        // StartLoadGame();
 
-        return;
+        // return;
 
         if (_isNewGame && _introCutscenePlayer != null && _introClip != null)
         {
-            SceneLoader.instance.PreloadFirstScene(_forceSceneLoad, !_isNewGame);
+            // SceneLoader.instance.PreloadFirstScene(_forceSceneLoad, !_isNewGame);
             _introCutscenePlayer.PlayCutscene(_introClip, StartLoadGame);
         }
         else
