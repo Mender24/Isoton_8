@@ -465,6 +465,8 @@ MonoBehaviour:
   _muzzleFlashPrimary: {fileID: 4285069962085390583}
   _muzzleFlashSecondary: {fileID: 3193715352187739864}
   _visionHeightForNonTurret: 1.75
+  _losTargetHeightOffset: 1.5
+  _playerAimHeight: 0
   _useForwardDirection: 1
   _usePrimaryBarrel: 1
 --- !u!114 &2455385641815122131
@@ -520,6 +522,14 @@ MonoBehaviour:
   _enableReactionCooldown: 0
   _reactionCooldown: 3
   _explosive: {fileID: 925444941658326937}
+  _alertNearbyOnDeath: 0
+  _deathAlertRadius: 15
+  _alertNearbyOnDamage: 0
+  _damageAlertRadius: 12
+  _damageAlertCooldown: 5
+  _enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
   OnDeathInternal:
     m_PersistentCalls:
       m_Calls: []
@@ -547,8 +557,8 @@ MonoBehaviour:
   _obstacleLayer:
     serializedVersion: 2
     m_Bits: 307201
-  _fieldOfViewAngle: 60
-  _visionRange: 15
+  _fieldOfViewAngle: 87.4
+  _visionRange: 40
   _visionHeight: 1.27
   _useVisionMeter: 0
   _visionMeterSpeedFar: 1.5
@@ -559,7 +569,7 @@ MonoBehaviour:
   - {x: 0, y: 0.1, z: 0}
   - {x: 0, y: 1, z: 0}
   - {x: 0, y: 1.8, z: 0}
-  _hearingRange: 10
+  _hearingRange: 30
   _noiseInvestigationTime: 8
   _detectionDelay: 2
   _forgetTime: 5
@@ -611,7 +621,7 @@ MonoBehaviour:
   _aimThreshold: 8
   _targetMode: 2
   _verticalPivot: {fileID: 2231758177857889195}
-  _minPitch: -30
+  _minPitch: -70
   _maxPitch: 80
   _upsideDown: 0
   _aimHeightOffset: 1.5
@@ -632,7 +642,7 @@ MonoBehaviour:
   _showDebug: 1
   _showDebugInfo: 1
   _debugVision: 1
-  _showDetectionRange: 0
+  _showDetectionRange: 1
   _showFieldOfView: 1
   _showVisionRaycast: 1
   _showLastKnownPosition: 0
