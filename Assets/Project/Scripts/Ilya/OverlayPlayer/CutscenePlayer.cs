@@ -58,18 +58,7 @@ public class CutscenePlayer : MonoBehaviour
         if (_fadeOverlay != null)
             _fadeOverlay.alpha = 1f;
 
-        CreateRenderTexture();
-
-        _videoPlayer.clip = clip;
-        _videoPlayer.loopPointReached += OnVideoEnd;
-        _videoPlayer.prepareCompleted += OnVideoPrepared;
-        _videoPlayer.Prepare();
-
-        if (_unlockCursorOnPlay)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
+        gameObject.SetActive(true);
 
         foreach (GameObject obj in _hideOnPlay)
             if (obj != null) obj.SetActive(false);
@@ -82,7 +71,18 @@ public class CutscenePlayer : MonoBehaviour
             _muteOnPlay[i].volume = 0f;
         }
 
-        gameObject.SetActive(true);
+        if (_unlockCursorOnPlay)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        CreateRenderTexture();
+
+        _videoPlayer.clip = clip;
+        _videoPlayer.loopPointReached += OnVideoEnd;
+        _videoPlayer.prepareCompleted += OnVideoPrepared;
+        _videoPlayer.Prepare();
     }
 
     private void CreateRenderTexture()
