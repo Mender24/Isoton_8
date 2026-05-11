@@ -21,6 +21,7 @@ public class CutscenePlayer : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private float _skipHoldDuration = 2f;
+    [SerializeField] private float _skipDecaySpeed = 1f;
     [SerializeField] private float _hintShowDuration = 2.5f;
     [SerializeField] private float _hintFadeDuration = 0.4f;
     [SerializeField] private bool _unlockCursorOnPlay = false;
@@ -130,8 +131,9 @@ public class CutscenePlayer : MonoBehaviour
         }
         else if (_holdTimer > 0f)
         {
-            _holdTimer = 0f;
-            _skipProgressBar.fillAmount = 0f;
+            _holdTimer -= Time.unscaledDeltaTime * _skipDecaySpeed;
+            _holdTimer = Mathf.Max(0f, _holdTimer);
+            _skipProgressBar.fillAmount = _holdTimer / _skipHoldDuration;
         }
 
         if (_hintVisible && !Input.GetKey(_skipKey))
