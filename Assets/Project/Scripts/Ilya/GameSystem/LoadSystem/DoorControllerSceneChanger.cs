@@ -40,7 +40,7 @@ namespace Akila.FPSFramework
                 _isActivated = true;
                 ToggleLeaver();
 
-                if (isActive)
+                if (isActive && _isUseLoad)
                     StartCoroutine(StartChangeSceneProcess());
             }
         }
