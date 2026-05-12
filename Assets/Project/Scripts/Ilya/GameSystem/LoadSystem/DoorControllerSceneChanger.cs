@@ -96,6 +96,8 @@ namespace Akila.FPSFramework
         {
             targetRotation = targetRotation == Quaternion.Euler(0, 0, 150) ? Quaternion.identity : Quaternion.Euler(0, 0, 10);
 
+            Debug.Log("Start");
+
             if (SoundManager.Instance != null)
                 SoundManager.Instance.PlayScriptedOneShotSoundName(_soundName);
         }

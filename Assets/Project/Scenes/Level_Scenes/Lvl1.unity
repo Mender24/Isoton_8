@@ -34768,6 +34768,43 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 268160737}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &268750997
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 256
+  m_Height: 256
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &269579794
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -68850,7 +68887,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 567907848}
+        m_Texture: {fileID: 268750997}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -68874,7 +68911,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DetailColor: {r: 0.51186275, g: 0.51186275, b: 0.51186275, a: 0}
     - _DetailData: {r: 0.5, g: 4, b: -0.5, a: 0}
-    - _DetailWindDirection: {r: -0.1058049, g: 0, b: 0, a: 0}
+    - _DetailWindDirection: {r: -0.09018689, g: 0, b: 0, a: 0}
     - _DistanceData: {r: 0, g: 5, b: 1, a: 1}
     - _FogOfWarCenter: {r: 0, g: 0, b: 0, a: 1}
     - _FogOfWarCenterAdjusted: {r: 0, g: 0, b: 0, a: 1}
@@ -68886,7 +68923,7 @@ Material:
     - _ShadowData: {r: 0.5, g: 0, b: 250, a: 0}
     - _SpecularColor: {r: 0.5, g: 0.5, b: 0.5, a: 0}
     - _SunDir: {r: 0, g: 1, b: 0, a: 0}
-    - _WindDirection: {r: -0.1058049, g: 0, b: 0, a: 0}
+    - _WindDirection: {r: -0.09018689, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!1001 &535842721
@@ -72732,43 +72769,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 567379847}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &567907848
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 256
-  m_Height: 256
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &568004598
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -225926,6 +225926,46 @@ PrefabInstance:
       propertyPath: _radiusHint
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 5981331572543183827, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      propertyPath: OnInteract.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981331572543183827, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      propertyPath: OnInteract.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981331572543183827, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      propertyPath: OnInteract.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1857602208}
+    - target: {fileID: 5981331572543183827, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      propertyPath: OnInteract.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981331572543183827, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      propertyPath: OnInteract.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ActivatedLeaver
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981331572543183827, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      propertyPath: OnInteract.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Akila.FPSFramework.DoorControllerSceneChanger, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981331572543183827, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      propertyPath: OnInteract.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981331572543183827, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      propertyPath: OnInteract.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -225934,6 +225974,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1857602205}
+    - targetCorrespondingSourceObject: {fileID: 3824285807969168986, guid: 7d26b69402642fd47865fcbd0131639a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1857602208}
   m_SourcePrefab: {fileID: 100100000, guid: 7d26b69402642fd47865fcbd0131639a, type: 3}
 --- !u!1 &1857602204 stripped
 GameObject:
@@ -225954,6 +225998,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storedAmmoCount: -1
+--- !u!1 &1857602206 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3824285807969168986, guid: 7d26b69402642fd47865fcbd0131639a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1857602203}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1857602207 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8887116320541988084, guid: 7d26b69402642fd47865fcbd0131639a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1857602203}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1857602208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857602206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f21337de04fdbe4c93f18f9fbbf769e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isUseLoad: 1
+  _isUseForceDontOpenDoor: 1
+  _isUseLateLoadedSystem: 1
+  _soundName: Lever_2
+  pivot: {fileID: 1857602207}
+  enterDoor: {fileID: 0}
+  exitDoor: {fileID: 0}
+  roughness: 2
 --- !u!1001 &1858160144
 PrefabInstance:
   m_ObjectHideFlags: 0
