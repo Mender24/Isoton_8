@@ -1,11 +1,12 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 public class BunkerDoor : MonoBehaviour
 {
     [SerializeField] private bool _isMoveOpen = false;
     [SerializeField] private float _lenMoveDoor = 4f;
     [SerializeField] private float _speedMoveDoor = 4f;
+    [SerializeField] private string _soundNameDoorOpen = "Door";
     [Space]
     [SerializeField] private bool _openNow = false;
     //public Transform pivot_left;
@@ -31,7 +32,7 @@ public class BunkerDoor : MonoBehaviour
     {
         _targetPosition = pivot_hinge.position;
 
-        if(isOpenInitially)
+        if (isOpenInitially)
         {
             OpenDoor();
         }
@@ -55,6 +56,9 @@ public class BunkerDoor : MonoBehaviour
     public void ToggleDoor()
     {
         targetRotation = targetRotation == Quaternion.Euler(0, _angle, 0) ? Quaternion.identity : Quaternion.Euler(0, _angle, 0);
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlayScriptedOneShotSoundName(_soundNameDoorOpen);
     }
 
     public void OpenDoor()
@@ -72,6 +76,9 @@ public class BunkerDoor : MonoBehaviour
 
         if (_isMoveOpen)
             _targetPosition.y += _lenMoveDoor;
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlayScriptedOneShotSoundName(_soundNameDoorOpen);
 
         // «апускаем авто-закрытие, если оно включено
         StartAutoClose();
@@ -92,6 +99,9 @@ public class BunkerDoor : MonoBehaviour
 
         if (_isMoveOpen)
             _targetPosition.y -= _lenMoveDoor;
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlayScriptedOneShotSoundName(_soundNameDoorOpen);
 
         // ќстанавливаем корутину авто-закрыти€, если дверь закрыли вручную
         StopAutoClose();

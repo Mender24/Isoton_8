@@ -8,6 +8,7 @@ namespace Akila.FPSFramework
         [SerializeField] private bool _isUseLoad = true;
         [SerializeField] private bool _isUseForceDontOpenDoor = false;
         [SerializeField] private bool _isUseLateLoadedSystem = false;
+        [SerializeField] private string _soundName = "Lever_2";
         [Space]
         public Transform pivot;
         public BunkerDoor enterDoor;
@@ -39,7 +40,7 @@ namespace Akila.FPSFramework
                 _isActivated = true;
                 ToggleLeaver();
 
-                if (isActive)
+                if (isActive && _isUseLoad)
                     StartCoroutine(StartChangeSceneProcess());
             }
         }
@@ -94,6 +95,9 @@ namespace Akila.FPSFramework
         private void ToggleLeaver()
         {
             targetRotation = targetRotation == Quaternion.Euler(0, 0, 150) ? Quaternion.identity : Quaternion.Euler(0, 0, 10);
+
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlayScriptedOneShotSoundName(_soundName);
         }
     }
 }
