@@ -173,6 +173,8 @@ namespace Akila.FPSFramework
         private Speedometer speedometer;
 
         private bool onMovingPlatform;
+        private Vector3 lastPlatformVelocity;
+        private Speedometer currentPlatformSpeedometer;
 
         protected virtual void Awake()
         {
@@ -194,11 +196,15 @@ namespace Akila.FPSFramework
                 Vector3 vel = speedometer.velocity;
 
                 onJumpVelcoity = vel.magnitude * (vel.normalized * (1 - momentumLoss));
+
+                Vector3 platVel = new Vector3(lastPlatformVelocity.x, 0, lastPlatformVelocity.z);
+                onJumpVelcoity += platVel * (1 - momentumLoss);
             });
 
             characterManager.onLand.AddListener(() =>
             {
                 attemptedToJump = false;
+                lastPlatformVelocity = Vector3.zero;
             });
 
             controller.center = Vector3.up * controller.height * 0.5f;
@@ -722,19 +728,15 @@ namespace Akila.FPSFramework
             // Move the character controller based on total velocity
             transform.position += totalVelocity;
 
+            if (totalVelocity.sqrMagnitude > 0)
+                lastPlatformVelocity = totalVelocity / Time.unscaledDeltaTime;
+
             onMovingPlatform = totalVelocity.magnitude > 0;
         }
 
         private Vector3 GetTransformVelocity(Transform hitTransform)
         {
             Speedometer speedometer = null;
-
-            //This is used to not move with anything there is and only move with what's under the player's feets
-            //e.g To avoid moving with a bullet casing for example
-            if (CollisionFlags != CollisionFlags.Below)
-            {
-                return Vector3.zero;
-            }
 
             if (autoDetectMovingPlatforms)
                 speedometer = hitTransform.GetOrAddComponent<Speedometer>();
@@ -750,14 +752,21 @@ namespace Akila.FPSFramework
                     return Vector3.zero;
             }
 
-            // If the Speedometer component exists, return its velocity
-            if (speedometer != null)
+            bool groundedBelow = (CollisionFlags & CollisionFlags.Below) != 0;
+
+            if (groundedBelow)
             {
-                return speedometer.GetPointVelocity(transform.position) * Time.unscaledDeltaTime; // Apply delta time for frame-rate independent movement
+                // Track which platform the player is standing on
+                currentPlatformSpeedometer = speedometer;
+                return speedometer.GetPointVelocity(transform.position) * Time.unscaledDeltaTime;
             }
 
+            // In the air: only follow the exact platform we were standing on to prevent
+            // the rising platform from clipping into the player. Other objects (bullet casings etc.) are ignored.
+            if (speedometer == currentPlatformSpeedometer)
+                return speedometer.GetPointVelocity(transform.position) * Time.unscaledDeltaTime;
 
-            return Vector3.zero; // Return zero if no Speedometer is found
+            return Vector3.zero;
         }
 
         [ContextMenu("Setup/Network Components")]
