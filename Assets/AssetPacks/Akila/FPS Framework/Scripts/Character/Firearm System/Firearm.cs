@@ -259,6 +259,7 @@ namespace Akila.FPSFramework
             {
                 fireAudio = new Audio();
                 fireAudio.Setup(gameObject, preset.fireSound);
+                Debug.Log(preset.fireSound.audioClip);
 
                 // Set the current fire audio profile based on the preset.
                 currentFireAudio = fireAudio;
@@ -958,7 +959,7 @@ namespace Akila.FPSFramework
             {
                 if (preset.isAudioActive)
                 {
-                    currentFireAudio?.Play(true);
+                    currentFireAudio?.Play();
 
                     fireTailAudio?.Stop();
                     fireTailAudio?.Play(true);
