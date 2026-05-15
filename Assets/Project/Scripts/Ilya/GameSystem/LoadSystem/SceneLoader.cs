@@ -99,7 +99,7 @@ public class SceneLoader : MonoBehaviour
     {
         Player.Instance.gameObject.SetActive(false);
         Destroy(gameObject);
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("Transition_Final");
     }
 
     public void PreloadFirstScene(string forceLoad = "", bool isUseSave = false)

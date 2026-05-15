@@ -119,14 +119,16 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     {
         if (_playerTransform == null) return true;
 
-        // Для не-турелей — луч из глаз бота (как в TryDealDamage и восприятии).
-        // Для турелей — из дула.
         Vector3 origin;
         if (_useDoubleBarrelTurret)
         {
             Transform barrel = _usePrimaryBarrel ? _shotOrigin : _shotOriginSecondary;
             if (barrel == null) return true;
             origin = barrel.position;
+        }
+        else if (_useForwardDirection && _shotOrigin != null)
+        {
+            origin = _shotOrigin.position;
         }
         else
         {
@@ -185,7 +187,6 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         TryDealDamage(target);
         _audio?.PlayAttackSound();
 
-        // Включаем нужный muzzle flash
         ParticleSystem currentMuzzleFlash = null;
 
         if (_useDoubleBarrelTurret)
@@ -221,7 +222,6 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     {
         if (_config.BulletPrefab == null) return;
 
-        // Определяем текущий ствол
         Transform currentShotOrigin = _usePrimaryBarrel || !_useDoubleBarrelTurret
             ? _shotOrigin
             : _shotOriginSecondary;
@@ -254,12 +254,10 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
 
         if (_useDoubleBarrelTurret)
         {
-            // Турель: луч идёт из ствола
             originSource = _usePrimaryBarrel ? _shotOrigin : _shotOriginSecondary;
         }
         else
         {
-            // НЕ‑турель: луч идёт из "глаз" врага
             originSource = transform;
             forwardOffset = 0.1f;
         }
@@ -267,12 +265,10 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         Vector3 origin;
         if (_useDoubleBarrelTurret)
         {
-            // Турель: из ствола
             origin = originSource.position + originSource.forward * forwardOffset;
         }
         else
         {
-            // НЕ‑турель: как в EnemyPerception — глаза на _visionHeight
             origin = originSource.position + Vector3.up * _visionHeightForNonTurret;
         }
 

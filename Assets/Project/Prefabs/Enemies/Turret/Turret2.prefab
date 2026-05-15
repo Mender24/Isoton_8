@@ -568,10 +568,10 @@ MonoBehaviour:
   _bodyCheckOffsets:
   - {x: 0, y: 0.1, z: 0}
   - {x: 0, y: 1, z: 0}
-  - {x: 0, y: 1.8, z: 0}
+  - {x: 0, y: 1.7, z: 0}
   _hearingRange: 30
   _noiseInvestigationTime: 8
-  _detectionDelay: 2
+  _detectionDelay: 0.5
   _forgetTime: 5
   _minDistanceToForget: 4
 --- !u!114 &8880186605920857864
@@ -610,7 +610,7 @@ MonoBehaviour:
   _shootDelay: 0.1
   _rotationSpeed: 200
   _mutantTag: Mutant
-  _scanRadius: 30
+  _scanRadius: 45.6
   _scanInterval: 0.3
   _obstacleLayer:
     serializedVersion: 2
@@ -621,11 +621,16 @@ MonoBehaviour:
   _aimThreshold: 8
   _targetMode: 2
   _verticalPivot: {fileID: 2231758177857889195}
-  _minPitch: -70
+  _minPitch: -80
   _maxPitch: 80
   _upsideDown: 0
   _aimHeightOffset: 1.5
   _muzzle: {fileID: 7909290687507886503}
+  _useMultiRay: 0
+  _bodyCheckOffsets:
+  - {x: 0, y: 0.1, z: 0}
+  - {x: 0, y: 1, z: 0}
+  - {x: 0, y: 1.7, z: 0}
   _haveTarget: 0
 --- !u!114 &5283072182384670821
 MonoBehaviour:
