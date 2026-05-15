@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7181893127386230833}
   - component: {fileID: 4071653986071251415}
   - component: {fileID: -8058436555326091377}
+  - component: {fileID: 6042675951806735642}
   m_Layer: 3
   m_Name: 7.62mm Casing
   m_TagString: Untagged
@@ -79,6 +80,24 @@ MonoBehaviour:
   ignoreWallAvoidance: 1
   ignoreFallDamage: 1
   ignoreMovingPlatform: 1
+--- !u!114 &6042675951806735642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505783374226792693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c9ce8b2a65ee684b92bf3f892c1b5ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitSounds:
+  - {fileID: 8300000, guid: 8cfc67226e59dc649b0afdf0911e0caf, type: 3}
+  volume: 0.1
+  pitchMin: 0.85
+  pitchMax: 1.15
+  minImpactVelocity: 0.5
 --- !u!1001 &2910265623913875414
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87,6 +106,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7181893127386230833}
     m_Modifications:
+    - target: {fileID: 2252647771719012314, guid: 1cbd1efaccc610b4392d600f7fdc95ae,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314456627554309569, guid: 1cbd1efaccc610b4392d600f7fdc95ae,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7005388889544458954, guid: 1cbd1efaccc610b4392d600f7fdc95ae,
         type: 3}
       propertyPath: m_Name
@@ -165,9 +194,14 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 8692884970787654663, guid: 1cbd1efaccc610b4392d600f7fdc95ae, type: 3}
     - {fileID: 2252647771719012314, guid: 1cbd1efaccc610b4392d600f7fdc95ae, type: 3}
+    - {fileID: 6314456627554309569, guid: 1cbd1efaccc610b4392d600f7fdc95ae, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7005388889544458954, guid: 1cbd1efaccc610b4392d600f7fdc95ae,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5801750765128359665}
   m_SourcePrefab: {fileID: 100100000, guid: 1cbd1efaccc610b4392d600f7fdc95ae, type: 3}
 --- !u!4 &4760484656864731046 stripped
 Transform:
@@ -175,6 +209,34 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2910265623913875414}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5285945299279201564 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7005388889544458954, guid: 1cbd1efaccc610b4392d600f7fdc95ae,
+    type: 3}
+  m_PrefabInstance: {fileID: 2910265623913875414}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &5801750765128359665
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5285945299279201564}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -7204647971529134275, guid: 53a38c9fb1ba80f4b836f6f44159320e, type: 3}
 --- !u!1001 &8738243303315250646
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -286,7 +348,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d7cd7619539720148b10164528caeb23,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -320,10 +382,10 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 1
-  m_CookingOptions: 30
+  m_CookingOptions: -1
   m_Mesh: {fileID: -8716796672375548116, guid: d7cd7619539720148b10164528caeb23, type: 3}
 --- !u!4 &9137452357648906813 stripped
 Transform:

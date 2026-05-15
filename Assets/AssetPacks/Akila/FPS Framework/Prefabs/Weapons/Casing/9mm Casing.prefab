@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 279019356344003527}
   - component: {fileID: 8242743529964103462}
   - component: {fileID: -4178815308819575122}
+  - component: {fileID: 1923508811520037548}
   m_Layer: 3
   m_Name: 9mm Casing
   m_TagString: Untagged
@@ -25,6 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6318048297812855481}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -32,7 +34,6 @@ Transform:
   m_Children:
   - {fileID: 5988193519019435461}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &8242743529964103462
 Rigidbody:
@@ -78,6 +79,24 @@ MonoBehaviour:
   ignoreWallAvoidance: 1
   ignoreFallDamage: 1
   ignoreMovingPlatform: 1
+--- !u!114 &1923508811520037548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6318048297812855481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c9ce8b2a65ee684b92bf3f892c1b5ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitSounds:
+  - {fileID: 8300000, guid: 8cfc67226e59dc649b0afdf0911e0caf, type: 3}
+  volume: 0.1
+  pitchMin: 0.85
+  pitchMax: 1.15
+  minImpactVelocity: 0.5
 --- !u!1001 &6093633328853697070
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -163,7 +182,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 0165befb7498f0545b5df8e2485a6d4a,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6361e871f5fd8ff418ee0187355fb3a5, type: 2}
     - target: {fileID: 919132149155446097, guid: 0165befb7498f0545b5df8e2485a6d4a,
