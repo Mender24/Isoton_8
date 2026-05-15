@@ -55,10 +55,17 @@ public class TurretEnemy : EnemyBase
     [Tooltip("Смещение точки прицеливания по вертикали")]
     [SerializeField] private float _aimHeightOffset = 1f;
 
-    [SerializeField] private Transform _muzzle; // ← добавить в инспектор, в конец ствола
+    [SerializeField] private Transform _muzzle;
+
+    [Header("Multi-Ray Detection")]
+    [Tooltip("Проверять видимость по нескольким точкам тела (ноги, пояс, голова).")]
+    [SerializeField] private bool _useMultiRay = false;
+    [SerializeField] private Vector3[] _bodyCheckOffsets = { new(0, 0.1f, 0), new(0, 1.0f, 0), new(0, 1.7f, 0) };
 
 
     public bool _haveTarget;
+
+    private Vector3 _visibleTargetPoint;
 
 
     public TurretTargetMode TargetMode => _targetMode;
@@ -181,38 +188,76 @@ public class TurretEnemy : EnemyBase
         _rangedCombat.SetTarget(_currentTarget, targetIsEnemy);
     }
 
-    private bool CanSeeTarget(Transform target) 
+    private bool CanSeeTarget(Transform target)
     {
         if (target == null)
         {
             _haveTarget = false; //Mender Вывожу состояние цели для вращения в анимацию, так что сделал публичный bool.
             return false;
         }
-        else
-        {
-            _haveTarget = true;
-        }
 
-        Vector3 eyePos      = transform.position + Vector3.up * 0.5f;
-        Vector3 targetPoint = target.position + Vector3.up * 1f;
-        Vector3 dir         = targetPoint - eyePos;
-        float   dist        = dir.magnitude;
+        Vector3 eyePos   = _verticalPivot != null ? _verticalPivot.position : transform.position + Vector3.up * 0.5f;
+        Vector3 aimPoint = target.position + Vector3.up * _aimHeightOffset;
+        Vector3 aimDir   = aimPoint - eyePos;
+        float   dist     = aimDir.magnitude;
 
         if (dist > _scanRadius) return false;
 
-        return !Physics.Raycast(eyePos, dir.normalized, dist - 0.1f, _obstacleLayer);
+        float pitchRaw = Mathf.Atan2(aimDir.y, new Vector2(aimDir.x, aimDir.z).magnitude) * Mathf.Rad2Deg;
+        if (_upsideDown) pitchRaw = -pitchRaw;
+        if (-pitchRaw < _minPitch || -pitchRaw > _maxPitch) return false;
+
+        bool seen;
+        if (_useMultiRay)
+        {
+            seen = CanSeeMultiRay(eyePos, target, aimPoint);
+        }
+        else
+        {
+            seen = CanSeeRay(eyePos, aimPoint, dist);
+            if (seen) _visibleTargetPoint = aimPoint;
+        }
+
+        _haveTarget = seen;
+        return seen;
+    }
+
+    private bool CanSeeRay(Vector3 from, Vector3 to, float dist)
+    {
+        return !Physics.Raycast(from, (to - from).normalized, dist - 0.1f, _obstacleLayer);
+    }
+
+    private bool CanSeeMultiRay(Vector3 eyePos, Transform target, Vector3 fallback)
+    {
+        if (_bodyCheckOffsets == null || _bodyCheckOffsets.Length == 0)
+        {
+            bool fb = CanSeeRay(eyePos, fallback, (fallback - eyePos).magnitude);
+            if (fb) _visibleTargetPoint = fallback;
+            return fb;
+        }
+
+        for (int i = _bodyCheckOffsets.Length - 1; i >= 0; i--)
+        {
+            Vector3 point = target.position + _bodyCheckOffsets[i];
+            Vector3 dir   = point - eyePos;
+            if (!Physics.Raycast(eyePos, dir.normalized, dir.magnitude - 0.1f, _obstacleLayer))
+            {
+                _visibleTargetPoint = point;
+                return true;
+            }
+        }
+        return false;
     }
 
     private bool IsAimedAt(Transform target)
     {
         if (target == null || _muzzle == null) return false;
 
-        Vector3 toTarget = target.position - _muzzle.position;
-        toTarget.y = 0f;
+        Vector3 toTarget = _visibleTargetPoint - _muzzle.position;
         if (toTarget.sqrMagnitude < 0.01f) return true;
 
         float angle = Vector3.Angle(_muzzle.forward, toTarget);
-        return angle <= (_aimThreshold + 2f); // например 10f вместо 8f
+        return angle <= (_aimThreshold + 2f);
     }
 
 
@@ -224,7 +269,6 @@ public class TurretEnemy : EnemyBase
         Vector3 from = _muzzle.position;
         Vector3 to = target.position;
 
-        // y в 0 только для горизонтального поворота
         Vector3 flatDir = to - from;
         flatDir.y = 0f;
 
@@ -239,8 +283,7 @@ public class TurretEnemy : EnemyBase
     {
         if (_verticalPivot == null || target == null) return;
 
-        Vector3 targetPoint = target.position + Vector3.up * _aimHeightOffset;
-        Vector3 dir = targetPoint - _verticalPivot.position;
+        Vector3 dir = _visibleTargetPoint - _verticalPivot.position;
         float pitch = Mathf.Atan2(dir.y, new Vector2(dir.x, dir.z).magnitude) * Mathf.Rad2Deg;
 
         if (_upsideDown) pitch = -pitch;
