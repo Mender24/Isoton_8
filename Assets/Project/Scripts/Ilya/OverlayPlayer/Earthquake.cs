@@ -61,7 +61,8 @@ public class Earthquake : MonoBehaviour
         if(dataCameraShake.IsGlobalEvent)
             StartEarthquake?.Invoke(dataCameraShake.Duration);
 
-        Player.Instance.ShakeCamera(dataCameraShake.CameraShakeMultiplier, dataCameraShake.Roughness, dataCameraShake.FadeInTime, dataCameraShake.FadeOutTime);
+        if(Player.Instance != null)
+            Player.Instance.ShakeCamera(dataCameraShake.CameraShakeMultiplier, dataCameraShake.Roughness, dataCameraShake.FadeInTime, dataCameraShake.FadeOutTime);
 
         if(dataCameraShake.SoundName != "")
             SoundManager.Instance.PlayScriptedSoundName(dataCameraShake.SoundName);
