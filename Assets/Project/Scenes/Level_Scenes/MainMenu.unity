@@ -2164,10 +2164,10 @@ MonoBehaviour:
     SoundName: 
     IsGlobalEvent: 0
     Duration: 11
-    CameraShakeMultiplier: 0.1
-    Roughness: 0.25
-    FadeInTime: 0.05
-    FadeOutTime: 0.01
+    CameraShakeMultiplier: 0.7
+    Roughness: 0.65
+    FadeInTime: 0.3
+    FadeOutTime: 0.05
 --- !u!1 &592612586
 GameObject:
   m_ObjectHideFlags: 0
@@ -3169,27 +3169,27 @@ PrefabInstance:
     - target: {fileID: 374009933901206597, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
       propertyPath: collectables.Array.data[0].m_limit
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 374009933901206597, guid: 365989104bab89047b810e46a38f7798,
-        type: 3}
-      propertyPath: collectables.Array.data[1].m_count
       value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 374009933901206597, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
-      propertyPath: collectables.Array.data[1].m_limit
+      propertyPath: collectables.Array.data[1].m_count
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 374009933901206597, guid: 365989104bab89047b810e46a38f7798,
+        type: 3}
+      propertyPath: collectables.Array.data[1].m_limit
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 374009933901206597, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
       propertyPath: collectables.Array.data[2].m_count
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 374009933901206597, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
       propertyPath: collectables.Array.data[2].m_limit
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 608916076690498369, guid: 365989104bab89047b810e46a38f7798,
         type: 3}
@@ -8468,7 +8468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isNewGame: 1
-  _forceSceneLoad: Transition_5-6
+  _forceSceneLoad: 
   _introCutscenePlayer: {fileID: 2609204966240585742}
   _introClip: {fileID: 32900000, guid: d3c77f64159a7b14088c59b1f14db523, type: 3}
 --- !u!95 &2119700593
