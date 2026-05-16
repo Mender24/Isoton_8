@@ -468,6 +468,7 @@ MonoBehaviour:
   _losTargetHeightOffset: 1.5
   _playerAimHeight: 0
   _useForwardDirection: 1
+  _skipLosCheck: 0
   _usePrimaryBarrel: 1
 --- !u!114 &2455385641815122131
 MonoBehaviour:
@@ -557,7 +558,7 @@ MonoBehaviour:
   _obstacleLayer:
     serializedVersion: 2
     m_Bits: 307201
-  _fieldOfViewAngle: 87.4
+  _fieldOfViewAngle: 90
   _visionRange: 40
   _visionHeight: 1.27
   _useVisionMeter: 0
@@ -618,7 +619,7 @@ MonoBehaviour:
   _mutantLayer:
     serializedVersion: 2
     m_Bits: 1048576
-  _aimThreshold: 8
+  _fieldOfViewAngle: 90
   _targetMode: 2
   _verticalPivot: {fileID: 2231758177857889195}
   _minPitch: -80
@@ -626,11 +627,6 @@ MonoBehaviour:
   _upsideDown: 0
   _aimHeightOffset: 1.5
   _muzzle: {fileID: 7909290687507886503}
-  _useMultiRay: 0
-  _bodyCheckOffsets:
-  - {x: 0, y: 0.1, z: 0}
-  - {x: 0, y: 1, z: 0}
-  - {x: 0, y: 1.7, z: 0}
   _haveTarget: 0
 --- !u!114 &5283072182384670821
 MonoBehaviour:

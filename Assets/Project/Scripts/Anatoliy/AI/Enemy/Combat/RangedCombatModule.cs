@@ -39,6 +39,9 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
     [Tooltip("Стрелять строго по направлению ствола. Вкл как туррель. Выкл для обычных врагов.")]
     [SerializeField] private bool _useForwardDirection = false;
 
+    [Tooltip("Пропустить проверку LoS при стрельбе. Для турели с собственной системой обнаружения (CanSeeTarget уже проверяет LoS).")]
+    [SerializeField] private bool _skipLosCheck = false;
+
     public bool _usePrimaryBarrel = true; // какой ствол в данный момент используется
     private bool _isPaused;
     private bool _hasManualTarget;
@@ -165,7 +168,7 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
             return;
         }
 
-        if (!HasWeaponClearLineOfSight())
+        if (!_skipLosCheck && !HasWeaponClearLineOfSight())
         {
             StopFire();
             return;

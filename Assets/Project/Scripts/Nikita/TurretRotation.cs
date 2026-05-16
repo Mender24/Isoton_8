@@ -4,12 +4,12 @@ using UnityEngine;
 public class TurretRotation : MonoBehaviour
 {
     [SerializeField] TurretEnemy turretEnemy;
-[Header("”глы поворота (по оси Y)")]
+    [Header("Sweep Angles (Y axis)")]
     public float fromAngle = -45f;
     public float toAngle = 45f;
     public float speed = 45f;
     [Range(0f, 3f)]
-    public float pauseDuration = 0.5f; // задержка в крайней позиции
+    public float pauseDuration = 0.5f;
 
     private float _direction = 1f;
     private float _pauseTimer = 0f;
@@ -39,13 +39,13 @@ public class TurretRotation : MonoBehaviour
         current = Mathf.MoveTowards(current, target, speed * Time.deltaTime);
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, current, transform.localEulerAngles.z);
 
-        if (current >= toAngle)
+        if (_direction > 0 && current >= toAngle)
         {
             _direction = -1f;
             _isPaused = true;
             _pauseTimer = pauseDuration;
         }
-        else if (current <= fromAngle)
+        else if (_direction < 0 && current <= fromAngle)
         {
             _direction = 1f;
             _isPaused = true;

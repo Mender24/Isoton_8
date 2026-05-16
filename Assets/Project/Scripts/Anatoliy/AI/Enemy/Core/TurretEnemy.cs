@@ -41,8 +41,8 @@ public class TurretEnemy : EnemyBase
     [Tooltip("Слой(и) на которых находятся мутанты (для OverlapSphere).")]
     [SerializeField] private LayerMask _mutantLayer = ~0;
 
-    [Tooltip("Максимальный угол (градусы) между forward туррели и направлением на цель для начала стрельбы.")]
-    [SerializeField] private float _aimThreshold = 8f;
+    [Tooltip("Горизонтальный угол обзора в градусах относительно начального направления турели. 360 = полный круговой обзор.")]
+    [SerializeField] private float _fieldOfViewAngle = 180f;
 
     [Tooltip("Кого атакует туррель по умолчанию.")]
     [SerializeField] private TurretTargetMode _targetMode = TurretTargetMode.Any;
@@ -56,11 +56,6 @@ public class TurretEnemy : EnemyBase
     [SerializeField] private float _aimHeightOffset = 1f;
 
     [SerializeField] private Transform _muzzle;
-
-    [Header("Multi-Ray Detection")]
-    [Tooltip("Проверять видимость по нескольким точкам тела (ноги, пояс, голова).")]
-    [SerializeField] private bool _useMultiRay = false;
-    [SerializeField] private Vector3[] _bodyCheckOffsets = { new(0, 0.1f, 0), new(0, 1.0f, 0), new(0, 1.7f, 0) };
 
 
     public bool _haveTarget;
@@ -133,8 +128,7 @@ public class TurretEnemy : EnemyBase
                     _rangedCombat.StartFire();
                 }
             }
-            else if (!_rangedCombat.IsFiring && !State.IsReloading && _rangedCombat.CanShoot
-                     && IsAimedAt(_currentTarget))
+            else if (!_rangedCombat.IsFiring && !State.IsReloading && _rangedCombat.CanShoot)
             {
                 _waitingToShoot = true;
                 _shootTimer     = _shootDelay;
@@ -155,7 +149,6 @@ public class TurretEnemy : EnemyBase
         Transform nearest  = null;
         float     bestDist = Mathf.Infinity;
 
-        // Игрок
         if (_targetMode != TurretTargetMode.MutantsOnly
             && PlayerTransform != null && CanSeeTarget(PlayerTransform))
         {
@@ -163,7 +156,6 @@ public class TurretEnemy : EnemyBase
             if (d < bestDist) { bestDist = d; nearest = PlayerTransform; }
         }
 
-        // Мутанты
         if (_targetMode != TurretTargetMode.PlayerOnly)
         {
             int count = Physics.OverlapSphereNonAlloc(transform.position, _scanRadius, _scanBuffer, _mutantLayer);
@@ -184,6 +176,7 @@ public class TurretEnemy : EnemyBase
         }
 
         _currentTarget = nearest;
+        _haveTarget    = nearest != null;
         bool targetIsEnemy = nearest != null && nearest != PlayerTransform;
         _rangedCombat.SetTarget(_currentTarget, targetIsEnemy);
     }
@@ -196,87 +189,54 @@ public class TurretEnemy : EnemyBase
             return false;
         }
 
-        Vector3 eyePos   = _verticalPivot != null ? _verticalPivot.position : transform.position + Vector3.up * 0.5f;
+        _haveTarget = false;
+
+        Vector3 eyePos   = _muzzle != null ? _muzzle.position
+                         : _verticalPivot != null ? _verticalPivot.position
+                         : transform.position + Vector3.up * 0.5f;
         Vector3 aimPoint = target.position + Vector3.up * _aimHeightOffset;
         Vector3 aimDir   = aimPoint - eyePos;
         float   dist     = aimDir.magnitude;
 
         if (dist > _scanRadius) return false;
 
+        if (_fieldOfViewAngle < 360f)
+        {
+            Vector3 flatForward  = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
+            Vector3 flatToTarget = new Vector3(aimDir.x, 0f, aimDir.z).normalized;
+            if (Vector3.Angle(flatForward, flatToTarget) > _fieldOfViewAngle * 0.5f) return false;
+        }
+
         float pitchRaw = Mathf.Atan2(aimDir.y, new Vector2(aimDir.x, aimDir.z).magnitude) * Mathf.Rad2Deg;
         if (_upsideDown) pitchRaw = -pitchRaw;
         if (-pitchRaw < _minPitch || -pitchRaw > _maxPitch) return false;
 
-        bool seen;
-        if (_useMultiRay)
-        {
-            seen = CanSeeMultiRay(eyePos, target, aimPoint);
-        }
-        else
-        {
-            seen = CanSeeRay(eyePos, aimPoint, dist);
-            if (seen) _visibleTargetPoint = aimPoint;
-        }
+        if (Physics.Raycast(eyePos, aimDir.normalized, dist - 0.1f, _obstacleLayer))
+            return false;
 
-        _haveTarget = seen;
-        return seen;
+        _visibleTargetPoint = aimPoint;
+        _haveTarget = true;
+        return true;
     }
-
-    private bool CanSeeRay(Vector3 from, Vector3 to, float dist)
-    {
-        return !Physics.Raycast(from, (to - from).normalized, dist - 0.1f, _obstacleLayer);
-    }
-
-    private bool CanSeeMultiRay(Vector3 eyePos, Transform target, Vector3 fallback)
-    {
-        if (_bodyCheckOffsets == null || _bodyCheckOffsets.Length == 0)
-        {
-            bool fb = CanSeeRay(eyePos, fallback, (fallback - eyePos).magnitude);
-            if (fb) _visibleTargetPoint = fallback;
-            return fb;
-        }
-
-        for (int i = _bodyCheckOffsets.Length - 1; i >= 0; i--)
-        {
-            Vector3 point = target.position + _bodyCheckOffsets[i];
-            Vector3 dir   = point - eyePos;
-            if (!Physics.Raycast(eyePos, dir.normalized, dir.magnitude - 0.1f, _obstacleLayer))
-            {
-                _visibleTargetPoint = point;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private bool IsAimedAt(Transform target)
-    {
-        if (target == null || _muzzle == null) return false;
-
-        Vector3 toTarget = _visibleTargetPoint - _muzzle.position;
-        if (toTarget.sqrMagnitude < 0.01f) return true;
-
-        float angle = Vector3.Angle(_muzzle.forward, toTarget);
-        return angle <= (_aimThreshold + 2f);
-    }
-
 
 
     private void RotateTowards(Transform target)
     {
         if (target == null || _muzzle == null) return;
 
-        Vector3 from = _muzzle.position;
-        Vector3 to = target.position;
+        Vector3 worldDir = target.position - _muzzle.position;
+        worldDir.y = 0f;
+        if (worldDir.sqrMagnitude < 0.01f) return;
 
-        Vector3 flatDir = to - from;
-        flatDir.y = 0f;
+        Vector3 localDir = transform.parent != null
+            ? transform.parent.InverseTransformDirection(worldDir)
+            : worldDir;
+        localDir.y = 0f;
+        if (localDir.sqrMagnitude < 0.01f) return;
 
-        if (flatDir.sqrMagnitude < 0.01f) return;
-
-        Quaternion rot = Quaternion.LookRotation(flatDir);
-        transform.rotation = Quaternion.RotateTowards(
-            transform.rotation, rot, _rotationSpeed * Time.deltaTime);
+        Quaternion localTarget = Quaternion.LookRotation(localDir);
+        transform.localRotation = Quaternion.RotateTowards(
+            transform.localRotation, localTarget, _rotationSpeed * Time.deltaTime);
     }
 
     private void RotateVerticalPivot(Transform target)
