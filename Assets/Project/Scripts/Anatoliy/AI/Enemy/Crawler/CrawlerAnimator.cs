@@ -36,6 +36,7 @@ public class CrawlerAnimator : MonoBehaviour, IEnemyAnimator
     private float _cachedSpeed;
     private float _meleeClipLength = 3.2f;
     private bool  _isInitialized;
+    private IEnemyAudio _audio;
 
     public System.Action OnMeleeHit;
 
@@ -44,6 +45,7 @@ public class CrawlerAnimator : MonoBehaviour, IEnemyAnimator
         if (_animator   == null) _animator   = GetComponent<Animator>();
         if (_state      == null) _state      = GetComponent<EnemyState>();
         if (_navigation == null) _navigation = GetComponent<EnemyNavigation>();
+        _audio = GetComponent<IEnemyAudio>();
     }
 
     private void Start()
@@ -146,8 +148,8 @@ public class CrawlerAnimator : MonoBehaviour, IEnemyAnimator
 
     public void OnMeleeAttackHit()      => OnMeleeHit?.Invoke();
     public void OnMeleeAttackComplete() { }
-    public void OnFootstepLeft()        { }
-    public void OnFootstepRight()       { }
+    public void OnFootstepLeft()        => _audio?.PlayFootstep(0);
+    public void OnFootstepRight()       => _audio?.PlayFootstep(1);
     public void OnHitReactionStart()    { }
     public void OnHitReactionComplete() { }
 }
