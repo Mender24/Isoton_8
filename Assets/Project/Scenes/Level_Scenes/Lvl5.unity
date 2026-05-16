@@ -7565,7 +7565,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &117389040
 Transform:
   m_ObjectHideFlags: 0
@@ -53156,7 +53156,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DetailColor: {r: 0.24410377, g: 0.24410377, b: 0.24410377, a: 0}
     - _DetailData: {r: 0.5, g: 4, b: -0.5, a: 0}
-    - _DetailWindDirection: {r: -1.1077163, g: 0, b: 0, a: 0}
+    - _DetailWindDirection: {r: -1.3997265, g: 0, b: 0, a: 0}
     - _DistanceData: {r: 0, g: 5, b: 1, a: 1}
     - _FogOfWarCenter: {r: 0, g: 0, b: 0, a: 1}
     - _FogOfWarCenterAdjusted: {r: 0, g: 0, b: 0, a: 1}
@@ -53168,7 +53168,7 @@ Material:
     - _ShadowData: {r: 0.5, g: 0, b: 250, a: 0}
     - _SpecularColor: {r: 0.5, g: 0.5, b: 0.5, a: 0}
     - _SunDir: {r: 0, g: 1, b: 0, a: 0}
-    - _WindDirection: {r: -1.1077163, g: 0, b: 0, a: 0}
+    - _WindDirection: {r: -1.3997265, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!1 &830321057 stripped
@@ -74412,52 +74412,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4272389955540834028, guid: e8f67a75f274d2147a8b5c312f2264c6, type: 3}
---- !u!1 &1192567001
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1192567002}
-  - component: {fileID: 1192567003}
-  m_Layer: 0
-  m_Name: Fog Void Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1192567002
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192567001}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1204841877}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1192567003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192567001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c47ea1fc2b1db4059aa6e41febfaa9de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trackingCenter: {fileID: 0}
-  distanceSortTimeInterval: 3
 --- !u!1001 &1193440918
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -74978,81 +74932,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.015742356, y: 0.025610914, z: 0.025040861}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &1204841875
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1204841877}
-  - component: {fileID: 1204841876}
-  m_Layer: 0
-  m_Name: Volumetric Fog Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1204841876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204841875}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac162c46ffa0a491299b8cd2f86d548c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sun: {fileID: 0}
-  moon: {fileID: 0}
-  flipDepthTexture: 0
-  mainManager: 0
-  includeTransparent:
-    serializedVersion: 2
-    m_Bits: 0
-  transparentCullMode: 2
-  depthPeeling: 0
-  includeSemiTransparent:
-    serializedVersion: 2
-    m_Bits: 0
-  alphaCutOff: 0
-  semiTransparentCullMode: 2
-  scattering: 0
-  scatteringThreshold: 0
-  scatteringIntensity: 0
-  scatteringAbsorption: 0.35
-  scatteringTint: {r: 1, g: 1, b: 1, a: 1}
-  scatteringHighQuality: 0
-  downscaling: 1
-  downscalingEdgeDepthThreshold: 0.05
-  blurPasses: 0
-  blurDownscaling: 1
-  blurSpread: 1
-  blurHDR: 1
-  blurEdgePreserve: 1
-  blurEdgeDepthThreshold: 0.008
-  ditherStrength: 0
---- !u!4 &1204841877
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204841875}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1508058223}
-  - {fileID: 1192567002}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1205144965
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -90700,59 +90579,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1505906409}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1508058222
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1508058223}
-  - component: {fileID: 1508058224}
-  m_Layer: 0
-  m_Name: Point Light Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1508058223
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1508058222}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1204841877}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1508058224
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1508058222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc58c00b7f7924fe8a2a9d5b5d592111, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trackingCenter: {fileID: 0}
-  distanceSortTimeInterval: 3
-  excludeLightsBehind: 1
-  inscattering: 1
-  intensity: 1
-  insideAtten: 0
-  enableDistanceDimmer: 1
-  distanceStartDimming: 70
-  distanceDeactivation: 100
 --- !u!1001 &1508133112
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -105901,7 +105727,7 @@ Material:
     - _RayMarchSettings: {r: 0.2, g: 0.010199999, b: 1, a: 1.25}
     - _ShadowData: {r: 0.55, g: 0, b: 500, a: 0}
     - _SpecularColor: {r: 0.5, g: 0.5, b: 0.5, a: 0}
-    - _SunDir: {r: 0.00032797782, g: 0.6691311, b: 0.7431456, a: 0}
+    - _SunDir: {r: -0.743145, g: 0.66913104, b: 0.0003286153, a: 0}
     - _WindDirection: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
@@ -110248,7 +110074,7 @@ Material:
     - _RayMarchSettings: {r: 0.2, g: 0.010199999, b: 1, a: 1.25}
     - _ShadowData: {r: 0.55, g: 0, b: 500, a: 0}
     - _SpecularColor: {r: 0.5, g: 0.5, b: 0.5, a: 0}
-    - _SunDir: {r: 0.00032797782, g: 0.6691311, b: 0.7431456, a: 0}
+    - _SunDir: {r: -0.743145, g: 0.66913104, b: 0.0003286153, a: 0}
     - _WindDirection: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
@@ -135407,4 +135233,3 @@ SceneRoots:
   - {fileID: 1112760267}
   - {fileID: 1459238718}
   - {fileID: 188655932}
-  - {fileID: 1204841877}
