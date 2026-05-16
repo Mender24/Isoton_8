@@ -155,23 +155,14 @@ public class Reactor : MonoBehaviour, IDamageable
     private IEnumerator OpenShield()
     {
         yield return new WaitForSeconds(_timeBeforeOpenShield);
-
-        if(_shieldObject != null)
-        {
-            Vector3 target = _shieldObject.transform.position - new Vector3(0, _lenPathShield, 0);
-
-            while (_shieldObject.transform.position != target)
-            {
-                _shieldObject.transform.position = Vector3.MoveTowards(_shieldObject.transform.position, target, _speedMoveShield * Time.deltaTime);
-
-                yield return null;
-            }
-        }
     }
 
     private IEnumerator Death()
     {
         yield return new WaitForSeconds(_secondDestroy);
+
+        if (_shieldObject != null)
+            _shieldObject.SetActive(false);
 
         _reactorObject.SetActive(false);
         _exploredReactor.SetActive(true);
