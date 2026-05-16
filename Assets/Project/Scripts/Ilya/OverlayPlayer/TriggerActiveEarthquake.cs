@@ -29,6 +29,7 @@ public class TriggerActiveEarthquake : MonoBehaviour
 public class DataCameraShake
 {
     public string SoundName = "";
+    public bool IsGlobalEvent = false;
     public float Duration = 11;
     [Space]
     public float CameraShakeMultiplier = 1;
