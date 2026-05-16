@@ -305,7 +305,7 @@ namespace Akila.FPSFramework
             if (type == DamagableType.Player && characterManager != null)
             {
                 onDamage?.Invoke();
-                characterManager.cameraManager.ShakeCameras(damageCameraShake);
+                //characterManager.cameraManager.ShakeCameras(damageCameraShake);
             }
 
             UpdateUI();
