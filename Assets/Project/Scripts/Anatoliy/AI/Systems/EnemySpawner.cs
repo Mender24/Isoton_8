@@ -141,6 +141,7 @@ public class EnemySpawner : MonoBehaviour
 
         Transform spawnPoint = GetRandomSpawnPoint();
         GameObject enemyObject = Instantiate(_enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        enemyObject.transform.parent = gameObject.transform;
 
         EnemyBase newEnemy = enemyObject.GetComponent<EnemyBase>();
         if (newEnemy != null)
