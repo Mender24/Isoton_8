@@ -269,5 +269,10 @@ namespace Akila.FPSFramework
 
             return option;
         }
+
+        public void ChangeGlobalVoume(float value)
+        {
+            AudioListener.volume = value / 100f;
+        }
     }
 }

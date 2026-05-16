@@ -16,6 +16,8 @@ public class Earthquake : MonoBehaviour
     [SerializeField] private string _baseSoundEarthquakeName = "";
     [Space]
     [SerializeField] private bool _isTest = false;
+    [Space]
+    [SerializeField] private DataCameraShake _dataCameraShakePlayer;
 
     public event Action<float> StartEarthquake;
 
@@ -43,6 +45,11 @@ public class Earthquake : MonoBehaviour
         }
     }
 
+    public void ShakeCamera()
+    {
+        ShakeCamera(_dataCameraShakePlayer);
+    }
+
     public void ShakeCamera(DataCameraShake dataCameraShake)
     {
         if(Player.Instance == null)
@@ -51,8 +58,12 @@ public class Earthquake : MonoBehaviour
             return;
         }
 
-        StartEarthquake?.Invoke(dataCameraShake.Duration);
+        if(dataCameraShake.IsGlobalEvent)
+            StartEarthquake?.Invoke(dataCameraShake.Duration);
+
         Player.Instance.ShakeCamera(dataCameraShake.CameraShakeMultiplier, dataCameraShake.Roughness, dataCameraShake.FadeInTime, dataCameraShake.FadeOutTime);
-        SoundManager.Instance.PlayScriptedSoundName(dataCameraShake.SoundName);
+
+        if(dataCameraShake.SoundName != "")
+            SoundManager.Instance.PlayScriptedSoundName(dataCameraShake.SoundName);
     }
 }
