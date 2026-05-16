@@ -99,6 +99,13 @@ public class SceneLoader : MonoBehaviour
     {
         Player.Instance.gameObject.SetActive(false);
         Destroy(gameObject);
+        SceneManager.LoadScene(0);
+    }
+
+    public void LoadFinalScene()
+    {
+        Player.Instance.gameObject.SetActive(false);
+        Destroy(gameObject);
         SceneManager.LoadScene("Transition_Final");
     }
 
