@@ -118,6 +118,7 @@ namespace Akila.FPSFramework
 
         private bool previoslyHealing;
 
+        public Action onDamage;
         /// <summary>
         /// Event called when healing starts.
         /// </summary>
@@ -290,6 +291,8 @@ namespace Akila.FPSFramework
             previoslyHealing = isHealing;
         }
 
+        
+
         private void UpdateSystem()
         {
             if (!died && health <= 0)
@@ -301,6 +304,7 @@ namespace Akila.FPSFramework
 
             if (type == DamagableType.Player && characterManager != null)
             {
+                onDamage?.Invoke();
                 characterManager.cameraManager.ShakeCameras(damageCameraShake);
             }
 
