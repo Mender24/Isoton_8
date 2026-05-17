@@ -52,8 +52,11 @@ namespace Akila.FPSFramework
             if (_interactable != null)
                 _interactable.OffInteraction();
 
-            enterDoor.CloseDoor();
-            exitDoor.OpenDoor();
+            if(enterDoor != null)
+                enterDoor.CloseDoor();
+
+            if (exitDoor != null)
+                exitDoor.OpenDoor();
         }
 
         public void EnterOpenDoor()
@@ -61,28 +64,35 @@ namespace Akila.FPSFramework
             if (_isUseForceDontOpenDoor)
                 return;
 
-            enterDoor.OpenDoor();
-            exitDoor.CloseDoor();
+            if (enterDoor != null)
+                enterDoor.OpenDoor();
+
+            if (exitDoor != null)
+                exitDoor.CloseDoor();
         }
 
         public void ForceOpenEnterDoor()
         {
-            enterDoor.OpenDoor();
+            if (enterDoor != null)
+                enterDoor.OpenDoor();
         }
 
         public void ForceCloseEnterDoor()
         {
-            enterDoor.CloseDoor();
+            if (enterDoor != null)
+                enterDoor.CloseDoor();
         }
 
         public void ForceOpenExitDoor()
         {
-            exitDoor.OpenDoor();
+            if (exitDoor != null)
+                exitDoor.OpenDoor();
         }
 
         private IEnumerator StartChangeSceneProcess()
         {
-            enterDoor.CloseDoor();
+            if (enterDoor != null)
+                enterDoor.CloseDoor();
 
             yield return null;
 
