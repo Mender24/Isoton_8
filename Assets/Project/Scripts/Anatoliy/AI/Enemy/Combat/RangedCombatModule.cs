@@ -285,7 +285,9 @@ public class RangedCombatModule : MonoBehaviour, IRangedCombat
         if (_hasManualTarget)
             mask |= 1 << _playerTransform.gameObject.layer;
 
-        float chanceToHit = _targetIsEnemy ? _config.ChanceToHitEnemy : _config.ChanceToHit;
+        float chanceToHit = _targetIsEnemy
+            ? _config.ChanceToHitEnemy
+            : Mathf.Clamp01(_config.ChanceToHit * DifficultyManager.EnemyChanceToHitMult);
         if (Random.value <= chanceToHit)
         {
             if (Physics.Raycast(origin, dir, out RaycastHit rayHit, _config.AttackRange, mask))

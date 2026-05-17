@@ -17,6 +17,7 @@ public class DifficultyManager : MonoBehaviour
     public static float EnemyHealthMult => Instance != null ? Instance._currentLevel.enemyHealthMult : 1f;
     public static float EnemyDamageMult => Instance != null ? Instance._currentLevel.enemyDamageMult : 1f;
     public static float WeaponDamageMult => Instance != null ? Instance._currentLevel.weaponDamageMult : 1f;
+    public static float EnemyChanceToHitMult => Instance != null ? Instance._currentLevel.enemyChanceToHitMult : 1f;
     public static float AmmoDropChanceMult => Instance != null ? Instance._currentLevel.ammoDropChanceMult : 1f;
     public static float AmmoBoxCountMult => Instance != null ? Instance._currentLevel.ammoBoxCountMult : 1f;
 
