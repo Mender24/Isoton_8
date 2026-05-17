@@ -278,7 +278,8 @@ public class EnemySpawner : MonoBehaviour
     
     private float GetRandomSpawnInterval()
     {
-        return _spawnInterval + Random.Range(-_spawnIntervalVariation, _spawnIntervalVariation);
+        float interval = _spawnInterval + Random.Range(-_spawnIntervalVariation, _spawnIntervalVariation);
+        return interval * DifficultyManager.SpawnIntervalMult;
     }
     
     #endregion
