@@ -372,7 +372,7 @@ namespace Akila.FPSFramework
                 {
                     ""name"": """",
                     ""id"": ""0aa981ee-9aa6-4424-8578-00d2f3494093"",
-                    ""path"": ""<Keyboard>/c"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",

@@ -26,6 +26,9 @@ public class DifficultyLevel
     [Header("Weapon (Player)")]
     public float weaponDamageMult   = 1f;
 
+    [Header("Enemy Accuracy")]
+    public float enemyChanceToHitMult = 1f;
+
     [Header("Ammo")]
     public float ammoDropChanceMult = 1f;
     public float ammoBoxCountMult   = 1f;
