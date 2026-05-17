@@ -29,6 +29,9 @@ public class DifficultyLevel
     [Header("Enemy Accuracy")]
     public float enemyChanceToHitMult = 1f;
 
+    [Header("Enemy Spawner")]
+    public float spawnIntervalMult = 1f;
+
     [Header("Ammo")]
     public float ammoDropChanceMult = 1f;
     public float ammoBoxCountMult   = 1f;
