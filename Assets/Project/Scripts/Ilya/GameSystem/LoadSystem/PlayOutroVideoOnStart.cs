@@ -1,21 +1,39 @@
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 
 public class PlayOutroVideoOnStart : MonoBehaviour
 {
-    [SerializeField] private CutscenePlayer _outroCutscenePlayer;
-    [SerializeField] private VideoClip _outroClip;
-    
+    [SerializeField] private CutscenePlayer _cutscenePlayer;
+    [SerializeField] private VideoClip[] _clips;
+
     private bool _triggered;
-    void Start()
+
+    private void Start()
     {
         if (_triggered) return;
         _triggered = true;
 
-        if (_outroCutscenePlayer != null && _outroClip != null)
-            _outroCutscenePlayer.PlayCutscene(_outroClip, () => SceneManager.LoadScene("MainMenu"));
-        else
-            SceneLoader.instance.LoadMainMenu();
+        PlayNext(0);
+    }
+
+    private void PlayNext(int index)
+    {
+        if (_cutscenePlayer == null || _clips == null || index >= _clips.Length)
+        {
+            SceneManager.LoadScene("MainMenu");
+            return;
+        }
+
+        VideoClip clip = _clips[index];
+
+        if (clip == null)
+        {
+            PlayNext(index + 1);
+            return;
+        }
+
+        _cutscenePlayer.PlayCutscene(clip, () => PlayNext(index + 1));
     }
 }
