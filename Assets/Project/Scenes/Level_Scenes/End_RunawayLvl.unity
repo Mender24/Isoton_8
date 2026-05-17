@@ -47366,43 +47366,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1066811050}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &1070692168
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 256
-  m_Height: 256
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &1071291087
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55633,6 +55596,43 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 051d96c7ae915c446a0d9c27dc5ac1b3, type: 3}
+--- !u!84 &1222000626
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 256
+  m_Height: 256
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &1223819484
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -59093,6 +59093,16 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -1.85
       objectReference: {fileID: 0}
+    - target: {fileID: 4694398777936056933, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 2.4221764
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694398777936056933, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: m_Center.y
+      value: 0.7110882
+      objectReference: {fileID: 0}
     - target: {fileID: 7234676533441135114, guid: 1c6f379a24d0a714cb4d0eb847007e98,
         type: 3}
       propertyPath: m_IsActive
@@ -59111,7 +59121,117 @@ PrefabInstance:
     - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
         type: 3}
       propertyPath: MaxDistance
-      value: 5.7
+      value: 7.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[0].time
+      value: 0.13642564
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].time
+      value: 0.2728513
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[2].time
+      value: 0.5457026
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[3].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].value
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[2].value
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[0].inSlope
+      value: -7.33292
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].inSlope
+      value: -1.83323
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[2].inSlope
+      value: -0.4583075
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[3].inSlope
+      value: -0.5881188
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[0].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[0].outSlope
+      value: -7.33292
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].outSlope
+      value: -1.83323
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[2].outSlope
+      value: -0.4583075
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[3].inWeight
+      value: 0.40762985
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[3].outSlope
+      value: -0.5881188
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7677140145109990230, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779409026773524658, guid: 1c6f379a24d0a714cb4d0eb847007e98,
+        type: 3}
+      propertyPath: _workTime
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -91722,7 +91842,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 1070692168}
+        m_Texture: {fileID: 1222000626}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
