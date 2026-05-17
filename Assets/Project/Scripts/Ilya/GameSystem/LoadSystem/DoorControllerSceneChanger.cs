@@ -5,6 +5,7 @@ namespace Akila.FPSFramework
 {
     public class DoorControllerSceneChanger : MonoBehaviour
     {
+        [SerializeField] private GameObject _objectBlock;
         [SerializeField] private bool _isUseLoad = true;
         [SerializeField] private bool _isUseForceDontOpenDoor = false;
         [SerializeField] private bool _isUseLateLoadedSystem = false;
@@ -48,6 +49,9 @@ namespace Akila.FPSFramework
         public void EnterExitDoor()
         {
             ActivatedLeaver();
+
+            if (_objectBlock != null)
+                _objectBlock.SetActive(true);
 
             if (_interactable != null)
                 _interactable.OffInteraction();
